@@ -1,0 +1,6 @@
+state=0,上传失败
+state=1,上传成功
+state=2,已经匹配
+state=3,已经风险发现
+state=4,已经删除
+state=5,当期无数据

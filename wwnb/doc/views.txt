@@ -1,0 +1,112 @@
+ST1_A：区房管局涉税信息表一（新建商品房销售信息） left join uploadRecords
+	SQL语句：SELECT     dbo.[区房管局涉税信息表一（新建商品房销售信息）].[房屋产权证书号*], 
+	                      dbo.[区房管局涉税信息表一（新建商品房销售信息）].[开发商统一社会信用代码或身份证号（出让方）*], 
+	                      dbo.[区房管局涉税信息表一（新建商品房销售信息）].[开发商名称*], 
+	                      dbo.[区房管局涉税信息表一（新建商品房销售信息）].[购买方统一社会信用代码或身份证号（受让方）*], 
+	                      dbo.[区房管局涉税信息表一（新建商品房销售信息）].[受让方名称*], dbo.[区房管局涉税信息表一（新建商品房销售信息）].[转让面积建面*], 
+	                      dbo.[区房管局涉税信息表一（新建商品房销售信息）].[转让面积套面*], dbo.[区房管局涉税信息表一（新建商品房销售信息）].[座落地址*], 
+	                      dbo.[区房管局涉税信息表一（新建商品房销售信息）].[金额*], dbo.[区房管局涉税信息表一（新建商品房销售信息）].[交易类别*], 
+	                      dbo.[区房管局涉税信息表一（新建商品房销售信息）].uploadId, dbo.[区房管局涉税信息表一（新建商品房销售信息）].批号, 
+	                      dbo.uploadRecords.uploadTime, dbo.uploadRecords.startTime, dbo.uploadRecords.terminalTime, dbo.uploadRecords.state
+	FROM         dbo.[区房管局涉税信息表一（新建商品房销售信息）] INNER JOIN
+	                      dbo.uploadRecords ON dbo.[区房管局涉税信息表一（新建商品房销售信息）].uploadId = dbo.uploadRecords.id
+============================
+ST1_B: 房屋信息查询 left join uploadRecords
+	SQL语句：SELECT     dbo.房屋ß信息查询.纳税人识别号, dbo.房屋信息查询.纳税人名称, dbo.房屋信息查询.纳税人状态, dbo.房屋信息查询.房源编号, 
+                      dbo.房屋信息查询.有效标志, dbo.房屋信息查询.房屋所在土地编号, dbo.房屋信息查询.房产名称, dbo.房屋信息查询.产权证书号, 
+                      dbo.房屋信息查询.纳税人类型, dbo.房屋信息查询.房屋用途, dbo.房屋信息查询.所有权人识别号, dbo.房屋信息查询.所有权人名称, 
+                      dbo.房屋信息查询.[房屋坐落地址（行政区划）], dbo.房屋信息查询.[房屋坐落地址（所处街乡）], dbo.房屋信息查询.房屋坐落详细地址, 
+                      dbo.房屋信息查询.[房屋所属税务所（科、分局）], dbo.房屋信息查询.房产取得时间, dbo.房屋信息查询.建筑面积, 
+                      dbo.房屋信息查询.从价税源信息, dbo.房屋信息查询.从租税源信息, dbo.房屋信息查询.录入日期, dbo.房屋信息查询.录入人员, 
+                      dbo.房屋信息查询.登记序号, dbo.房屋信息查询.FYXXUUID, dbo.房屋信息查询.房屋原价, dbo.房屋信息查询.uploadId, dbo.uploadRecords.startTime, 
+                      dbo.uploadRecords.terminalTime, dbo.uploadRecords.uploadTime
+FROM         dbo.房屋信息查询 LEFT OUTER JOIN
+                      dbo.uploadRecords ON dbo.房屋信息查询.uploadId = dbo.uploadRecords.id
+============================                      
+ST1_AB:SELECT     dbo.ST1_A.[房屋产权证书号*], dbo.ST1_A.[开发商统一社会信用代码或身份证号（出让方）*], dbo.ST1_A.[开发商名称*], 
+                      dbo.ST1_A.[购买方统一社会信用代码或身份证号（受让方）*], dbo.ST1_A.[受让方名称*], dbo.ST1_A.[转让面积建面*], dbo.ST1_A.[转让面积套面*], 
+                      dbo.ST1_A.[座落地址*], dbo.ST1_A.[金额*], dbo.ST1_A.[交易类别*], dbo.ST1_A.批号, dbo.ST1_A.uploadTime, dbo.ST1_A.startTime, dbo.ST1_A.terminalTime, 
+                      dbo.ST1_B.纳税人识别号, dbo.ST1_B.纳税人名称, dbo.ST1_B.纳税人状态, dbo.ST1_B.房源编号, dbo.ST1_B.有效标志, dbo.ST1_B.房屋所在土地编号, 
+                      dbo.ST1_B.房产名称, dbo.ST1_B.产权证书号, dbo.ST1_B.纳税人类型, dbo.ST1_B.房屋用途, dbo.ST1_B.所有权人识别号, dbo.ST1_B.所有权人名称, 
+                      dbo.ST1_B.[房屋坐落地址（行政区划）], dbo.ST1_B.[房屋坐落地址（所处街乡）], dbo.ST1_B.房屋坐落详细地址, 
+                      dbo.ST1_B.[房屋所属税务所（科、分局）], dbo.ST1_B.房产取得时间, dbo.ST1_B.建筑面积, dbo.ST1_B.从价税源信息, dbo.ST1_B.从租税源信息, 
+                      dbo.ST1_B.录入日期, dbo.ST1_B.录入人员, dbo.ST1_B.登记序号, dbo.ST1_B.FYXXUUID, dbo.ST1_B.房屋原价, dbo.ST1_A.state
+FROM         dbo.ST1_A LEFT OUTER JOIN
+                      dbo.ST1_B ON dbo.ST1_A.[受让方名称*] = dbo.ST1_B.纳税人名称 AND 
+                      dbo.ST1_A.[购买方统一社会信用代码或身份证号（受让方）*] = dbo.ST1_B.纳税人识别号 AND 
+                      dbo.ST1_A.[房屋产权证书号*] = dbo.ST1_B.产权证书号 AND dbo.ST1_A.[座落地址*] = dbo.ST1_B.房屋坐落详细地址
+============================                      
+ST1_AB_1: 标准1
+	SQL语句：SELECT     [房屋产权证书号*], [开发商统一社会信用代码或身份证号（出让方）*], [开发商名称*], [购买方统一社会信用代码或身份证号（受让方）*], 
+                      [受让方名称*], [转让面积建面*], [转让面积套面*], [座落地址*], [金额*], [交易类别*], 批号, uploadTime, startTime, terminalTime, 纳税人识别号, 
+                      纳税人名称, 纳税人状态, 房源编号, 有效标志, 房屋所在土地编号, 房产名称, 产权证书号, 纳税人类型, 房屋用途, 所有权人识别号, 
+                      所有权人名称, [房屋坐落地址（行政区划）], [房屋坐落地址（所处街乡）], 房屋坐落详细地址, [房屋所属税务所（科、分局）], 房产取得时间, 
+                      建筑面积, 从价税源信息, 从租税源信息, 录入日期, 录入人员, 登记序号, FYXXUUID, 房屋原价, state
+FROM         dbo.ST1_AB
+WHERE     (纳税人识别号 IS NOT NULL) AND ([转让面积建面*] < 建筑面积) OR
+                      ([金额*] < 房屋原价)
+                      
+ST2_A: 
+============================
+dataTableView:列出全部表名和组织机构
+    SQL语句：SELECT     dbo.dataTable.tableName, dbo.organization.name, dbo.dataTable.organizationId, dbo.dataTable.id, dbo.dataTable.type
+FROM         dbo.dataTable INNER JOIN
+                      dbo.organization ON dbo.dataTable.organizationId = dbo.organization.id
+============================
+dataView:列出全部表名和表中的列名
+   SQL语句：SELECT     dbo.dataTable.tableName, dbo.dataTableDefinition.tableName AS Expr1, dbo.dataTable.organizationId, dbo.dataTableDefinition.text, dbo.dataTableDefinition.type, 
+                      dbo.dataTableDefinition.taxUnitCode, dbo.dataTableDefinition.taxUnitName, dbo.dataTableDefinition.isNull, dbo.dataTableDefinition.id, dbo.dataTableDefinition.[check], dbo.dataTable.type AS Expr2, 
+                      dbo.dataTableDefinition.tableRecord
+FROM         dbo.dataTable INNER JOIN
+                      dbo.dataTableDefinition ON dbo.dataTable.tableName = dbo.dataTableDefinition.tableName
+============================
+reportFormView：单位上传情况统计（分报表）
+   SQL语句：SELECT     dbo.dataTable.tableName, dbo.dataTable.organizationId, dbo.dataTable.type, dbo.organization.id, dbo.organization.name, dbo.organization.tel, dbo.organization.address, 
+                      dbo.organization.uploadCycle, dbo.organization.cycleStart
+FROM         dbo.dataTable LEFT OUTER JOIN
+                      dbo.organization ON dbo.dataTable.organizationId = dbo.organization.id
+============================
+tableTestView：登录名与相关表名
+   SQL语句：SELECT     dbo.organization.id, dbo.[user].loginName, dbo.dataTable.tableName
+FROM         dbo.[user] INNER JOIN
+                      dbo.organization ON dbo.[user].organizationId = dbo.organization.id RIGHT OUTER JOIN
+                      dbo.dataTable ON dbo.organization.id = dbo.dataTable.organizationId
+============================
+test:
+   SQL语句：SELECT     dbo.[区房管局涉税信息表一（新建商品房销售信息）].[房屋产权证书号*], dbo.[区房管局涉税信息表一（新建商品房销售信息）].[开发商统一社会信用代码或身份证号（出让方）*], 
+                      dbo.[区房管局涉税信息表一（新建商品房销售信息）].[开发商名称*], dbo.[区房管局涉税信息表一（新建商品房销售信息）].[购买方统一社会信用代码或身份证号（受让方）*], 
+                      dbo.[区房管局涉税信息表一（新建商品房销售信息）].[受让方名称*], dbo.[区房管局涉税信息表一（新建商品房销售信息）].[转让面积建面*], 
+                      dbo.[区房管局涉税信息表一（新建商品房销售信息）].[转让面积套面*], dbo.[区房管局涉税信息表一（新建商品房销售信息）].[座落地址*], 
+                      dbo.[区房管局涉税信息表一（新建商品房销售信息）].[金额*], dbo.[区房管局涉税信息表一（新建商品房销售信息）].[交易类别*], dbo.[区房管局涉税信息表一（新建商品房销售信息）].uploadId, 
+                      dbo.[区房管局涉税信息表一（新建商品房销售信息）].批号, dbo.房屋信息查询.纳税人识别号, dbo.房屋信息查询.纳税人名称, dbo.房屋信息查询.纳税人状态, dbo.房屋信息查询.房源编号, 
+                      dbo.房屋信息查询.有效标志, dbo.房屋信息查询.房屋所在土地编号, dbo.房屋信息查询.房产名称, dbo.房屋信息查询.产权证书号, dbo.房屋信息查询.纳税人类型, dbo.房屋信息查询.房屋用途, 
+                      dbo.房屋信息查询.所有权人识别号, dbo.房屋信息查询.所有权人名称, dbo.房屋信息查询.[房屋坐落地址（行政区划）], dbo.房屋信息查询.[房屋坐落地址（所处街乡）], 
+                      dbo.房屋信息查询.房屋坐落详细地址, dbo.房屋信息查询.[房屋所属税务所（科、分局）], dbo.房屋信息查询.房产取得时间, dbo.房屋信息查询.建筑面积, dbo.房屋信息查询.从价税源信息, 
+                      dbo.房屋信息查询.从租税源信息, dbo.房屋信息查询.录入日期, dbo.房屋信息查询.录入人员, dbo.房屋信息查询.登记序号, dbo.房屋信息查询.FYXXUUID, dbo.房屋信息查询.房屋原价, 
+                      dbo.房屋信息查询.uploadId AS Expr1, dbo.房屋信息查询.批号 AS Expr2
+FROM         dbo.[区房管局涉税信息表一（新建商品房销售信息）] LEFT OUTER JOIN
+                      dbo.uploadRecords ON dbo.[区房管局涉税信息表一（新建商品房销售信息）].uploadId = dbo.uploadRecords.id LEFT OUTER JOIN
+                      dbo.房屋信息查询 ON dbo.[区房管局涉税信息表一（新建商品房销售信息）].[房屋产权证书号*] = dbo.房屋信息查询.产权证书号 AND 
+                      dbo.[区房管局涉税信息表一（新建商品房销售信息）].[座落地址*] = dbo.房屋信息查询.房屋坐落详细地址
+============================
+uploadRecordsView：按上传时间显示上传记录
+   SQL语句：SELECT     dbo.[user].loginName, dbo.[user].name, dbo.uploadRecords.tableName, dbo.uploadRecords.state, dbo.uploadRecords.terminalTime, dbo.uploadRecords.startTime, 
+                      dbo.uploadRecords.uploadTime
+FROM         dbo.[user] INNER JOIN
+                      dbo.uploadRecords ON dbo.[user].loginName = dbo.uploadRecords.uploads
+============================
+uploadTableView： dataTable left join uploadRecords
+  SQL语句：SELECT     dbo.dataTable.type, dbo.uploadRecords.state, dbo.uploadRecords.id, dbo.uploadRecords.tableName
+FROM         dbo.dataTable INNER JOIN
+                      dbo.uploadRecords ON dbo.dataTable.tableName = dbo.uploadRecords.tableName
+============================
+userView：用户登陆（user left join role left join organization）
+  SQL语句：SELECT     dbo.[user].loginName, dbo.[user].pwd, dbo.[user].roleId, dbo.[user].name, dbo.[user].tel, dbo.[user].organizationId, dbo.role.name AS roleName, dbo.organization.name AS organizationName
+FROM         dbo.[user] LEFT OUTER JOIN
+                      dbo.role ON dbo.[user].roleId = dbo.role.id LEFT OUTER JOIN
+                      dbo.organization ON dbo.[user].organizationId = dbo.organization.id
+============================
+noUploadView:
+  SQL语句：SELECT     dbo.dataTable.tableName, dbo.organization.name, dbo.organization.tel, dbo.organization.address, dbo.organization.uploadCycle, dbo.organization.cycleStart, dbo.dataTable.organizationId
+FROM         dbo.dataTable LEFT OUTER JOIN
+                      dbo.organization ON dbo.dataTable.organizationId = dbo.organization.id
