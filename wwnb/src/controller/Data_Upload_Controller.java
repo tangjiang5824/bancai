@@ -61,12 +61,11 @@ public class Data_Upload_Controller {
 		String tableName= "oldpanelstore";
 		String userid = (String) session.getAttribute("userid");
 		try {
-			UploadDataResult result = excel_Service.upload_Data(uploadFile.getInputStream(),tableName,userid, check);
+			UploadDataResult result = excel_Service.upload_Data(uploadFile.getInputStream(),userid,tableName);
 			response.setSuccess(result.success);
-			
 			response.setErrorCode(result.errorCode);
 			response.setValue(result.data);
-			response.put("uploadId", result.uploadId);
+			//response.put("uploadId", result.uploadId);
 //			if(result.success)
 //			{
 //				if(tableName.equals("税务登记信息查询")||tableName.equals("税务登记信息查询(国税)"))

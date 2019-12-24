@@ -15,12 +15,12 @@ import domain.DataList;
 
 public class DB {
 	private static Logger log = Logger.getLogger(DB.class);
-	//private final static String driver = "com.mysql.cj.jdbc.Driver";
-	private final static String driver = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+	private final static String driver = "com.mysql.cj.jdbc.Driver";
+	//private final static String driver = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
 	private static String connectionUrl;
 	static {
-		//connectionUrl = "jdbc:mysql://116.62.24.156:3306;user=root;password=root;";// 运行数据库地址
-		connectionUrl = "jdbc:sqlserver://116.62.24.156:1433;databaseName=wwnb;user=wwnb;password=CQUa1502;";
+		connectionUrl = "jdbc:mysql://116.62.24.156:3306;user=root;password=root;";// 运行数据库地址
+		//connectionUrl = "jdbc:sqlserver://116.62.24.156:1433;databaseName=wwnb;user=wwnb;password=CQUa1502;";
 		log.debug("使用默认数据库");
 		log.debug("数据库URL" + connectionUrl);
 	}

@@ -158,127 +158,135 @@ public class Excel_Service extends BaseService {
 //		Excel_Service service = new Excel_Service();
 //		service.getNextBatch(2015, 0L, 0);
 //	}
-
-	/**
-	 * 根据上传数据表名和上传id生成数据excel
-	 * 
-	 * @param tableName
-	 * @param uploadId
-	 * @return
-	 */
-	public Excel createExcelFromTable(String tableName, Integer uploadId) {
-		DataList columnList = tableService.getColumnList(tableName);
-
-		DataList tableData = tableService.getTableData(tableName, uploadId);
-		
-		return new Excel(tableData, columnList);
-	}
-	/**
-	 * 根据表名和数据所属期生成excel
-	 * @param tableName
-	 * @param begintime
-	 * @param deadline
-	 * @return
-	 */
-	public Excel createExcelFromTable(String tableName,String begintime, String deadline) {
-		DataList columnList = tableService.getColumnList(tableName);
-		DataList tableData = queryService.query("select * from ["+tableName+"] where uploadId in (select id from uploadRecords where tableName=? and startTime>=? and endTime<=?)", tableName,begintime,deadline);
-		return new Excel(tableData, columnList);
-	}
-
-	public Excel createExcelFromTable(String tableName, String columnName, String compareName, String conditionName,
-			String columnType) {
-		if(compareName.equals("like"))
-			conditionName="%"+conditionName+"%";
-		log.debug(columnName);
-		log.debug(compareName);
-		log.debug(columnType);
-		
-		DataList columnList = tableService.getColumnList(tableName);
-		if(columnType.equals("0"))
-		{
-			DataList tableData = queryService.query("select * from ["+tableName+"] where convert(float,["+columnName+"])"+compareName+"?",conditionName);
-			return new Excel(tableData, columnList);
-		}
-		else
-		{
-			DataList tableData = queryService.query("select * from ["+tableName+"] where ["+columnName+"]"+compareName+"'"+conditionName+"'");
-			return new Excel(tableData, columnList);
-		}
-
-		
-	}
+//	/**
+//	 * 根据上传数据表名和上传id生成数据excel
+//	 *
+//	 * @param tableName
+//	 * @param uploadId
+//	 * @return
+//	 */
+//	public Excel createExcelFromTable(String tableName, Integer uploadId) {
+//		DataList columnList = tableService.getColumnList(tableName);
+//
+//		DataList tableData = tableService.getTableData(tableName, uploadId);
+//
+//		return new Excel(tableData, columnList);
+//	}
+//	/**
+//	 * 根据表名和数据所属期生成excel
+//	 * @param tableName
+//	 * @param begintime
+//	 * @param deadline
+//	 * @return
+//	 */
+//	public Excel createExcelFromTable(String tableName,String begintime, String deadline) {
+//		DataList columnList = tableService.getColumnList(tableName);
+//		DataList tableData = queryService.query("select * from ["+tableName+"] where uploadId in (select id from uploadRecords where tableName=? and startTime>=? and endTime<=?)", tableName,begintime,deadline);
+//		return new Excel(tableData, columnList);
+//	}
+//
+//	public Excel createExcelFromTable(String tableName, String columnName, String compareName, String conditionName,
+//			String columnType) {
+//		if(compareName.equals("like"))
+//			conditionName="%"+conditionName+"%";
+//		log.debug(columnName);
+//		log.debug(compareName);
+//		log.debug(columnType);
+//
+//		DataList columnList = tableService.getColumnList(tableName);
+//		if(columnType.equals("0"))
+//		{
+//			DataList tableData = queryService.query("select * from ["+tableName+"] where convert(float,["+columnName+"])"+compareName+"?",conditionName);
+//			return new Excel(tableData, columnList);
+//		}
+//		else
+//		{
+//			DataList tableData = queryService.query("select * from ["+tableName+"] where ["+columnName+"]"+compareName+"'"+conditionName+"'");
+//			return new Excel(tableData, columnList);
+//		}
+//
+//
+//	}
+//
+//	public Excel createExcelFromTable(String tableName, String condition) {
+//		DataList columnList = tableService.getColumnList(tableName);
+//		JSONArray jArray = JSONArray.fromObject(condition);
+//		List<Map<String, Object>> mapList=new ArrayList<Map<String, Object>>(jArray);
+//		WebResponse wr=queryService.advanceQuery(tableName, mapList, 0, 9999999);
+//		DataList tableData = (DataList) wr.get("value");
+//		return new Excel(tableData, columnList);
+//	}
 	
-	public Excel createExcelFromTable(String tableName, String condition) {
-		DataList columnList = tableService.getColumnList(tableName);
-		JSONArray jArray = JSONArray.fromObject(condition);
-		List<Map<String, Object>> mapList=new ArrayList<Map<String, Object>>(jArray);
-		WebResponse wr=queryService.advanceQuery(tableName, mapList, 0, 9999999);
-		DataList tableData = (DataList) wr.get("value");
-		return new Excel(tableData, columnList);
-	}
-	
-	private void saveData(String tableName, int uploadId, DataList dataList) {
-		for (int i = 0; i < dataList.size(); i += 1000) {
-			log.debug("保存第" + i + "条数据");
-			String sql = dataList.toInsertSQL(i, i + 1000, tableName, uploadId);
-			jo.update(sql);
+	private void saveData(DataList dataList,String userid,String tablename) {
+		for (int i = 0; i < dataList.size(); i += 1) {
+			//String sql = dataList.toInsertSQL(i, i + 1000, tableName, uploadId);//sql语句
+			//String sql = dataList.toInsertSQL(i, i + 1000);//sql语句  insert into oldpanelstore (%s) values %s
+			//DataRow proNum=
+			//dr=dataList.get(i);
+			String proNum =(String)dataList.get(i).get("品号");
+			String ProName = (String) dataList.get(i).get("品名");
+			String scale=(String) dataList.get(i).get("规格");
+			String respo=(String) dataList.get(i).get("库存单位");
+			String respoNum=(String) dataList.get(i).get("仓库编号");
+			String count=(String)dataList.get(i).get("数量");
+			String cost= (String)dataList.get(i).get("数量"); //(float)jsonTemp.get("数量");
+			String location=(String) dataList.get(i).get("存放位置");
+			String sql = "insert into "+tablename+"(品号, 品名,规格,库存单位,仓库编号,数量,成本,存放位置,uploadId) values(?,?,?,?,?,?,?,?,?)";
+			jo.update(sql, proNum,ProName,scale,respo,respoNum,count,cost,location,userid);
 		}
 	}
-	
 
-	private int insertUploadRecord(String uploads, String tableName, Integer batchNo, String startTime, String endTime) {
-		KeyHolder keyHolder = new GeneratedKeyHolder();
-		jo.update(new PreparedStatementCreator() {
-			@Override
-			public PreparedStatement createPreparedStatement(Connection conn) throws SQLException {
-				String sql = "insert into uploadRecords(tableName,uploads,uploadTime,startTime,endTime,state,batchNo) values(?,?,?,?,?,?,?)";
-				PreparedStatement ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
-				ps.setString(1, tableName);
-				ps.setString(2, uploads);
-				ps.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
-				ps.setString(4, startTime);
-				ps.setString(5, endTime);
-				ps.setInt(6, 1);
-				ps.setInt(7, batchNo);
-				return ps;
-			}
 
-		}, keyHolder);
-		return keyHolder.getKey().intValue();
-	}
+//	private int insertUploadRecord(String uploads, String tableName, Integer batchNo, String startTime, String endTime) {
+//		KeyHolder keyHolder = new GeneratedKeyHolder();
+//		jo.update(new PreparedStatementCreator() {
+//			@Override
+//			public PreparedStatement createPreparedStatement(Connection conn) throws SQLException {
+//				String sql = "insert into uploadRecords(tableName,uploads,uploadTime,startTime,endTime,state,batchNo) values(?,?,?,?,?,?,?)";
+//				PreparedStatement ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+//				ps.setString(1, tableName);
+//				ps.setString(2, uploads);
+//				ps.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
+//				ps.setString(4, startTime);
+//				ps.setString(5, endTime);
+//				ps.setInt(6, 1);
+//				ps.setInt(7, batchNo);
+//				return ps;
+//			}
+//
+//		}, keyHolder);
+//		return keyHolder.getKey().intValue();
+//	}
 
-	private List<String> checkColumn(DataList columnList1, DataList columnList2) {
-		List<String> noExist = new ArrayList<String>();
-		for (DataRow row1 : columnList1) {
-			String text1 = row1.get("text").toString();
-			boolean flag = false;
-			for (DataRow row2 : columnList2) {
-				String text2 = row2.get("text").toString();
-				if (text1.equals(text2)) {
-					flag = true;
-					break;
-				}
-			}
-			if (!flag) {
-				noExist.add(text1);
-			}
-		}
-		return noExist;
-
-	}
+//	private List<String> checkColumn(DataList columnList1, DataList columnList2) {
+//		List<String> noExist = new ArrayList<String>();
+//		for (DataRow row1 : columnList1) {
+//			String text1 = row1.get("text").toString();
+//			boolean flag = false;
+//			for (DataRow row2 : columnList2) {
+//				String text2 = row2.get("text").toString();
+//				if (text1.equals(text2)) {
+//					flag = true;
+//					break;
+//				}
+//			}
+//			if (!flag) {
+//				noExist.add(text1);
+//			}
+//		}
+//		return noExist;
+//
+//	}
 
 	/**
 	 * 上传数据
 	 * 
 	 * @param inputStream
-	 * @param tableName
-	 * @param check
 	 * @return
 	 * @throws IOException
 	 */
 	@Transactional
-	public UploadDataResult upload_Data(InputStream inputStream,String tableName,String userid, Boolean check) throws IOException {
+	public UploadDataResult upload_Data(InputStream inputStream,String userid,String tablename) throws IOException {
 		DataList dataList;
 		UploadDataResult result = new UploadDataResult();
 		Excel excel = new Excel(inputStream);
@@ -294,75 +302,69 @@ public class Excel_Service extends BaseService {
 //			return result;			
 //		}
 //		else 
-		if(true) {
-			// 检查数据列名 获取表头
-			DataList columnListFromDB = tableService.getColumnList(tableName);
+//		if(true) {
+//			// 检查数据列名 获取表头
+//			DataList columnListFromDB = tableService.getColumnList(tableName);
+//
+//			DataList columnListFromExcel = excel.readExcelColumns();
+//			List<String> noExistInExcel = checkColumn(columnListFromDB, columnListFromExcel);
+//			List<String> noExistInDB = checkColumn(columnListFromExcel, columnListFromDB);
+//			if (noExistInExcel.size() != 0 || noExistInDB.size() != 0) {
+//				result.success = false;
+//				result.errorCode = 2; // 上传文件中的数据项与系统需要的不一致，请检查上传文件
+//				result.setFileds("name", "value");
+//				if (noExistInExcel.size() != 0)
+//					result.addData("系统需要但上传文件中不存在", noExistInExcel);
+//				if (noExistInDB.size() != 0)
+//					result.addData("上传文件中存在但系统不需要", noExistInDB);
+//				return result;
+//			}
 
-			DataList columnListFromExcel = excel.readExcelColumns();
-			List<String> noExistInExcel = checkColumn(columnListFromDB, columnListFromExcel);
-			List<String> noExistInDB = checkColumn(columnListFromExcel, columnListFromDB);
-			if (noExistInExcel.size() != 0 || noExistInDB.size() != 0) {
-				result.success = false;
-				result.errorCode = 2; // 上传文件中的数据项与系统需要的不一致，请检查上传文件
-				result.setFileds("name", "value");
-				if (noExistInExcel.size() != 0)
-					result.addData("系统需要但上传文件中不存在", noExistInExcel);
-				if (noExistInDB.size() != 0)
-					result.addData("上传文件中存在但系统不需要", noExistInDB);
-				return result;
-			}
-
-			dataList = excel.readExcelContent();
+		dataList = excel.readExcelContent();
 
 
-			// TODO 检查数据字段
-			if (check) {
-				Map<String, DataRow> columnMap = tableService.getColumnMap(tableName);
-				result.setFileds("row", "col", "value", "type");
-				for (int i = 0; i < dataList.size(); i++) {
-					DataRow row = dataList.get(i);
-					for (String columnName : row.keySet()) {
-						DataRow column = columnMap.get(columnName);
-						if (column.get("type").toString().startsWith("float")) {
-							// 类型为数字
-							try {
-								Float.parseFloat(row.get(columnName).toString());
-							} catch (Exception e) {
-								result.addData(i + 4, columnName, row.get(columnName).toString(), "数字");
-							}
-						}
+		// TODO 检查数据字段
+//			if (check) {
+//				Map<String, DataRow> columnMap = tableService.getColumnMap(tableName);
+//				result.setFileds("row", "col", "value", "type");
+//				for (int i = 0; i < dataList.size(); i++) {
+//					DataRow row = dataList.get(i);
+//					for (String columnName : row.keySet()) {
+//						DataRow column = columnMap.get(columnName);
+//						if (column.get("type").toString().startsWith("float")) {
+//							// 类型为数字
+//							try {
+//								Float.parseFloat(row.get(columnName).toString());
+//							} catch (Exception e) {
+//								result.addData(i + 4, columnName, row.get(columnName).toString(), "数字");
+//							}
+//						}
+//
+//					}
+//					if (result.data.size() != 0) {
+//						result.success = false;
+//						result.errorCode = 3;
+//						return result;
+//					}
+//				}
+//			}
 
-					}
-					if (result.data.size() != 0) {
-						result.success = false;
-						result.errorCode = 3;
-						return result;
-					}
-				}
-			}
-				}
-				String uploads = "";
-				int batchNo = 0;
-				String startTime = "";
-				String endTime = "";
+
 				// 插入数据
-				int uploadId = uploadData(uploads, tableName, batchNo, startTime, endTime, dataList);
+				boolean upload = uploadData(dataList,userid,tablename);
 				result.dataList = dataList;
-				result.success = true;
-				result.uploadId = uploadId;
+				result.success = upload;
 				return result;
 
 
-
-		
 	}
 
 	@Transactional
-	private int uploadData(String uploads, String tableName, Integer batchNo, String startTime, String endTime, DataList dataList) {
-		int uploadId = insertUploadRecord(uploads, tableName, batchNo, startTime, endTime);
-		saveData(tableName, uploadId, dataList);
+	boolean uploadData(DataList dataList,String userid,String tablename) {
+		//int uploadId = insertUploadRecord(uploads, tableName, batchNo, startTime, endTime);
+		saveData( dataList,userid,tablename);
 		//updateEnterpriseInfo(tableName);
-		return uploadId;
+		return true;
 	}
 //	@Transactional
 //	public void updateEnterpriseInfo() {
@@ -424,16 +426,16 @@ public class Excel_Service extends BaseService {
 //
 //		}
 //	}
-	/**
-	 * 根据uploadId删除对应数据
-	 * @param uploadId
-	 * @param tableName
-	 */
-	@Transactional
-	public void deleteByUploadId(Integer uploadId, String tableName) {
-		jo.update("delete from [" + tableName + "] where uploadId=?",uploadId);
-		jo.update("update uploadRecords set state=4 where id=?",uploadId);
-	}
+//	/**
+//	 * 根据uploadId删除对应数据
+//	 * @param uploadId
+//	 * @param tableName
+//	 */
+//	@Transactional
+//	public void deleteByUploadId(Integer uploadId, String tableName) {
+//		jo.update("delete from [" + tableName + "] where uploadId=?",uploadId);
+//		jo.update("update uploadRecords set state=4 where id=?",uploadId);
+//	}
 
 //public static void main(){
 //	Excel_Service s = new Excel_Service();

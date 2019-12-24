@@ -454,9 +454,7 @@ public class ExcelService extends BaseService {
 
 public static void main(){
 	ExcelService s = new ExcelService();
-	
 	System.out.println(s.createExcelFromTable("区房管局涉税信息表一（新建商品房销售信息）", "金额", ">", "0", "0"));
-
 }
 	
 	
