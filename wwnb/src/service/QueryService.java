@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import db.mysqlcondition;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -106,6 +107,15 @@ public class QueryService extends BaseService {
 			return queryPage(start,limit,"select * from ["+tableName+"] where "+whereClause,c.getParameters());
 		else
 			return queryPage(start,limit,"select * from ["+tableName+"]");
+	}
+	public WebResponse mysqlqueryPage(Integer start, Integer limit, mysqlcondition c, String tableName)
+	{
+		log.debug(c.toString()+"   "+c.getParameters());
+		String whereClause=c.toString();
+		if(whereClause.length()>0)
+			return queryPage(start,limit,"select * from "+tableName+" where "+whereClause,c.getParameters());
+		else
+			return queryPage(start,limit,"select * from "+tableName+"");
 	}
 
 	/**

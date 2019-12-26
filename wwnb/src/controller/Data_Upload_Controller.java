@@ -56,12 +56,11 @@ public class Data_Upload_Controller {
 	 * @return
 	 */
 	@RequestMapping(value = "/data/upload_Data.do",produces = { "text/html;charset=UTF-8" })
-	public String uploadData(MultipartFile uploadFile,Boolean check, HttpSession session) {
+	public String uploadData(MultipartFile uploadFile,String materialtype,String tableName,Boolean check, HttpSession session) {
 		WebResponse response = new WebResponse();
-		String tableName= "oldpanelstore";
 		String userid = (String) session.getAttribute("userid");
 		try {
-			UploadDataResult result = excel_Service.upload_Data(uploadFile.getInputStream(),userid,tableName);
+			UploadDataResult result = excel_Service.upload_Data(uploadFile.getInputStream(),materialtype,userid,tableName);
 			response.setSuccess(result.success);
 			response.setErrorCode(result.errorCode);
 			response.setValue(result.data);

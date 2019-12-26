@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import db.mysqlcondition;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import db.Condition;
 import service.ExcelService;
 import service.QueryService;
+import service.Upload_Data_Service;
 import util.Excel;
 import vo.WebResponse;
 
@@ -25,6 +27,9 @@ public class DataHistoryController {
 	@Autowired
 	private QueryService queryService;
 	Logger log=Logger.getLogger(DataHistoryController.class);
+
+	@Autowired
+	private Upload_Data_Service Upload_Data_Service;
 	/**
 	 * 查询当前用户提交的表
 	 * @param session
@@ -49,7 +54,44 @@ public class DataHistoryController {
 		if (endTime.length() != 0) {
 			c.and(new Condition("endTime", "<=", endTime));
 		}
-		return queryService.queryPage(start, limit, c, "uploadRecords");
+		WebResponse wr=queryService.queryPage(start, limit, c, "uploadRecords");
+		return wr;
+	}
+
+	@RequestMapping(value = "/org/data/history_ExcelList.do")
+	public WebResponse history_ExcelList(Integer start, Integer limit, HttpSession session, String tableName, String startWidth,
+										String endWidth,String startLength,String endLength) throws ParseException {
+		log.debug(startWidth+" "+endWidth);
+		mysqlcondition c=new mysqlcondition();
+		//String loginName = (String) session.getAttribute("loginName");
+		if (startWidth.length() != 0) {
+			c.and(new mysqlcondition("宽", ">=", startWidth));
+		}
+		if (endWidth.length() != 0) {
+			c.and(new mysqlcondition("宽", "<=", endWidth));
+		}
+		if (startLength.length() != 0) {
+			c.and(new mysqlcondition("长", ">=", startLength));
+		}
+		if (endLength.length() != 0) {
+			c.and(new mysqlcondition("长", "<=", endLength));
+		}
+		WebResponse wr=queryService.mysqlqueryPage(start, limit, c, tableName);
+		return wr;
+	}
+	@RequestMapping(value = "/update_Data_By_Edit.do")
+	public boolean uploadDataByEdit(String tableName,String field , String value,String id){
+
+		String sql = "update "+tableName+" set "+field +"="+value +" where id ="+id;
+		Upload_Data_Service.updateData(sql);
+		return true;
+	}
+	@RequestMapping(value = "/delete_Data_By_Button.do")
+	public boolean deleteDataByButton(String tableName,String id ){
+
+		String sql = "delete from "+tableName+" where id ="+id;
+		Upload_Data_Service.updateData(sql);
+		return true;
 	}
 
 	@RequestMapping(value="/downloadExcelbyID.do")

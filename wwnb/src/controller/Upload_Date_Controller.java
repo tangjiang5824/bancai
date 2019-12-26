@@ -20,7 +20,7 @@ public class Upload_Date_Controller {
 	private Upload_Data_Service Upload_Data_Service;
 	
 	@RequestMapping(value="/do_Update")
-	public boolean addData(String s,HttpSession session) {
+	public boolean addData(String s,String tableName,String materialType,HttpSession session) {
 		
 		JSONArray jsonArray =new JSONArray(s);
 		String userid = (String)session.getAttribute("userid");
@@ -30,16 +30,19 @@ public class Upload_Date_Controller {
 	    	//int id=Integer.parseInt(jsonTemp.get("id"));
 	    	System.out.println(jsonTemp.get("品号"));
 	    	int proNum=Integer.parseInt(jsonTemp.get("品号").toString());
-	    	String ProName=(String) jsonTemp.get("品名");
+	    	String Length=(String) jsonTemp.get("长");
+			String Type=(String) jsonTemp.get("类型");
+			String Width=(String) jsonTemp.get("宽");
 	    	String scale=(String) jsonTemp.get("规格");
 	    	String respo=(String) jsonTemp.get("库存单位");
 	    	String respoNum=(String) jsonTemp.get("仓库编号");
 	    	int count=Integer.parseInt(jsonTemp.get("数量").toString());
 	    	double cost= Double.parseDouble(jsonTemp.get("数量").toString()); //(float)jsonTemp.get("数量");
 	    	String location=(String) jsonTemp.get("存放位置");
+	    	int material_type = Integer.parseInt(materialType);
 	    		    	
 	    	//对每条数据处理
-	    	Upload_Data_Service.addData(proNum,ProName,scale,respo,respoNum,count,cost,location,userid);
+	    	Upload_Data_Service.addData(tableName,proNum,Length,Type,Width,scale,respo,respoNum,count,cost,location,material_type,userid);
 			
 		}
 		
