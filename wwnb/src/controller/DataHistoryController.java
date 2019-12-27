@@ -59,8 +59,8 @@ public class DataHistoryController {
 	}
 
 	@RequestMapping(value = "/org/data/history_ExcelList.do")
-	public WebResponse history_ExcelList(Integer start, Integer limit, HttpSession session, String tableName, String startWidth,
-										String endWidth,String startLength,String endLength) throws ParseException {
+	public WebResponse history_ExcelList(Integer start, Integer limit, String tableName,String materialType,String startWidth,
+										String endWidth,String startLength,String endLength,String mType) throws ParseException {
 		log.debug(startWidth+" "+endWidth);
 		mysqlcondition c=new mysqlcondition();
 		//String loginName = (String) session.getAttribute("loginName");
@@ -75,6 +75,12 @@ public class DataHistoryController {
 		}
 		if (endLength.length() != 0) {
 			c.and(new mysqlcondition("长", "<=", endLength));
+		}
+		if (mType.length() != 0) {
+			c.and(new mysqlcondition("类型", "=", mType));
+		}
+		if (materialType.length() != 0) {
+			c.and(new mysqlcondition("materialtype", "=", materialType));
 		}
 		WebResponse wr=queryService.mysqlqueryPage(start, limit, c, tableName);
 		return wr;
