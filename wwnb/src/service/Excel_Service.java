@@ -289,7 +289,7 @@ public class Excel_Service extends BaseService {
 	 * @throws IOException
 	 */
 	@Transactional
-	public UploadDataResult upload_Data(InputStream inputStream,  String materialtype,String userid, String tablename) throws IOException {
+	public UploadDataResult upload_Data(InputStream inputStream,String materialtype,String userid, String tablename) throws IOException {
 		DataList dataList;
 		UploadDataResult result = new UploadDataResult();
 		Excel excel = new Excel(inputStream);
@@ -354,7 +354,7 @@ public class Excel_Service extends BaseService {
 
 
 				// 插入数据
-		log.debug("userid= "+userid);
+		log.debug("materialtype= "+materialtype);
 		boolean upload = uploadData(dataList,materialtype,userid,tablename);
 		result.dataList = dataList;
 		result.success = upload;
