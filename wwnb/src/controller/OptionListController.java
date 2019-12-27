@@ -54,7 +54,7 @@ public class OptionListController {
 		if(organizationId==null||organizationId.length()<=0) {
 			organizationId=(String) session.getAttribute("organizationId");
 		}
-		DataList list = queryService.query("select tableName from [dataTable] where organizationId = ?",organizationId);
+		DataList list = queryService.query("select tableName from [dataTable] where organizationId = ? and deltable!=1",organizationId);
 		return list;
 	}
 	/**
@@ -74,11 +74,19 @@ public class OptionListController {
 	 * @param session
 	 * @return
 	 */
-	@RequestMapping(value = "/tableList.do")
+	/*@RequestMapping(value = "/tableList.do")
 	public DataList tableList(HttpSession session) {
 		String loginName = (String) session.getAttribute("loginName");
 		return queryService.query(
 				"select a.tableName as tableName from dataTable as a,[user] as b where a.organizationId=b.organizationId and b.loginName=? and type!=2",
+				loginName);
+	}*/
+	
+	@RequestMapping(value = "/tableList.do")
+	public DataList tableListDel(HttpSession session) {
+		String loginName = (String) session.getAttribute("loginName");
+		return queryService.query(
+				"select a.tableName as tableName from dataTable as a,[user] as b where a.organizationId=b.organizationId and b.loginName=? and type!=2 and a.deltable!=1",
 				loginName);
 	}
 	

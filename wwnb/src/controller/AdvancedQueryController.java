@@ -31,6 +31,7 @@ public class AdvancedQueryController {
 	public WebResponse advancedQueryList(String tableName,String condition,Integer start,Integer limit) {
 		JSONArray jArray = JSONArray.fromObject(condition);
 		List<Map<String, Object>> mapList=new ArrayList<Map<String, Object>>(jArray);
+//		System.out.println(start+" "+limit);
 		return queryService.advanceQuery(tableName, mapList, start, limit);
 	}
 

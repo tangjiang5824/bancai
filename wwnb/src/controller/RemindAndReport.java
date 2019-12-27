@@ -29,7 +29,7 @@ public class RemindAndReport {
 	@RequestMapping(value = "/tax/edit/noUpload.do")
 	public DataList noUploadRemindList() {
 		// 获取所有上传方的表 及相关信息
-		DataList tableList = queryService.query("select * from reportFormView where type = 0");
+		DataList tableList = queryService.query("select * from reportFormView where type = 0 and deltable!=1");
 		Calendar now=Calendar.getInstance();
 		Integer year=now.get(Calendar.YEAR);
 		Integer month=now.get(Calendar.MONTH)+1;//当前月

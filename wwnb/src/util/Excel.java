@@ -144,15 +144,22 @@ public class Excel {
 		// sheet页名称
 		wb.setSheetName(0, "sheet1");
 
-		HSSFRow row = sheet.createRow(0);
+		HSSFRow row_fir = sheet.createRow(0);
 
+		HSSFCellStyle secondRowStyle=createCellStyle(false,CellStyle.ALIGN_RIGHT, CellStyle.VERTICAL_CENTER, "黑体", (short) 12, HSSFColor.YELLOW.index, true);
+		sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, columnsList.size() - 1)); //合并
+		HSSFCell cell_fir = row_fir.createCell(0);
+		cell_fir.setCellStyle(secondRowStyle);
+		cell_fir.setCellValue("面积单位：平方米                    金额单位：元");
+		
+		HSSFRow row = sheet.createRow(1);
 		int i = 0;
 		for (Map<String, Object> map : columnsList) {
 
 			HSSFCell cell = row.createCell(i++);
 			cell.setCellValue(map.get("text").toString());
 		}
-		int j = 1;
+		int j = 2;
 		for (Map<String, Object> m : tableNameList) {
 			HSSFRow r = sheet.createRow(j++);
 			int k = 0;
@@ -162,6 +169,12 @@ public class Excel {
 				cell.setCellValue(m.get(key).toString());
 			}
 		}
+//		HSSFRow r = sheet.createRow(j);
+//		HSSFCellStyle secondRowStyle=createCellStyle(false,CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, "黑体", (short) 12, HSSFColor.YELLOW.index, true);
+//		sheet.addMergedRegion(new CellRangeAddress(j, j, 0, columnsList.size() - 1)); //合并
+//		HSSFCell cell = r.createCell(0);
+//		cell.setCellStyle(secondRowStyle);
+//		cell.setCellValue("面积单位：平方米                    金额单位：元");
 
 	}
 
@@ -197,7 +210,7 @@ public class Excel {
 	}
 
 	public DataList readExcelContent() {
-		return readExcelContent(2); // 默认从第4行开始读取数据
+		return readExcelContent(1); // 默认从第4行开始读取数据
 	}
 
 	public DataList readExcelContent(int startRow) {

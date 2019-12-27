@@ -22,7 +22,6 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
 
-import db.DB;
 import domain.DataList;
 import domain.DataRow;
 import net.sf.json.JSONArray;
@@ -334,7 +333,6 @@ public class ExcelService extends BaseService {
 				result.addData("系统需要但上传文件中不存在", noExistInExcel);
 			if (noExistInDB.size() != 0)
 				result.addData("上传文件中存在但系统不需要", noExistInDB);
-
 			return result;
 		}
 		
@@ -376,6 +374,7 @@ public class ExcelService extends BaseService {
 		
 	}
 
+	@Transactional
 	private int uploadData(String uploads, String tableName, Integer batchNo, String startTime, String endTime, DataList dataList) {
 		int uploadId = insertUploadRecord(uploads, tableName, batchNo, startTime, endTime);
 		saveData(tableName, uploadId, dataList);

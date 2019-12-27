@@ -62,8 +62,9 @@ public class MD5 {
             return null;  
         }  
     }  
-	public static void main(String[] args) {
-
-	}
+	/*public static void main(String[] args) {
+			//System.out.println(encode("123456"));
+			//4a0cbce4a2cd498396848f54cbcc8260
+	}*/
 
 }

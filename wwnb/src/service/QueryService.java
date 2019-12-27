@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import db.mysqlcondition;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -107,30 +108,16 @@ public class QueryService extends BaseService {
 		else
 			return queryPage(start,limit,"select * from ["+tableName+"]");
 	}
-//		log.debug("C: "+c.toString());
-//		String whereClause=c.toString();
-//		List<Object> parameters=c.getParameters();
-//		WebResponse response=new WebResponse();
-//		String selectSQL=null;
-//		String countSQL=null;
-//		String view="["+viewName+"]";
-//		if(whereClause.equals(""))
-//		{
-//			selectSQL="select * from "+view;
-//			countSQL="select count(*) as num from "+view;
-//		}else
-//		{
-//			selectSQL="select * from "+view+" where "+whereClause;
-//			countSQL="select count(*) as num from "+view+" where "+whereClause;
-//		}
-//		log.debug(selectSQL);
-//		log.debug(countSQL);
-//		DataList list=query(selectSQL,start,limit,parameters.toArray());
-//		DataList countlist=query(countSQL,parameters.toArray());
-//		response.put("value", list);
-//		response.put("totalCount", countlist.get(0).get("num"));
-//		return response;
-//	}
+	public WebResponse mysqlqueryPage(Integer start, Integer limit, mysqlcondition c, String tableName)
+	{
+		log.debug(c.toString()+"   "+c.getParameters());
+		String whereClause=c.toString();
+		if(whereClause.length()>0)
+			return queryPage(start,limit,"select * from "+tableName+" where "+whereClause,c.getParameters());
+		else
+			return queryPage(start,limit,"select * from "+tableName+"");
+	}
+
 	/**
 	 * 按sql查询DataList
 	 * @param sql

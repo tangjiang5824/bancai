@@ -165,7 +165,7 @@ public class TableService extends BaseService {
 		}
 		if (!tableName.equals(oldTableName)) {
 			jo.update("sp_rename ?,?", oldTableName, tableName);
-
+			jo.update("update [uploadRecords] set tableName=? where tableName=?",tableName,oldTableName);
 		}
 		for (int i = 0; i < definitions.size(); i++) {
 			DataTableDefinition definition = definitions.get(i);
@@ -215,9 +215,10 @@ public class TableService extends BaseService {
 	 */
 	@Transactional
 	public boolean deleteTable(String tableName) {
-		jo.update("drop table ["+tableName+"]");
-		jo.update("delete from dataTableDefinition where tableName=?",tableName);
-		jo.update("delete from dataTable where tableName=?",tableName);
+		jo.update("UPDATE [dataTable] SET [deltable] = '1' WHERE tableName = ?",tableName);
+//		jo.update("drop table ["+tableName+"]");
+//		jo.update("delete from dataTableDefinition where tableName=?",tableName);
+//		jo.update("delete from dataTable where tableName=?",tableName);
 		return true;
 	}
 	/**
