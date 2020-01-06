@@ -58,47 +58,15 @@ public class DataHistoryController {
 		return wr;
 	}
 
-	@RequestMapping(value = "/org/data/history_ExcelList.do")
-	public WebResponse history_ExcelList(Integer start, Integer limit, String tableName,String materialType,String startWidth,
-										String endWidth,String startLength,String endLength,String mType) throws ParseException {
-		log.debug(startWidth+" "+endWidth);
-		mysqlcondition c=new mysqlcondition();
-		//String loginName = (String) session.getAttribute("loginName");
-		if (startWidth.length() != 0) {
-			c.and(new mysqlcondition("宽", ">=", startWidth));
-		}
-		if (endWidth.length() != 0) {
-			c.and(new mysqlcondition("宽", "<=", endWidth));
-		}
-		if (startLength.length() != 0) {
-			c.and(new mysqlcondition("长", ">=", startLength));
-		}
-		if (endLength.length() != 0) {
-			c.and(new mysqlcondition("长", "<=", endLength));
-		}
-		if (mType.length() != 0) {
-			c.and(new mysqlcondition("类型", "=", mType));
-		}
-		if (materialType.length() != 0) {
-			c.and(new mysqlcondition("materialtype", "=", materialType));
-		}
-		WebResponse wr=queryService.mysqlqueryPage(start, limit, c, tableName);
-		return wr;
-	}
-	@RequestMapping(value = "/update_Data_By_Edit.do")
-	public boolean uploadDataByEdit(String tableName,String field , String value,String id){
 
-		String sql = "update "+tableName+" set "+field +"="+value +" where id ="+id;
-		Upload_Data_Service.updateData(sql);
-		return true;
-	}
-	@RequestMapping(value = "/delete_Data_By_Button.do")
-	public boolean deleteDataByButton(String tableName,String id ){
+//	@RequestMapping(value = "/update_Data_By_Edit.do")
+//	public boolean uploadDataByEdit(String tableName,String field , String value,String id){
+//
+//		String sql = "update "+tableName+" set "+field +"="+value +" where id ="+id;
+//		Upload_Data_Service.updateData(sql);
+//		return true;
+//	}
 
-		String sql = "delete from "+tableName+" where id ="+id;
-		Upload_Data_Service.updateData(sql);
-		return true;
-	}
 
 	@RequestMapping(value="/downloadExcelbyID.do")
 	public void downloadExcelbyID(HttpServletRequest request,HttpServletResponse response,String tableName,int id) throws IOException {

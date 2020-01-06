@@ -22,6 +22,10 @@ public class TestUserController {
 	@Autowired
 	private UpdateService updateService;
 
+	/*
+	*用户登录
+	*
+	* */
 	
 	@RequestMapping(value = "/testLogin.do")
 	public boolean login(String username, String password, String usertype, HttpSession session) {
