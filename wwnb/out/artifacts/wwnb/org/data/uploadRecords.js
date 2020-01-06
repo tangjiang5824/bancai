@@ -45,7 +45,7 @@ Ext.define('org.data.uploadRecords',{
 		}); 
 
         var toobar = Ext.create('Ext.toolbar.Toolbar',{
-			items: [tableList, 
+			items: [tableList,
     {
 		
         xtype: 'monthfield',
@@ -137,7 +137,7 @@ Ext.define('org.data.uploadRecords',{
 		var uploadRecordsStore = Ext.create('Ext.data.Store',{
 			id: 'uploadRecordsStore',
 			autoLoad: true,
-			fields: ['id', 'tableName', 'uploads',{name : 'uploadTime',
+			fields: ['id',  {name : 'uploadTime',
 				type : 'date',
 				mapping : 'uploadTime',
 				dateFormat : 'time'}, 'startTime','endTime'],
@@ -173,12 +173,12 @@ Ext.define('org.data.uploadRecords',{
 		});
 		
 		
-		
+
 		var OneCombo = Ext.create('Ext.form.ComboBox', {
 			store : {
 	             fields : ['state', 'name'],
 	             data : [
-	                 
+
 	                 {"state":"0", "name":"上传失败"},
 	                 {"state":"1", "name":"上传成功"},
 	                 {"state":"2", "name":"上传成功并已匹配"},
@@ -189,7 +189,7 @@ Ext.define('org.data.uploadRecords',{
 	         },
 			displayField: 'name',
 			valueField: 'state',
-			
+
 			editable: false
 		});
 		getOneDisplay = function(value, meta, record) {
@@ -231,8 +231,8 @@ Ext.define('org.data.uploadRecords',{
 			        store: uploadRecordsStore,   // same store GridPanel is using
 			        dock: 'bottom',
 			        displayInfo: true,
-			        displayMsg:'显示{0}-{1}条，共{2}条',  
-			        emptyMsg:'无数据' 
+			        displayMsg:'显示{0}-{1}条，共{2}条',
+			        emptyMsg:'无数据'
 			    }],
 			    listeners: {
 			    		itemdblclick: function(me, record, item, index){
