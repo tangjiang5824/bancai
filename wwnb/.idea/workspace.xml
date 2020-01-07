@@ -34,7 +34,7 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="project.structure.last.edited" value="Artifacts" />
+    <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
@@ -46,7 +46,7 @@
     </key>
   </component>
   <component name="RunManager">
-    <configuration name="Tomcat 8.5.50" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local" APPLICATION_SERVER_NAME="Tomcat 9.0.29" ALTERNATIVE_JRE_ENABLED="false" nameIsGenerated="true">
+    <configuration name="Tomcat 8.5.50" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local" APPLICATION_SERVER_NAME="Tomcat 8.5.50" ALTERNATIVE_JRE_ENABLED="false" nameIsGenerated="true">
       <option name="UPDATING_POLICY" value="restart-server" />
       <deployment>
         <artifact name="wwnb">
@@ -129,11 +129,6 @@
                 <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
                 <item name="Tomcat Server" type="7427dc5b:ServiceModel$ServiceGroupNode" />
               </path>
-              <path>
-                <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
-                <item name="Tomcat Server" type="7427dc5b:ServiceModel$ServiceGroupNode" />
-                <item name="Failed" type="7427dc5b:ServiceModel$ServiceGroupNode" />
-              </path>
             </expand>
             <select />
           </treeState>
@@ -153,6 +148,7 @@
       <updated>1577107291879</updated>
       <workItem from="1577107293853" duration="7897000" />
       <workItem from="1577430841842" duration="692000" />
+      <workItem from="1578373041450" duration="207000" />
     </task>
     <servers />
   </component>
@@ -164,10 +160,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="552" y="181" key="#Project_Structure/0.0.1920.1040@0.0.1920.1040" timestamp="1577108565830" />
-    <state x="643" y="164" key="#Tomcat_8.5.50" timestamp="1577430872904">
+    <state x="643" y="164" key="#Tomcat_8.5.50" timestamp="1578373061172">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="643" y="164" key="#Tomcat_8.5.50/0.0.1920.1040@0.0.1920.1040" timestamp="1577430872904" />
+    <state x="643" y="164" key="#Tomcat_8.5.50/0.0.1920.1040@0.0.1920.1040" timestamp="1578373061172" />
     <state x="552" y="181" key="#Tomcat_Server" timestamp="1577430868382">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -176,10 +172,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="414" y="178" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1577108576303" />
-    <state x="552" y="181" key="#com.intellij.j2ee.appServerIntegrations.ApplicationServersConfigurable" timestamp="1577107366734">
+    <state x="552" y="181" key="#com.intellij.j2ee.appServerIntegrations.ApplicationServersConfigurable" timestamp="1578373054104">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="552" y="181" key="#com.intellij.j2ee.appServerIntegrations.ApplicationServersConfigurable/0.0.1920.1040@0.0.1920.1040" timestamp="1577107366734" />
+    <state x="552" y="181" key="#com.intellij.j2ee.appServerIntegrations.ApplicationServersConfigurable/0.0.1920.1040@0.0.1920.1040" timestamp="1578373054104" />
     <state x="811" y="503" width="350" height="169" key="#com.intellij.javaee.module.view.common.J2EE.J2EEDeploymentDescriptorLocationPanel.changeDDPath" timestamp="1577107798163">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -196,10 +192,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="492" height="466" key="DebuggerActiveHint/0.0.1920.1040@0.0.1920.1040" timestamp="1577154456808" />
-    <state x="657" y="331" key="FileChooserDialogImpl" timestamp="1577107859147">
+    <state x="657" y="331" key="FileChooserDialogImpl" timestamp="1578373227821">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="657" y="331" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1577107859147" />
+    <state x="657" y="331" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1578373227821" />
     <state width="1293" height="282" key="GridCell.Tab.0.bottom" timestamp="1577785653180">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -280,14 +276,14 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1293" height="282" key="GridCell.Tab.4.right/0.0.1920.1040@0.0.1920.1040" timestamp="1577108212184" />
-    <state x="463" y="165" key="SettingsEditor" timestamp="1577430887719">
+    <state x="463" y="165" key="SettingsEditor" timestamp="1578373229149">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="463" y="165" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1577430887719" />
-    <state x="652" y="347" key="com.intellij.ide.util.TipDialog" timestamp="1577107294743">
+    <state x="463" y="165" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1578373229149" />
+    <state x="652" y="347" key="com.intellij.ide.util.TipDialog" timestamp="1578373041763">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="652" y="347" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1577107294743" />
+    <state x="652" y="347" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1578373041763" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
