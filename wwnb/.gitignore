@@ -1,4 +1,4 @@
 /build/
 .DS_Store
-/WebContent/
 /hs_err_pid59206.log
+.idea
