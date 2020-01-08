@@ -40,6 +40,9 @@
     <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="zj" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\project\wwnb\src\service\test" />
       <recent name="D:\project\wwnb\src\controller" />
@@ -129,6 +132,11 @@
                 <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
                 <item name="Tomcat Server" type="7427dc5b:ServiceModel$ServiceGroupNode" />
               </path>
+              <path>
+                <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
+                <item name="Tomcat Server" type="7427dc5b:ServiceModel$ServiceGroupNode" />
+                <item name="Running" type="7427dc5b:ServiceModel$ServiceGroupNode" />
+              </path>
             </expand>
             <select />
           </treeState>
@@ -151,7 +159,8 @@
       <workItem from="1578373041450" duration="207000" />
       <workItem from="1578373998894" duration="772000" />
       <workItem from="1578387368066" duration="1197000" />
-      <workItem from="1578447063024" duration="2709000" />
+      <workItem from="1578447063024" duration="2045000" />
+      <workItem from="1578453148551" duration="572000" />
     </task>
     <servers />
   </component>
@@ -176,7 +185,7 @@
     <state x="414" y="178" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1577108576303">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="414" y="178" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1577108576303" />
+    <state x="414" y="178" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1578453198777" />
     <state x="552" y="181" key="#com.intellij.j2ee.appServerIntegrations.ApplicationServersConfigurable" timestamp="1578373054104">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
