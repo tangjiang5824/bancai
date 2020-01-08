@@ -43,7 +43,7 @@ public class HandleDataController {
             JSONObject jsonTemp = jsonArray.getJSONObject(i);
             //获得第i条数据的各个属性值
             //int id=Integer.parseInt(jsonTemp.get("id"));
-            System.out.println(jsonTemp.get("品号"));
+            System.out.println(jsonTemp);
             int proNum=Integer.parseInt(jsonTemp.get("品号").toString());
             String Length=(String) jsonTemp.get("长");
             String Type=(String) jsonTemp.get("类型");
