@@ -18,6 +18,7 @@ Ext.define('data.Old_Upload_Data', {
     
 	initComponent : function() {
 		var me = this;
+		//定义表名
 		var tableName="materialstore";
 		var materialtype="0";
 		var toolbar2 = Ext.create("Ext.toolbar.Toolbar", {
@@ -57,15 +58,6 @@ Ext.define('data.Old_Upload_Data', {
 						text : '保存',
 
 						handler : function() {
-
-//							var tabName = Ext.getCmp('tabName').getValue();
-//							var organizationId = Ext.getCmp('orgId').getValue();
-//							var tableType = Ext.getCmp('tableType').getValue();
-//							var uploadCycle = Ext.getCmp('uploadCycle')
-//									.getValue();
-//							var cycleStart = Ext.getCmp('cycleStart')
-//									.getValue();
-							// console.log(cycleStart);
 							// 取出grid的字段名字段类型
 							//var userid="<%=session.getAttribute('userid')%>";
 							var select = Ext.getCmp('addDataGrid').getStore()
@@ -79,7 +71,7 @@ Ext.define('data.Old_Upload_Data', {
 							//alert(s);//数组s存放表格中的数据，每条数据以json格式存放
 
 							Ext.Ajax.request({
-								url : 'do_Update.do', //Upload_Date_Controller
+								url : 'addData.do', //HandleDataController
 								method:'POST',
 								//submitEmptyText : false,
 								params : {
@@ -260,7 +252,7 @@ Ext.define('data.Old_Upload_Data', {
 										var check=Ext.getCmp("check").getValue();
 										
 										form.submit({
-											url : 'data/upload_Data.do',
+											url : 'data/uploadExcel.do',
 											waitMsg : '正在上传...',
 											params : {
 												tableName:tableName,
@@ -368,27 +360,6 @@ Ext.define('data.Old_Upload_Data', {
 	            text: '当前时间：'+Ext.Date.format(new Date(), 'Y-m-d H:i:s'),
 	            layout:'left'	        
 		     },
-//		     {
-//				xtype : 'button',
-//				text : '上传',
-//				id:'uploadBtn',
-//				handler : function() {
-//					var data = [{
-//						'品号' : '',
-//						'品名' : '',
-//						'规格' : '',
-//						'库存' : '',
-//						'库存单位' : '',
-//						'仓库编号' : '',
-//						'数量' : '',
-//						'成本' : '',
-//						'存放位置' : '',
-//
-//					}];
-//					Ext.getCmp('addDataGrid').getStore().loadData(data,true);
-//				},
-//	           layout:'right'
-//			}
 		     ]
 		},toolbar2,grid];
 		//this.items = [ me.grid ];

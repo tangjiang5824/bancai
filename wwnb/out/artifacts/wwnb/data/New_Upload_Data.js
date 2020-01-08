@@ -79,7 +79,7 @@ Ext.define('data.New_Upload_Data', {
                     //alert(s);//数组s存放表格中的数据，每条数据以json格式存放
 
                     Ext.Ajax.request({
-                        url : 'do_Update.do', //Upload_Date_Controller
+                        url : 'addData.do', //HandleDataController
                         method:'POST',
                         //submitEmptyText : false,
                         params : {
@@ -260,7 +260,7 @@ Ext.define('data.New_Upload_Data', {
                                         var check=Ext.getCmp("check").getValue();
 
                                         form.submit({
-                                            url : 'data/upload_Data.do',
+                                            url : 'data/uploadExcel.do',
                                             waitMsg : '正在上传...',
                                             params : {
                                                 tableName:tableName,

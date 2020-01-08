@@ -67,7 +67,7 @@
 	Ext.onReady(function() {
 		var usertype=<c:out value="${usertype}"/>;
 		Ext.tip.QuickTipManager.init();
-		var title='<c:out value="${username}"/>:<c:out value="${username}"/>';
+		var title='欢迎:<c:out value="${usertype}"/>:<c:out value="${username}"/>';
 		var usertype='<c:out value="${usertype}"/>';
 		var menu=Ext.create("menu.MenuRole_upload",{title:title,usertype:usertype});
 		var welcome = Ext.create("welcome.Welcome0");
