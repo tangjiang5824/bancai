@@ -118,13 +118,6 @@ public class Oldpanel_Data_Controller {
         return queryService.queryPage(start,limit,"select * from " + tableName);
     }
 
-    /**
-     * 根据ID删除旧板表某行数据
-     */
-    @RequestMapping(value="/system/dataTable/dropColumn.do")
-    public boolean dropColumn(String tableName,String fieldName) {
-        return tableService.dropColumn(tableName,fieldName);
-    }
 
 
 }
