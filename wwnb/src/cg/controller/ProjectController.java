@@ -52,9 +52,9 @@ public class ProjectController {
             ArrayList arrayList=new ArrayList();
             JSONObject jsonTemp = jsonArray.getJSONObject(i);
             //获得第i条数据的各个属性值
-            String BuildingNo = jsonTemp.get("楼栋编号")+"";
-            String BuildName = jsonTemp.get("楼栋名")+"";
-            String BuildOwner = (String) jsonTemp.get("楼栋负责人");
+            String BuildingNo = jsonTemp.get("buildingNo")+"";
+            String BuildName = jsonTemp.get("buildingName")+"";
+            String BuildOwner = (String) jsonTemp.get("buildingOwner");
 
             //插入楼栋信息
             String sql2="insert into building (buildingNo,buildingName,buildingOwner,projectId) values(?,?,?,?)";
@@ -63,8 +63,5 @@ public class ProjectController {
         }
         return true;
     }
-
-
-
 
 }
