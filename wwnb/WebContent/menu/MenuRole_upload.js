@@ -8,7 +8,7 @@ Ext.define("menu.MenuRole_upload", {
 		root : {
 			expanded : true,
 			children : [ {
-				text : '旧版材库信息数据',
+				text : '旧板管理',
 				expanded : true,
 				children : [ {
 					text : '旧板数据上传',
@@ -20,19 +20,31 @@ Ext.define("menu.MenuRole_upload", {
 					leaf : true
 				}]
 			} ,{
-				text : '新板信息数据',
+				text : '原材料管理',
 				expanded : true,
 				children : [ {
-					text : '新板数据上传',
+					text : '原材料数据上传',
 					id : 'data.New_Upload_Data',
 					leaf : true
 				} , {
-					text : '新板数据查询',
+					text : '原材料数据查询',
 					id : 'data.New_Query_Data',
 					leaf : true
 				}]
 			},{
-				text : '自动化扣板',
+				text : '产品管理',
+				expanded : true,
+				children : [ {
+					text : '',
+					id : '',
+					leaf : true
+				} , {
+					text : '',
+					id : '',
+					leaf : true
+				}]
+			},{
+				text : '项目管理',
 				expanded : true,
 				children : [ {
 					text : '项目立项',

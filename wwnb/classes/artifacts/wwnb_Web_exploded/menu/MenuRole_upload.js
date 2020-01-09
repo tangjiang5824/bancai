@@ -39,8 +39,28 @@ Ext.define("menu.MenuRole_upload", {
 					id : 'project.project_plan',
 					leaf : true
 				} , {
-					text : '生产材料单',
+					text : '导入设计清单',
+					id : '',
+					leaf : true
+				} , {
+					text : '项目旧板材料清单',
+					id : '',
+					leaf : true
+				} , {
+					text : '项目新板材料清单',
+					id : '',
+					leaf : true
+				} , {
+					text : '项目生产材料单',
 					id : 'project.project_plan_list',
+					leaf : true
+				}, {
+					text : '项目领料单',
+					id : '',
+					leaf : true
+				}, {
+					text : '项目产品工单',
+					id : '',
 					leaf : true
 				}]
 			}
