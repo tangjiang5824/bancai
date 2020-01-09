@@ -35,17 +35,16 @@ public class Project_impot_design_list_controller {
 	 * */
 	@RequestMapping(value="/project/findBuildingList.do")
 	public void findProjectList(HttpServletResponse response,String projectName) throws IOException {
-		System.out.println("project/findBuildingList.do");
+		System.out.println("project/findBuildingList.do"+projectName);
 		DataList buildingList = project_import_design_list_service.findBuildingList(projectName);
 		//写回前端
 		JSONObject object = new JSONObject();
 		JSONArray array = new JSONArray(buildingList);
 		object.put("buildingList", array);
-		System.out.println("类型1：--"+array.getClass().getName().toString());
+		//System.out.println("类型1：--"+array.getClass().getName().toString());
 		response.getWriter().write(object.toString());
 		response.getWriter().flush();
 		response.getWriter().close();
-
 	}
 
 }
