@@ -12,11 +12,11 @@ Ext.define("menu.MenuRole_upload", {
 				expanded : true,
 				children : [ {
 					text : '旧板数据上传',
-					id : 'data.Old_Upload_Data',
+					id : 'oldpanel.Old_Upload_Data',
 					leaf : true
 				} , {
 					text : '旧板数据查询',
-					id : 'data.Old_Query_Data',
+					id : 'oldpanel.Old_Query_Data',
 					leaf : true
 				}]
 			} ,{

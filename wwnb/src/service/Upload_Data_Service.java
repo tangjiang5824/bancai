@@ -19,7 +19,7 @@ public class Upload_Data_Service extends BaseService {
 	public void addData(String tableName,int proNum,String Length,String Type,String Width,String scale,String respo,String respoNum,int count,double cost,String location,int materialType,String userid){
 		
 		
-		jo.update("insert into "+ tableName+" (品号,长,类型,宽,规格,库存单位,仓库编号,数量,成本,存放位置,materialtype,uploadID) values(?,?,?,?,?,?,?,?,?,?,?,?)",
+		jo.update("insert into "+ tableName+" (品号,长,类型,宽,规格,库存单位,仓库编号,数量,成本,存放位置,materialtype,uploadId) values(?,?,?,?,?,?,?,?,?,?,?,?)",
 				proNum,Length,Type,Width,scale,respo,respoNum,count,cost,location,materialType,userid);
 		//return true;
 	}
