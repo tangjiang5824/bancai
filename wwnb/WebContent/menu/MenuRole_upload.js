@@ -24,11 +24,11 @@ Ext.define("menu.MenuRole_upload", {
 				expanded : true,
 				children : [ {
 					text : '原材料数据上传',
-					id : 'data.New_Upload_Data',
+					id : 'material.material_Upload_Data',
 					leaf : true
 				} , {
 					text : '原材料数据查询',
-					id : 'data.New_Query_Data',
+					id : 'material.material_Query_Data',
 					leaf : true
 				}]
 			},{

@@ -78,15 +78,7 @@ public class HandleDataController {
             response.setSuccess(result.success);
             response.setErrorCode(result.errorCode);
             response.setValue(result.data);
-            //response.put("uploadId", result.uploadId);
-//			if(result.success)
-//			{
-//				if(tableName.equals("税务登记信息查询")||tableName.equals("税务登记信息查询(国税)"))
-//				{
-//					updateEnterpriseInfo();
-//				}
-//				matchAndRiskDiscovery(tableName, result.uploadId, result.dataList);
-//			}
+
         } catch (IOException e) {
             e.printStackTrace();
             response.setSuccess(false);
