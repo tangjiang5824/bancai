@@ -24,11 +24,11 @@ Ext.define("menu.MenuRole_upload", {
 				expanded : true,
 				children : [ {
 					text : '原材料数据上传',
-					id : 'data.New_Upload_Data',
+					id : 'material.material_Upload_Data',
 					leaf : true
 				} , {
 					text : '原材料数据查询',
-					id : 'data.New_Query_Data',
+					id : 'material.material_Query_Data',
 					leaf : true
 				}]
 			},{
@@ -48,11 +48,11 @@ Ext.define("menu.MenuRole_upload", {
 				expanded : true,
 				children : [ {
 					text : '项目立项',
-					id : 'project.project_plan',
+					id : 'project.management.buildproject',
 					leaf : true
 				} , {
 					text : '导入设计清单',
-					id : '',
+					id : 'project.import_design_list',
 					leaf : true
 				} , {
 					text : '项目旧板材料清单',
