@@ -1,7 +1,7 @@
 package yrd.controller;
 
-import db.mysqlcondition;
-import db.Condition;
+import commonMethod.NewCondition;
+import commonMethod.QueryAllService;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import service.Excel_Service;
-import service.QueryService;
 import service.TableService;
 import vo.UploadDataResult;
 import vo.WebResponse;
@@ -18,9 +16,6 @@ import yrd.service.Y_Upload_Data_Service;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 public class Oldpanel_Data_Controller {
@@ -28,7 +23,7 @@ public class Oldpanel_Data_Controller {
     @Autowired
     private TableService tableService;
     @Autowired
-    private QueryService queryService;
+    private QueryAllService queryService;
     @Autowired
     private Y_Upload_Data_Service y_Upload_Data_Service;
 
@@ -104,11 +99,11 @@ public class Oldpanel_Data_Controller {
         //DataList dataList = testAddService.findList(proName);
         //查询字段不为空
         if((startLength !=null)||(endLength !=null)||(startWidth !=null)||(endWidth !=null)){
-            Condition c=new Condition();
+            NewCondition c=new NewCondition();
             if ((startLength.length() != 0)&&(endLength.length() != 0)&&(startWidth.length() != 0)&&(endWidth.length() != 0)) {
-                c.and(new Condition("长", " between", startLength, endLength));
-                c.and(new Condition("宽", " between", startWidth, endWidth));
-                c.and(new Condition("类型", "=", mType));
+                c.and(new NewCondition("长", " between", startLength, endLength));
+                c.and(new NewCondition("宽", " between", startWidth, endWidth));
+                c.and(new NewCondition("类型", "=", mType));
             }
             //调用函数，查询满足条件的所有数据
             return queryService.queryPage(start, limit, c, tableName);
