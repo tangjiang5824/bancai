@@ -44,14 +44,5 @@ public class Material_Service extends BaseService {
 						},
 				keyHolder);
 		return keyHolder.getKey().intValue();
-		
-//		jo.update("insert into "+ tableName+" (materialName,品号,长,类型,宽,规格,库存单位,仓库编号,数量,成本,存放位置,uploadID) values(?,?,?,?,?,?,?,?,?,?,?,?)",
-//				materialName,proNum,Length,Type,Width,scale,respo,respoNum,count,cost,location,userid);
-		//return true;
-	}
-	@Transactional
-	public void updateData(String sql){
-		log.debug(sql);
-		jo.update(sql);
 	}
 }

@@ -1,17 +1,23 @@
 package zj.controller;
 
 import controller.DataHistoryController;
+import db.mysqlcondition;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import service.Excel_Service;
+import org.springframework.web.multipart.MultipartFile;
 import service.QueryService;
+import vo.UploadDataResult;
+import vo.WebResponse;
+import zj.service.MaterialExcelService;
 import zj.service.Material_Service;
 
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.text.ParseException;
 
 @RestController
 public class MaterialDataController {
@@ -21,7 +27,7 @@ public class MaterialDataController {
     @Autowired
     private Material_Service material_Service;
     @Autowired
-    private Excel_Service excel_Service;
+    private MaterialExcelService excelService;
 
     Logger log=Logger.getLogger(DataHistoryController.class);
 
@@ -31,8 +37,6 @@ public class MaterialDataController {
     * */
     @RequestMapping(value="/addMaterial.do")
     public boolean addMaterialData(String s, String tableName, HttpSession session) {
-
-        System.out.println("++++++++++++++++++++++++++++++++++++++++");
 
         JSONArray jsonArray =new JSONArray(s);
         String userid = (String)session.getAttribute("userid");
@@ -66,5 +70,73 @@ public class MaterialDataController {
 
         return true;
     }
+    /*
+     * 上传excel文件
+     * */
+
+    @RequestMapping(value = "/uploadMaterialExcel.do",produces = { "text/html;charset=UTF-8" })
+    public String uploadMaterial(MultipartFile uploadFile, String tableName, HttpSession session) {
+        WebResponse response = new WebResponse();
+        String userid = (String) session.getAttribute("userid");
+        try {
+            UploadDataResult result = excelService.uploadExcelData(uploadFile.getInputStream(),userid,tableName);
+            response.setSuccess(result.success);
+            response.setErrorCode(result.errorCode);
+            response.setValue(result.data);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误
+            response.setMsg(e.getMessage());
+        }
+        net.sf.json.JSONObject json= net.sf.json.JSONObject.fromObject(response);
+        return json.toString();
+    }
+
+    /*
+     * 根据条件查询
+     *
+     * */
+    @RequestMapping(value = "/material/historyDataList.do")
+    public WebResponse materialDataList(Integer start, Integer limit, String tableName, String startWidth,
+                                         String endWidth, String startLength, String endLength, String mType) throws ParseException {
+        //log.debug(startWidth+" "+endWidth);
+
+        System.out.println("------");
+        System.out.println(startWidth);
+        System.out.println(endWidth);
+
+        mysqlcondition c=new mysqlcondition();
+        //String loginName = (String) session.getAttribute("loginName");
+        if (startWidth.length() != 0) {
+            c.and(new mysqlcondition("宽", ">=", startWidth));
+        }
+        if (endWidth.length() != 0) {
+            c.and(new mysqlcondition("宽", "<=", endWidth));
+        }
+        if (startLength.length() != 0) {
+            c.and(new mysqlcondition("长", ">=", startLength));
+        }
+        if (endLength.length() != 0) {
+            c.and(new mysqlcondition("长", "<=", endLength));
+        }
+        if (mType.length() != 0) {
+            c.and(new mysqlcondition("类型", "=", mType));
+        }
+//        if (materialType.length() != 0) {
+//            c.and(new mysqlcondition("materialtype", "=", materialType));
+//        }
+        WebResponse wr=queryService.mysqlqueryPage(start, limit, c, tableName);
+        return wr;
+    }
+
+
+    /*
+     * 根据选中的id删除数据
+     *
+     * */
+
+
 
 }
