@@ -3,4 +3,8 @@
 /hs_err_pid59206.log
 .idea
 /out/
+<<<<<<< HEAD
 /*.iml
+=======
+/*.imi
+>>>>>>> cb9c45801213997ed8e98597bf575c9b48d660d6
