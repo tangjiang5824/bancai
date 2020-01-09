@@ -48,7 +48,7 @@ Ext.define("menu.MenuRole_upload", {
 				expanded : true,
 				children : [ {
 					text : '项目立项',
-					id : 'project.project_plan',
+					id : 'project.management.buildproject',
 					leaf : true
 				} , {
 					text : '导入设计清单',
