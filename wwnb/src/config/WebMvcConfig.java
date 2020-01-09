@@ -17,7 +17,7 @@ import org.springframework.web.servlet.view.UrlBasedViewResolver;
 @Configuration
 @EnableAsync
 @EnableScheduling
-@ComponentScan(basePackages = { "controller","bo.standards" }, includeFilters = {@Filter(value = Controller.class)})
+@ComponentScan(basePackages = { "controller","bo.standards","zj.controller","cg.controller","yrd.controller","zzy.controller" }, includeFilters = {@Filter(value = Controller.class)})
 @EnableTransactionManagement
 public class WebMvcConfig extends WebMvcConfigurationSupport {
 	@Bean
