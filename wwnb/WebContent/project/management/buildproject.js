@@ -66,8 +66,8 @@ Ext.define('project.management.buildproject', {
                     fieldLabel : '开始时间',
                     width : 180,
                     labelWidth : 60,
-                    id : "starttime",
-                    name : 'starttime',
+                    id : "startTime",
+                    name : 'startTime',
                     //align: 'right',
                     format : 'Y-m',
                     editable : false,
@@ -310,8 +310,9 @@ Ext.define('project.management.buildproject', {
                         s.push(JSON.stringify(rec.data));
                     });
 
-                    //获取时间
-                    var sTime=Ext.Date.format(Ext.getCmp('starttime').getValue(), 'Y-m-d H:i:s');
+                    //获取数据
+                    var sTime=Ext.Date.format(Ext.getCmp('startTime').getValue(), 'Y-m-d H:i:s');
+
                     Ext.Ajax.request({
                         url : 'generateproduct.do', //createProject.do
                         method:'POST',
@@ -321,6 +322,12 @@ Ext.define('project.management.buildproject', {
                             //tableName:tableName,
                             //materialType:materialtype,
                             startTime:sTime,
+                            planLeader:Ext.getCmp('planLeader').getValue(),
+                            produceLeader:Ext.getCmp('produceLeader').getValue(),
+                            proEndTime:Ext.getCmp('proEndTime').getValue(),
+                            purchaseLeader:Ext.getCmp('purchaseLeader').getValue(),
+                            financeLeader:Ext.getCmp('financeLeader').getValue(),
+                            storeLeader:Ext.getCmp('storeLeader').getValue(),
                             projectName:Ext.getCmp('projectName').getValue(),
                             s : "[" + s + "]",
                         },

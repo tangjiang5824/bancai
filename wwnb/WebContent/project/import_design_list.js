@@ -313,7 +313,7 @@ Ext.define('project.import_design_list', {
 				url : 'project/findBuildingList.do',
 				params : {
 					projectName:Ext.getCmp('projectName').getValue(),
-					buildingName:Ext.getCmp('buildingName').getValue(),
+					//buildingName:Ext.getCmp('buildingName').getValue(),
 				},
 				reader : {
 					type : 'json',
@@ -339,35 +339,7 @@ Ext.define('project.import_design_list', {
 
 		});
 
-		var uploadRecordsStore = Ext.create('Ext.data.Store',{
-			id: 'uploadRecordsStore',
-			autoLoad: true,
-			fields: [],
-			pageSize: itemsPerPage, // items per page
-			proxy:{
-				//url:"hisExcelList.do",
-				url : "project/showProject.do",
-				type: 'ajax',
-				reader:{
-					type : 'json',
-					rootProperty: 'value',
-					totalProperty: 'totalCount'
-				},
-				params:{
-					start: 0,
-					//limit: itemsPerPage
-				}
-			},
-			listeners : {
-				beforeload : function(store, operation, eOpts) {
-					store.getProxy().setExtraParams({
-						projectName:Ext.getCmp('projectName').getValue(),
-						buildingName:Ext.getCmp('buildingName').getValue(),
-					});
-				}
 
-			}
-		});
 
 		var toolbar2 = Ext.create('Ext.toolbar.Toolbar', {
 			dock : "top",
@@ -398,6 +370,36 @@ Ext.define('project.import_design_list', {
 		     },
 		     ]
 		},toolbar2,grid];
+
+		// var uploadRecordsStore = Ext.create('Ext.data.Store',{
+		// 	id: 'uploadRecordsStore',
+		// 	autoLoad: true,
+		// 	fields: [],
+		// 	pageSize: itemsPerPage, // items per page
+		// 	proxy:{
+		// 		//url:"hisExcelList.do",
+		// 		url : "project/showProject.do",
+		// 		type: 'ajax',
+		// 		reader:{
+		// 			type : 'json',
+		// 			rootProperty: 'value',
+		// 			totalProperty: 'totalCount'
+		// 		},
+		// 		params:{
+		// 			start: 0,
+		// 			//limit: itemsPerPage
+		// 		}
+		// 	},
+		// 	listeners : {
+		// 		beforeload : function(store, operation, eOpts) {
+		// 			store.getProxy().setExtraParams({
+		// 				projectName:Ext.getCmp('projectName').getValue(),
+		// 				buildingName:Ext.getCmp('buildingName').getValue(),
+		// 			});
+		// 		}
+		//
+		// 	}
+		// });
 		//this.items = [ me.grid ];
 		this.callParent(arguments);
 

@@ -20,10 +20,9 @@ public class Project_import_design_list_service extends BaseService{
 
     @Transactional
     public DataList findBuildingList(String projectName){
-        String sql = "select buildingName from building_project_view where projectName = "+projectName;
+        String sql = "select buildingName from building_project_view where projectName = bancai1311";//+projectName;
         DataList namelist = queryService.query(sql);
         return namelist;
-
     }
 
 }
