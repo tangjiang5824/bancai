@@ -12,11 +12,11 @@ Ext.define("menu.MenuRole_upload", {
 				expanded : true,
 				children : [ {
 					text : '旧板数据上传',
-					id : 'data.Old_Upload_Data',
+					id : 'oldpanel.Old_Upload_Data',
 					leaf : true
 				} , {
 					text : '旧板数据查询',
-					id : 'data.Old_Query_Data',
+					id : 'oldpanel.Old_Query_Data',
 					leaf : true
 				}]
 			} ,{
@@ -50,9 +50,13 @@ Ext.define("menu.MenuRole_upload", {
 					text : '项目立项',
 					id : 'project.management.buildproject',
 					leaf : true
-				} , {
+				}, {
+					text : '项目楼栋信息查询',
+					id : 'project.management.buildinglist',
+					leaf : true
+					}, {
 					text : '导入设计清单',
-					id : '',
+					id : 'project.import_design_list',
 					leaf : true
 				} , {
 					text : '项目旧板材料清单',

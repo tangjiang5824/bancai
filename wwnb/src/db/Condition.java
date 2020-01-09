@@ -5,19 +5,26 @@ public class Condition {
 	private StringBuffer buffer=new StringBuffer();
 	private List<Object> parameters=new ArrayList<Object>();
 	public Condition() {
-		
+
 	}
 	public Condition(String property, String op,Object value) {
 		super();
-		buffer.append("[").append(property).append("] ").append(op).append(" ?");
+		buffer.append(property).append(op).append(" ?");
 		parameters.add(value);
+	}
+	//区间查询
+	public Condition(String property, String op,Object value1,Object value2) {
+		super();
+		buffer.append(property).append(op).append(" ? and ?");
+		parameters.add(value1);
+		parameters.add(value2);
 	}
 	public Condition(String property, String op,Object value,boolean text) {
 		if(text) {
-			buffer.append("[").append(property).append("] ").append(op).append(" ?");
+			buffer.append(property).append(op).append(" ?");
 			parameters.add(value);
 		}else {
-			buffer.append("convert(float,["+property+"]) ").append(op).append(" ?");
+			buffer.append("convert(float,"+property+") ").append(op).append(" ?");
 			parameters.add(Float.parseFloat((String) value));
 		}
 	}
@@ -67,5 +74,5 @@ public class Condition {
 		System.out.println(Double.parseDouble(text));
 		System.out.println(Float.parseFloat(text));
 	}
-	
+
 }
