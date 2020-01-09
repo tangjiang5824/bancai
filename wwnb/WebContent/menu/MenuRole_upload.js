@@ -52,7 +52,7 @@ Ext.define("menu.MenuRole_upload", {
 					leaf : true
 				} , {
 					text : '导入设计清单',
-					id : '',
+					id : 'project.import_design_list',
 					leaf : true
 				} , {
 					text : '项目旧板材料清单',
