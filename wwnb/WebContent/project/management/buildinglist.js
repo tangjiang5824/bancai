@@ -71,7 +71,7 @@ Ext.define('project.management.buildinglist', {
             store: tableListStore,
             listeners:{
                 select: function(combo, record, index) {
-                    console.log(record);
+                    console.log(record[0].data.projectName);
 
                 }
             }
