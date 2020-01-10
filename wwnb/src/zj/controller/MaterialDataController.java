@@ -1,5 +1,7 @@
 package zj.controller;
 
+import commonMethod.AllExcelService;
+import commonMethod.QueryAllService;
 import controller.DataHistoryController;
 import db.mysqlcondition;
 import org.apache.log4j.Logger;
@@ -23,11 +25,13 @@ import java.text.ParseException;
 public class MaterialDataController {
 
     @Autowired
-    private QueryService queryService;
+    private QueryAllService queryAllService;
+    //private QueryService queryService;
     @Autowired
     private Material_Service material_Service;
     @Autowired
-    private MaterialExcelService excelService;
+    private AllExcelService allExcelService;
+    //private MaterialExcelService excelService;
 
     Logger log=Logger.getLogger(DataHistoryController.class);
 
@@ -79,7 +83,8 @@ public class MaterialDataController {
         WebResponse response = new WebResponse();
         String userid = (String) session.getAttribute("userid");
         try {
-            UploadDataResult result = excelService.uploadExcelData(uploadFile.getInputStream(),userid,tableName);
+            //UploadDataResult result = excelService.uploadExcelData(uploadFile.getInputStream(),userid,tableName);
+            UploadDataResult result = allExcelService.uploadExcelData(uploadFile.getInputStream(),userid,tableName);
             response.setSuccess(result.success);
             response.setErrorCode(result.errorCode);
             response.setValue(result.data);
@@ -127,7 +132,8 @@ public class MaterialDataController {
 //        if (materialType.length() != 0) {
 //            c.and(new mysqlcondition("materialtype", "=", materialType));
 //        }
-        WebResponse wr=queryService.mysqlqueryPage(start, limit, c, tableName);
+        //WebResponse wr=queryService.mysqlqueryPage(start, limit, c, tableName);
+        WebResponse wr=queryAllService.queryDataPage(start, limit, c, tableName);
         return wr;
     }
 

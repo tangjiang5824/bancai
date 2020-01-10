@@ -12,6 +12,16 @@ Ext.define('material.material_Query_Data',{
                 {
                     xtype: 'textfield',
                     margin : '0 10 0 0',
+                    fieldLabel: '原材料类型',
+                    id :'mType',
+                    width: 180,
+                    labelWidth: 70,
+                    name: 'mType',
+                    value:"",
+                },
+                {
+                    xtype: 'textfield',
+                    margin : '0 10 0 0',
                     fieldLabel: '宽度下限',
                     id :'startWidth',
                     width: 180,
@@ -47,16 +57,6 @@ Ext.define('material.material_Query_Data',{
                     width: 180,
                     labelWidth: 60,
                     name: 'endLength',
-                    value:"",
-                },
-                {
-                    xtype: 'textfield',
-                    margin : '0 10 0 0',
-                    fieldLabel: '板材类型',
-                    id :'mType',
-                    width: 180,
-                    labelWidth: 60,
-                    name: 'mType',
                     value:"",
                 },
                 {
@@ -109,7 +109,7 @@ Ext.define('material.material_Query_Data',{
         })
         var uploadRecordsStore = Ext.create('Ext.data.Store',{
             id: 'uploadRecordsStore',
-            autoLoad: false,
+            autoLoad: true,
             fields: [],
             pageSize: itemsPerPage, // items per page
             proxy:{
