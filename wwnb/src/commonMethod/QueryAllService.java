@@ -47,6 +47,17 @@ public class QueryAllService extends BaseService {
 	 * @param tableName
 	 * @return
 	 */
+
+	public WebResponse queryPage(Integer start,Integer limit,NewCondition c,String tableName)
+	{
+		log.debug(c.toString()+"   "+c.getParameters());
+		String whereClause=c.toString();
+		if(whereClause.length()>0)
+			return queryPage(start,limit,"select * from "+tableName+" where "+whereClause,c.getParameters());
+		else
+			return queryPage(start,limit,"select * from "+tableName);
+	}
+
 	public WebResponse queryDataPage(Integer start, Integer limit, mysqlcondition c, String tableName)
 	{
 		log.debug(c.toString()+"   "+c.getParameters());

@@ -3,13 +3,12 @@ Ext.define('project.management.buildproject', {
     region : 'center',
     layout : "fit",
     title : '项目立项',
-    requires : [ 'component.TableList', "component.YearList" ],
-    reloadPage : function() {
-        var p = Ext.getCmp('functionPanel');
-        p.removeAll();
-        cmp = Ext.create("data.UploadDataTest");
-        p.add(cmp);
-    },
+    // reloadPage : function() {
+    //     var p = Ext.getCmp('functionPanel');
+    //     p.removeAll();
+    //     cmp = Ext.create("data.UploadDataTest");
+    //     p.add(cmp);
+    // },
     clearGrid : function() {
         var msgGrid = Ext.getCmp("msgGrid");
         if (msgGrid != null || msgGrid != undefined)
@@ -19,7 +18,7 @@ Ext.define('project.management.buildproject', {
     initComponent : function() {
         var me = this;
         //定义表名,计划清单
-        var tableName="planList";
+       // var tableName="planList";
         //var materialtype="0";
 
 
@@ -55,7 +54,7 @@ Ext.define('project.management.buildproject', {
                     fieldLabel: '项目名',
                     id :'projectName',
                     width: 180,
-                    labelWidth: 60,
+                    labelWidth: 80,
                     name: 'projectName',
                     value:"",
 
@@ -65,9 +64,9 @@ Ext.define('project.management.buildproject', {
                     margin : '0 10 0 0',
                     fieldLabel : '开始时间',
                     width : 180,
-                    labelWidth : 60,
-                    id : "starttime",
-                    name : 'starttime',
+                    labelWidth : 80,
+                    id : "startTime",
+                    name : 'startTime',
                     //align: 'right',
                     format : 'Y-m',
                     editable : false,
@@ -77,7 +76,7 @@ Ext.define('project.management.buildproject', {
                     margin : '0 10 0 0',
                     fieldLabel : '预计结束时间',
                     width : 180,
-                    labelWidth : 60,
+                    labelWidth : 80,
                     id : "proEndTime",
                     name : 'proEndTime',
                     //align: 'right',
@@ -90,17 +89,21 @@ Ext.define('project.management.buildproject', {
                     fieldLabel: '计划负责人',
                     id :'planLeader',
                     width: 180,
-                    labelWidth: 60,
+                    labelWidth: 80,
                     name: 'planLeader',
                     value:"",
 
-                },{
+                }]
+        });
+        var toobar_2 = Ext.create('Ext.toolbar.Toolbar',{
+            items: [
+               {
                     xtype: 'textfield',
                     margin : '0 10 0 0',
                     fieldLabel: '生产负责人',
                     id :'produceLeader',
                     width: 180,
-                    labelWidth: 60,
+                    labelWidth: 80,
                     name: 'produceLeader',
                     value:"",
 
@@ -110,7 +113,7 @@ Ext.define('project.management.buildproject', {
                     fieldLabel: '采购负责人',
                     id :'purchaseLeader',
                     width: 180,
-                    labelWidth: 60,
+                    labelWidth: 80,
                     name: 'purchaseLeader',
                     value:"",
 
@@ -120,7 +123,7 @@ Ext.define('project.management.buildproject', {
                     fieldLabel: '财务负责人',
                     id :'financeLeader',
                     width: 180,
-                    labelWidth: 60,
+                    labelWidth: 80,
                     name: 'financeLeader',
                     value:"",
 
@@ -130,7 +133,7 @@ Ext.define('project.management.buildproject', {
                     fieldLabel: '仓库负责人',
                     id :'storeLeader',
                     width: 180,
-                    labelWidth: 60,
+                    labelWidth: 80,
                     name: 'storeLeader',
                     value:"",
 
@@ -307,13 +310,15 @@ Ext.define('project.management.buildproject', {
                     var s = new Array();
                     select.each(function(rec) {
                         //delete rec.data.id;
+                        if(rec.data.楼栋编号!="")
                         s.push(JSON.stringify(rec.data));
                     });
 
-                    //获取时间
-                    var sTime=Ext.Date.format(Ext.getCmp('starttime').getValue(), 'Y-m-d H:i:s');
+                    //获取数据
+                    var sTime=Ext.Date.format(Ext.getCmp('startTime').getValue(), 'Y-m-d H:i:s');
+
                     Ext.Ajax.request({
-                        url : 'generateproduct.do', //createProject.do
+                        url : 'generate_project.do', //createProject.do
                         method:'POST',
                         //submitEmptyText : false,
 
@@ -321,15 +326,22 @@ Ext.define('project.management.buildproject', {
                             //tableName:tableName,
                             //materialType:materialtype,
                             startTime:sTime,
+                            planLeader:Ext.getCmp('planLeader').getValue(),
+                            produceLeader:Ext.getCmp('produceLeader').getValue(),
+                            proEndTime:Ext.getCmp('proEndTime').getValue(),
+                            purchaseLeader:Ext.getCmp('purchaseLeader').getValue(),
+                            financeLeader:Ext.getCmp('financeLeader').getValue(),
+                            storeLeader:Ext.getCmp('storeLeader').getValue(),
                             projectName:Ext.getCmp('projectName').getValue(),
                             s : "[" + s + "]",
                         },
                         success : function(response) {
-                            Ext.MessageBox.alert("提示", "创建成功！");
-                            me.close();
+                            var message =Ext.decode(response.responseText).showmessage;
+                            Ext.MessageBox.alert("提示",message );
                         },
                         failure : function(response) {
-                            Ext.MessageBox.alert("提示", "创建失败，重新输入楼栋信息");
+                            var message =Ext.decode(response.responseText).showmessage;
+                            Ext.MessageBox.alert("提示",message );
                         }
                     });
 
@@ -337,7 +349,7 @@ Ext.define('project.management.buildproject', {
             }]
         });
 
-        this.dockedItems = [toobar,toolbar2,grid,toolbar3];
+        this.dockedItems = [toobar,toobar_2,toolbar2,grid,toolbar3];
         //this.items = [ me.grid ];
         this.callParent(arguments);
 
