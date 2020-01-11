@@ -36,14 +36,41 @@ public class ProjectController {
     @Autowired
     private InsertProjectService insertProjectService;
 
-    /*
-    *这个方法实现项目的新建
-    *
+    /**
+     *生成项目计划，添加楼栋信息
+     * @param s
+     * @param session
+     * @param projectName
+     * @param startTime
+     * @param proEndTime
+     * @param planLeader
+     * @param produceLeader
+     * @param purchaseLeader
+     * @param financeLeader
+     * @param storeLeader
+     * @return
      */
     @RequestMapping(value="/generate_project.do")
-    public boolean add_project(String s,HttpSession session,String projectName,String startTime,String proEndTime,String planLeader,String produceLeader,String purchaseLeader,String financeLeader,String storeLeader ) {
+    public void add_project(String s,HttpServletResponse response,HttpSession session,String projectName,String startTime,String proEndTime,String planLeader,String produceLeader,String purchaseLeader,String financeLeader,String storeLeader ) throws IOException {
         JSONArray jsonArray = new JSONArray(s);
         String userid = session.getAttribute("userid")+"";
+
+        //应该先验证是否有项目重名的情况，返回时输出错误信息
+        String sql_search="select count(*) from project where projectName='"+projectName+"'";
+        try {
+            int projectName_count=insertProjectService.queryisexist(sql_search);
+            if (projectName_count!=0){
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("text/html");
+                response.getWriter().write("{'success':false,'showmessage':'项目名已经存在！操作失败'}");
+                response.setStatus(500);
+                response.getWriter().flush();
+                response.getWriter().close();
+                return ;
+            }
+        }catch (Exception e){
+           e.printStackTrace();
+        }
         //生成project计划表
         String sql1="insert into project (uploadId,startTime,projectName,proEndTime,planLeader,produceLeader,purchaseLeader,financeLeader,storeLeader,statusId) values(?,?,?,?,?,?,?,?,?,?) ";
         //插入到project表的同时返回projectId
@@ -61,7 +88,12 @@ public class ProjectController {
             //插入到planlist表的同时返回planlistid
             String BuildingId=insertProjectService.insertDataToTable(sql2,BuildingNo,BuildName,BuildOwner,projectId)+"";
         }
-        return true;
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html");
+        response.getWriter().write(
+                "{'success':true,'showmessage':'创建成功！'}");
+        response.getWriter().flush();
+        response.getWriter().close();
     }
 
 }

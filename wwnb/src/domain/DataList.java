@@ -39,11 +39,16 @@ public class DataList extends ArrayList<DataRow> {
 			add(row);
 		}
 	}
+
+	/*
+	* 修改为mysql的语句格式
+	*
+	* */
 	public String toInsertSQL(int start,int end,String tableName,int uploadId)
 	{
 		String columns=getColumns();
 		String values=getValues(start,end,uploadId);
-		return String.format("insert into [%s] (%s uploadId) values %s", tableName,columns,values);
+		return String.format("insert into %s (%s uploadId) values %s", tableName,columns,values);
 	}
 	
 
@@ -68,7 +73,8 @@ public class DataList extends ArrayList<DataRow> {
 		DataRow row=this.get(0);
 		for(String column:row.keySet())
 		{
-			columns+="["+column+"],";
+			//columns+="["+column+"],";
+			columns+=column+",";
 		}
 		return columns;
 	}

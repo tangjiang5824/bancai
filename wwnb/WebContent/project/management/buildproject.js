@@ -310,6 +310,7 @@ Ext.define('project.management.buildproject', {
                     var s = new Array();
                     select.each(function(rec) {
                         //delete rec.data.id;
+                        if(rec.data.楼栋编号!="")
                         s.push(JSON.stringify(rec.data));
                     });
 
@@ -335,11 +336,12 @@ Ext.define('project.management.buildproject', {
                             s : "[" + s + "]",
                         },
                         success : function(response) {
-                            Ext.MessageBox.alert("提示", "创建成功！");
-                            me.close();
+                            var message =Ext.decode(response.responseText).showmessage;
+                            Ext.MessageBox.alert("提示",message );
                         },
                         failure : function(response) {
-                            Ext.MessageBox.alert("提示", "创建失败，重新输入楼栋信息");
+                            var message =Ext.decode(response.responseText).showmessage;
+                            Ext.MessageBox.alert("提示",message );
                         }
                     });
 

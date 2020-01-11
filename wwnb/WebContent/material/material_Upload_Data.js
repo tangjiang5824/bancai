@@ -3,7 +3,7 @@ Ext.define('material.material_Upload_Data', {
     region : 'center',
     layout : "fit",
     title : '原材料数据上传',
-    requires : [ 'component.TableList', "component.YearList" ],
+    //requires : [ 'component.TableList', "component.YearList" ],
     reloadPage : function() {
         var p = Ext.getCmp('functionPanel');
         p.removeAll();
@@ -402,10 +402,10 @@ Ext.define('material.material_Upload_Data', {
                     }
                 }
             },
-                {
-                    text: '当前时间：'+Ext.Date.format(new Date(), 'Y-m-d H:i:s'),
-                    layout:'left'
-                }
+                // {
+                //     text: '当前时间：'+Ext.Date.format(new Date(), 'Y-m-d H:i:s'),
+                //     layout:'left'
+                // }
             ]
         });
 

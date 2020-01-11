@@ -47,83 +47,13 @@ public class InsertProjectService extends BaseService {
 
 
 
+    /**
+     * 查询一个值是否在数据库中存在
+     *
+     **/
     @Transactional
-    //插入数据到project
-    public int insertDataToProject(String sql,String userid,String startTime,String projectName){
-        log.debug(sql);
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        //int i= jo.update(sql,userid,startTime,projectName,"1",keyHolder);
-        int j=jo.update(new PreparedStatementCreator(){
-                            @Override
-                            public PreparedStatement createPreparedStatement(Connection conn) throws SQLException {
-                                PreparedStatement ps = conn.prepareStatement(sql,new String[] { "id" });
-                                ps.setString(1, userid);
-                                ps.setString(2, startTime);
-                                ps.setString(3, projectName);
-                                ps.setString(4, "1");
-                                return ps;
-                            }
-                        },
-                keyHolder);
-        return keyHolder.getKey().intValue();
-    }
-
-    @Transactional
-    //插入数据到planlist
-    public int insertDataToPlanlist(String sql,String projectId,String productId,String number){
-        log.debug(sql);
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        //int i= jo.update(sql,userid,startTime,projectName,"1",keyHolder);
-        int j=jo.update(new PreparedStatementCreator(){
-                            @Override
-                            public PreparedStatement createPreparedStatement(Connection conn) throws SQLException {
-                                PreparedStatement ps = conn.prepareStatement(sql,new String[] { "id" });
-                                ps.setString(1, projectId);
-                                ps.setString(2, productId);
-                                ps.setString(3, number);
-                                return ps;
-                            }
-                        },
-                keyHolder);
-        return keyHolder.getKey().intValue();
-    }
-    @Transactional
-    //插入数据到projectlist
-    public int insertDataToProjectlist(String sql,String projectId,String productId,String materialStoreId,String Num){
-        log.debug(sql);
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        //int i= jo.update(sql,userid,startTime,projectName,"1",keyHolder);
-        int j=jo.update(new PreparedStatementCreator(){
-                            @Override
-                            public PreparedStatement createPreparedStatement(Connection conn) throws SQLException {
-                                PreparedStatement ps = conn.prepareStatement(sql,new String[] { "id" });
-                                ps.setString(1, projectId);
-                                ps.setString(2, productId);
-                                ps.setString(3, materialStoreId);
-                                ps.setString(4, Num);
-                                return ps;
-                            }
-                        },
-                keyHolder);
-        return keyHolder.getKey().intValue();
-    }
-
-
-
-
-    /*
-     * 新建一个项目
-     * */
-    @Transactional
-    public void createProject(String tableName,String startTime, String projectName,String userId,int statusId){
-
-        //返回自增主键
-        // KeyHolder keyHolder = new GeneratedKeyHolder();
-
-        jo.update("insert into "+ tableName+" (userId,startTime,projectName,statusId) values(?,?,?,?)",
-                userId,startTime, projectName, statusId);
-        //return true;
-        //System.out.println("主键id：-----"+keyHolder.getKey().intValue());
+    public int queryisexist(String sql){
+        return  jo.queryForObject(sql,Integer.class);
     }
 
 //    /*

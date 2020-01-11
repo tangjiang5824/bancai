@@ -68,7 +68,13 @@ Ext.define('project.management.buildinglist', {
             displayField: 'projectName',
             valueField: 'projectName',
             editable : false,
-            store: tableListStore
+            store: tableListStore,
+            listeners:{
+                select: function(combo, record, index) {
+                    console.log(record[0].data.projectName);
+
+                }
+            }
 
         });
 
