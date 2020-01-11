@@ -90,10 +90,9 @@ public class Oldpanel_Data_Controller {
      * 查旧板表
      */
     @RequestMapping(value="/oldpanel/updateData.do")
-    public WebResponse oldpanel_Find_List(Integer start, Integer limit, String startLength, String endLength, String startWidth, String endWidth, String mType, HttpSession session){
+    public WebResponse oldpanel_Find_List(Integer start, Integer limit,String tableName, String startLength, String endLength, String startWidth, String endWidth, String mType, HttpSession session){
 
-        //查询的数据表名
-        String tableName = "oldpanel";
+        log.debug("search["+tableName+"]length:"+startLength+"--"+endLength+";width"+startWidth+"--"+endWidth);
 
         //根据输入的数据查询
         //DataList dataList = testAddService.findList(proName);

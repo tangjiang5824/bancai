@@ -5,43 +5,58 @@ Ext.define('oldpanel.Old_Query_Data',{
     title: '旧板材库数据查询',
     initComponent: function(){
         var itemsPerPage = 50;
+        var tableName="oldpanel";
         var toobar = Ext.create('Ext.toolbar.Toolbar',{
             items: [{
                 xtype: 'textfield',
-                fieldLabel: '旧板查询：长：',
-                labelSeparator: '',
-                id :'cLow',
-                labelWidth: 100,
-                width: 140,
-                //margin : '0 10 0 0',
-                name: 'cLow',
+                fieldLabel: '长度下限：',
+                // labelSeparator: '',
+                id :'startLength',
+                labelWidth: 60,
+                width: 180,
+                margin : '0 10 0 0',
+                name: 'startLength',
+                value:"",
             },{
                 xtype: 'textfield',
-                fieldLabel: '----',
-                labelSeparator: '',
-                id :'cHigh',
-                labelWidth: 20,
-                width: 60,
-                //margin : '0 10 0 0',
-                name: 'cHigh',
+                fieldLabel: '长度上限：',
+                // labelSeparator: '',
+                id :'endLength',
+                labelWidth: 60,
+                width: 180,
+                margin : '0 10 0 0',
+                name: 'endLength',
+                value:"",
             },{
                 xtype: 'textfield',
-                fieldLabel: '宽:',
-                labelSeparator: '',
-                id :'kLow',
-                labelWidth: 20,
-                width: 60,
-                //margin : '0 10 0 0',
-                name: 'kLow',
+                fieldLabel: '宽度下限:',
+                // labelSeparator: '',
+                id :'startWidth',
+                labelWidth: 60,
+                width: 180,
+                margin : '0 10 0 0',
+                name: 'startWidth',
+                value:"",
             },{
                 xtype: 'textfield',
-                fieldLabel: '----',
-                labelSeparator: '',
-                id :'kHigh',
-                labelWidth: 20,
-                width: 60,
-                //margin : '0 10 0 0',
-                name: 'kHigh',
+                fieldLabel: '宽度上限：',
+                // labelSeparator: '',
+                id :'endWidth',
+                labelWidth: 60,
+                width: 180,
+                margin : '0 10 0 0',
+                name: 'endWidth',
+                value:"",
+            },{
+                xtype: 'textfield',
+                fieldLabel: '板材类型：',
+                // labelSeparator: '',
+                id :'mType',
+                labelWidth: 60,
+                width: 180,
+                margin : '0 10 0 0',
+                name: 'mType',
+                value:"",
             },{
                 xtype : 'button',
                 text: '查询',
@@ -51,55 +66,59 @@ Ext.define('oldpanel.Old_Query_Data',{
                 handler: function(){
                     uploadRecordsStore.load({
                         params : {
-                            cLow : Ext.getCmp('cLow').getValue(),
-                            cHigh : Ext.getCmp('cHigh').getValue(),
-                            kLow : Ext.getCmp('kLow').getValue(),
-                            kHigh : Ext.getCmp('kHigh').getValue(),
+                            startWidth : Ext.getCmp('startWidth').getValue(),
+                            endTWidth : Ext.getCmp('endWidth').getValue(),
+                            startLength:Ext.getCmp('startLength').getValue(),
+                            endLength:Ext.getCmp('endLength').getValue(),
+                            mType:Ext.getCmp('mType').getValue(),
+                            tableName:tableName,
+
                         }
                     });
-                }
-            },{
-                xtype : 'button',
-                text: '修改',
-                width: 80,
-                margin: '0 0 0 15',
-                layout: 'right',
-                handler: function(){
-                    //保存修改
-                    var select = Ext.getCmp('uploadRecordsMain').getStore().getData();
-                    var s = new Array();
-                    select.each(function(rec) {
-                        //delete rec.data.id;
-                        s.push(JSON.stringify(rec.data));
-                        //alert(JSON.stringify(rec.data));//获得表格中的数据
-                    });
-                    Ext.Ajax.request({
-                        url : 'old/editData.do',
-                        method:'POST',
-                        //submitEmptyText : false,
-                        params : {
-                            s : "[" + s + "]",
-                        },
-                        success : function(response) {
-                            Ext.MessageBox.alert("提示", "修改成功！");
-                            uploadRecordsStore.load({
-                                params : {
-                                }
-                            });
-                            me.close();
-
-                        },
-                        failure : function(response) {
-                            Ext.MessageBox.alert("提示", "修改失败！");
-                        }
-                    });
-
-
                 }
             },
+            //     {
+            //     xtype : 'button',
+            //     text: '修改',
+            //     width: 80,
+            //     margin: '0 0 0 15',
+            //     layout: 'right',
+            //     handler: function(){
+            //         //保存修改
+            //         var select = Ext.getCmp('uploadRecordsMain').getStore().getData();
+            //         var s = new Array();
+            //         select.each(function(rec) {
+            //             //delete rec.data.id;
+            //             s.push(JSON.stringify(rec.data));
+            //             //alert(JSON.stringify(rec.data));//获得表格中的数据
+            //         });
+            //         Ext.Ajax.request({
+            //             url : 'old/editData.do',
+            //             method:'POST',
+            //             //submitEmptyText : false,
+            //             params : {
+            //                 s : "[" + s + "]",
+            //             },
+            //             success : function(response) {
+            //                 Ext.MessageBox.alert("提示", "修改成功！");
+            //                 uploadRecordsStore.load({
+            //                     params : {
+            //                     }
+            //                 });
+            //                 me.close();
+            //
+            //             },
+            //             failure : function(response) {
+            //                 Ext.MessageBox.alert("提示", "修改失败！");
+            //             }
+            //         });
+            //
+            //
+            //     }
+            // },
                 {
                     xtype : 'button',
-                    text: '删除',
+                    text: '删除选中行',
                     width: 80,
                     margin: '0 0 0 15',
                     layout: 'right',
@@ -112,7 +131,7 @@ Ext.define('oldpanel.Old_Query_Data',{
                         }
                         else{
                             Ext.Ajax.request({
-                                url:"oldpanel/deleteData.do",
+                                url:"data/deleteItemById.do",
                                 params:{
                                     tableName:tableName,
                                     id:select[0].data.id
@@ -157,12 +176,12 @@ Ext.define('oldpanel.Old_Query_Data',{
             listeners : {
                 beforeload : function(store, operation, eOpts) {
                     store.getProxy().setExtraParams({
-                        tableName :tableName,
                         startWidth : Ext.getCmp('startWidth').getValue(),
                         endWidth : Ext.getCmp('endWidth').getValue(),
                         startLength:Ext.getCmp('startLength').getValue(),
                         endLength:Ext.getCmp('endLength').getValue(),
                         mType:Ext.getCmp('mType').getValue(),
+                        tableName:tableName,
 
                     });
                 }
@@ -178,16 +197,19 @@ Ext.define('oldpanel.Old_Query_Data',{
                 enableTextSelection : true
             },
             columns : [
-                { text: '品号',  dataIndex: '品号' ,flex :1, editor : {xtype : 'textfield', allowBlank : false}},
+                { text: '旧板名称',  dataIndex: 'oldpanelName' ,flex :1, editor : {xtype : 'textfield', allowBlank : false}},
                 { text: '长', dataIndex: '长', flex :1, editor : {xtype : 'textfield', allowBlank : false}},
                 { text: '类型',  dataIndex: '类型' ,flex :1,editor : {xtype : 'textfield', allowBlank : false}},
                 { text: '宽', dataIndex: '宽', flex :1,editor : {xtype : 'textfield', allowBlank : false}},
-                { text: '规格', dataIndex: '规格',flex :1 ,editor : {xtype : 'textfield', allowBlank : false}},
+                { text: '重量', dataIndex: '重量',flex :1 ,editor : {xtype : 'textfield', allowBlank : false}},
                 { text: '库存单位', dataIndex: '库存单位', flex :1 ,editor : {xtype : 'textfield', allowBlank : false}},
-                { text: '仓库编号', dataIndex: '仓库编号', flex :1,editor : {xtype : 'textfield', allowBlank : false}},
-                { text: '数量', dataIndex: '数量',flex :1 ,editor : {xtype : 'textfield', allowBlank : false}},
-                { text: '成本', dataIndex:'成本',flex :1 ,editor : {xtype : 'textfield', allowBlank : false}},
-                { text: '存放位置', dataIndex: '存放位置',flex :1 ,editor : {xtype : 'textfield', allowBlank : false}}],
+                { text: '库存数量', dataIndex: '库存数量', flex :1,editor : {xtype : 'textfield', allowBlank : false}},
+                { text: '可用数量', dataIndex: '可用数量',flex :1 ,editor : {xtype : 'textfield', allowBlank : false}},
+                { text: '仓库编号', dataIndex:'仓库编号',flex :1 ,editor : {xtype : 'textfield', allowBlank : false}},
+                { text: '存放位置', dataIndex: '存放位置',flex :1 ,editor : {xtype : 'textfield', allowBlank : false}},
+                { text: '上传者ID', dataIndex: 'uploadId',flex :1 ,editor : {xtype : 'textfield', allowBlank : false}}
+                ],
+
             tbar: toobar,
             dockedItems: [{
                 xtype: 'pagingtoolbar',
@@ -205,23 +227,21 @@ Ext.define('oldpanel.Old_Query_Data',{
             listeners: {
 
                 validateedit: function(editor, e){//监听点击表格
-                    //alert('aaaa')
-                    // alert(e.field)
-                    // alert(e.record.id)
-                    // alert(e.value)
+
                     //获得当前行的id
                     var cellId = e.record.id;
-                    var cellName = e.field;
+                    var cellField = e.field;
                     var cellValue = e.value//当前值
 
                     Ext.Ajax.request({
-                        url : 'old/editData.do',
+                        url : 'data/EditCellById.do',
                         method:'POST',
                         //submitEmptyText : false,
                         params : {
-                            cellId:cellId,
-                            cellName:cellName,
-                            cellValue:cellValue
+                            tableName:tableName,
+                            id:cellId,
+                            field:cellField,
+                            value:cellValue
                         },
                         success : function(response) {
                             Ext.MessageBox.alert("提示", "修改成功！");
