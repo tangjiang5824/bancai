@@ -6,12 +6,16 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import service.ProjectService;
 import service.QueryService;
 import service.UpdateService;
+import vo.UploadDataResult;
+import vo.WebResponse;
 import zzy.service.Project_import_design_list_service;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 @RestController
@@ -34,7 +38,8 @@ public class Project_impot_design_list_controller {
 	 * 查询所有的building，
 	 * */
 	@RequestMapping(value="/project/findBuildingList.do")
-	public void findProjectList(HttpServletResponse response,String projectName) throws IOException {
+	public void findBuildingList(HttpServletResponse response, HttpSession session) throws IOException {
+		String projectName = (String)session.getAttribute("projectName");
 		System.out.println("project/findBuildingList.do"+projectName);
 		DataList buildingList = project_import_design_list_service.findBuildingList(projectName);
 		//写回前端
@@ -45,6 +50,44 @@ public class Project_impot_design_list_controller {
 		response.getWriter().write(object.toString());
 		response.getWriter().flush();
 		response.getWriter().close();
+	}
+
+	@RequestMapping(value="/project/getSelectedProjectName.do") 
+	public void getSelectedProjectName(String projectName, HttpSession session) throws IOException {
+		session.setAttribute("projectName", projectName);
+		System.out.println("getSelectedProjectName===="+projectName);
+	}
+	@RequestMapping(value="/project/getSelectedBuildingName.do")
+	public void getSelectedBuildingName(String buildingName, HttpSession session) throws IOException {
+		session.setAttribute("buildingName", buildingName);
+		System.out.println("getSelectedProjectName===="+buildingName);
+		//获得buildingName对应的buildingId
+		DataList buildingId = project_import_design_list_service.findBuildingId(buildingName);
+		session.setAttribute("buildingId",buildingId.get(0).get("buildingId"));
+	}
+
+	/*
+	 * 上传excel文件
+	 * */
+
+	@RequestMapping(value = "/project/Upload_Design_List_Excel.do",produces = { "text/html;charset=UTF-8" })
+	public String uploadData(MultipartFile uploadFile, String materialtype, String tableName, Boolean check, HttpSession session) {
+		WebResponse response = new WebResponse();
+		String userid = (String) session.getAttribute("userid");
+		try {
+			UploadDataResult result = project_import_design_list_service.upload_Data(uploadFile.getInputStream(),materialtype,userid,tableName);
+			response.setSuccess(result.success);
+			response.setErrorCode(result.errorCode);
+			response.setValue(result.data);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+			response.setSuccess(false);
+			response.setErrorCode(1000); //未知错误
+			response.setMsg(e.getMessage());
+		}
+		net.sf.json.JSONObject json= net.sf.json.JSONObject.fromObject(response);
+		return json.toString();
 	}
 
 }

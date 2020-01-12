@@ -15,7 +15,59 @@ Ext.define('project.import_design_list', {
 		if (msgGrid != null || msgGrid != undefined)
 			this.remove(msgGrid);
 	},
-    
+	showDataGrid : function(tableName, uploadId) {
+		var me = this;
+		var itemsPerPage = 50;
+		this.clearGrid();
+		Ext.Ajax.request({
+			url : "system/dataTable/getColumnsAndFields.do",
+			params : {
+				tableName : tableName
+			},
+			success : function(response) {
+				var obj = Ext.decode(response.responseText);
+				var store = Ext.create('Ext.data.Store', {
+					pageSize : itemsPerPage,
+					fields : obj.fields,
+					proxy : {
+						type : 'ajax',
+						url : 'dataListByUploadId.do',
+						extraParams : {
+							tableName : tableName,
+							id : uploadId
+						},
+						reader : {
+							type : 'json',
+							rootProperty : 'value',
+							totalProperty : 'totalCount'
+						}
+					},
+					autoLoad : true
+				});
+				var grid = Ext.create('Ext.grid.Panel', {
+					title : '最新上传数据',
+					autoScroll : true,
+					viewConfig : {
+						enableTextSelection : true
+					},
+					id : "msgGrid",
+					store : store,
+					columns : obj.columns,
+					dockedItems : [ {
+						xtype : 'pagingtoolbar',
+						store : store,
+						dock : 'bottom',
+						displayInfo : true,
+						displayMsg : '显示{0}-{1}条，共{2}条',
+						emptyMsg : '无数据',
+						beforePageText : '第',
+						afterPageText : '页，共{0}页'
+					} ]
+				});
+				me.add(grid);
+			}
+		});
+	},
 	initComponent : function() {
 		var me = this;
 		//定义表名
@@ -166,7 +218,7 @@ Ext.define('project.import_design_list', {
 				xtype : 'filefield',
 				width : 400,
 				margin: '1 0 0 0',
-				buttonText : '上传楼栋信息',
+				buttonText : 'Excel文件上传楼栋信息',
 				name : 'uploadFile',
 				//id : 'uploadFile',
 				listeners : {
@@ -184,7 +236,7 @@ Ext.define('project.import_design_list', {
 										var check=Ext.getCmp("check").getValue();
 
 										exceluploadform.submit({
-											url : 'data/uploadExcel.do',
+											url : 'project/Upload_Design_List_Excel.do',
 											waitMsg : '正在上传...',
 											params : {
 												tableName:tableName,
@@ -272,8 +324,6 @@ Ext.define('project.import_design_list', {
 				}
 			} ]
 		});
-		
-
 
 
 
@@ -303,9 +353,28 @@ Ext.define('project.import_design_list', {
 			displayField: 'projectName',
 			valueField: 'projectName',
 			editable : false,
-			store: tableListStore1
+			store: tableListStore1,
+			listeners: {
+				select:function () {
+					projectName:Ext.getCmp('projectName').getValue();
+					Ext.Ajax.request({
+						url:'project/getSelectedProjectName.do',
+						params:{
+							projectName:Ext.getCmp('projectName').getValue()
+						},
+						success:function (response,config) {
+							//alert("combox1把数据传到后台成功");
+						},
+						failure:function (form, action) {
+							//alert("combox1把数据传到后台成功");
+						}
+					})
+				}
+			}
 
 		});
+
+
 		var tableListStore2 = Ext.create('Ext.data.Store',{
 			fields : [ 'buildingName'],
 			proxy : {
@@ -321,7 +390,6 @@ Ext.define('project.import_design_list', {
 				}
 			},
 			autoLoad : true
-
 		});
 
 		var tableList2 = Ext.create('Ext.form.ComboBox',{
@@ -335,8 +403,26 @@ Ext.define('project.import_design_list', {
 			displayField: 'buildingName',
 			valueField: 'buildingName',
 			editable : false,
-			store: tableListStore2
-
+			store: tableListStore2,
+			listeners: {
+				select:function () {
+					projectName:Ext.getCmp('projectName').getValue();
+					buildingName:Ext.getCmp('buildingName').getValue();
+					Ext.Ajax.request({
+						url:'project/getSelectedBuildingName.do',
+						params:{
+							//projectName:Ext.getCmp('projectName').getValue(),
+							buildingName:Ext.getCmp('buildingName').getValue(),
+						},
+						success:function (response,config) {
+							//alert("combox1把数据传到后台成功");
+						},
+						failure:function (form, action) {
+							//alert("combox1把数据传到后台成功");
+						}
+					})
+				}
+			}
 		});
 
 
@@ -371,36 +457,6 @@ Ext.define('project.import_design_list', {
 		     ]
 		},toolbar2,grid];
 
-		// var uploadRecordsStore = Ext.create('Ext.data.Store',{
-		// 	id: 'uploadRecordsStore',
-		// 	autoLoad: true,
-		// 	fields: [],
-		// 	pageSize: itemsPerPage, // items per page
-		// 	proxy:{
-		// 		//url:"hisExcelList.do",
-		// 		url : "project/showProject.do",
-		// 		type: 'ajax',
-		// 		reader:{
-		// 			type : 'json',
-		// 			rootProperty: 'value',
-		// 			totalProperty: 'totalCount'
-		// 		},
-		// 		params:{
-		// 			start: 0,
-		// 			//limit: itemsPerPage
-		// 		}
-		// 	},
-		// 	listeners : {
-		// 		beforeload : function(store, operation, eOpts) {
-		// 			store.getProxy().setExtraParams({
-		// 				projectName:Ext.getCmp('projectName').getValue(),
-		// 				buildingName:Ext.getCmp('buildingName').getValue(),
-		// 			});
-		// 		}
-		//
-		// 	}
-		// });
-		//this.items = [ me.grid ];
 		this.callParent(arguments);
 
 	}
