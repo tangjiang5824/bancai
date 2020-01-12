@@ -2,8 +2,8 @@ Ext.define('material.material_Upload_Data', {
     extend : 'Ext.panel.Panel',
     region : 'center',
     layout : "fit",
-    title : '原材料数据上传',
-    requires : [ 'component.TableList', "component.YearList" ],
+    title : '原材料入库',
+    //requires : [ 'component.TableList', "component.YearList" ],
     reloadPage : function() {
         var p = Ext.getCmp('functionPanel');
         p.removeAll();
@@ -26,7 +26,7 @@ Ext.define('material.material_Upload_Data', {
                 xtype : 'button',
                 iconAlign : 'center',
                 iconCls : 'rukuicon ',
-                text : '添加表项',
+                text : '新增',
                 handler : function() {
                     //fields: ['品号', '品名','规格','库存单位','仓库编号','数量','成本','存放位置']
                     var data = [{
@@ -402,10 +402,10 @@ Ext.define('material.material_Upload_Data', {
                     }
                 }
             },
-                {
-                    text: '当前时间：'+Ext.Date.format(new Date(), 'Y-m-d H:i:s'),
-                    layout:'left'
-                }
+                // {
+                //     text: '当前时间：'+Ext.Date.format(new Date(), 'Y-m-d H:i:s'),
+                //     layout:'left'
+                // }
             ]
         });
 

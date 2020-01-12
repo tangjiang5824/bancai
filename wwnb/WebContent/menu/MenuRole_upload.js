@@ -23,10 +23,15 @@ Ext.define("menu.MenuRole_upload", {
 				text : '原材料管理',
 				expanded : true,
 				children : [ {
+					text : '原材料入库',
+					id : 'material.material_Inbound',
+					leaf : true
+				} ,{
 					text : '原材料数据上传',
 					id : 'material.material_Upload_Data',
 					leaf : true
-				} , {
+				},
+					{
 					text : '原材料数据查询',
 					id : 'material.material_Query_Data',
 					leaf : true

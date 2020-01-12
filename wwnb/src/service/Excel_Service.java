@@ -294,64 +294,7 @@ public class Excel_Service extends BaseService {
 		UploadDataResult result = new UploadDataResult();
 		Excel excel = new Excel(inputStream);
 
-//		if(tableName.equals("统计局涉税信息表一（生产总值）")||tableName.equals("统计局涉税信息表二（工业增加值）")||tableName.equals("统计局涉税信息表三（交通）")||tableName.equals("统计局涉税信息表四（投资）")||tableName.equals("统计局涉税信息表五（房地产）")||tableName.equals("统计局涉税信息表六（社零）")||tableName.equals("统计局涉税信息表七（人民生活物价）")||tableName.equals("统计局涉税信息表八（工业总产值）")) {
-//			 dataList = excel.readExcelContent_field1(2);			
-//			int uploadId = insertUploadRecord(uploads, tableName, batchNo, startTime, endTime);
-//			String value="'"+JSONArray.fromObject(dataList).toString()+"'";
-//			jo.update(String.format("insert into [%s] (value,uploadId) values (%s,%s)", tableName,value,uploadId));
-//			result.dataList=dataList;
-//			result.success = true;
-//			result.uploadId = uploadId;
-//			return result;			
-//		}
-//		else 
-//		if(true) {
-//			// 检查数据列名 获取表头
-//			DataList columnListFromDB = tableService.getColumnList(tableName);
-//
-//			DataList columnListFromExcel = excel.readExcelColumns();
-//			List<String> noExistInExcel = checkColumn(columnListFromDB, columnListFromExcel);
-//			List<String> noExistInDB = checkColumn(columnListFromExcel, columnListFromDB);
-//			if (noExistInExcel.size() != 0 || noExistInDB.size() != 0) {
-//				result.success = false;
-//				result.errorCode = 2; // 上传文件中的数据项与系统需要的不一致，请检查上传文件
-//				result.setFileds("name", "value");
-//				if (noExistInExcel.size() != 0)
-//					result.addData("系统需要但上传文件中不存在", noExistInExcel);
-//				if (noExistInDB.size() != 0)
-//					result.addData("上传文件中存在但系统不需要", noExistInDB);
-//				return result;
-//			}
-
 		dataList = excel.readExcelContent();
-
-
-		// TODO 检查数据字段
-//			if (check) {
-//				Map<String, DataRow> columnMap = tableService.getColumnMap(tableName);
-//				result.setFileds("row", "col", "value", "type");
-//				for (int i = 0; i < dataList.size(); i++) {
-//					DataRow row = dataList.get(i);
-//					for (String columnName : row.keySet()) {
-//						DataRow column = columnMap.get(columnName);
-//						if (column.get("type").toString().startsWith("float")) {
-//							// 类型为数字
-//							try {
-//								Float.parseFloat(row.get(columnName).toString());
-//							} catch (Exception e) {
-//								result.addData(i + 4, columnName, row.get(columnName).toString(), "数字");
-//							}
-//						}
-//
-//					}
-//					if (result.data.size() != 0) {
-//						result.success = false;
-//						result.errorCode = 3;
-//						return result;
-//					}
-//				}
-//			}
-
 
 				// 插入数据
 		log.debug("materialtype= "+materialtype);

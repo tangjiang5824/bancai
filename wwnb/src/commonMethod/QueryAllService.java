@@ -20,54 +20,6 @@ import java.util.Map;
 public class QueryAllService extends BaseService {
 	private Logger log=Logger.getLogger(QueryAllService.class);
 	/**
-	 * 高级查询，按照表名和条件
-	 * @param tableName
-	 * @param conditions
-	 * @param start
-	 * @param limit
-	 * @return
-	 */
-//	public WebResponse advanceQuery(String tableName,List<Map<String, Object>> conditions,Integer start,Integer limit)
-//	{
-//		Condition c=new Condition();
-//		for(Map<String, Object> map:conditions)
-//		{
-//
-//			String cName=map.get("cName").toString();
-//			String compare=map.get("compare").toString();
-//			String cond=map.get("condition").toString().trim();
-//			boolean columnType= ((int)map.get("columnType"))==1?true:false;
-//			if(cName.equals("")||compare.equals("")) {
-//				continue;
-//			}
-//			if(compare.equals("like"))
-//				cond="%"+cond+"%";
-//			c.and(new Condition(cName,compare,cond,columnType));
-//		}
-//		log.debug(c.toString());
-//		return queryPage(start, limit, c, tableName);
-//	}
-	/**
-	 * 按照selectSQL和条件分页查询，selectSQL不能有where子句
-	 * @param start
-	 * @param limit
-	 * @param selectSQL
-	 * @param c
-	 * @return
-	 */
-//	public WebResponse queryPage(Integer start,Integer limit,String selectSQL,Condition c)
-//	{
-//		String whereClause=c.toString();
-//		if(whereClause.length()>0)
-//		{
-//			selectSQL+="where "+whereClause;
-//			return queryPage(start,limit,selectSQL,c.getParameters());
-//		}else
-//		{
-//			return queryPage(start,limit,selectSQL);
-//		}
-//	}
-	/**
 	 * 按照selectSQL分页查询
 	 * @param start
 	 * @param limit
@@ -95,6 +47,7 @@ public class QueryAllService extends BaseService {
 	 * @param tableName
 	 * @return
 	 */
+
 	public WebResponse queryPage(Integer start,Integer limit,NewCondition c,String tableName)
 	{
 		log.debug(c.toString()+"   "+c.getParameters());
@@ -105,7 +58,7 @@ public class QueryAllService extends BaseService {
 			return queryPage(start,limit,"select * from "+tableName);
 	}
 
-	public WebResponse mysqlqueryPage(Integer start, Integer limit, mysqlcondition c, String tableName)
+	public WebResponse queryDataPage(Integer start, Integer limit, mysqlcondition c, String tableName)
 	{
 		log.debug(c.toString()+"   "+c.getParameters());
 		String whereClause=c.toString();
