@@ -43,9 +43,29 @@ public class InsertProjectService extends BaseService {
         return keyHolder.getKey().intValue();
     }
 
+    /**
+     * 查询返回所有的原材料类型
+     * @return
+     */
+    @Transactional
+    public DataList findmaterialtype(){
+        String sql = "select * from materialtype";
+        DataList typelist = queryService.query(sql);
+        return typelist;
 
+    }
 
+    /**
+     * 查询返回对应projectId的领料单
+     * @return
+     */
+    @Transactional
+    public DataList findmateriallist(String projectId){
+        String sql = "select materialName，materialNum from projectmateriallist where projectId=? values (?)";
+        DataList materiallist = queryService.query(sql,projectId);
+        return materiallist;
 
+    }
 
     /**
      * 查询一个值是否在数据库中存在
