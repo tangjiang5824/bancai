@@ -43,9 +43,9 @@ public class Oldpanel_Data_Controller {
             //获得第i条数据的各个属性值
             log.debug(tableName+"第"+i+"个:userid="+userid+"---"+jsonTemp);
             String oldpanelName = (String) jsonTemp.get("旧板名称");
-            int length = Integer.parseInt(jsonTemp.get("长").toString());
+            String length = (String) jsonTemp.get("长");
             String type = (String) jsonTemp.get("类型");
-            int width = Integer.parseInt(jsonTemp.get("宽").toString());
+            String width = (String) jsonTemp.get("宽");
             int number = Integer.parseInt(jsonTemp.get("数量").toString());
             String respo = (String) jsonTemp.get("库存单位");
             String respoNum = (String) jsonTemp.get("仓库编号");
@@ -90,10 +90,9 @@ public class Oldpanel_Data_Controller {
      * 查旧板表
      */
     @RequestMapping(value="/oldpanel/updateData.do")
-    public WebResponse oldpanel_Find_List(Integer start, Integer limit, String startLength, String endLength, String startWidth, String endWidth, String mType, HttpSession session){
+    public WebResponse oldpanel_Find_List(Integer start, Integer limit,String tableName, String startLength, String endLength, String startWidth, String endWidth, String mType, HttpSession session){
 
-        //查询的数据表名
-        String tableName = "oldpanel";
+        log.debug("search["+tableName+"]length:"+startLength+"--"+endLength+";width"+startWidth+"--"+endWidth);
 
         //根据输入的数据查询
         //DataList dataList = testAddService.findList(proName);
