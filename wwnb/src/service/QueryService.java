@@ -110,7 +110,10 @@ public class QueryService extends BaseService {
 	}
 	public WebResponse mysqlqueryPage(Integer start, Integer limit, mysqlcondition c, String tableName)
 	{
-		log.debug(c.toString()+"   "+c.getParameters());
+		//log.debug(c.toString()+"   "+c.getParameters());
+//		System.out.println(">>>>>>>>>>");
+//		System.out.println(c.getParameters());
+//		System.out.println("<<<<<<<<<<<");
 		String whereClause=c.toString();
 		if(whereClause.length()>0)
 			return queryPage(start,limit,"select * from "+tableName+" where "+whereClause,c.getParameters());

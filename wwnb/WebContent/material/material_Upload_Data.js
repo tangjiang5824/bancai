@@ -3,7 +3,7 @@ Ext.define('material.material_Upload_Data', {
     region : 'center',
     layout : "fit",
     title : '原材料数据上传',
-    requires : [ 'component.TableList', "component.YearList" ],
+    //requires : [ 'component.TableList', "component.YearList" ],
     reloadPage : function() {
         var p = Ext.getCmp('functionPanel');
         p.removeAll();
@@ -81,13 +81,6 @@ Ext.define('material.material_Upload_Data', {
                             tableName:tableName,
                             //materialType:materialtype,
                             s : "[" + s + "]",
-                            //userid: userid + ""
-//									tableName : tabName,
-//									organizationId : organizationId,
-//									tableType : tableType,
-//									uploadCycle : uploadCycle,
-//									cycleStart : cycleStart
-
                         },
                         success : function(response) {
                             Ext.MessageBox.alert("提示", "保存成功！");
@@ -263,12 +256,12 @@ Ext.define('material.material_Upload_Data', {
                                         var check=Ext.getCmp("check").getValue();
 
                                         form.submit({
-                                            url : 'data/uploadExcel.do',
+                                            url : 'uploadMaterialExcel.do',
                                             waitMsg : '正在上传...',
                                             params : {
                                                 tableName:tableName,
-                                                materialtype:materialtype,
-                                                check:check
+                                                //materialtype:materialtype,
+                                                //check:check
                                             },
                                             success : function(form, action) {
                                                 var response = action.result;
@@ -409,10 +402,10 @@ Ext.define('material.material_Upload_Data', {
                     }
                 }
             },
-                {
-                    text: '当前时间：'+Ext.Date.format(new Date(), 'Y-m-d H:i:s'),
-                    layout:'left'
-                }
+                // {
+                //     text: '当前时间：'+Ext.Date.format(new Date(), 'Y-m-d H:i:s'),
+                //     layout:'left'
+                // }
             ]
         });
 

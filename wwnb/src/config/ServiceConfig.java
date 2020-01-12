@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Configuration
 @EnableAsync
 @EnableScheduling
-@ComponentScan(basePackages = { "service","zj.service","yrd.service","zzy.service","cg.service" }, includeFilters = {@Filter(value = Service.class)})
+@ComponentScan(basePackages = { "service","zj.service","yrd.service","zzy.service","cg.service","commonMethod" }, includeFilters = {@Filter(value = Service.class)})
 public class ServiceConfig {
 
 }

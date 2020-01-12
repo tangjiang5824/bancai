@@ -242,7 +242,7 @@ Ext.define('oldpanel.Old_Upload_Data', {
                                         var check=Ext.getCmp("check").getValue();
 
                                         form.submit({
-                                            url : 'data/uploadExcel.do',
+                                            url : 'oldpanel/uploadExcel.do',
                                             waitMsg : '正在上传...',
                                             params : {
                                                 // tableName:tableName,

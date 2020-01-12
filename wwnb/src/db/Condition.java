@@ -5,7 +5,7 @@ public class Condition {
 	private StringBuffer buffer=new StringBuffer();
 	private List<Object> parameters=new ArrayList<Object>();
 	public Condition() {
-		
+
 	}
 	public Condition(String property, String op,Object value) {
 		super();
@@ -67,5 +67,5 @@ public class Condition {
 		System.out.println(Double.parseDouble(text));
 		System.out.println(Float.parseFloat(text));
 	}
-	
+
 }

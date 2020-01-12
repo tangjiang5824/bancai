@@ -2,13 +2,23 @@ Ext.define('material.material_Query_Data',{
     extend:'Ext.panel.Panel',
     region: 'center',
     layout:'fit',
-    title: '新版材库数据查询',
+    title: '原材料数据查询',
     initComponent: function(){
         var itemsPerPage = 50;
-        var tableName="material_info";
-        var materialType="1";
+        var tableName="material";
+        //var materialType="1";
         var toobar = Ext.create('Ext.toolbar.Toolbar',{
             items: [
+                {
+                    xtype: 'textfield',
+                    margin : '0 10 0 0',
+                    fieldLabel: '原材料类型',
+                    id :'mType',
+                    width: 180,
+                    labelWidth: 70,
+                    name: 'mType',
+                    value:"",
+                },
                 {
                     xtype: 'textfield',
                     margin : '0 10 0 0',
@@ -18,21 +28,6 @@ Ext.define('material.material_Query_Data',{
                     labelWidth: 60,
                     name: 'startWidth',
                     value:"",
-                    // listeners: {
-                    //     change: function(ombo, records, eOpts) {
-                    //         // alert(Ext.getCmp('startTime').getValue())
-                    //         uploadRecordsStore.load({
-                    //             params : {
-                    //                 startWidth : Ext.getCmp('startWidth').getValue(),
-                    //                 endTWidth : Ext.getCmp('endWidth').getValue(),
-                    //                 startLength:Ext.getCmp('startLength').getValue(),
-                    //                 endLength:Ext.getCmp('endLength').getValue(),
-                    //                 mType:Ext.getCmp('mType').getValue()
-                    //             }
-                    //         });
-                    //     },
-                    // }
-
                 }, {
                     xtype: 'textfield',
                     fieldLabel: '宽度上限',
@@ -43,20 +38,6 @@ Ext.define('material.material_Query_Data',{
                     margin : '0 10 0 0',
                     name: 'endWidth',
                     value:"",
-                    // listeners: {
-                    //     change: function(ombo, records, eOpts) {
-                    //         // alert(Ext.getCmp('startTime').getValue())
-                    //         uploadRecordsStore.load({
-                    //             params : {
-                    //                 startWidth : Ext.getCmp('startWidth').getValue(),
-                    //                 endTWidth : Ext.getCmp('endWidth').getValue(),
-                    //                 startLength:Ext.getCmp('startLength').getValue(),
-                    //                 endLength:Ext.getCmp('endLength').getValue(),
-                    //                 mType:Ext.getCmp('mType').getValue()
-                    //             }
-                    //         });
-                    //     }
-                    // }
                 },
                 {
                     xtype: 'textfield',
@@ -67,20 +48,6 @@ Ext.define('material.material_Query_Data',{
                     labelWidth: 60,
                     name: 'startLength',
                     value:"",
-                    // listeners: {
-                    //     change: function(ombo, records, eOpts) {
-                    //         // alert(Ext.getCmp('startTime').getValue())
-                    //         uploadRecordsStore.load({
-                    //             params : {
-                    //                 startWidth : Ext.getCmp('startWidth').getValue(),
-                    //                 endTWidth : Ext.getCmp('endWidth').getValue(),
-                    //                 startLength:Ext.getCmp('startLength').getValue(),
-                    //                 endLength:Ext.getCmp('endLength').getValue(),
-                    //                 mType:Ext.getCmp('mType').getValue()
-                    //             }
-                    //         });
-                    //     },
-                    // }
                 },
                 {
                     xtype: 'textfield',
@@ -91,44 +58,6 @@ Ext.define('material.material_Query_Data',{
                     labelWidth: 60,
                     name: 'endLength',
                     value:"",
-                    // listeners: {
-                    //     change: function(ombo, records, eOpts) {
-                    //         // alert(Ext.getCmp('startTime').getValue())
-                    //         uploadRecordsStore.load({
-                    //             params : {
-                    //                 startWidth : Ext.getCmp('startWidth').getValue(),
-                    //                 endTWidth : Ext.getCmp('endWidth').getValue(),
-                    //                 startLength:Ext.getCmp('startLength').getValue(),
-                    //                 endLength:Ext.getCmp('endLength').getValue(),
-                    //                 mType:Ext.getCmp('mType').getValue()
-                    //             }
-                    //         });
-                    //     },
-                    // }
-                },
-                {
-                    xtype: 'textfield',
-                    margin : '0 10 0 0',
-                    fieldLabel: '板材类型',
-                    id :'mType',
-                    width: 180,
-                    labelWidth: 60,
-                    name: 'mType',
-                    value:"",
-                    // listeners: {
-                    //     change: function(ombo, records, eOpts) {
-                    //         // alert(Ext.getCmp('startTime').getValue())
-                    //         uploadRecordsStore.load({
-                    //             params : {
-                    //                 startWidth : Ext.getCmp('startWidth').getValue(),
-                    //                 endTWidth : Ext.getCmp('endWidth').getValue(),
-                    //                 startLength:Ext.getCmp('startLength').getValue(),
-                    //                 endLength:Ext.getCmp('endLength').getValue(),
-                    //                 mType:Ext.getCmp('mType').getValue()
-                    //             }
-                    //         });
-                    //     },
-                    // }
                 },
                 {
                     xtype : 'button',
@@ -160,7 +89,7 @@ Ext.define('material.material_Query_Data',{
                         }
                         else{
                             Ext.Ajax.request({
-                                url:"deleteDataById.do",
+                                url:"data/deleteItemById.do",  //公共方法，在commonMethod包下
                                 params:{
                                     tableName:tableName,
                                     id:select[0].data.id
@@ -184,8 +113,7 @@ Ext.define('material.material_Query_Data',{
             fields: [],
             pageSize: itemsPerPage, // items per page
             proxy:{
-                //url:"hisExcelList.do",
-                url : "org/data/history_ExcelList.do",
+                url : "material/historyDataList.do",
                 type: 'ajax',
                 reader:{
                     type : 'json',
@@ -201,12 +129,12 @@ Ext.define('material.material_Query_Data',{
                 beforeload : function(store, operation, eOpts) {
                     store.getProxy().setExtraParams({
                         tableName :tableName,
-                        startWidth : Ext.getCmp('startWidth').getValue(),
-                        endWidth : Ext.getCmp('endWidth').getValue(),
+                        startWidth:Ext.getCmp('startWidth').getValue(),
+                        endWidth:Ext.getCmp('endWidth').getValue(),
                         startLength:Ext.getCmp('startLength').getValue(),
                         endLength:Ext.getCmp('endLength').getValue(),
                         mType:Ext.getCmp('mType').getValue(),
-                        materialType:materialType    //旧板材库
+                        //materialType:materialType
 
                     });
                 }
@@ -225,6 +153,7 @@ Ext.define('material.material_Query_Data',{
                 editable:true
             },
             columns : [
+                { text: '材料名', dataIndex: 'materialName', flex :0.5 ,editor:{xtype : 'textfield', allowBlank : false}},
                 { text: '品号',  dataIndex: '品号' ,flex :0.4, editor:{xtype : 'textfield', allowBlank : false}},
                 { text: '长', dataIndex: '长', flex :2 ,editor:{xtype : 'textfield', allowBlank : false}},
                 { text: '类型', dataIndex: '类型',flex :1,editor:{xtype : 'textfield', allowBlank : false} },
@@ -249,22 +178,11 @@ Ext.define('material.material_Query_Data',{
                 emptyMsg:'无数据'
             }],
             listeners: {
-                // itemdblclick: function(me, record, item, index){
-                //     var select = record.data;
-                //     var id =select.id;
-                //     var tableName=select.tableName;
-                //     var url='showData.jsp?taxTableName='
-                //         + tableName
-                //         + "&taxTableId=" + id;
-                //     url=encodeURI(url)
-                //     window.open(url,
-                //         '_blank');
-                // }
                 validateedit : function(editor, e) {
                     var field=e.field
                     var id=e.record.data.id
                     Ext.Ajax.request({
-                        url:"EditDataById.do",
+                        url:"data/EditCellById.do",  //EditDataById.do
                         params:{
                             tableName:tableName,
                             field:field,
