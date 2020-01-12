@@ -22,7 +22,7 @@ public class Y_Upload_Data_Service extends BaseService {
      * 添加数据
      */
     @Transactional
-    public void oldpanel_Add_Data(String tableName,String oldpanelName,int length,String type,int width,
+    public void oldpanel_Add_Data(String tableName,String oldpanelName,String length,String type,String width,
                                 int number,String respo,String respoNum,String location,double weight,int userid){
         log.debug("yrd.service.Y_Upload_Data_Service.oldpanel_Add_Data");
 
