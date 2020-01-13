@@ -7,6 +7,7 @@ import domain.DataRow;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -94,6 +95,65 @@ public class ProjectController {
                 "{'success':true,'showmessage':'创建成功！'}");
         response.getWriter().flush();
         response.getWriter().close();
+    }
+
+    /**
+     * 下拉选择原材料类型
+     * @param response
+     * @throws IOException
+     */
+    @RequestMapping(value="/material/materialType.do")
+    public void findmaterialtype(HttpServletResponse response) throws IOException {
+        DataList projectList = insertProjectService.findmaterialtype();
+        //写回前端
+        JSONObject object = new JSONObject();
+        JSONArray array = new JSONArray(projectList);
+        object.put("typeList", array);
+       // System.out.println("类型1：--"+array.getClass().getName().toString());
+        response.getWriter().write(object.toString());
+        response.getWriter().flush();
+        response.getWriter().close();
+
+    }
+
+    /**
+     * 通过projectId查询对应的领料单
+     * @param projectid
+     * @param response
+     * @throws IOException
+     */
+    @RequestMapping("/material/materiallsitbyproject.do")
+    public void findmateriallistbyproject(String projectid,HttpServletResponse response) throws IOException {
+        DataList materialtList = insertProjectService.findmateriallist(projectid);
+        //写回前端
+        JSONObject object = new JSONObject();
+        JSONArray array = new JSONArray(materialtList);
+        object.put("materialList", array);
+       // System.out.println("类型1：--"+array.getClass().getName().toString());
+        response.getWriter().write(object.toString());
+        response.getWriter().flush();
+        response.getWriter().close();
+
+    }
+
+    /**
+     * 通过领料单中的materialname 返回有库存中有哪些，数量多少
+     * @param materialName
+     * @param response
+     * @throws IOException
+     */
+    @RequestMapping("/material/materiallsitbyname.do")
+    public void findmateriallistbybname(String materialName,HttpServletResponse response) throws IOException {
+        DataList materialtList = insertProjectService.findmateriallistbyname(materialName);
+        //写回前端
+        JSONObject object = new JSONObject();
+        JSONArray array = new JSONArray(materialtList);
+        object.put("materialstoreList", array);
+        // System.out.println("类型1：--"+array.getClass().getName().toString());
+        response.getWriter().write(object.toString());
+        response.getWriter().flush();
+        response.getWriter().close();
+
     }
 
 }

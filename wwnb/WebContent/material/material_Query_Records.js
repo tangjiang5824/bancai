@@ -210,7 +210,7 @@ Ext.define('material.material_Query_Records',{
                      var str = "<input type='button' value='查看' onclick='look()'>";
                      return str;
                     }
-                } 
+                }
             ],
 
             // plugins : [Ext.create('Ext.grid.plugin.CellEditing', {

@@ -39,19 +39,21 @@ Ext.define("menu.MenuRole_upload", {
 				text : '原材料管理',
 				expanded : true,
 				children : [ {
-					text : '原材料批量入库（Excel）',
-					id : 'material.material_Upload_Data',
-					leaf : true
-				} ,{
-					text : '原材料手动入库（下拉框）',
-					//id : 'material.material_Upload_Data',
-					leaf : true
-				} , {
 					text : '原材料领料（左右两个界面，可选出库数量）',
 					id : 'material.material_Receive',
 					leaf : true
 				} , {
-					text : '原材料库存查询（显示原材料表）',
+					text : '原材料入库',
+					id : 'material.material_Inbound',
+					leaf : true
+				} ,{
+					text : '原材料数据上传',
+					id : 'material.material_Upload_Data',
+					leaf : true
+				},
+					{
+					text : '原材料数据查询',
+
 					id : 'material.material_Query_Data',
 					leaf : true
 				}, {

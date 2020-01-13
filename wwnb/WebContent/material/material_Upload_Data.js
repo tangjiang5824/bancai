@@ -2,7 +2,7 @@ Ext.define('material.material_Upload_Data', {
     extend : 'Ext.panel.Panel',
     region : 'center',
     layout : "fit",
-    title : '原材料数据上传',
+    title : '原材料入库',
     //requires : [ 'component.TableList', "component.YearList" ],
     reloadPage : function() {
         var p = Ext.getCmp('functionPanel');
@@ -26,7 +26,7 @@ Ext.define('material.material_Upload_Data', {
                 xtype : 'button',
                 iconAlign : 'center',
                 iconCls : 'rukuicon ',
-                text : '添加表项',
+                text : '新增',
                 handler : function() {
                     //fields: ['品号', '品名','规格','库存单位','仓库编号','数量','成本','存放位置']
                     var data = [{
