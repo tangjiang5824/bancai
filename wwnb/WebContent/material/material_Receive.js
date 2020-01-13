@@ -2,41 +2,75 @@ Ext.define('material.material_Receive',{
     extend:'Ext.panel.Panel',
     region: 'center',
     layout:'fit',
-    title: '原材料数据查询',
+    title: '原材料领料',
 
     initComponent: function(){
         var itemsPerPage = 50;
         var tableName="material";
         //var materialType="1";
+        var tableListStore = Ext.create('Ext.data.Store',{
+            fields : [ 'projectName'],
+            proxy : {
+                type : 'ajax',
+                url : 'project/findProjectList.do',
+
+                reader : {
+                    type : 'json',
+                    rootProperty: 'projectList',
+                }
+            },
+            autoLoad : true
+        });
+        var tableList = Ext.create('Ext.form.ComboBox',{
+            fieldLabel : '项目名',
+            labelWidth : 45,
+            width : 400,
+            id :  'projectName',
+            name : 'projectName',
+            matchFieldWidth: false,
+            emptyText : "--请选择--",
+            displayField: 'projectName',
+            valueField: 'projectName',
+            editable : false,
+            store: tableListStore,
+            listeners:{
+                select: function(combo, record, index) {
+                    console.log(record[0].data.projectName);
+
+                }
+            }
+
+        });
+
         var toobar = Ext.create('Ext.toolbar.Toolbar',{
-            items: [
-                {
-                    xtype: 'textfield',
-                    margin : '0 10 0 0',
-                    fieldLabel: '项目名称',
-                    id :'projectName',
-                    width: 180,
-                    labelWidth: 70,
-                    name: 'projectName',
-                    value:"",
-                },
+            items: [tableList,
+                // {
+                //     xtype: 'textfield',
+                //     margin : '0 10 0 0',
+                //     fieldLabel: '项目名称',
+                //     id :'projectName',
+                //     width: 180,
+                //     labelWidth: 70,
+                //     name: 'projectName',
+                //     value:"",
+                // },
                 {
                     xtype : 'button',
-                    text: '查询领料单',
+                    text: '领料单查询',
                     width: 80,
-                    margin: '0 0 0 15',
+                    margin: '0 0 0 10',
                     layout: 'right',
                     handler: function(){
-                        uploadRecordsStore.load({
-                            params : {
-                                //proNum : Ext.getCmp('proNum').getValue(),
-                                //startWidth : Ext.getCmp('startWidth').getValue(),
-                                //endTWidth : Ext.getCmp('endWidth').getValue(),
-                                //startLength:Ext.getCmp('startLength').getValue(),
-                                //endLength:Ext.getCmp('endLength').getValue(),
-                                projectName:Ext.getCmp('projectName').getValue()
-                            }
-                        });
+                        var url='material/materiaPickingWin.jsp';
+                        url=encodeURI(url)
+                        //window.open(url,"_blank");
+                        window.open(url, 'mywindow1', 'width=500, height=400');
+
+                        // uploadRecordsStore.load({
+                        //     params : {
+                        //         projectName:Ext.getCmp('projectName').getValue()
+                        //     }
+                        // });
                     }
                 }]
         })
@@ -46,7 +80,7 @@ Ext.define('material.material_Receive',{
             fields: [],
             pageSize: itemsPerPage, // items per page
             proxy:{
-                url : "material/historyDataList.do",
+                //url : "material/historyDataList.do",
                 type: 'ajax',
                 reader:{
                     type : 'json',
@@ -62,11 +96,11 @@ Ext.define('material.material_Receive',{
                 beforeload : function(store, operation, eOpts) {
                     store.getProxy().setExtraParams({
                         tableName :tableName,
-                        startWidth:Ext.getCmp('startWidth').getValue(),
-                        endWidth:Ext.getCmp('endWidth').getValue(),
-                        startLength:Ext.getCmp('startLength').getValue(),
-                        endLength:Ext.getCmp('endLength').getValue(),
-                        mType:Ext.getCmp('mType').getValue(),
+                        // startWidth:Ext.getCmp('startWidth').getValue(),
+                        // endWidth:Ext.getCmp('endWidth').getValue(),
+                        // startLength:Ext.getCmp('startLength').getValue(),
+                        // endLength:Ext.getCmp('endLength').getValue(),
+                        // mType:Ext.getCmp('mType').getValue(),
                         //materialType:materialType
 
                     });

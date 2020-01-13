@@ -9,7 +9,7 @@ Ext.define('oldpanel.Old_Query_Data',{
         var toobar = Ext.create('Ext.toolbar.Toolbar',{
             items: [{
                 xtype: 'textfield',
-                fieldLabel: '长度下限：',
+                fieldLabel: '长度下限:',
                 // labelSeparator: '',
                 id :'startLength',
                 labelWidth: 60,
@@ -19,7 +19,7 @@ Ext.define('oldpanel.Old_Query_Data',{
                 value:"",
             },{
                 xtype: 'textfield',
-                fieldLabel: '长度上限：',
+                fieldLabel: '长度上限:',
                 // labelSeparator: '',
                 id :'endLength',
                 labelWidth: 60,
@@ -39,7 +39,7 @@ Ext.define('oldpanel.Old_Query_Data',{
                 value:"",
             },{
                 xtype: 'textfield',
-                fieldLabel: '宽度上限：',
+                fieldLabel: '宽度上限:',
                 // labelSeparator: '',
                 id :'endWidth',
                 labelWidth: 60,
@@ -49,7 +49,7 @@ Ext.define('oldpanel.Old_Query_Data',{
                 value:"",
             },{
                 xtype: 'textfield',
-                fieldLabel: '板材类型：',
+                fieldLabel: '板材类型:',
                 // labelSeparator: '',
                 id :'mType',
                 labelWidth: 60,

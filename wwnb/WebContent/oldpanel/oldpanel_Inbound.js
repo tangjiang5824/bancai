@@ -1,8 +1,8 @@
-Ext.define('material.material_Inbound', {
+Ext.define('oldpanel.oldpanel_Inbound', {
     extend : 'Ext.panel.Panel',
     region : 'center',
     layout : "fit",
-    title : '原材料入库',
+    title : '旧板入库',
     reloadPage : function() {
         var p = Ext.getCmp('functionPanel');
         p.removeAll();
@@ -56,7 +56,7 @@ Ext.define('material.material_Inbound', {
             autoLoad : true
         });
         var MaterialTypeList = Ext.create('Ext.form.ComboBox',{
-            fieldLabel : '原材料类型',
+            fieldLabel : '旧板类型',
             labelWidth : 70,
             width : 230,
             id :  'materialName',
@@ -188,7 +188,7 @@ Ext.define('material.material_Inbound', {
                 xtype : 'button',
                 iconAlign : 'center',
                 iconCls : 'rukuicon ',
-                text : '确认入库',
+                text : '创建',
                 region:'center',
                 bodyStyle: 'background:#fff;',
                 handler : function() {
