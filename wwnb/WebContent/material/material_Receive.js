@@ -9,7 +9,7 @@ Ext.define('material.material_Receive',{
         var tableName="material";
         //var materialType="1";
         var tableListStore = Ext.create('Ext.data.Store',{
-            fields : [ 'projectName','id'],
+            fields : [ "项目名称","id"],
             proxy : {
                 type : 'ajax',
                 url : 'project/findProjectList.do',
@@ -26,17 +26,16 @@ Ext.define('material.material_Receive',{
             labelWidth : 45,
             width : 400,
             id :  'projectName',
-            name : 'projectName',
+            name : '项目名称',
             matchFieldWidth: false,
             emptyText : "--请选择--",
-            displayField: 'projectName',
+            displayField: '项目名称',
             valueField: 'id',
             editable : false,
             store: tableListStore,
             listeners:{
                 select: function(combo, record, index) {
                     console.log(record[0].data.projectName);
-
                 }
             }
 
@@ -59,7 +58,7 @@ Ext.define('material.material_Receive',{
             data:sampleData
         });
         var MaterialList = Ext.create('Ext.data.Store',{
-            fields:['materialName','materialNum'],
+            fields:['材料名称','材料数量'],
             proxy : {
                 type : 'ajax',
                 url : 'material/materiallsitbyproject.do',
@@ -73,7 +72,7 @@ Ext.define('material.material_Receive',{
 
 
         var store2=Ext.create('Ext.data.Store',{
-            fields:['materialName','materialNum']
+            fields:['材料名称','材料数量']
         });
 
         var clms=[
@@ -82,12 +81,27 @@ Ext.define('material.material_Receive',{
             //     text:'项目名'
             // },
             {
-                dataIndex:'materialName',
-                text:'材料名'
+                dataIndex:'材料名称',
+                text:'材料名',
             },
             {
-                dataIndex:'materialNum',
-                text:'数量'
+                dataIndex:'材料数量',
+                text:'未领数量',
+                //editor:{xtype : 'textfield', allowBlank : false}
+            },
+            {
+                dataIndex:'材料数量',
+                text:'领取数量',
+                editor:{xtype : 'textfield', allowBlank : false}
+            }];
+        var clms1=[ {
+                dataIndex:'材料名称',
+                text:'材料名',
+            },
+            {
+                dataIndex:'材料数量',
+                text:'领取数量',
+                //editor:{xtype : 'textfield', allowBlank : false}
             }];
 
         var grid1=Ext.create('Ext.grid.Panel',{
@@ -95,14 +109,39 @@ Ext.define('material.material_Receive',{
             dock: 'bottom',
             columns:clms,
             flex:1,
-            selType:'checkboxmodel'
+            selType:'checkboxmodel',
+            plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
+                clicksToEdit : 2
+            })],
+            listeners: {
+                validateedit : function(editor, e) {
+                    var field=e.field
+                    var id=e.record.data.id
+                    // Ext.Ajax.request({
+                    //     url:"data/EditCellById.do",  //EditDataById.do
+                    //     params:{
+                    //         tableName:tableName,
+                    //         field:field,
+                    //         value:e.value,
+                    //         id:id
+                    //     },
+                    //     success:function (response) {
+                    //         //console.log(response.responseText);
+                    //     }
+                    // })
+                    // console.log("value is "+e.value);
+                    // console.log(e.record.data["id"]);
+
+                }
+            }
+
         });
 
         var grid2=Ext.create('Ext.grid.Panel',{
             id : 'pickingMaterialGrid',
             store:store2,
             dock: 'bottom',
-            columns:clms,
+            columns:clms1,
             flex:1,
             selType:'checkboxmodel'
         });
@@ -125,10 +164,12 @@ Ext.define('material.material_Receive',{
                         //window.open(url,"_blank");
                         //window.open(url, 'mywindow1', 'width=500, height=400');
                         //store1.loadData(action.result['value']);
+                        console.log('sss')
                         console.log(Ext.getCmp('projectName').getValue())
                         MaterialList.load({
                             params : {
                                 //proNum : Ext.getCmp('proNum').getValue(),
+                                //proejctId:Ext.getCmp('projectName').getValue(),
                                 proejctId:'1',
                             }
                         });

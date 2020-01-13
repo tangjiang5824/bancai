@@ -44,7 +44,7 @@ Ext.define('material.material_Inbound', {
 
 
         var MaterialNameList = Ext.create('Ext.data.Store',{
-            fields : [ 'projectName'],
+            fields : [ 'materialName'],
             proxy : {
                 type : 'ajax',
                 url : 'material/materialType.do',
@@ -63,8 +63,8 @@ Ext.define('material.material_Inbound', {
             name : 'materialName',
             matchFieldWidth: false,
             emptyText : "--请选择--",
-            displayField: 'materialName',
-            valueField: 'materialType',
+            displayField: '原材料名称',
+            valueField: '原材料类型',
             editable : false,
             store: MaterialNameList,
             listeners:{
