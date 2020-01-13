@@ -4,6 +4,7 @@ import commonMethod.AllExcelService;
 import commonMethod.QueryAllService;
 import controller.DataHistoryController;
 import db.mysqlcondition;
+import domain.DataRow;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -79,15 +80,16 @@ public class MaterialDataController {
      * */
 
     @RequestMapping(value = "/uploadMaterialExcel.do",produces = { "text/html;charset=UTF-8" })
-    public String uploadMaterial(MultipartFile uploadFile, String tableName, HttpSession session) {
+    public WebResponse uploadMaterial(MultipartFile uploadFile, String tableName, HttpSession session) {
         WebResponse response = new WebResponse();
         String userid = (String) session.getAttribute("userid");
+        JSONArray array = new JSONArray();
         try {
             //UploadDataResult result = excelService.uploadExcelData(uploadFile.getInputStream(),userid,tableName);
             UploadDataResult result = allExcelService.uploadExcelData(uploadFile.getInputStream(),userid,tableName);
-            response.setSuccess(result.success);
-            response.setErrorCode(result.errorCode);
-            response.setValue(result.data);
+            response.put("value",result.dataList);
+            response.put("totalCount", result.dataList.size());
+
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -95,8 +97,8 @@ public class MaterialDataController {
             response.setErrorCode(1000); //未知错误
             response.setMsg(e.getMessage());
         }
-        net.sf.json.JSONObject json= net.sf.json.JSONObject.fromObject(response);
-        return json.toString();
+
+        return response;
     }
 
     /*
