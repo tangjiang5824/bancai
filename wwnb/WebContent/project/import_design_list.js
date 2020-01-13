@@ -3,71 +3,71 @@ Ext.define('project.import_design_list', {
 	region : 'center',
 	layout : "fit",
 	title : '旧板材库数据上传',
-	requires : [ 'component.TableList', "component.YearList" ],
-	reloadPage : function() {
-		var p = Ext.getCmp('functionPanel');
-		p.removeAll();
-		cmp = Ext.create("data.UploadDataTest");
-		p.add(cmp);
-	},
-	clearGrid : function() {
-		var msgGrid = Ext.getCmp("msgGrid");
-		if (msgGrid != null || msgGrid != undefined)
-			this.remove(msgGrid);
-	},
-	showDataGrid : function(tableName, uploadId) {
-		var me = this;
-		var itemsPerPage = 50;
-		this.clearGrid();
-		Ext.Ajax.request({
-			url : "system/dataTable/getColumnsAndFields.do",
-			params : {
-				tableName : tableName
-			},
-			success : function(response) {
-				var obj = Ext.decode(response.responseText);
-				var store = Ext.create('Ext.data.Store', {
-					pageSize : itemsPerPage,
-					fields : obj.fields,
-					proxy : {
-						type : 'ajax',
-						url : 'dataListByUploadId.do',
-						extraParams : {
-							tableName : tableName,
-							id : uploadId
-						},
-						reader : {
-							type : 'json',
-							rootProperty : 'value',
-							totalProperty : 'totalCount'
-						}
-					},
-					autoLoad : true
-				});
-				var grid = Ext.create('Ext.grid.Panel', {
-					title : '最新上传数据',
-					autoScroll : true,
-					viewConfig : {
-						enableTextSelection : true
-					},
-					id : "msgGrid",
-					store : store,
-					columns : obj.columns,
-					dockedItems : [ {
-						xtype : 'pagingtoolbar',
-						store : store,
-						dock : 'bottom',
-						displayInfo : true,
-						displayMsg : '显示{0}-{1}条，共{2}条',
-						emptyMsg : '无数据',
-						beforePageText : '第',
-						afterPageText : '页，共{0}页'
-					} ]
-				});
-				me.add(grid);
-			}
-		});
-	},
+	//requires : [ 'component.TableList', "component.YearList" ],
+	// reloadPage : function() {
+	// 	var p = Ext.getCmp('functionPanel');
+	// 	p.removeAll();
+	// 	cmp = Ext.create("data.UploadDataTest");
+	// 	p.add(cmp);
+	// },
+	// clearGrid : function() {
+	// 	var msgGrid = Ext.getCmp("msgGrid");
+	// 	if (msgGrid != null || msgGrid != undefined)
+	// 		this.remove(msgGrid);
+	// },
+	// showDataGrid : function(tableName, uploadId) {
+	// 	var me = this;
+	// 	var itemsPerPage = 50;
+	// 	this.clearGrid();
+	// 	Ext.Ajax.request({
+	// 		url : "system/dataTable/getColumnsAndFields.do",
+	// 		params : {
+	// 			tableName : tableName
+	// 		},
+	// 		success : function(response) {
+	// 			var obj = Ext.decode(response.responseText);
+	// 			var store = Ext.create('Ext.data.Store', {
+	// 				pageSize : itemsPerPage,
+	// 				fields : obj.fields,
+	// 				proxy : {
+	// 					type : 'ajax',
+	// 					url : 'dataListByUploadId.do',
+	// 					extraParams : {
+	// 						tableName : tableName,
+	// 						id : uploadId
+	// 					},
+	// 					reader : {
+	// 						type : 'json',
+	// 						rootProperty : 'value',
+	// 						totalProperty : 'totalCount'
+	// 					}
+	// 				},
+	// 				autoLoad : true
+	// 			});
+	// 			var grid = Ext.create('Ext.grid.Panel', {
+	// 				title : '最新上传数据',
+	// 				autoScroll : true,
+	// 				viewConfig : {
+	// 					enableTextSelection : true
+	// 				},
+	// 				id : "msgGrid",
+	// 				store : store,
+	// 				columns : obj.columns,
+	// 				dockedItems : [ {
+	// 					xtype : 'pagingtoolbar',
+	// 					store : store,
+	// 					dock : 'bottom',
+	// 					displayInfo : true,
+	// 					displayMsg : '显示{0}-{1}条，共{2}条',
+	// 					emptyMsg : '无数据',
+	// 					beforePageText : '第',
+	// 					afterPageText : '页，共{0}页'
+	// 				} ]
+	// 			});
+	// 			me.add(grid);
+	// 		}
+	// 	});
+	// },
 	initComponent : function() {
 		var me = this;
 		//定义表名
@@ -447,15 +447,17 @@ Ext.define('project.import_design_list', {
 				,exceluploadform]
 		});
 
-		this.dockedItems = [ {
-	        xtype: 'toolbar',
-	        dock: 'top',
-	        items: [{
-	            text: '当前时间：'+Ext.Date.format(new Date(), 'Y-m-d H:i:s'),
-	            layout:'left'	        
-		     },
-		     ]
-		},toolbar2,grid];
+		this.dockedItems = [
+		// 	{
+	    //     xtype: 'toolbar',
+	    //     dock: 'top',
+	    //     items: [{
+	    //         text: '当前时间：'+Ext.Date.format(new Date(), 'Y-m-d H:i:s'),
+	    //         layout:'left'
+		//      },
+		//      ]
+		// },
+		toolbar2,grid];
 
 		this.callParent(arguments);
 
