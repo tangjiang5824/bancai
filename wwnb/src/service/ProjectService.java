@@ -192,7 +192,7 @@ public class ProjectService extends BaseService {
 
     @Transactional
     public DataList findProjectList(){
-        String sql = "select projectName from project";
+        String sql = "select * from project";
         DataList namelist = queryService.query(sql);
         return namelist;
 
