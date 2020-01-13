@@ -11,36 +11,88 @@ Ext.define("menu.MenuRole_upload", {
 				text : '旧板管理',
 				expanded : true,
 				children : [ {
-					text : '旧板数据上传',
+					text : '旧板批量入库（Excel）',
 					id : 'oldpanel.Old_Upload_Data',
 					leaf : true
 				} , {
-					text : '旧板数据查询',
+					text : '旧板手动入库（下拉框）',
+					//id : ,//'oldpanel.Old_Upload_Data',
+					leaf : true
+				} ,{
+					text : '旧板出库（左右两个界面，可选出库数量）',
+					//id : 'oldpanel.Old_Query_Data',
+					leaf : true
+				}, {
+					text : '旧板库存查询（显示旧板表）',
 					id : 'oldpanel.Old_Query_Data',
+					leaf : true
+				}, {
+					text : '旧板出入库记录查询（出入库日志）',
+					//id : 'oldpanel.Old_Query_Data',
+					leaf : true
+				}, {
+					text : '旧板出入库记录统计',
+					//id : 'oldpanel.Old_Query_Data',
 					leaf : true
 				}]
 			} ,{
 				text : '原材料管理',
 				expanded : true,
 				children : [ {
-					text : '原材料数据上传',
+					text : '原材料批量入库（Excel）',
 					id : 'material.material_Upload_Data',
 					leaf : true
+				} ,{
+					text : '原材料手动入库（下拉框）',
+					//id : 'material.material_Upload_Data',
+					leaf : true
 				} , {
-					text : '原材料数据查询',
+					text : '原材料领料（左右两个界面，可选出库数量）',
+					id : 'material.material_Receive',
+					leaf : true
+				} , {
+					text : '原材料库存查询（显示原材料表）',
 					id : 'material.material_Query_Data',
+					leaf : true
+				}, {
+					text : '原材料出入库记录查询（出入库日志）',
+					//id : 'oldpanel.Old_Query_Data',
+					leaf : true
+				}, {
+					text : '原材料出入库记录统计',
+					id : 'material.material_Query_Records',
+					leaf : true
+				}, {
+					text : '预警',
+					//id : 'oldpanel.Old_Query_Data',
+					leaf : true
+				}, {
+					text : '报警',
+					//id : 'oldpanel.Old_Query_Data',
 					leaf : true
 				}]
 			},{
 				text : '产品管理',
 				expanded : true,
 				children : [ {
-					text : '',
-					id : '',
+					text : '产品信息录入',
+					//id : 'material.material_Upload_Data',
 					leaf : true
 				} , {
+					text : '产品信息查询',
+					//id : 'material.material_Upload_Data',
+					leaf : true
+				} , {
+					text : '产品信息修改',
+					//id : 'oldpanel.Old_Query_Data',
+					leaf : true
+				}, {
+					text : '产品信息删除（待定）',
+					//id : 'oldpanel.Old_Query_Data',
+					leaf : true
+				}, {
 					text : '',
-					id : '',
+					//id : 'oldpanel.Old_Query_Data',
 					leaf : true
 				}]
 			},{
