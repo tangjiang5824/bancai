@@ -1,8 +1,8 @@
-Ext.define('material.material_Query_Data',{
+Ext.define('product.product_Query_Data',{
     extend:'Ext.panel.Panel',
     region: 'center',
     layout:'fit',
-    title: '原材料数据查询',
+    title: '产品信息查询',
     initComponent: function(){
         var itemsPerPage = 50;
         var tableName="material";
@@ -12,7 +12,7 @@ Ext.define('material.material_Query_Data',{
                 {
                     xtype: 'textfield',
                     margin : '0 10 0 0',
-                    fieldLabel: '原材料类型',
+                    fieldLabel: '产品名',
                     id :'mType',
                     width: 180,
                     labelWidth: 70,
@@ -107,8 +107,8 @@ Ext.define('material.material_Query_Data',{
                     }
                 }]
         })
-        var material_Query_Data_Store = Ext.create('Ext.data.Store',{
-            id: 'material_Query_Data_Store',
+        var product_Query_Data_Store = Ext.create('Ext.data.Store',{
+            id: 'product_Query_Data_Store',
             autoLoad: true,
             fields: [],
             pageSize: itemsPerPage, // items per page
@@ -146,8 +146,8 @@ Ext.define('material.material_Query_Data',{
 
 
         var grid = Ext.create('Ext.grid.Panel',{
-            id: 'material_Query_Data_Main',
-            store: material_Query_Data_Store,
+            id: 'product_Query_Data_Main',
+            store: product_Query_Data_Store,
             viewConfig : {
                 enableTextSelection : true,
                 editable:true
@@ -171,7 +171,7 @@ Ext.define('material.material_Query_Data',{
             tbar: toobar,
             dockedItems: [{
                 xtype: 'pagingtoolbar',
-                store: material_Query_Data_Store,   // same store GridPanel is using
+                store: product_Query_Data_Store,   // same store GridPanel is using
                 dock: 'bottom',
                 displayInfo: true,
                 displayMsg:'显示{0}-{1}条，共{2}条',

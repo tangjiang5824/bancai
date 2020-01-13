@@ -20,7 +20,7 @@ Ext.define("menu.MenuRole_upload", {
 					leaf : true
 				} ,{
 					text : '旧板出库（左右两个界面，可选出库数量）',
-					//id : 'oldpanel.Old_Query_Data',
+					id : '',
 					leaf : true
 				}, {
 					text : '旧板库存查询（显示旧板表）',
@@ -66,11 +66,11 @@ Ext.define("menu.MenuRole_upload", {
 					leaf : true
 				}, {
 					text : '原材料预警',
-					//id : 'oldpanel.Old_Query_Data',
+					id : 'material.material_Warning',
 					leaf : true
 				}, {
 					text : '原材料报警',
-					//id : 'oldpanel.Old_Query_Data',
+					id : 'material.material_Alarm',
 					leaf : true
 				}]
 			},{
@@ -78,25 +78,14 @@ Ext.define("menu.MenuRole_upload", {
 				expanded : true,
 				children : [ {
 					text : '产品信息录入',
-					//id : 'material.material_Upload_Data',
+					id : 'product.product_Inbound',
 					leaf : true
 				} , {
 					text : '产品信息查询',
-					//id : 'material.material_Upload_Data',
+					id : 'product.product_Query_Data',
 					leaf : true
-				} , {
-					text : '产品信息修改',
-					//id : 'oldpanel.Old_Query_Data',
-					leaf : true
-				}, {
-					text : '产品信息删除（待定）',
-					//id : 'oldpanel.Old_Query_Data',
-					leaf : true
-				}, {
-					text : '',
-					//id : 'oldpanel.Old_Query_Data',
-					leaf : true
-				}]
+				} ,
+				]
 			},{
 				text : '项目管理',
 				expanded : true,

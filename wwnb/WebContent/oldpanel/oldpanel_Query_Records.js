@@ -56,12 +56,12 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
                     margin: '0 0 0 15',
                     layout: 'right',
                     handler: function(){
-                        uploadRecordsStore.load({
+                        oldpanel_Query_Records_Store.load({
                             params : {
-                                userId : Ext.getCmp('userId').getValue(),
-                                endTime : Ext.getCmp('endTime').getValue(),
-                                startTime:Ext.getCmp('startTime').getValue(),
-                                projectName:Ext.getCmp('projectName').getValue(),
+                                // userId : Ext.getCmp('userId').getValue(),
+                                // endTime : Ext.getCmp('endTime').getValue(),
+                                // startTime:Ext.getCmp('startTime').getValue(),
+                                // projectName:Ext.getCmp('projectName').getValue(),
                             }
                         });
                     }
@@ -96,13 +96,13 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
                 // }
                 ]
         })
-        var uploadRecordsStore = Ext.create('Ext.data.Store',{
-            id: 'uploadRecordsStore',
+        var oldpanel_Query_Records_Store = Ext.create('Ext.data.Store',{
+            id: 'oldpanel_Query_Records_Store',
             autoLoad: true,
             fields: [],
             pageSize: itemsPerPage, // items per page
             proxy:{
-                url : "",//"material/historyDataList.do",
+                //url : "",//"material/historyDataList.do",
                 type: 'ajax',
                 reader:{
                     type : 'json',
@@ -117,12 +117,12 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
             listeners : {
                 beforeload : function(store, operation, eOpts) {
                     store.getProxy().setExtraParams({
-                        tableName :tableName,
-                        userId:Ext.getCmp('userId').getValue(),
-                        endTime:Ext.getCmp('endTime').getValue(),
-                        startTime:Ext.getCmp('startTime').getValue(),
-                        projectName:Ext.getCmp('projectName').getValue(),
-                        //materialType:materialType
+                        //tableName :tableName,
+                        // userId:Ext.getCmp('userId').getValue(),
+                        // endTime:Ext.getCmp('endTime').getValue(),
+                        // startTime:Ext.getCmp('startTime').getValue(),
+                        // projectName:Ext.getCmp('projectName').getValue(),
+                        // //materialType:materialType
 
                     });
                 }
@@ -134,8 +134,8 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
 
 
         var grid = Ext.create('Ext.grid.Panel',{
-            id: 'uploadRecordsMain',
-            store: uploadRecordsStore,
+            id: 'oldpanel_Query_Records_Main',
+            store: oldpanel_Query_Records_Store,
             viewConfig : {
                 enableTextSelection : true,
                 editable:true
@@ -159,7 +159,7 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
             tbar: toobar,
             dockedItems: [{
                 xtype: 'pagingtoolbar',
-                store: uploadRecordsStore,   // same store GridPanel is using
+                store: oldpanel_Query_Records_Store,   // same store GridPanel is using
                 dock: 'bottom',
                 displayInfo: true,
                 displayMsg:'显示{0}-{1}条，共{2}条',
@@ -170,12 +170,12 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
                     var field=e.field
                     var id=e.record.data.id
                     Ext.Ajax.request({
-                        url:"",//"data/EditCellById.do",  //EditDataById.do
+                        //url:"",//"data/EditCellById.do",  //EditDataById.do
                         params:{
-                            tableName:tableName,
-                            field:field,
-                            value:e.value,
-                            id:id
+                            // tableName:tableName,
+                            // field:field,
+                            // value:e.value,
+                            // id:id
                         },
                         success:function (response) {
                             //console.log(response.responseText);

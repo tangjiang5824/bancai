@@ -56,7 +56,7 @@ Ext.define('material.material_Query_Records',{
                     margin: '0 0 0 15',
                     layout: 'right',
                     handler: function(){
-                        uploadRecordsStore.load({
+                        material_Query_Records_Store.load({
                             params : {
                                 userId : Ext.getCmp('userId').getValue(),
                                 endTime : Ext.getCmp('endTime').getValue(),
@@ -96,8 +96,8 @@ Ext.define('material.material_Query_Records',{
                 // }
                 ]
         })
-        var uploadRecordsStore = Ext.create('Ext.data.Store',{
-            id: 'uploadRecordsStore',
+        var material_Query_Records_Store = Ext.create('Ext.data.Store',{
+            id: 'material_Query_Records_Store',
             autoLoad: true,
             fields: [],
             pageSize: itemsPerPage, // items per page
@@ -134,8 +134,8 @@ Ext.define('material.material_Query_Records',{
 
 
         var grid = Ext.create('Ext.grid.Panel',{
-            id: 'uploadRecordsMain',
-            store: uploadRecordsStore,
+            id: 'material_Query_Records_Main',
+            store: material_Query_Records_Store,
             viewConfig : {
                 enableTextSelection : true,
                 editable:true
@@ -159,7 +159,7 @@ Ext.define('material.material_Query_Records',{
             tbar: toobar,
             dockedItems: [{
                 xtype: 'pagingtoolbar',
-                store: uploadRecordsStore,   // same store GridPanel is using
+                store: material_Query_Records_Store,   // same store GridPanel is using
                 dock: 'bottom',
                 displayInfo: true,
                 displayMsg:'显示{0}-{1}条，共{2}条',

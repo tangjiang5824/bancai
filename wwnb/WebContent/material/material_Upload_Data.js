@@ -464,13 +464,6 @@ Ext.define('material.material_Upload_Data', {
             dock : "top",
             id : "toolbar2",
             items : [
-                {
-                xtype : 'checkboxfield',
-                boxLabel : '校验数据',
-                name : 'check',
-                checked   : true,
-                id : 'check'
-               },
                 form
             ]
         });
