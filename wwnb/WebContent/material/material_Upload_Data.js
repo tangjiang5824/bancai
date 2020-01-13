@@ -1,5 +1,6 @@
 Ext.define('material.material_Upload_Data', {
     extend : 'Ext.panel.Panel',
+    id:'material_Upload_Data',
     region : 'center',
     layout : "fit",
     title : '原材料入库',
@@ -110,24 +111,12 @@ Ext.define('material.material_Upload_Data', {
 //             }]
 //         });
 
-        var uploadMaterialRecordsStore = Ext.create('Ext.data.Store',{
-            id: 'uploadMaterialRecordsStore',
+        var MaterialStore = Ext.create('Ext.data.Store',{
+            id: 'MaterialStore',
             autoLoad: true,
             fields: [],
             pageSize: itemsPerPage, // items per page
-            proxy:{
-                //url : "material/historyDataList.do",//material/materialUploadDataList.do
-                type: 'ajax',
-                reader:{
-                    type : 'json',
-                    rootProperty: 'value',
-                    totalProperty: 'totalCount'
-                },
-                params:{
-                    start: 0,
-                    limit: itemsPerPage
-                }
-            },
+            data:[],
             listeners : {
                 beforeload : function(store, operation, eOpts) {
                     store.getProxy().setExtraParams({
@@ -145,7 +134,7 @@ Ext.define('material.material_Upload_Data', {
 
         var grid = Ext.create('Ext.grid.Panel',{
             id: 'uploadRecordsMain',
-            store: uploadMaterialRecordsStore,
+            store: MaterialStore,
             viewConfig : {
                 enableTextSelection : true,
                 editable:true
@@ -166,14 +155,14 @@ Ext.define('material.material_Upload_Data', {
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 3
             })],
-            dockedItems: [{
-                xtype: 'pagingtoolbar',
-                store: uploadMaterialRecordsStore,   // same store GridPanel is using
-                dock: 'bottom',
-                displayInfo: true,
-                displayMsg:'显示{0}-{1}条，共{2}条',
-                emptyMsg:'无数据'
-            }],
+            // dockedItems: [{
+            //     xtype: 'pagingtoolbar',
+            //     store: MaterialStore,   // same store GridPanel is using    uploadMaterialRecordsStore
+            //     dock: 'bottom',
+            //     displayInfo: true,
+            //     displayMsg:'显示{0}-{1}条，共{2}条',
+            //     emptyMsg:'无数据'
+            // }],
             listeners: {
                 validateedit : function(editor, e) {
                     var field=e.field
@@ -347,7 +336,7 @@ Ext.define('material.material_Upload_Data', {
                                         var check=Ext.getCmp("check").getValue();
 
                                         form.submit({
-                                            url : 'uploadMaterialExcel.do',
+                                            url : 'uploadMaterialExcel.do', //上传excel文件，并回显数据
                                             waitMsg : '正在上传...',
                                             params : {
                                                 tableName:tableName,
@@ -355,12 +344,14 @@ Ext.define('material.material_Upload_Data', {
                                                 //check:check
                                             },
                                             success : function(form, action) {
+                                                //上传成功
                                                 var response = action.result;
+                                                //回显
+
+                                                console.log(action.result['value']);
                                                 Ext.MessageBox.alert("提示", "上传成功!");
-//                                              //上传成功后将数据回显在页面中
-
-
-
+                                                //重新加载数据
+                                                MaterialStore.loadData(action.result['value']);
 
                                             },
                                             failure : function(form, action) {
@@ -438,6 +429,7 @@ Ext.define('material.material_Upload_Data', {
             ]
         });
 
+
         var tableNameList =  Ext.create('Ext.data.Store', {
             fields: ['tableName'],
             data : [
@@ -493,7 +485,16 @@ Ext.define('material.material_Upload_Data', {
             ]
         });
 
-        this.dockedItems = [toolbar1,toolbar,grid];
+        this.dockedItems = [toolbar1,toolbar,grid,
+            {
+                xtype: 'pagingtoolbar',
+                store: MaterialStore,   // same store GridPanel is using    uploadMaterialRecordsStore
+                dock: 'bottom',
+                displayInfo: true,
+                displayMsg:'显示{0}-{1}条，共{2}条',
+                emptyMsg:'无数据'
+            }
+        ];
         //this.items = [ me.grid ];
         this.callParent(arguments);
 
