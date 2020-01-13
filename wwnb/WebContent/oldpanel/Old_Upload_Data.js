@@ -337,15 +337,7 @@ Ext.define('oldpanel.Old_Upload_Data', {
             items : [form]
         });
 
-        this.dockedItems = [ {
-            xtype: 'toolbar',
-            dock: 'top',
-            items: [{
-                text: '当前时间：'+Ext.Date.format(new Date(), 'Y-m-d H:i:s'),
-                layout:'left'
-            },
-            ]
-        },toolbar2,grid];
+        this.dockedItems = [ toolbar2,grid];
         //this.items = [ me.grid ];
         this.callParent(arguments);
 

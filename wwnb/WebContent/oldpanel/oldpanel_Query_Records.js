@@ -1,8 +1,8 @@
-Ext.define('material.material_Query_Records',{
+Ext.define('oldpanel.oldpanel_Query_Records',{
     extend:'Ext.panel.Panel',
     region: 'center',
     layout:'fit',
-    title: '原材料出入库记录查询',
+    title: '旧板出入库记录查询',
     initComponent: function(){
         var itemsPerPage = 50;
         var tableName="material";

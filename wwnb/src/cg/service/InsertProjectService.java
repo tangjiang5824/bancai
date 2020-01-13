@@ -61,7 +61,7 @@ public class InsertProjectService extends BaseService {
      */
     @Transactional
     public DataList findmateriallist(String projectId){
-        String sql = "select materialName,materialNum from projectmateriallist where projectId=?";
+        String sql = "select 材料名称,材料数量 from projectmateriallist where 项目编号=?";
         DataList materiallist = queryService.query(sql,projectId);
         return materiallist;
     }

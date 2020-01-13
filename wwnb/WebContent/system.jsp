@@ -99,7 +99,7 @@
 		}).show();
 	});
 </script>
-<title>万州区税收征管保障信息系统</title>
+<title>新久融板材信息系统</title>
 </head>
 <body>
 

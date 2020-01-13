@@ -9,7 +9,7 @@
 <!--[if IE 9 ]>    <html lang="zh" class="ie9">    <![endif]-->
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>万州区税收征管保障信息系统</title>
+<title>新久融板材信息系统</title>
 <link rel="stylesheet" type="text/css"
     href="extjs/packages/ext-theme-classic/build/resources/ext-theme-classic-all.css">
 <script src="extjs/ext-all.js"></script>
