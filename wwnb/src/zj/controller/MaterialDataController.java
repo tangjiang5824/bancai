@@ -52,11 +52,11 @@ public class MaterialDataController {
             System.out.println(jsonTemp);
             int proNum=Integer.parseInt(jsonTemp.get("品号").toString());
             String materialName=(String) jsonTemp.get("材料名");
-            String Length=(String) jsonTemp.get("长");
-            String Type=(String) jsonTemp.get("类型");
-            String Width=(String) jsonTemp.get("宽");
-            String scale=(String) jsonTemp.get("规格");
-            String respo=(String) jsonTemp.get("库存单位");
+            String Length=jsonTemp.get("长")+"";
+            String Type=jsonTemp.get("类型")+"";
+            String Width=jsonTemp.get("宽")+"";
+            String scale=jsonTemp.get("规格")+"";
+            String respo=jsonTemp.get("库存单位")+"";
             String respoNum=(String) jsonTemp.get("仓库编号");
             int count=Integer.parseInt(jsonTemp.get("数量").toString());
             double cost= Double.parseDouble(jsonTemp.get("成本").toString());
@@ -76,9 +76,9 @@ public class MaterialDataController {
         return true;
     }
     /*
-     * 上传excel文件
+     * 上传excel文件,produces = { "text/html;charset=UTF-8" }
      * */
-    @RequestMapping(value = "/uploadMaterialExcel.do",produces = { "text/html;charset=UTF-8" })
+    @RequestMapping(value = "/uploadMaterialExcel.do")
     public WebResponse uploadMaterial(MultipartFile uploadFile, String tableName, HttpSession session) {
         WebResponse response = new WebResponse();
         String userid = (String) session.getAttribute("userid");
@@ -96,6 +96,10 @@ public class MaterialDataController {
             response.setErrorCode(1000); //未知错误
             response.setMsg(e.getMessage());
         }
+        System.out.println("????????????????????????????????????????????????????????");
+
+        System.out.println(response.get("success"));
+        System.out.println(response.get("value"));
 
         return response;
     }

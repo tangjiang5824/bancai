@@ -118,13 +118,13 @@ public class ProjectController {
 
     /**
      * 通过projectId查询对应的领料单
-     * @param projectid
+     * @param proejctId
      * @param response
      * @throws IOException
      */
     @RequestMapping("/material/materiallsitbyproject.do")
-    public void findmateriallistbyproject(String projectid,HttpServletResponse response) throws IOException {
-        DataList materialtList = insertProjectService.findmateriallist(projectid);
+    public void findmateriallistbyproject(String proejctId,HttpServletResponse response) throws IOException {
+        DataList materialtList = insertProjectService.findmateriallist(proejctId);
         //写回前端
         JSONObject object = new JSONObject();
         JSONArray array = new JSONArray(materialtList);

@@ -50,7 +50,7 @@ Ext.define('material.material_Inbound', {
                 url : 'material/materialType.do',
                 reader : {
                     type : 'json',
-                    rootProperty: 'typetList',
+                    rootProperty: 'typeList',
                 }
             },
             autoLoad : true
@@ -159,6 +159,11 @@ Ext.define('material.material_Inbound', {
                             '数量' : number,
                             '成本' : cost,
                             '存放位置' : location,
+                            '品号' : '',
+                            '库存单位' : '',
+                            '仓库编号' : '',
+                            '规格' : '',
+                            '材料名' : '',
                         }];
                         //点击查询获得输入的数据
 
@@ -198,10 +203,13 @@ Ext.define('material.material_Inbound', {
                         .getData();
                     var s = new Array();
                     select.each(function(rec) {
-                        //delete rec.data.id;
                         s.push(JSON.stringify(rec.data));
+                        // s.push('品号','');
                         //alert(JSON.stringify(rec.data));//获得表格中的数据
+                        //s.push();
                     });
+
+                    console.log(s);
 
                     //获取数据
                     //获得当前操作时间
@@ -235,29 +243,29 @@ Ext.define('material.material_Inbound', {
             id : 'addDataGrid',
             //dockedItems : [toolbar2],
             store : {
-                // fields: ['材料名','品号', '长',"；类型","宽",'规格','库存单位','仓库编号','数量','成本','存放位置']
-                fields: ['长',"类型","宽",'数量','成本','存放位置']
+                 fields: ['材料名','品号', '长',"；类型","宽",'规格','库存单位','仓库编号','数量','成本','存放位置']
+                //fields: ['长',"类型","宽",'数量','成本','存放位置','品号','规格','库存单位','仓库编号']
             },
 
             columns : [
-            //     {
-            //     dataIndex: '材料名',
-            //     text: '材料名',
-            //     //width : 110,
-            //     editor: {// 文本字段
-            //         xtype: 'textfield',
-            //         allowBlank: false,
-            //     }
-            // },{
-            //     dataIndex : '品号',
-            //     name : '品号',
-            //     text : '品号',
-            //     //width : 110,
-            //     editor : {// 文本字段
-            //         xtype : 'textfield',
-            //         allowBlank : false
-            //     }
-            // },
+                {
+                dataIndex: '材料名',
+                text: '材料名',
+                //width : 110,
+                editor: {// 文本字段
+                    xtype: 'textfield',
+                    allowBlank: false,
+                }
+            },{
+                dataIndex : '品号',
+                name : '品号',
+                text : '品号',
+                //width : 110,
+                editor : {// 文本字段
+                    xtype : 'textfield',
+                    allowBlank : false
+                }
+            },
                 {
                 dataIndex : '长',
                 text : '长',
@@ -289,36 +297,36 @@ Ext.define('material.material_Inbound', {
                 }
 
             },
-            //     {
-            //     dataIndex : '规格',
-            //     text : '规格',
-            //     //width : 192,
-            //     editor : {
-            //         xtype : 'textfield',
-            //         allowBlank : false
-            //     }
-            // }, {
-            //     dataIndex : '库存单位',
-            //     text : '库存单位',
-            //     //width : 110,
-            //     editor : {// 文本字段
-            //         id : 'isNullCmb',
-            //         xtype : 'textfield',
-            //         allowBlank : false
-            //
-            //     }
-            //
-            // }, {
-            //     dataIndex : '仓库编号',
-            //     name : '仓库编号',
-            //     text : '仓库编号',
-            //     //width : 130,
-            //
-            //     editor : {// 文本字段
-            //         xtype : 'textfield',
-            //         allowBlank : false
-            //     }
-            // },
+                {
+                dataIndex : '规格',
+                text : '规格',
+                //width : 192,
+                editor : {
+                    xtype : 'textfield',
+                    allowBlank : false
+                }
+            }, {
+                dataIndex : '库存单位',
+                text : '库存单位',
+                //width : 110,
+                editor : {// 文本字段
+                    id : 'isNullCmb',
+                    xtype : 'textfield',
+                    allowBlank : false
+
+                }
+
+            }, {
+                dataIndex : '仓库编号',
+                name : '仓库编号',
+                text : '仓库编号',
+                //width : 130,
+
+                editor : {// 文本字段
+                    xtype : 'textfield',
+                    allowBlank : false
+                }
+            },
                 {
                 dataIndex : '数量',
                 name : '数量',
