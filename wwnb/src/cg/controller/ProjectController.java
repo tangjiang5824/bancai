@@ -108,21 +108,48 @@ public class ProjectController {
         //写回前端
         JSONObject object = new JSONObject();
         JSONArray array = new JSONArray(projectList);
-        object.put("typetList", array);
-        System.out.println("类型1：--"+array.getClass().getName().toString());
+        object.put("typeList", array);
+       // System.out.println("类型1：--"+array.getClass().getName().toString());
         response.getWriter().write(object.toString());
         response.getWriter().flush();
         response.getWriter().close();
 
     }
 
+    /**
+     * 通过projectId查询对应的领料单
+     * @param projectid
+     * @param response
+     * @throws IOException
+     */
+    @RequestMapping("/material/materiallsitbyproject.do")
     public void findmateriallistbyproject(String projectid,HttpServletResponse response) throws IOException {
-        DataList projectList = insertProjectService.findmateriallist(projectid);
+        DataList materialtList = insertProjectService.findmateriallist(projectid);
         //写回前端
         JSONObject object = new JSONObject();
-        JSONArray array = new JSONArray(projectList);
-        object.put("typetList", array);
-        System.out.println("类型1：--"+array.getClass().getName().toString());
+        JSONArray array = new JSONArray(materialtList);
+        object.put("materialList", array);
+       // System.out.println("类型1：--"+array.getClass().getName().toString());
+        response.getWriter().write(object.toString());
+        response.getWriter().flush();
+        response.getWriter().close();
+
+    }
+
+    /**
+     * 通过领料单中的materialname 返回有库存中有哪些，数量多少
+     * @param materialName
+     * @param response
+     * @throws IOException
+     */
+    @RequestMapping("/material/materiallsitbyname.do")
+    public void findmateriallistbybname(String materialName,HttpServletResponse response) throws IOException {
+        DataList materialtList = insertProjectService.findmateriallistbyname(materialName);
+        //写回前端
+        JSONObject object = new JSONObject();
+        JSONArray array = new JSONArray(materialtList);
+        object.put("materialstoreList", array);
+        // System.out.println("类型1：--"+array.getClass().getName().toString());
         response.getWriter().write(object.toString());
         response.getWriter().flush();
         response.getWriter().close();
