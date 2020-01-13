@@ -188,7 +188,7 @@ Ext.define('material.material_Inbound', {
                 xtype : 'button',
                 iconAlign : 'center',
                 iconCls : 'rukuicon ',
-                text : '创建',
+                text : '确认入库',
                 region:'center',
                 bodyStyle: 'background:#fff;',
                 handler : function() {

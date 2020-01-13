@@ -155,5 +155,23 @@ public class ProjectController {
         response.getWriter().close();
 
     }
+    @Test
+    public void test(){
+        DataRow dr=new DataRow();
+        dr.put("姓名","陈钢");
+        dr.put("年龄","25");
+        DataRow dr1=new DataRow();
+        dr1.put("姓名","陈钢1");
+        dr1.put("年龄","251");
+        DataList dl=new DataList();
+        dl.add(dr);
+        dl.add(dr1);
+        JSONArray array = new JSONArray();
+        for (DataRow dataRow : dl) {
+          array.put(dataRow);
+        }
+        System.out.println(array);
+
+    }
 
 }
