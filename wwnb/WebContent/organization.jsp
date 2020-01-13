@@ -87,7 +87,7 @@
 		Ext.tip.QuickTipManager.init();
 		//Ext.form.Field.prototype.msgTarget="side";
 		 Ext.create('Ext.window.Window',{
-		 	title: '万州区税收征管保障信息系统',
+		 	title: '新久融板材信息系统',
 		 	layout: 'anchor',
 		    defaults: {
 		        anchor: '100%'
@@ -98,7 +98,7 @@
 		}).show();
 	});
 </script>
-<title>万州区税收征管保障信息系统</title>
+<title>新久融板材信息系统</title>
 </head>
 <body>
 

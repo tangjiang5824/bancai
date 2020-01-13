@@ -1,8 +1,8 @@
-Ext.define('material.material_Query_Records',{
+Ext.define('material.material_Statistics_Records',{
     extend:'Ext.panel.Panel',
     region: 'center',
     layout:'fit',
-    title: '原材料出入库记录查询',
+    title: '原材料出入库记录统计',
     initComponent: function(){
         var itemsPerPage = 50;
         var tableName="material";
@@ -32,7 +32,7 @@ Ext.define('material.material_Query_Records',{
                 {
                     xtype: 'textfield',
                     margin : '0 10 0 0',
-                    fieldLabel: '上传时间下限',
+                    fieldLabel: '开始时间',
                     id :'startTime',
                     width: 180,
                     labelWidth: 80,
@@ -42,7 +42,7 @@ Ext.define('material.material_Query_Records',{
                 {
                     xtype: 'textfield',
                     margin : '0 10 0 0',
-                    fieldLabel: '上传时间上限',
+                    fieldLabel: '结束时间',
                     id :'endTime',
                     width: 180,
                     labelWidth: 80,
@@ -94,7 +94,7 @@ Ext.define('material.material_Query_Records',{
                 //         }
                 //     }
                 // }
-                ]
+            ]
         })
         var uploadRecordsStore = Ext.create('Ext.data.Store',{
             id: 'uploadRecordsStore',
