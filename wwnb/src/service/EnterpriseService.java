@@ -9,12 +9,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import db.DB;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import db.Condition;
-import db.DB;
 import vo.WebResponse;
 
 
@@ -59,7 +59,7 @@ public class EnterpriseService extends BaseService{
 		}
 		Connection conn=null;
 		try {
-			conn=DB.getConnection();
+			conn= DB.getConnection();
 			PreparedStatement st=conn.prepareStatement("select a.tableName as tableName, a.text as text from dataTableDefinition as a,dataTable as b where a.tableName=b.tableName and b.type=? and a.taxUnitCode=1");
 			st.setInt(1, type);
 			st.execute();

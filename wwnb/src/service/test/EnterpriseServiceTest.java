@@ -1,7 +1,5 @@
 package service.test;
 
-import static org.junit.Assert.*;
-
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +17,7 @@ import config.DataSourceConfig;
 import config.ServiceConfig;
 import config.TransactionConfig;
 import service.EnterpriseService;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { DataSourceConfig.class,  TransactionConfig.class,
 		ServiceConfig.class })
