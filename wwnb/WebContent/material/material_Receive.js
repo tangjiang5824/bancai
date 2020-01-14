@@ -8,6 +8,8 @@ Ext.define('material.material_Receive',{
         var itemsPerPage = 50;
         var tableName="material";
         //var materialType="1";
+
+        //项目名称选择
         var tableListStore = Ext.create('Ext.data.Store',{
             fields : [ "项目名称","id"],
             proxy : {
@@ -41,7 +43,7 @@ Ext.define('material.material_Receive',{
 
         });
 
-
+        //查询的数据存放位置
         var MaterialList = Ext.create('Ext.data.Store',{
             fields:['材料名称','材料数量','已领数量','要领数量'],
             proxy : {
@@ -54,7 +56,6 @@ Ext.define('material.material_Receive',{
             },
             autoLoad : false
         });
-
 
         var MaterialList2=Ext.create('Ext.data.Store',{
             fields:['材料名称','材料数量','已领数量','要领数量']

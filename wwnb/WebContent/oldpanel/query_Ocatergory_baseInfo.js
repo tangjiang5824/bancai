@@ -9,51 +9,11 @@ Ext.define('oldpanel.query_Ocatergory_baseInfo',{
         var toobar = Ext.create('Ext.toolbar.Toolbar',{
             items: [{
                 xtype: 'textfield',
-                fieldLabel: '长度下限:',
+                fieldLabel: '旧版类型:',
                 // labelSeparator: '',
-                id :'startLength',
-                labelWidth: 60,
-                width: 180,
-                margin : '0 10 0 0',
-                name: 'startLength',
-                value:"",
-            },{
-                xtype: 'textfield',
-                fieldLabel: '长度上限:',
-                // labelSeparator: '',
-                id :'endLength',
-                labelWidth: 60,
-                width: 180,
-                margin : '0 10 0 0',
-                name: 'endLength',
-                value:"",
-            },{
-                xtype: 'textfield',
-                fieldLabel: '宽度下限:',
-                // labelSeparator: '',
-                id :'startWidth',
-                labelWidth: 60,
-                width: 180,
-                margin : '0 10 0 0',
-                name: 'startWidth',
-                value:"",
-            },{
-                xtype: 'textfield',
-                fieldLabel: '宽度上限:',
-                // labelSeparator: '',
-                id :'endWidth',
-                labelWidth: 60,
-                width: 180,
-                margin : '0 10 0 0',
-                name: 'endWidth',
-                value:"",
-            },{
-                xtype: 'textfield',
-                fieldLabel: '板材类型:',
-                // labelSeparator: '',
-                id :'mType',
-                labelWidth: 60,
-                width: 180,
+                id :'oldpanelCatergory',
+                labelWidth: 80,
+                width: 300,
                 margin : '0 10 0 0',
                 name: 'mType',
                 value:"",
@@ -66,56 +26,51 @@ Ext.define('oldpanel.query_Ocatergory_baseInfo',{
                 handler: function(){
                     uploadRecordsStore.load({
                         params : {
-                            startWidth : Ext.getCmp('startWidth').getValue(),
-                            endTWidth : Ext.getCmp('endWidth').getValue(),
-                            startLength:Ext.getCmp('startLength').getValue(),
-                            endLength:Ext.getCmp('endLength').getValue(),
-                            mType:Ext.getCmp('mType').getValue(),
+                            oldpanelCatergory:Ext.getCmp('oldpanelCatergory').getValue(),
                             tableName:tableName,
-
                         }
                     });
                 }
             },
-            //     {
-            //     xtype : 'button',
-            //     text: '修改',
-            //     width: 80,
-            //     margin: '0 0 0 15',
-            //     layout: 'right',
-            //     handler: function(){
-            //         //保存修改
-            //         var select = Ext.getCmp('uploadRecordsMain').getStore().getData();
-            //         var s = new Array();
-            //         select.each(function(rec) {
-            //             //delete rec.data.id;
-            //             s.push(JSON.stringify(rec.data));
-            //             //alert(JSON.stringify(rec.data));//获得表格中的数据
-            //         });
-            //         Ext.Ajax.request({
-            //             url : 'old/editData.do',
-            //             method:'POST',
-            //             //submitEmptyText : false,
-            //             params : {
-            //                 s : "[" + s + "]",
-            //             },
-            //             success : function(response) {
-            //                 Ext.MessageBox.alert("提示", "修改成功！");
-            //                 uploadRecordsStore.load({
-            //                     params : {
-            //                     }
-            //                 });
-            //                 me.close();
-            //
-            //             },
-            //             failure : function(response) {
-            //                 Ext.MessageBox.alert("提示", "修改失败！");
-            //             }
-            //         });
-            //
-            //
-            //     }
-            // },
+                //     {
+                //     xtype : 'button',
+                //     text: '修改',
+                //     width: 80,
+                //     margin: '0 0 0 15',
+                //     layout: 'right',
+                //     handler: function(){
+                //         //保存修改
+                //         var select = Ext.getCmp('uploadRecordsMain').getStore().getData();
+                //         var s = new Array();
+                //         select.each(function(rec) {
+                //             //delete rec.data.id;
+                //             s.push(JSON.stringify(rec.data));
+                //             //alert(JSON.stringify(rec.data));//获得表格中的数据
+                //         });
+                //         Ext.Ajax.request({
+                //             url : 'old/editData.do',
+                //             method:'POST',
+                //             //submitEmptyText : false,
+                //             params : {
+                //                 s : "[" + s + "]",
+                //             },
+                //             success : function(response) {
+                //                 Ext.MessageBox.alert("提示", "修改成功！");
+                //                 uploadRecordsStore.load({
+                //                     params : {
+                //                     }
+                //                 });
+                //                 me.close();
+                //
+                //             },
+                //             failure : function(response) {
+                //                 Ext.MessageBox.alert("提示", "修改失败！");
+                //             }
+                //         });
+                //
+                //
+                //     }
+                // },
                 {
                     xtype : 'button',
                     text: '删除选中行',
@@ -131,7 +86,7 @@ Ext.define('oldpanel.query_Ocatergory_baseInfo',{
                         }
                         else{
                             Ext.Ajax.request({
-                                url:"data/deleteItemById.do",
+                                url:"????",
                                 params:{
                                     tableName:tableName,
                                     id:select[0].data.id
@@ -160,7 +115,7 @@ Ext.define('oldpanel.query_Ocatergory_baseInfo',{
             pageSize: itemsPerPage, // items per page
             proxy:{
                 //url:"hisExcelList.do",
-                url : "oldpanel/updateData.do",
+                url : "？？？？",
                 type: 'ajax',
                 method:'POST',
                 reader:{
@@ -176,39 +131,26 @@ Ext.define('oldpanel.query_Ocatergory_baseInfo',{
             listeners : {
                 beforeload : function(store, operation, eOpts) {
                     store.getProxy().setExtraParams({
-                        startWidth : Ext.getCmp('startWidth').getValue(),
-                        endWidth : Ext.getCmp('endWidth').getValue(),
-                        startLength:Ext.getCmp('startLength').getValue(),
-                        endLength:Ext.getCmp('endLength').getValue(),
-                        mType:Ext.getCmp('mType').getValue(),
+                        oldpanelCatergory:Ext.getCmp('oldpanelCatergory').getValue(),
                         tableName:tableName,
-
                     });
                 }
-
             }
 
         });
 
         var grid = Ext.create('Ext.grid.Panel',{
             id: 'uploadRecordsMain',
+            height:400,
+            width:600,
             store: uploadRecordsStore,
             viewConfig : {
                 enableTextSelection : true
             },
             columns : [
-                { text: '旧板名称',  dataIndex: 'oldpanelName' ,flex :1, editor : {xtype : 'textfield', allowBlank : false}},
-                { text: '长', dataIndex: '长', flex :1, editor : {xtype : 'textfield', allowBlank : false}},
+                { text: '旧版名称',  dataIndex: '旧版名称' ,flex :1, editor : {xtype : 'textfield', allowBlank : false}},
                 { text: '类型',  dataIndex: '类型' ,flex :1,editor : {xtype : 'textfield', allowBlank : false}},
-                { text: '宽', dataIndex: '宽', flex :1,editor : {xtype : 'textfield', allowBlank : false}},
-                { text: '重量', dataIndex: '重量',flex :1 ,editor : {xtype : 'textfield', allowBlank : false}},
-                { text: '库存单位', dataIndex: '库存单位', flex :1 ,editor : {xtype : 'textfield', allowBlank : false}},
-                { text: '库存数量', dataIndex: '库存数量', flex :1,editor : {xtype : 'textfield', allowBlank : false}},
-                { text: '可用数量', dataIndex: '可用数量',flex :1 ,editor : {xtype : 'textfield', allowBlank : false}},
-                { text: '仓库编号', dataIndex:'仓库编号',flex :1 ,editor : {xtype : 'textfield', allowBlank : false}},
-                { text: '存放位置', dataIndex: '存放位置',flex :1 ,editor : {xtype : 'textfield', allowBlank : false}},
-                { text: '上传者ID', dataIndex: 'uploadId',flex :1 ,editor : {xtype : 'textfield', allowBlank : false}}
-                ],
+            ],
 
             tbar: toobar,
             dockedItems: [{

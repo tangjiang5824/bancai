@@ -11,11 +11,11 @@ Ext.define("menu.MenuRole_upload", {
 				text : '旧板管理',
 				expanded : true,
 				children : [ {
-					text : '旧板批量入库（Excel）',
+					text : '旧板批量入库',
 					id : 'oldpanel.Old_Upload_Data',
 					leaf : true
 				} , {
-					text : '旧板手动入库（下拉框）',
+					text : '旧板手动入库',
 					id : 'oldpanel.oldpanel_Inbound',
 					leaf : true
 				} ,{
@@ -39,7 +39,7 @@ Ext.define("menu.MenuRole_upload", {
 				text : '原材料管理',
 				expanded : true,
 				children : [ {
-					text : '原材料领料（左右两个界面，可选出库数量）',
+					text : '原材料领料',
 					id : 'material.material_Receive',
 					leaf : true
 				} , {
@@ -47,7 +47,7 @@ Ext.define("menu.MenuRole_upload", {
 					id : 'material.material_Inbound',
 					leaf : true
 				} ,{
-					text : '原材料数据上传',
+					text : '原材料批量入库',
 					id : 'material.material_Upload_Data',
 					leaf : true
 				},
@@ -148,7 +148,7 @@ Ext.define("menu.MenuRole_upload", {
 						id : 'oldpanel.add_Ocatergory_baseInfo',
 						leaf : true
 					},{
-						text : '查看原材料类型',
+						text : '查看旧版基础信息',
 						id : 'oldpanel.query_Ocatergory_baseInfo',
 						leaf : true
 					}
@@ -162,8 +162,8 @@ Ext.define("menu.MenuRole_upload", {
 						id : 'product.add_Pcatergory_baseInfo',
 						leaf : true
 					},{
-						text : '查看原材料类型',
-						id : 'product.query_Pcatergory_baseInfo',
+						text : '查看产品基础信息',
+						id : 'product.query_Pcatergory_baseInfo',//
 						leaf : true
 					}
 					]
