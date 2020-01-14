@@ -41,24 +41,9 @@ Ext.define('material.material_Receive',{
 
         });
 
-        var sampleData=[{
-            materialName:1,
-            materialNum:'Zeng'
-        },{
-            materialName:2,
-            materialNum:'Lee'
-        },{
-            materialName:3,
-            materialNum:'Chang'
-        }];
 
-        var store1=Ext.create('Ext.data.Store',{
-            id: 'store1',
-            fields:['materialName','materialNum'],
-            data:sampleData
-        });
         var MaterialList = Ext.create('Ext.data.Store',{
-            fields:['材料名称','材料数量'],
+            fields:['材料名称','材料数量','已领数量','要领数量'],
             proxy : {
                 type : 'ajax',
                 url : 'material/materiallsitbyproject.do',
@@ -71,8 +56,8 @@ Ext.define('material.material_Receive',{
         });
 
 
-        var store2=Ext.create('Ext.data.Store',{
-            fields:['材料名称','材料数量']
+        var MaterialList2=Ext.create('Ext.data.Store',{
+            fields:['材料名称','材料数量','已领数量','要领数量']
         });
 
         var clms=[
@@ -86,12 +71,15 @@ Ext.define('material.material_Receive',{
             },
             {
                 dataIndex:'材料数量',
-                text:'未领数量',
-                //editor:{xtype : 'textfield', allowBlank : false}
+                text:'材料数量',
             },
             {
-                dataIndex:'材料数量',
-                text:'领取数量',
+                dataIndex:'已领数量',
+                text:'已领数量',
+            },
+            {
+                dataIndex:'要领数量',
+                text:'要领数量',
                 editor:{xtype : 'textfield', allowBlank : false}
             }];
         var clms1=[ {
@@ -99,10 +87,95 @@ Ext.define('material.material_Receive',{
                 text:'材料名',
             },
             {
-                dataIndex:'材料数量',
-                text:'领取数量',
+                dataIndex:'要领数量',
+                text:'要领数量',
                 //editor:{xtype : 'textfield', allowBlank : false}
             }];
+
+        var sampleData=[{
+            原材料名称:1,
+            长:'Zeng',
+            类型:'2',
+            宽:'ttt',
+            数量:'12'
+        }];
+
+        var store1=Ext.create('Ext.data.Store',{
+            id: 'store1',
+            fields:['原材料名称','长','类型','宽','数量'],
+            data:sampleData
+        });
+
+        //弹窗的数据
+        var specificMaterialList = Ext.create('Ext.data.Store',{
+            fields:['材料名称','材料数量','已领数量','要领数量'],
+            proxy : {
+                type : 'ajax',
+                url : '？？？',//获取同类型的原材料
+                reader : {
+                    type : 'json',
+                    rootProperty: '？？',
+                }
+            },
+            autoLoad : false
+        });
+
+        var specific_data_grid=Ext.create('Ext.grid.Panel',{
+            id : 'specific_data_grid',
+            store:store1,//specificMaterialList，store1的数据固定
+            dock: 'bottom',
+            columns:[
+                {
+                    text: '原材料名称',
+                    dataIndex: '原材料名称'
+                },{
+                    text: '长',
+                    dataIndex: '长'
+                },{
+                    text: '类型',
+                    dataIndex: '类型'
+                },{
+                    text: '宽',
+                    dataIndex: '宽'
+                },{
+                    text: '数量',
+                    dataIndex: '数量'
+                },
+
+                ],
+            flex:1,
+            selType:'checkboxmodel'
+        });
+
+
+        var win_showmaterialData = Ext.create('Ext.window.Window', {
+            id:'win_showmaterialData',
+            title: '领取同类型下的具体规格',
+            height: 500,
+            width: 800,
+            layout: 'fit',
+            closable : true,
+            items:specific_data_grid,
+            // items: {  // Let's put an empty grid in just to illustrate fit layout
+            //     xtype: 'grid',
+            //     border: false,
+            //     // 仅仅用来显示一个头部。没有数据，
+            //     columns: [{header: '原材料名称'},
+            //         {header: '长'},
+            //         {header: '类型'},
+            //         {header: '宽'},
+            //         {header: '数量'},
+            //
+            //     ],
+            //     store: Ext.create('Ext.data.ArrayStore', {fields:['原材料名称','长','类型','宽','数量'],
+            //         data:{原材料名称:1,
+            //             长:'Zeng',
+            //             类型:'2',
+            //             宽:'ttt',
+            //             数量:'12'}}) // 一个假的空的数据存储
+            // }
+        });
+
 
         var grid1=Ext.create('Ext.grid.Panel',{
             store:MaterialList,
@@ -114,24 +187,25 @@ Ext.define('material.material_Receive',{
                 clicksToEdit : 2
             })],
             listeners: {
+                //监听修改
                 validateedit : function(editor, e) {
                     var field=e.field
                     var id=e.record.data.id
-                    // Ext.Ajax.request({
-                    //     url:"data/EditCellById.do",  //EditDataById.do
-                    //     params:{
-                    //         tableName:tableName,
-                    //         field:field,
-                    //         value:e.value,
-                    //         id:id
-                    //     },
-                    //     success:function (response) {
-                    //         //console.log(response.responseText);
-                    //     }
-                    // })
-                    // console.log("value is "+e.value);
-                    // console.log(e.record.data["id"]);
+                },
 
+                //双击表行响应事件
+                itemdblclick: function(me, record, item, index){
+                    // var select = record.data;
+                    // var id =select.id;
+                    // var tableName=select.tableName;
+                    // var url='showData.jsp?taxTableName='
+                    //     + tableName
+                    //     + "&taxTableId=" + id;
+                    // var url='material/material_specificTypes.jsp';
+                    // url=encodeURI(url)
+                    // window.open(url,
+                    //     '_blank','width=800, height=500');
+                    Ext.getCmp('win_showmaterialData').show();
                 }
             }
 
@@ -139,7 +213,7 @@ Ext.define('material.material_Receive',{
 
         var grid2=Ext.create('Ext.grid.Panel',{
             id : 'pickingMaterialGrid',
-            store:store2,
+            store:MaterialList2,
             dock: 'bottom',
             columns:clms1,
             flex:1,
@@ -196,8 +270,26 @@ Ext.define('material.material_Receive',{
                     itemId:'move_right',
                     handler:function(){
                         var records=grid1.getSelectionModel().getSelection();
-                        MaterialList.remove(records);
-                        store2.add(records);
+                        console.log(records)
+                        console.log(records[0].previousValues==undefined)//代领的数量，未修改前的数量
+                        //console.log(records[0].data['已领数量'])
+                        console.log(records[0].data['要领数量'])//最终的数量
+
+                        //若未修改数量，不变.直接remove
+                        if(records[0].previousValues==undefined){
+                            MaterialList.remove(records);
+                            MaterialList2.add(records);
+
+                        }
+                        //若修改领取数量,则不remove
+                        else{
+                            console.log("ceshi???")
+                            MaterialList2.add(records);
+
+                        }
+
+                        //若要领数量<领取数量，则不能直接remove，需要更改数量值
+
                     }
                 },{
                     xtype:'button',
@@ -205,7 +297,7 @@ Ext.define('material.material_Receive',{
                     itemId:'move_left',
                     handler:function(){
                         var records=grid2.getSelectionModel().getSelection();
-                        store2.remove(records);
+                        MaterialList2.remove(records);
                         MaterialList.add(records);
                     }
                 }]

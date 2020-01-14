@@ -333,7 +333,7 @@ Ext.define('material.material_Upload_Data', {
                                 icon : Ext.Msg.QUESTION,
                                 fn : function(btn) {
                                     if (btn === 'yes') {
-                                        var check=Ext.getCmp("check").getValue();
+                                        //var check=Ext.getCmp("check").getValue();
 
                                         form.submit({
                                             url : 'uploadMaterialExcel.do', //上传excel文件，并回显数据

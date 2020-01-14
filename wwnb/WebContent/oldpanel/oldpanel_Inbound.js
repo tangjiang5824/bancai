@@ -17,33 +17,10 @@ Ext.define('oldpanel.oldpanel_Inbound', {
 
     initComponent : function() {
         var me = this;
-        var tableName="material";
+        var tableName="oldpanel";
         //var materialtype="1";
 
-        // var MaterialNameList =  Ext.create('Ext.data.Store', {
-        //     fields: ['materialName'],
-        //     data : [
-        //         {materialName:"W"},
-        //         {materialName:"BS"},
-        //         {materialName:"BP"}
-        //         //...
-        //     ]
-        // });
-        // var MaterialTypeList = Ext.create('Ext.form.ComboBox', {
-        //     fieldLabel : '原材料类型',
-        //     labelWidth : 70,
-        //     width : 230,
-        //     name : 'table',
-        //     emptyText : "--请选择--",
-        //     store: MaterialNameList,
-        //     queryMode: 'local',
-        //     displayField: "materialName",
-        //     valueField: "materialName",
-        //     editable : false,
-        // });
-
-
-        var MaterialNameList = Ext.create('Ext.data.Store',{
+        var oldPanelNameList = Ext.create('Ext.data.Store',{
             fields : [ 'projectName'],
             proxy : {
                 type : 'ajax',
@@ -55,18 +32,18 @@ Ext.define('oldpanel.oldpanel_Inbound', {
             },
             autoLoad : true
         });
-        var MaterialTypeList = Ext.create('Ext.form.ComboBox',{
+        var oldpanelTypeList = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '旧板类型',
             labelWidth : 70,
             width : 230,
-            id :  'materialName',
-            name : 'materialName',
+            id :  'oldpanelType',
+            name : 'oldpanelType',
             matchFieldWidth: false,
             emptyText : "--请选择--",
             displayField: 'materialName',
             valueField: 'materialType',
             editable : false,
-            store: MaterialNameList,
+            store: oldPanelNameList,
             listeners:{
                 select: function(combo, record, index) {
 
@@ -81,7 +58,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
         var toolbar = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
             items: [
-                MaterialTypeList,
+                oldpanelTypeList,
                 {
                     xtype: 'textfield',
                     margin: '0 10 0 85',
