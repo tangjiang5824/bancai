@@ -333,7 +333,7 @@ Ext.define('material.material_Upload_Data', {
                                 icon : Ext.Msg.QUESTION,
                                 fn : function(btn) {
                                     if (btn === 'yes') {
-                                        var check=Ext.getCmp("check").getValue();
+                                        //var check=Ext.getCmp("check").getValue();
 
                                         form.submit({
                                             url : 'uploadMaterialExcel.do', //上传excel文件，并回显数据
@@ -456,13 +456,6 @@ Ext.define('material.material_Upload_Data', {
             dock : "top",
             id : "toolbar2",
             items : [
-                {
-                xtype : 'checkboxfield',
-                boxLabel : '校验数据',
-                name : 'check',
-                checked   : true,
-                id : 'check'
-               },
                 form
             ]
         });

@@ -2,7 +2,7 @@ Ext.define('oldpanel.oldpanel_Statistics_Records',{
     extend:'Ext.panel.Panel',
     region: 'center',
     layout:'fit',
-    title: '旧板出入库记录统计',
+    title: '旧板出入库记录查询',
     initComponent: function(){
         var itemsPerPage = 50;
         var tableName="material";
@@ -13,7 +13,7 @@ Ext.define('oldpanel.oldpanel_Statistics_Records',{
                     xtype: 'textfield',
                     margin : '0 10 0 0',
                     fieldLabel: '上传人',
-                    id :'userId',
+                    //id :'userId',
                     width: 160,
                     labelWidth: 50,
                     name: 'userId',
@@ -23,7 +23,7 @@ Ext.define('oldpanel.oldpanel_Statistics_Records',{
                     xtype: 'textfield',
                     margin : '0 10 0 0',
                     fieldLabel: '项目名称',
-                    id :'projectName',
+                    //id :'projectName',
                     width: 250,
                     labelWidth: 60,
                     name: 'projectName',
@@ -32,8 +32,8 @@ Ext.define('oldpanel.oldpanel_Statistics_Records',{
                 {
                     xtype: 'textfield',
                     margin : '0 10 0 0',
-                    fieldLabel: '开始时间',
-                    id :'startTime',
+                    fieldLabel: '上传时间下限',
+                    //id :'startTime',
                     width: 180,
                     labelWidth: 80,
                     name: 'startTime',
@@ -42,8 +42,8 @@ Ext.define('oldpanel.oldpanel_Statistics_Records',{
                 {
                     xtype: 'textfield',
                     margin : '0 10 0 0',
-                    fieldLabel: '结束时间',
-                    id :'endTime',
+                    fieldLabel: '上传时间上限',
+                    //id :'endTime',
                     width: 180,
                     labelWidth: 80,
                     name: 'endTime',
@@ -56,12 +56,12 @@ Ext.define('oldpanel.oldpanel_Statistics_Records',{
                     margin: '0 0 0 15',
                     layout: 'right',
                     handler: function(){
-                        uploadRecordsStore.load({
+                        oldpanel_Statistics_Records_Store.load({
                             params : {
-                                userId : Ext.getCmp('userId').getValue(),
-                                endTime : Ext.getCmp('endTime').getValue(),
-                                startTime:Ext.getCmp('startTime').getValue(),
-                                projectName:Ext.getCmp('projectName').getValue(),
+                                // userId : Ext.getCmp('userId').getValue(),
+                                // endTime : Ext.getCmp('endTime').getValue(),
+                                // startTime:Ext.getCmp('startTime').getValue(),
+                                // projectName:Ext.getCmp('projectName').getValue(),
                             }
                         });
                     }
@@ -94,15 +94,15 @@ Ext.define('oldpanel.oldpanel_Statistics_Records',{
                 //         }
                 //     }
                 // }
-            ]
+                ]
         })
-        var uploadRecordsStore = Ext.create('Ext.data.Store',{
-            id: 'uploadRecordsStore',
+        var oldpanel_Statistics_Records_Store = Ext.create('Ext.data.Store',{
+            id: 'oldpanel_Statistics_Records_Store',
             autoLoad: true,
             fields: [],
             pageSize: itemsPerPage, // items per page
             proxy:{
-                url : "",//"material/historyDataList.do",
+                //url : "",//"material/historyDataList.do",
                 type: 'ajax',
                 reader:{
                     type : 'json',
@@ -117,12 +117,12 @@ Ext.define('oldpanel.oldpanel_Statistics_Records',{
             listeners : {
                 beforeload : function(store, operation, eOpts) {
                     store.getProxy().setExtraParams({
-                        tableName :tableName,
-                        userId:Ext.getCmp('userId').getValue(),
-                        endTime:Ext.getCmp('endTime').getValue(),
-                        startTime:Ext.getCmp('startTime').getValue(),
-                        projectName:Ext.getCmp('projectName').getValue(),
-                        //materialType:materialType
+                        //tableName :tableName,
+                        // userId:Ext.getCmp('userId').getValue(),
+                        // endTime:Ext.getCmp('endTime').getValue(),
+                        // startTime:Ext.getCmp('startTime').getValue(),
+                        // projectName:Ext.getCmp('projectName').getValue(),
+                        // //materialType:materialType
 
                     });
                 }
@@ -134,8 +134,8 @@ Ext.define('oldpanel.oldpanel_Statistics_Records',{
 
 
         var grid = Ext.create('Ext.grid.Panel',{
-            id: 'uploadRecordsMain',
-            store: uploadRecordsStore,
+            id: 'oldpanel_Statistics_Records_Main',
+            store: oldpanel_Statistics_Records_Store,
             viewConfig : {
                 enableTextSelection : true,
                 editable:true
@@ -159,7 +159,7 @@ Ext.define('oldpanel.oldpanel_Statistics_Records',{
             tbar: toobar,
             dockedItems: [{
                 xtype: 'pagingtoolbar',
-                store: uploadRecordsStore,   // same store GridPanel is using
+                store: oldpanel_Statistics_Records_Store,   // same store GridPanel is using
                 dock: 'bottom',
                 displayInfo: true,
                 displayMsg:'显示{0}-{1}条，共{2}条',
@@ -170,12 +170,12 @@ Ext.define('oldpanel.oldpanel_Statistics_Records',{
                     var field=e.field
                     var id=e.record.data.id
                     Ext.Ajax.request({
-                        url:"",//"data/EditCellById.do",  //EditDataById.do
+                        //url:"",//"data/EditCellById.do",  //EditDataById.do
                         params:{
-                            tableName:tableName,
-                            field:field,
-                            value:e.value,
-                            id:id
+                            // tableName:tableName,
+                            // field:field,
+                            // value:e.value,
+                            // id:id
                         },
                         success:function (response) {
                             //console.log(response.responseText);

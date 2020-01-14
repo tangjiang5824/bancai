@@ -20,31 +20,8 @@ Ext.define('material.material_Inbound', {
         var tableName="material";
         //var materialtype="1";
 
-        // var MaterialNameList =  Ext.create('Ext.data.Store', {
-        //     fields: ['materialName'],
-        //     data : [
-        //         {materialName:"W"},
-        //         {materialName:"BS"},
-        //         {materialName:"BP"}
-        //         //...
-        //     ]
-        // });
-        // var MaterialTypeList = Ext.create('Ext.form.ComboBox', {
-        //     fieldLabel : '原材料类型',
-        //     labelWidth : 70,
-        //     width : 230,
-        //     name : 'table',
-        //     emptyText : "--请选择--",
-        //     store: MaterialNameList,
-        //     queryMode: 'local',
-        //     displayField: "materialName",
-        //     valueField: "materialName",
-        //     editable : false,
-        // });
-
-
         var MaterialNameList = Ext.create('Ext.data.Store',{
-            fields : [ 'projectName'],
+            fields : [ 'materialName'],
             proxy : {
                 type : 'ajax',
                 url : 'material/materialType.do',
@@ -63,8 +40,8 @@ Ext.define('material.material_Inbound', {
             name : 'materialName',
             matchFieldWidth: false,
             emptyText : "--请选择--",
-            displayField: 'materialName',
-            valueField: 'materialType',
+            displayField: '原材料名称',
+            valueField: '原材料类型',
             editable : false,
             store: MaterialNameList,
             listeners:{
@@ -103,6 +80,16 @@ Ext.define('material.material_Inbound', {
                     name: 'width',
                     value: "",
                 },
+                {
+                    xtype: 'textfield',
+                    margin: '0 10 0 50',
+                    fieldLabel: '库存单位',
+                    id: 'stockUnit',
+                    width: 220,
+                    labelWidth: 60,
+                    name: 'stockUnit',
+                    value: "",
+                },
             ]
         });
         var toolbar1 = Ext.create('Ext.toolbar.Toolbar', {
@@ -131,6 +118,17 @@ Ext.define('material.material_Inbound', {
                 },
                 {
                     xtype: 'textfield',
+                    fieldLabel: '仓库编号',
+                    //labelSeparator: '',
+                    id: 'warehouse',
+                    labelWidth: 60,
+                    width: 220,
+                    margin: '0 10 0 47',
+                    name: 'warehouse',
+                    value: "",
+                },
+                {
+                    xtype: 'textfield',
                     margin: '0 10 0 50',
                     fieldLabel: '存放位置',
                     id: 'location',
@@ -152,6 +150,8 @@ Ext.define('material.material_Inbound', {
                         var cost = Ext.getCmp('cost').getValue();
                         var number = Ext.getCmp('number').getValue();
                         var location = Ext.getCmp('location').getValue();
+                        var warehouse = Ext.getCmp('warehouse').getValue();
+                        var stockUnit = Ext.getCmp('stockUnit').getValue();
                         var data = [{
                             '类型' : materialType,
                             '长' : length,
@@ -160,10 +160,10 @@ Ext.define('material.material_Inbound', {
                             '成本' : cost,
                             '存放位置' : location,
                             '品号' : '',
-                            '库存单位' : '',
-                            '仓库编号' : '',
+                            '库存单位' : stockUnit,
+                            '仓库编号' : warehouse,
                             '规格' : '',
-                            '材料名' : '',
+                            '原材料名称' : '',
                         }];
                         //点击查询获得输入的数据
 
@@ -249,7 +249,7 @@ Ext.define('material.material_Inbound', {
 
             columns : [
                 {
-                dataIndex: '材料名',
+                dataIndex: '原材料名称',
                 text: '材料名',
                 //width : 110,
                 editor: {// 文本字段

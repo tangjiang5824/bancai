@@ -7,56 +7,115 @@ Ext.define('material.material_Query_Records',{
         var itemsPerPage = 50;
         var tableName="material";
         //var materialType="1";
+        //项目名称选择
+        var projectListStore = Ext.create('Ext.data.Store',{
+            fields : [ "项目名称","id"],
+            proxy : {
+                type : 'ajax',
+                url : 'project/findProjectList.do',
+
+                reader : {
+                    type : 'json',
+                    rootProperty: 'projectList',
+                }
+            },
+            autoLoad : true
+        });
+        var projectName = Ext.create('Ext.form.ComboBox',{
+            fieldLabel : '项目名',
+            labelWidth : 45,
+            width : 400,
+            id :  'projectName',
+            name : '项目名称',
+            matchFieldWidth: false,
+            emptyText : "--请选择--",
+            displayField: '项目名称',
+            valueField: 'id',
+            editable : false,
+            store: projectListStore,
+            listeners:{
+                select: function(combo, record, index) {
+                    console.log(record[0].data.projectName);
+                }
+            }
+
+        });
+
+        //操作类型
+        //操作类型选择
+        var optionTypeList = Ext.create('Ext.data.Store', {
+            fields: ['abbr', 'name'],
+            data : [
+                {"abbr":"1", "name":"入库"},
+                {"abbr":"0", "name":"出库"},
+                //...
+            ]
+        });
+
+        var optionType = Ext.create('Ext.form.ComboBox', {
+            fieldLabel: '操作类型',
+            store: optionTypeList,
+            queryMode: 'local',
+            displayField: 'name',
+            valueField: 'abbr',
+            renderTo: Ext.getBody()
+        });
         var toobar = Ext.create('Ext.toolbar.Toolbar',{
+            dock: 'top',
             items: [
                 {
                     xtype: 'textfield',
-                    margin : '0 10 0 0',
-                    fieldLabel: '上传人',
+                    margin : '0 20 0 20',
+                    fieldLabel: '操作员',
                     id :'userId',
-                    width: 160,
+                    width: 200,
                     labelWidth: 50,
                     name: 'userId',
                     value:"",
+                },projectName,
+                optionType,
+                {
+                    xtype : 'datefield',
+                    margin : '0 20 0 20',
+                    fieldLabel : '开始时间',
+                    width : 200,
+                    labelWidth : 60,
+                    id : "startTime",
+                    name : 'startTime',
+                    //align: 'right',
+                    format : 'Y-m-d',
+                    editable : false,
+                    //value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
+                },{
+                    xtype:'tbtext',
+                    text:'至',
+                    itemId:'move_left',
+                    // handler:function(){
+                    //     var records=grid2.getSelectionModel().getSelection();
+                    //     MaterialList2.remove(records);
+                    //     MaterialList.add(records);
+                    // }
                 },
                 {
-                    xtype: 'textfield',
-                    margin : '0 10 0 0',
-                    fieldLabel: '项目名称',
-                    id :'projectName',
-                    width: 250,
-                    labelWidth: 60,
-                    name: 'projectName',
-                    value:"",
-                },
-                {
-                    xtype: 'textfield',
-                    margin : '0 10 0 0',
-                    fieldLabel: '上传时间下限',
-                    id :'startTime',
-                    width: 180,
-                    labelWidth: 80,
-                    name: 'startTime',
-                    value:"",
-                },
-                {
-                    xtype: 'textfield',
-                    margin : '0 10 0 0',
-                    fieldLabel: '上传时间上限',
-                    id :'endTime',
-                    width: 180,
-                    labelWidth: 80,
-                    name: 'endTime',
-                    value:"",
-                },
-                {
+                    xtype : 'datefield',
+                    margin : '0 20 0 20',
+                    fieldLabel : '结束时间',
+                    width : 200,
+                    labelWidth : 60,
+                    id : "endTime",
+                    name : 'endTime',
+                    //align: 'right',
+                    format : 'Y-m-d',
+                    editable : false,
+                    //value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
+                },{
                     xtype : 'button',
-                    text: '查询',
-                    width: 80,
+                    text: '查询操作记录',
+                    width: 100,
                     margin: '0 0 0 15',
                     layout: 'right',
                     handler: function(){
-                        uploadRecordsStore.load({
+                        material_Query_Records_Store.load({
                             params : {
                                 userId : Ext.getCmp('userId').getValue(),
                                 endTime : Ext.getCmp('endTime').getValue(),
@@ -66,6 +125,7 @@ Ext.define('material.material_Query_Records',{
                         });
                     }
                 },
+
                 // {
                 //     text: '删除',
                 //     width: 80,
@@ -95,9 +155,10 @@ Ext.define('material.material_Query_Records',{
                 //     }
                 // }
                 ]
-        })
-        var uploadRecordsStore = Ext.create('Ext.data.Store',{
-            id: 'uploadRecordsStore',
+        });
+
+        var material_Query_Records_Store = Ext.create('Ext.data.Store',{
+            id: 'material_Query_Records_Store',
             autoLoad: true,
             fields: [],
             pageSize: itemsPerPage, // items per page
@@ -134,8 +195,8 @@ Ext.define('material.material_Query_Records',{
 
 
         var grid = Ext.create('Ext.grid.Panel',{
-            id: 'uploadRecordsMain',
-            store: uploadRecordsStore,
+            id: 'material_Query_Records_Main',
+            store: material_Query_Records_Store,
             viewConfig : {
                 enableTextSelection : true,
                 editable:true
@@ -156,10 +217,10 @@ Ext.define('material.material_Query_Records',{
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 3
             })],
-            tbar: toobar,
-            dockedItems: [{
+            tbar:toobar,
+            dockedItems:[{
                 xtype: 'pagingtoolbar',
-                store: uploadRecordsStore,   // same store GridPanel is using
+                store: material_Query_Records_Store,   // same store GridPanel is using
                 dock: 'bottom',
                 displayInfo: true,
                 displayMsg:'显示{0}-{1}条，共{2}条',
@@ -189,6 +250,14 @@ Ext.define('material.material_Query_Records',{
         });
 
         this.items = [grid];
+        // this.dockedItems = [toobar,toobar1,grid,{
+        //     xtype: 'pagingtoolbar',
+        //     store: material_Query_Records_Store,   // same store GridPanel is using
+        //     dock: 'bottom',
+        //     displayInfo: true,
+        //     displayMsg:'显示{0}-{1}条，共{2}条',
+        //     emptyMsg:'无数据'
+        // }];
         this.callParent(arguments);
     }
 })

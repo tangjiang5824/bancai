@@ -5,7 +5,7 @@ Ext.define('material.material_Statistics_Records',{
     title: '原材料出入库记录统计',
     initComponent: function(){
         var itemsPerPage = 50;
-        var tableName="material";
+        //var tableName="material";
         //var materialType="1";
         var toobar = Ext.create('Ext.toolbar.Toolbar',{
             items: [
@@ -13,7 +13,7 @@ Ext.define('material.material_Statistics_Records',{
                     xtype: 'textfield',
                     margin : '0 10 0 0',
                     fieldLabel: '上传人',
-                    id :'userId',
+                    //id :'userId',
                     width: 160,
                     labelWidth: 50,
                     name: 'userId',
@@ -23,7 +23,7 @@ Ext.define('material.material_Statistics_Records',{
                     xtype: 'textfield',
                     margin : '0 10 0 0',
                     fieldLabel: '项目名称',
-                    id :'projectName',
+                    //id :'projectName',
                     width: 250,
                     labelWidth: 60,
                     name: 'projectName',
@@ -33,7 +33,7 @@ Ext.define('material.material_Statistics_Records',{
                     xtype: 'textfield',
                     margin : '0 10 0 0',
                     fieldLabel: '开始时间',
-                    id :'startTime',
+                    //id :'startTime',
                     width: 180,
                     labelWidth: 80,
                     name: 'startTime',
@@ -43,7 +43,7 @@ Ext.define('material.material_Statistics_Records',{
                     xtype: 'textfield',
                     margin : '0 10 0 0',
                     fieldLabel: '结束时间',
-                    id :'endTime',
+                    //id :'endTime',
                     width: 180,
                     labelWidth: 80,
                     name: 'endTime',
@@ -56,12 +56,12 @@ Ext.define('material.material_Statistics_Records',{
                     margin: '0 0 0 15',
                     layout: 'right',
                     handler: function(){
-                        uploadRecordsStore.load({
+                        material_Statistics_Records_Store.load({
                             params : {
-                                userId : Ext.getCmp('userId').getValue(),
-                                endTime : Ext.getCmp('endTime').getValue(),
-                                startTime:Ext.getCmp('startTime').getValue(),
-                                projectName:Ext.getCmp('projectName').getValue(),
+                                // userId : Ext.getCmp('userId').getValue(),
+                                // endTime : Ext.getCmp('endTime').getValue(),
+                                // startTime:Ext.getCmp('startTime').getValue(),
+                                // projectName:Ext.getCmp('projectName').getValue(),
                             }
                         });
                     }
@@ -96,13 +96,13 @@ Ext.define('material.material_Statistics_Records',{
                 // }
             ]
         })
-        var uploadRecordsStore = Ext.create('Ext.data.Store',{
-            id: 'uploadRecordsStore',
+        var material_Statistics_Records_Store = Ext.create('Ext.data.Store',{
+            id: 'material_Statistics_Records_Store',
             autoLoad: true,
             fields: [],
             pageSize: itemsPerPage, // items per page
             proxy:{
-                url : "",//"material/historyDataList.do",
+                //url : "",//"material/historyDataList.do",
                 type: 'ajax',
                 reader:{
                     type : 'json',
@@ -110,18 +110,18 @@ Ext.define('material.material_Statistics_Records',{
                     totalProperty: 'totalCount'
                 },
                 params:{
-                    start: 0,
-                    limit: itemsPerPage
+                    // start: 0,
+                    // limit: itemsPerPage
                 }
             },
             listeners : {
                 beforeload : function(store, operation, eOpts) {
                     store.getProxy().setExtraParams({
-                        tableName :tableName,
-                        userId:Ext.getCmp('userId').getValue(),
-                        endTime:Ext.getCmp('endTime').getValue(),
-                        startTime:Ext.getCmp('startTime').getValue(),
-                        projectName:Ext.getCmp('projectName').getValue(),
+                        // tableName :tableName,
+                        // userId:Ext.getCmp('userId').getValue(),
+                        // endTime:Ext.getCmp('endTime').getValue(),
+                        // startTime:Ext.getCmp('startTime').getValue(),
+                        // projectName:Ext.getCmp('projectName').getValue(),
                         //materialType:materialType
 
                     });
@@ -134,8 +134,8 @@ Ext.define('material.material_Statistics_Records',{
 
 
         var grid = Ext.create('Ext.grid.Panel',{
-            id: 'uploadRecordsMain',
-            store: uploadRecordsStore,
+            //id: 'material_Statistics_Records_Main',
+            store: material_Statistics_Records_Store,
             viewConfig : {
                 enableTextSelection : true,
                 editable:true
@@ -148,8 +148,8 @@ Ext.define('material.material_Statistics_Records',{
                 {
                     header: "操作", dataIndex: 'Gender',
                     renderer: function() {                      //此处为主要代码
-                        var str = "<input type='button' value='查看' onclick='look()'>";
-                        return str;
+                        //var str = "<input type='button' value='查看' onclick='look()'>";
+                        //return str;
                     }
                 },
             ],
@@ -159,7 +159,7 @@ Ext.define('material.material_Statistics_Records',{
             tbar: toobar,
             dockedItems: [{
                 xtype: 'pagingtoolbar',
-                store: uploadRecordsStore,   // same store GridPanel is using
+                store: material_Statistics_Records_Store,   // same store GridPanel is using
                 dock: 'bottom',
                 displayInfo: true,
                 displayMsg:'显示{0}-{1}条，共{2}条',
@@ -168,14 +168,14 @@ Ext.define('material.material_Statistics_Records',{
             listeners: {
                 validateedit : function(editor, e) {
                     var field=e.field
-                    var id=e.record.data.id
+                    //var id=e.record.data.id
                     Ext.Ajax.request({
-                        url:"",//"data/EditCellById.do",  //EditDataById.do
+                        //url:"",//"data/EditCellById.do",  //EditDataById.do
                         params:{
-                            tableName:tableName,
-                            field:field,
-                            value:e.value,
-                            id:id
+                            // tableName:tableName,
+                            // field:field,
+                            // value:e.value,
+                            // id:id
                         },
                         success:function (response) {
                             //console.log(response.responseText);

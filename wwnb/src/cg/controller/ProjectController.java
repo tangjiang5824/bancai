@@ -108,6 +108,8 @@ public class ProjectController {
         JSONArray array = new JSONArray(projectList);
         object.put("typeList", array);
        // System.out.println("类型1：--"+array.getClass().getName().toString());
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html");
         response.getWriter().write(object.toString());
         response.getWriter().flush();
         response.getWriter().close();
@@ -128,6 +130,8 @@ public class ProjectController {
         JSONArray array = new JSONArray(materialtList);
         object.put("materialList", array);
        // System.out.println("类型1：--"+array.getClass().getName().toString());
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html");
         response.getWriter().write(object.toString());
         response.getWriter().flush();
         response.getWriter().close();

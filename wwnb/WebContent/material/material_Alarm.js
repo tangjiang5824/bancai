@@ -1,8 +1,8 @@
-Ext.define('material.material_Query_Data',{
+Ext.define('material.material_Alarm',{
     extend:'Ext.panel.Panel',
     region: 'center',
     layout:'fit',
-    title: '原材料数据查询',
+    title: '原材料报警',
     initComponent: function(){
         var itemsPerPage = 50;
         var tableName="material";
@@ -66,7 +66,7 @@ Ext.define('material.material_Query_Data',{
                     margin: '0 0 0 15',
                     layout: 'right',
                     handler: function(){
-                        material_Query_Data_Store.load({
+                        material_Alarm_Store.load({
                             params : {
                                 //proNum : Ext.getCmp('proNum').getValue(),
                                 startWidth : Ext.getCmp('startWidth').getValue(),
@@ -107,8 +107,8 @@ Ext.define('material.material_Query_Data',{
                     }
                 }]
         })
-        var material_Query_Data_Store = Ext.create('Ext.data.Store',{
-            id: 'material_Query_Data_Store',
+        var material_Alarm_Store = Ext.create('Ext.data.Store',{
+            id: 'material_Alarm_Store',
             autoLoad: true,
             fields: [],
             pageSize: itemsPerPage, // items per page
@@ -146,8 +146,8 @@ Ext.define('material.material_Query_Data',{
 
 
         var grid = Ext.create('Ext.grid.Panel',{
-            id: 'material_Query_Data_Main',
-            store: material_Query_Data_Store,
+            id: 'material_Alarm_Main',
+            store: material_Alarm_Store,
             viewConfig : {
                 enableTextSelection : true,
                 editable:true
@@ -171,7 +171,7 @@ Ext.define('material.material_Query_Data',{
             tbar: toobar,
             dockedItems: [{
                 xtype: 'pagingtoolbar',
-                store: material_Query_Data_Store,   // same store GridPanel is using
+                store: material_Alarm_Store,   // same store GridPanel is using
                 dock: 'bottom',
                 displayInfo: true,
                 displayMsg:'显示{0}-{1}条，共{2}条',
