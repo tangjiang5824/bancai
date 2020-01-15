@@ -51,7 +51,7 @@ public class Oldpanel_Data_Controller {
             String oldpanelName = (String) jsonTemp.get("oldpanelName");
             int length = Integer.parseInt(jsonTemp.get("length").toString());
             int length2 = Integer.parseInt(jsonTemp.get("length2").toString());
-            String oldpanelType = (String) jsonTemp.get("oldpanelType");
+            String oldpanelType = jsonTemp.get("oldpanelType").toString();
             int width = Integer.parseInt(jsonTemp.get("width").toString());
             int width2 = Integer.parseInt(jsonTemp.get("width2").toString());
             int width3 = Integer.parseInt(jsonTemp.get("width3").toString());
