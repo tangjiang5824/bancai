@@ -135,6 +135,24 @@ public class ProjectController {
         response.getWriter().flush();
         response.getWriter().close();
     }
+    /**
+     * 返回任意表的所有字段
+     * @param response
+     * @throws IOException
+     */
+    @RequestMapping(value="/material/findAllBytableName.do")
+    public void findAllbyTableName(HttpServletResponse response,String tableName) throws IOException {
+        DataList table = insertProjectService.findallbytableName(tableName);
+        //写回前端
+        JSONObject object = new JSONObject();
+        JSONArray StoreNamearray = new JSONArray(table);
+        object.put(tableName, StoreNamearray);
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html");
+        response.getWriter().write(object.toString());
+        response.getWriter().flush();
+        response.getWriter().close();
+    }
 
     /**
      * 通过传入warehouseNo返回对应的行和列
@@ -211,7 +229,6 @@ public class ProjectController {
         response.getWriter().flush();
         response.getWriter().close();
         //log.info(response);
-
     }
     @Test
     public void test(){
