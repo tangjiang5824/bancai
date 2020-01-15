@@ -331,7 +331,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                 //width : 110,
                 editor : {// 文本字段
                     xtype : 'textfield',
-                    allowBlank : false,
+                    allowBlank : true,
 
                 }
 
@@ -353,7 +353,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                 //width : 110,
                 editor : {// 文本字段
                     xtype : 'textfield',
-                    allowBlank : false,
+                    allowBlank : true,
 
                 }
 
@@ -364,7 +364,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                 //width : 110,
                 editor : {// 文本字段
                     xtype : 'textfield',
-                    allowBlank : false,
+                    allowBlank : true,
 
                 }
             },{
