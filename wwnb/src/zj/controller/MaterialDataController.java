@@ -41,7 +41,7 @@ public class MaterialDataController {
     * 入库
     *
     * */
-    @RequestMapping(value="/addMaterial.do")
+    @RequestMapping(value="material/addData.do")
     public boolean addMaterialData(String s, String tableName, HttpSession session) {
 
         JSONArray jsonArray =new JSONArray(s);
