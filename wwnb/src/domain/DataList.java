@@ -50,7 +50,6 @@ public class DataList extends ArrayList<DataRow> {
 	{
 		String columns=getColumns();
 		String values=getValues(start,end,uploadId);
-		//String values=getValues(start,end);
 		String number="";
 		for(int i=start;i<end&&i<this.size();i++){
 			DataRow row=this.get(i);
@@ -58,21 +57,6 @@ public class DataList extends ArrayList<DataRow> {
 		}
 		return String.format("insert into %s (%s uploadId) values %s", tableName,columns,values);
 	}
-//	private String getValues(int start,int end) {
-//		String values="";
-//		for(int i=start;i<end&&i<this.size();i++)
-//		{
-//			DataRow row=this.get(i);
-//			String value="";
-//			for(Object v:row.values())
-//			{
-//				value+=String.format("'%s',", v.toString().replaceAll("'", "''"));
-//			}
-//			//value=value+uploadId;
-//			values+=String.format("(%s),", value);
-//		}
-//		return values.substring(0,values.length()-1);
-//	}
 
 	private String getValues(int start,int end,int uploadId) {
 		String values="";

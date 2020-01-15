@@ -103,24 +103,58 @@ Ext.define('material.material_Inbound', {
                     var type = MaterialTypeList.rawValue;
                     //console.log(MaterialTypeList.rawValue)//选择的值
                     console.log(MaterialTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
-                    //console.log(record[0].data.materialName);
+                    //选中后
+                    var select = record[0].data;
+                    var warehouseNo = select.warehouseNo;
+                    console.log(warehouseNo)
+
+                    //重新加载行选项
+                    var locationNameList_row = Ext.create('Ext.data.Store',{
+                        fields : [ 'rowNum'],
+                        proxy : {
+                            type : 'ajax',
+                            url : 'material/findStorePosition.do?warehouseNo='+warehouseNo,
+                            reader : {
+                                type : 'json',
+                                rootProperty: 'rowNum',
+                            }
+                        },
+                        autoLoad : true
+                    });
+                    speificLocation_row.setStore(locationNameList_row);
+
+                    //重新加载列选项
+                    var locationNameList_col = Ext.create('Ext.data.Store',{
+                        fields : [ 'columnNum'],
+                        proxy : {
+                            type : 'ajax',
+                            url : 'material/findStorePosition.do?warehouseNo='+warehouseNo,
+                            reader : {
+                                type : 'json',
+                                rootProperty: 'columnNum',
+                            }
+                        },
+                        autoLoad : true
+                    });
+                    speificLocation_col.setStore(locationNameList_col);
+
                 }
             }
         });
 
         //仓库存放位置--行
-        var locationNameList_row = Ext.create('Ext.data.Store',{
-            fields : [ 'materialName'],
-            proxy : {
-                type : 'ajax',
-                url : '？？？',
-                reader : {
-                    type : 'json',
-                    rootProperty: '？？',
-                }
-            },
-            autoLoad : true
-        });
+        // var locationNameList_row = Ext.create('Ext.data.Store',{
+        //     fields : [ 'columnNum'],
+        //     proxy : {
+        //         type : 'ajax',
+        //         url : 'material/findStorePosition.do',
+        //         reader : {
+        //             type : 'json',
+        //             rootProperty: 'columnNum',
+        //         }
+        //     },
+        //     autoLoad : true
+        // });
         var speificLocation_row = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '行',
             labelWidth : 20,
@@ -130,10 +164,10 @@ Ext.define('material.material_Inbound', {
             name : 'speificLocation_row',
             matchFieldWidth: false,
             //emptyText : "--请选择--",
-            displayField: '？？',
-            valueField: '？？',
+            displayField: 'rowNum',
+            valueField: 'rowNum',
             editable : false,
-            store: locationNameList_row,
+            //store: locationNameList_row,
             listeners:{
                 select: function(combo, record, index) {
                     var type = MaterialTypeList.rawValue;
@@ -144,18 +178,18 @@ Ext.define('material.material_Inbound', {
             }
         });
         //仓库存放位置--列
-        var locationNameList_col = Ext.create('Ext.data.Store',{
-            fields : [ 'materialName'],
-            proxy : {
-                type : 'ajax',
-                url : '？？？',
-                reader : {
-                    type : 'json',
-                    rootProperty: '？？',
-                }
-            },
-            autoLoad : true
-        });
+        // var locationNameList_col = Ext.create('Ext.data.Store',{
+        //     fields : [ 'columnNum'],
+        //     proxy : {
+        //         type : 'ajax',
+        //         url : 'material/findStorePosition.do',
+        //         reader : {
+        //             type : 'json',
+        //             rootProperty: 'columnNum',
+        //         }
+        //     },
+        //     autoLoad : true
+        // });
         var speificLocation_col = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '列',
             labelWidth : 20,
@@ -164,10 +198,10 @@ Ext.define('material.material_Inbound', {
             name : 'speificLocation_col',
             matchFieldWidth: false,
             //emptyText : "--请选择--",
-            displayField: '？？',
-            valueField: '？？',
+            displayField: 'columnNum',
+            valueField: 'columnNum',
             editable : false,
-            store: locationNameList_col,
+            //store: locationNameList_col,
             listeners:{
                 select: function(combo, record, index) {
                     var type = MaterialTypeList.rawValue;
