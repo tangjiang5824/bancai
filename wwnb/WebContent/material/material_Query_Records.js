@@ -55,6 +55,9 @@ Ext.define('material.material_Query_Records',{
         var optionType = Ext.create('Ext.form.ComboBox', {
             fieldLabel: '操作类型',
             store: optionTypeList,
+            margin : '0 20 0 20',
+            width: 160,
+            labelWidth: 60,
             queryMode: 'local',
             displayField: 'name',
             valueField: 'abbr',
@@ -203,7 +206,7 @@ Ext.define('material.material_Query_Records',{
             },
             columns : [
                 { text: '材料单编号', dataIndex: '材料单编号', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '上传人',  dataIndex: '上传人' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
+                { text: '操作人员',  dataIndex: '操作人员' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
                 { text: '上传时间', dataIndex: '上传时间', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
                 { text: '项目名称', dataIndex: '项目名称',flex :1,editor:{xtype : 'textfield', allowBlank : false} },
                 {

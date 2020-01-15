@@ -53,12 +53,12 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
         var optionType = Ext.create('Ext.form.ComboBox', {
             fieldLabel: '操作类型',
             store: optionTypeList,
-            margin : '0 20 0 20',
             queryMode: 'local',
             displayField: 'name',
             valueField: 'abbr',
-            width: 200,
-            labelWidth: 30,
+            margin : '0 20 0 20',
+            width: 160,
+            labelWidth: 60,
             renderTo: Ext.getBody()
         });
 
@@ -77,16 +77,6 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
                 },projectName,
                 optionType,
                 {
-                    xtype: 'textfield',
-                    margin : '0 20 0 20',
-                    fieldLabel: '',
-                    id :'userId',
-                    width: 200,
-                    labelWidth: 50,
-                    name: 'userId',
-                    value:"",
-                },
-                {
                     xtype : 'datefield',
                     margin : '0 20 0 20',
                     fieldLabel : '开始时间',
@@ -94,7 +84,6 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
                     labelWidth : 60,
                     id : "startTime",
                     name : 'startTime',
-                    //align: 'right',
                     format : 'Y-m-d',
                     editable : false,
                     //value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
@@ -138,6 +127,34 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
                     }
                 },
 
+                // {
+                //     text: '删除',
+                //     width: 80,
+                //     margin: '0 0 0 15',
+                //     handler: function(){
+                //         var select = grid.getSelectionModel().getSelection();
+                //         if(select.length==0){
+                //             Ext.Msg.alert('错误', '请选择要删除的记录')
+                //         }
+                //         else{
+                //             Ext.Ajax.request({
+                //                 url:"data/deleteItemById.do",  //公共方法，在commonMethod包下
+                //                 params:{
+                //                     tableName:tableName,
+                //                     id:select[0].data.id
+                //                 },
+                //                 success:function (response) {
+                //                     Ext.MessageBox.alert("提示","删除成功！")
+                //                     grid.store.remove(grid.getSelectionModel().getSelection());
+                //                 },
+                //                 failure:function (reponse) {
+                //                     Ext.MessageBox.alert("提示","删除失败！")
+                //
+                //                 }
+                //             })
+                //         }
+                //     }
+                // }
             ]
         });
 
