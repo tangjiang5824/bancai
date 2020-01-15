@@ -35,8 +35,8 @@ public class Y_Upload_Data_Service extends BaseService {
      * 添加数据
      */
     @Transactional
-    public void oldpanelAddData(String tableName,int oldpanelNo,String oldpanelName,int length,int length2,String oldpanelType,int width,
-                                int width2,int width3,String inventoryUnit,String warehouseNo,String position,double number,double weight,int uploadId){
+    public void oldpanelAddData(String tableName,int oldpanelNo,String oldpanelName,double length,double length2,String oldpanelType,double width,
+                                double width2,double width3,String inventoryUnit,String warehouseNo,String position,double number,double weight,int uploadId){
         log.debug("yrd.service.Y_Upload_Data_Service.oldpanelAddData");
 
         jo.update("insert into "+tableName+"(oldpanelNo,oldpanelName,length,length2,oldpanelType,width," +
