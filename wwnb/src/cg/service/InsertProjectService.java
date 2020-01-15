@@ -54,6 +54,18 @@ public class InsertProjectService extends BaseService {
         return typelist;
 
     }
+    /**
+     * 查询返回所有的旧板类型
+     * @return
+     */
+    @Transactional
+    public DataList findOldpanelType(){
+        String sql = "select * from oldpaneltype";
+        DataList typelist = queryService.query(sql);
+        return typelist;
+
+    }
+
 
     /**
      * 查询返回对应projectId的领料单

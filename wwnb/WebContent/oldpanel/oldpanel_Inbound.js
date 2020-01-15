@@ -24,10 +24,10 @@ Ext.define('oldpanel.oldpanel_Inbound', {
             fields : [ 'projectName'],
             proxy : {
                 type : 'ajax',
-                url : 'material/materialType.do',
+                url : 'oldpanel/oldpanelType.do',
                 reader : {
                     type : 'json',
-                    rootProperty: 'typetList',
+                    rootProperty: 'typeList',
                 }
             },
             autoLoad : true
@@ -40,14 +40,14 @@ Ext.define('oldpanel.oldpanel_Inbound', {
             name : 'oldpanelType',
             matchFieldWidth: false,
             emptyText : "--请选择--",
-            displayField: 'materialName',
-            valueField: 'materialType',
+            displayField: 'oldpanelName',
+            valueField: 'oldpanelType',
             editable : false,
             store: oldPanelNameList,
             listeners:{
                 select: function(combo, record, index) {
 
-                    console.log(MaterialTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
+                    console.log(oldpanelTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
                     //console.log(record[0].data.materialName);
                 }
             }
@@ -62,22 +62,76 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                 {
                     xtype: 'textfield',
                     margin: '0 10 0 85',
-                    fieldLabel: '长',
+                    fieldLabel: '长一',
                     id: 'length',
-                    width: 180,
-                    labelWidth: 20,
+                    width: 100,
+                    labelWidth: 40,
                     name: 'length',
                     value: "",
                 },
                 {
                     xtype: 'textfield',
-                    fieldLabel: '宽',
+                    fieldLabel: '长二',
                     //labelSeparator: '',
-                    id: 'width',
-                    labelWidth: 20,
-                    width: 180,
+                    id: 'length2',
+                    labelWidth: 40,
+                    width: 100,
                     margin: '0 10 0 85',
+                    name: 'length2',
+                    value: "",
+                },
+                {
+                    xtype: 'textfield',
+                    margin: '0 10 0 85',
+                    fieldLabel: '宽一',
+                    id: 'width',
+                    width: 100,
+                    labelWidth: 40,
                     name: 'width',
+                    value: "",
+                },
+                {
+                    xtype: 'textfield',
+                    fieldLabel: '宽二',
+                    //labelSeparator: '',
+                    id: 'width2',
+                    labelWidth: 40,
+                    width: 100,
+                    margin: '0 10 0 85',
+                    name: 'width2',
+                    value: "",
+                },
+                {
+                    xtype: 'textfield',
+                    fieldLabel: '宽三',
+                    //labelSeparator: '',
+                    id: 'width3',
+                    labelWidth: 40,
+                    width: 100,
+                    margin: '0 10 0 85',
+                    name: 'width3',
+                    value: "",
+                },
+                {
+                    xtype: 'textfield',
+                    fieldLabel: '品号',
+                    //labelSeparator: '',
+                    id: 'oldpanelNo',
+                    labelWidth: 40,
+                    width: 160,
+                    margin: '0 10 0 85',
+                    name: 'oldpanelNo',
+                    value: "",
+                },
+                {
+                    xtype: 'textfield',
+                    fieldLabel: '旧板名称',
+                    //labelSeparator: '',
+                    id: 'oldpanelName',
+                    labelWidth: 40,
+                    width: 160,
+                    margin: '0 10 0 85',
+                    name: 'oldpanelName',
                     value: "",
                 },
             ]
@@ -89,11 +143,11 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                 {
                     xtype: 'textfield',
                     margin: '0 10 0 40',
-                    fieldLabel: '成本',
-                    id: 'cost',
+                    fieldLabel: '库存单位',
+                    id: 'inventoryUnit',
                     width: 187,
                     labelWidth: 30,
-                    name: 'cost',
+                    name: 'inventoryUnit',
                     value: "",
                 },
                 {
@@ -109,11 +163,31 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                 {
                     xtype: 'textfield',
                     margin: '0 10 0 50',
-                    fieldLabel: '存放位置',
-                    id: 'location',
+                    fieldLabel: '重量',
+                    id: 'weight',
                     width: 220,
                     labelWidth: 60,
-                    name: 'location',
+                    name: 'weight',
+                    value: "",
+                },
+                {
+                    xtype: 'textfield',
+                    margin: '0 10 0 50',
+                    fieldLabel: '仓库编号',
+                    id: 'warehouseNo',
+                    width: 220,
+                    labelWidth: 60,
+                    name: 'warehouseNo',
+                    value: "",
+                },
+                {
+                    xtype: 'textfield',
+                    margin: '0 10 0 50',
+                    fieldLabel: '存放位置',
+                    id: 'position',
+                    width: 220,
+                    labelWidth: 60,
+                    name: 'position',
                     value: "",
                 },
                 {
@@ -123,27 +197,40 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                     iconCls : 'rukuicon ',
                     text : '添加',
                     handler: function(){
-                        var materialType = Ext.getCmp('materialName').getValue();
+                        var oldpanelType = Ext.getCmp('oldpanelName').getValue();
                         var length = Ext.getCmp('length').getValue();
+                        var length2 = Ext.getCmp('length2').getValue();
                         var width = Ext.getCmp('width').getValue();
-                        var cost = Ext.getCmp('cost').getValue();
+                        var width2 = Ext.getCmp('width2').getValue();
+                        var width3 = Ext.getCmp('width3').getValue();
+                        var oldpanelNo = Ext.getCmp('oldpanelNo').getValue();
+                        var oldpanelName = Ext.getCmp('oldpanelNo').getValue();
+                        var inventoryUnit = Ext.getCmp('inventoryUnit').getValue();
                         var number = Ext.getCmp('number').getValue();
-                        var location = Ext.getCmp('location').getValue();
+                        var weight = Ext.getCmp('weight').getValue();
+                        var warehouseNo = Ext.getCmp('warehouseNo').getValue();
+                        var position = Ext.getCmp('position').getValue();
                         var data = [{
-                            '类型' : materialType,
-                            '长' : length,
-                            '宽' : width,
+                            '旧板类型' : oldpanelType,
+                            '长一' : length ,
+                            '长二' : length2 ,
+                            '宽一' : width,
+                            '宽二' : width2,
+                            '宽三' : width3,
+                            '品号' : oldpanelNo,
+                            '旧板名称' : oldpanelName,
+                            '库存单位' : inventoryUnit,
                             '数量' : number,
-                            '成本' : cost,
-                            '存放位置' : location,
+                            '重量' : weight,
+                            '仓库编号' : warehouseNo,
+                            '存放位置' : position,
                         }];
                         //点击查询获得输入的数据
 
 
                         // console.log(Ext.getCmp('length').getValue());
                         // console.log(Ext.getCmp('cost').getValue());
-                        Ext.getCmp('addDataGrid').getStore().loadData(data,
-                            true);
+                        Ext.getCmp('addDataGrid').getStore().loadData(data, true);
                     }
                 }
 
@@ -184,7 +271,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                     //获得当前操作时间
                     //var sTime=Ext.Date.format(Ext.getCmp('startTime').getValue(), 'Y-m-d H:i:s');
                     Ext.Ajax.request({
-                        url : 'addMaterial.do', //原材料入库
+                        url : 'oldpanel/addData.do', //原材料入库
                         method:'POST',
                         //submitEmptyText : false,
                         params : {
@@ -213,41 +300,13 @@ Ext.define('oldpanel.oldpanel_Inbound', {
             //dockedItems : [toolbar2],
             store : {
                 // fields: ['材料名','品号', '长',"；类型","宽",'规格','库存单位','仓库编号','数量','成本','存放位置']
-                fields: ['长',"类型","宽",'数量','成本','存放位置']
+                fields: ['旧板类型','长一','长二','宽一','宽二','宽三','品号','旧板名称','库存单位','数量','重量','仓库编号','存放位置']
             },
 
-            columns : [
-            //     {
-            //     dataIndex: '材料名',
-            //     text: '材料名',
-            //     //width : 110,
-            //     editor: {// 文本字段
-            //         xtype: 'textfield',
-            //         allowBlank: false,
-            //     }
-            // },{
-            //     dataIndex : '品号',
-            //     name : '品号',
-            //     text : '品号',
-            //     //width : 110,
-            //     editor : {// 文本字段
-            //         xtype : 'textfield',
-            //         allowBlank : false
-            //     }
-            // },
-                {
-                dataIndex : '长',
-                text : '长',
-                //width : 110,
-                editor : {// 文本字段
-                    xtype : 'textfield',
-                    allowBlank : false,
-
-                }
-
-            }, {
-                dataIndex : '类型',
-                text : '类型',
+            columns : [{
+                dataIndex : '旧板类型',
+                name : '旧板类型',
+                text : '旧板类型',
                 //width : 110,
                 editor : {// 文本字段
                     xtype : 'textfield',
@@ -256,8 +315,9 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                 }
 
             },{
-                dataIndex : '宽',
-                text : '宽',
+                dataIndex : '长一',
+                name : '长一',
+                text : '长一',
                 //width : 110,
                 editor : {// 文本字段
                     xtype : 'textfield',
@@ -265,65 +325,126 @@ Ext.define('oldpanel.oldpanel_Inbound', {
 
                 }
 
-            },
-            //     {
-            //     dataIndex : '规格',
-            //     text : '规格',
-            //     //width : 192,
-            //     editor : {
-            //         xtype : 'textfield',
-            //         allowBlank : false
-            //     }
-            // }, {
-            //     dataIndex : '库存单位',
-            //     text : '库存单位',
-            //     //width : 110,
-            //     editor : {// 文本字段
-            //         id : 'isNullCmb',
-            //         xtype : 'textfield',
-            //         allowBlank : false
-            //
-            //     }
-            //
-            // }, {
-            //     dataIndex : '仓库编号',
-            //     name : '仓库编号',
-            //     text : '仓库编号',
-            //     //width : 130,
-            //
-            //     editor : {// 文本字段
-            //         xtype : 'textfield',
-            //         allowBlank : false
-            //     }
-            // },
-                {
+            },{
+                dataIndex : '长二',
+                name : '长二',
+                text : '长二',
+                //width : 110,
+                editor : {// 文本字段
+                    xtype : 'textfield',
+                    allowBlank : false,
+
+                }
+
+            },{
+                dataIndex : '宽一',
+                name : '宽一',
+                text : '宽一',
+                //width : 110,
+                editor : {// 文本字段
+                    xtype : 'textfield',
+                    allowBlank : false,
+
+                }
+
+            },{
+                dataIndex : '宽二',
+                name : '宽二',
+                text : '宽二',
+                //width : 110,
+                editor : {// 文本字段
+                    xtype : 'textfield',
+                    allowBlank : false,
+
+                }
+
+            },{
+                dataIndex : '宽三',
+                name : '宽三',
+                text : '宽三',
+                //width : 110,
+                editor : {// 文本字段
+                    xtype : 'textfield',
+                    allowBlank : false,
+
+                }
+            },{
+                dataIndex : '品号',
+                name : '品号',
+                text : '品号',
+                //width : 110,
+                editor : {// 文本字段
+                    xtype : 'textfield',
+                    allowBlank : false,
+
+                }
+
+            },{
+                dataIndex : '旧板名称',
+                name : '旧板名称',
+                text : '旧板名称',
+                //width : 110,
+                editor : {// 文本字段
+                    xtype : 'textfield',
+                    allowBlank : false,
+
+                }
+
+            },{
+                dataIndex : '库存单位',
+                name : '库存单位',
+                text : '库存单位',
+                //width : 110,
+                editor : {// 文本字段
+                    xtype : 'textfield',
+                    allowBlank : false,
+
+                }
+
+            },{
                 dataIndex : '数量',
                 name : '数量',
                 text : '数量',
-                //width : 160,
-                editor : {
+                //width : 110,
+                editor : {// 文本字段
                     xtype : 'textfield',
-                    allowBlank : false
+                    allowBlank : false,
+
                 }
 
             },{
-                dataIndex : '成本',
-                name : '成本',
-                text : '成本',
-                //width : 160,
-                editor : {
+                dataIndex : '重量',
+                name : '重量',
+                text : '重量',
+                //width : 110,
+                editor : {// 文本字段
                     xtype : 'textfield',
-                    allowBlank : false
+                    allowBlank : false,
+
                 }
+
+            },{
+                dataIndex : '仓库编号',
+                name : '仓库编号',
+                text : '仓库编号',
+                //width : 110,
+                editor : {// 文本字段
+                    xtype : 'textfield',
+                    allowBlank : false,
+
+                }
+
             },{
                 dataIndex : '存放位置',
                 name : '存放位置',
                 text : '存放位置',
-                //width : 160,
-                editor : {
+                //width : 110,
+                editor : {// 文本字段
                     xtype : 'textfield',
-                    allowBlank : false
+                    allowBlank : false,
+
                 }
+
             }
             ],
             viewConfig : {

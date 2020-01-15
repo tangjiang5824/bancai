@@ -1,7 +1,9 @@
 package yrd.controller;
 
+import cg.service.InsertProjectService;
 import commonMethod.NewCondition;
 import commonMethod.QueryAllService;
+import domain.DataList;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -14,6 +16,7 @@ import vo.UploadDataResult;
 import vo.WebResponse;
 import yrd.service.Y_Upload_Data_Service;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
@@ -26,6 +29,8 @@ public class Oldpanel_Data_Controller {
     private QueryAllService queryService;
     @Autowired
     private Y_Upload_Data_Service y_Upload_Data_Service;
+    @Autowired
+    private InsertProjectService insertProjectService;
 
     Logger log=Logger.getLogger(Oldpanel_Data_Controller.class);
 
@@ -33,27 +38,32 @@ public class Oldpanel_Data_Controller {
      * 添加单个数据
      * */
     @RequestMapping(value="/oldpanel/addData.do")
-    public boolean oldpanel_Add_Data(String s, HttpSession session) {
+    public boolean oldpanelAddData(String s, HttpSession session) {
 
         JSONArray jsonArray =new JSONArray(s);
         String tableName = "oldpanel";
-        int userid = Integer.parseInt(session.getAttribute("userid").toString());
+        int uploadId = Integer.parseInt(session.getAttribute("userid").toString());
         for(int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonTemp = jsonArray.getJSONObject(i);
             //获得第i条数据的各个属性值
-            log.debug(tableName+"第"+i+"个:userid="+userid+"---"+jsonTemp);
-            String oldpanelName = (String) jsonTemp.get("旧板名称");
-            String length = (String) jsonTemp.get("长");
-            String type = (String) jsonTemp.get("类型");
-            String width = (String) jsonTemp.get("宽");
-            int number = Integer.parseInt(jsonTemp.get("数量").toString());
-            String respo = (String) jsonTemp.get("库存单位");
-            String respoNum = (String) jsonTemp.get("仓库编号");
-            String location = (String) jsonTemp.get("存放位置");
-            double weight = Double.parseDouble(jsonTemp.get("重量").toString());
+            log.debug(tableName+"第"+i+"个:userid="+uploadId+"---"+jsonTemp);
+            int oldpanelNo = Integer.parseInt(jsonTemp.get("oldpanelNo").toString());
+            String oldpanelName = (String) jsonTemp.get("oldpanelName");
+            int length = Integer.parseInt(jsonTemp.get("length").toString());
+            int length2 = Integer.parseInt(jsonTemp.get("length2").toString());
+            String oldpanelType = (String) jsonTemp.get("oldpanelType");
+            int width = Integer.parseInt(jsonTemp.get("width").toString());
+            int width2 = Integer.parseInt(jsonTemp.get("width2").toString());
+            int width3 = Integer.parseInt(jsonTemp.get("width3").toString());
+            String inventoryUnit = (String) jsonTemp.get("inventoryUnit");
+            String warehouseNo = (String) jsonTemp.get("warehouseNo");
+            String position = (String) jsonTemp.get("position");
+            double number = Double.parseDouble(jsonTemp.get("number").toString());
+            double weight = Double.parseDouble(jsonTemp.get("weight").toString());
 
             //对每条数据处理
-            y_Upload_Data_Service.oldpanel_Add_Data(tableName,oldpanelName,length,type,width,number,respo,respoNum,location,weight,userid);
+            y_Upload_Data_Service.oldpanelAddData(tableName,oldpanelNo,oldpanelName,length,length2,oldpanelType,width,
+                    width2,width3,inventoryUnit,warehouseNo,position,number,weight,uploadId);
 
         }
 
@@ -110,6 +120,26 @@ public class Oldpanel_Data_Controller {
 
 //        System.out.println("-------------------------------------------------------33");
         return queryService.queryPage(start,limit,"select * from " + tableName);
+    }
+    /**
+     * 下拉选择旧板类型
+     * @param response
+     * @throws IOException
+     */
+    @RequestMapping(value="/oldpanel/oldpanelType.do")
+    public void findOldpanelType(HttpServletResponse response) throws IOException {
+        DataList projectList = insertProjectService.findOldpanelType();
+        //写回前端
+        JSONObject object = new JSONObject();
+        JSONArray array = new JSONArray(projectList);
+        object.put("typeList", array);
+        // System.out.println("类型1：--"+array.getClass().getName().toString());
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html");
+        response.getWriter().write(object.toString());
+        response.getWriter().flush();
+        response.getWriter().close();
+
     }
 
 

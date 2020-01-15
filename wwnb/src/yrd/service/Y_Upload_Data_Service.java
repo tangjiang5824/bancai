@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import service.BaseService;
+import service.QueryService;
 import util.Excel;
 import vo.UploadDataResult;
 
@@ -34,12 +35,14 @@ public class Y_Upload_Data_Service extends BaseService {
      * 添加数据
      */
     @Transactional
-    public void oldpanel_Add_Data(String tableName,String oldpanelName,String length,String type,String width,
-                                int number,String respo,String respoNum,String location,double weight,int userid){
-        log.debug("yrd.service.Y_Upload_Data_Service.oldpanel_Add_Data");
+    public void oldpanelAddData(String tableName,int oldpanelNo,String oldpanelName,int length,int length2,String oldpanelType,int width,
+                                int width2,int width3,String inventoryUnit,String warehouseNo,String position,double number,double weight,int uploadId){
+        log.debug("yrd.service.Y_Upload_Data_Service.oldpanelAddData");
 
-        jo.update("insert into "+tableName+"(oldpanelName,长,类型,宽,可用数量,库存数量,库存单位,仓库编号,存放位置,重量,uploadId) values(?,?,?,?,?,?,?,?,?,?,?)",
-                oldpanelName,length,type,width,number,number,respo,respoNum,location,weight,userid);
+        jo.update("insert into "+tableName+"(oldpanelNo,oldpanelName,length,length2,oldpanelType,width," +
+                        "width2,width3,inventoryUnit,warehouseNo,position,countUse,countStore,weight,uploadId) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                oldpanelNo,oldpanelName,length,length2,oldpanelType,width,
+                width2,width3,inventoryUnit,warehouseNo,position,number,number,weight,uploadId);
         //return true;
     }
 
