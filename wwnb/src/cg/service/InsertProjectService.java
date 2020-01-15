@@ -52,9 +52,36 @@ public class InsertProjectService extends BaseService {
         String sql = "select * from materialtype";
         DataList typelist = queryService.query(sql);
         return typelist;
-
     }
 
+    /**
+     * 通过表名和要查的字段查询结果，如果全查第二个参数设为空
+     * @param tablename
+     * @param args
+     * @return
+     */
+    @Transactional
+    public DataList findallbytableName(String tablename,String...args){
+        String colum="";
+        if(null==args){
+            colum="*";
+        }else {
+            for (String arg : args) {
+                colum=colum+arg+",";
+            }
+            int index=colum.lastIndexOf(",");
+            colum=colum.substring(0,index);
+        }
+        String sql = "select "+colum+" from "+tablename;
+        DataList typelist = queryService.query(sql);
+        return typelist;
+    }
+    @Transactional
+    public DataList findallbytableName(String tablename){
+        String sql = "select * from "+tablename;
+        DataList typelist = queryService.query(sql);
+        return typelist;
+    }
     /**
      * 查询返回对应projectId的领料单
      * @return
