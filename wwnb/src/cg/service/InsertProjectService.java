@@ -61,7 +61,7 @@ public class InsertProjectService extends BaseService {
      */
     @Transactional
     public DataList findmateriallist(String projectId){
-        String sql = "select 材料名称,材料数量,已领数量,要领数量 from projectmateriallist where 项目编号=?";
+        String sql = "select materialName,materialCount,countReceived,countNotReceived from projectmateriallist where projectId=?";
         DataList materiallist = queryService.query(sql,projectId);
         return materiallist;
     }
@@ -73,7 +73,7 @@ public class InsertProjectService extends BaseService {
      */
     @Transactional
     public DataList findmateriallistbyname(String materialName){
-        String sql = "select id,材料名,长,宽,类型,数量 from material where 材料名=? and 数量>0";
+        String sql = "select id,materialName,length,width,materialType,number from material where materialName=? and number>0";
         DataList materiallist = queryService.query(sql,materialName);
         return materiallist;
     }

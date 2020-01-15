@@ -20,14 +20,12 @@ import vo.WebResponse;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 public class ProjectController {
 
-    private Logger log = Logger.getLogger(Upload_Data_Service.class);
+    private Logger log = Logger.getLogger(ProjectController.class);
     @Autowired
     private ProjectService projectService;
     @Autowired
@@ -57,7 +55,7 @@ public class ProjectController {
         String userid = session.getAttribute("userid")+"";
 
         //应该先验证是否有项目重名的情况，返回时输出错误信息
-        String sql_search="select count(*) from project where 项目名称='"+projectName+"'";
+        String sql_search="select count(*) from project where projectName='"+projectName+"'";
         try {
             int projectName_count=insertProjectService.queryisexist(sql_search);
             if (projectName_count!=0){
@@ -73,7 +71,7 @@ public class ProjectController {
            e.printStackTrace();
         }
         //生成project计划表
-        String sql1="insert into project (uploadId,开始时间,项目名称,预计结束时间,计划处负责人,生产处负责人,采购处负责人,财务部负责人,仓储负责人,状态编号) values(?,?,?,?,?,?,?,?,?,?) ";
+        String sql1="insert into project (uploadId,startTime,projectName,proEndTime,planLeader,produceLeader,purchaseLeader,financeLeader,storeLeader,statusId) values(?,?,?,?,?,?,?,?,?,?) ";
         //插入到project表的同时返回projectId
         String projectId =insertProjectService.insertDataToTable(sql1,userid,startTime,projectName,proEndTime,planLeader,produceLeader,purchaseLeader,financeLeader,storeLeader,"1")+"";
         for (int i = 0; i < jsonArray.length(); i++) {
@@ -85,7 +83,7 @@ public class ProjectController {
             String BuildOwner = (String) jsonTemp.get("buildingOwner");
 
             //插入楼栋信息
-            String sql2="insert into building (楼栋编号,楼栋名称,楼栋负责人,项目编号) values(?,?,?,?)";
+            String sql2="insert into building (buildingNo,buildingName,buildingLeader,projectId) values(?,?,?,?)";
             //插入到planlist表的同时返回planlistid
             String BuildingId=insertProjectService.insertDataToTable(sql2,BuildingNo,BuildName,BuildOwner,projectId)+"";
         }
@@ -157,6 +155,17 @@ public class ProjectController {
         response.getWriter().write(object.toString());
         response.getWriter().flush();
         response.getWriter().close();
+
+    }
+    @Test
+    public void test(){
+        String s="a*b LS（SN） m LA";
+        String[]a=s.split(" ");
+        //String[]b=a[0].split("\\+");
+       // double b=Double.parseDouble(a[0]); //java.lang.NumberFormatException: For input string: "a*b"
+        System.out.println(Arrays.toString(a));
+        //System.out.println(Arrays.toString(b));
+
 
     }
 
