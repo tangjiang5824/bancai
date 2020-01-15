@@ -15,7 +15,6 @@ Ext.define('material.material_Receive',{
             proxy : {
                 type : 'ajax',
                 url : 'project/findProjectList.do',
-
                 reader : {
                     type : 'json',
                     rootProperty: 'projectList',
@@ -31,7 +30,7 @@ Ext.define('material.material_Receive',{
             name : '项目名称',
             matchFieldWidth: false,
             emptyText : "--请选择--",
-            displayField: '项目名称',
+            displayField: 'projectName',
             valueField: 'id',
             editable : false,
             store: tableListStore,
@@ -95,32 +94,37 @@ Ext.define('material.material_Receive',{
             }];
 
         var sampleData=[{
-            原材料名称:1,
-            长:'Zeng',
-            类型:'2',
-            宽:'ttt',
-            数量:'12'
+            materialName:1,
+            length:'Zeng',
+            materialType:'2',
+            width:'ttt',
+            number:'12'
         }];
 
         var store1=Ext.create('Ext.data.Store',{
             id: 'store1',
-            fields:['原材料名称','长','类型','宽','数量'],
+            fields:['原材料名称','长','类型','宽','数量','领取数量'],
             data:sampleData
         });
 
         //弹窗的数据
-        var specificMaterialList = Ext.create('Ext.data.Store',{
-            fields:['材料名称','材料数量','已领数量','要领数量'],
-            proxy : {
-                type : 'ajax',
-                url : '？？？',//获取同类型的原材料
-                reader : {
-                    type : 'json',
-                    rootProperty: '？？',
-                }
-            },
-            autoLoad : false
-        });
+        // var specificMaterialList = Ext.create('Ext.data.Store',{
+        //     fields:['材料名称','材料数量','已领数量','要领数量'],
+        //     proxy : {
+        //         type : 'ajax',
+        //         url : 'material/materiallsitbyname.do',//获取同类型的原材料
+        //         reader : {
+        //             type : 'json',
+        //             rootProperty: 'materialstoreList',
+        //         },
+        //         params:{
+        //             //materialName:materialName,
+        //             // start: 0,
+        //             // limit: itemsPerPage
+        //         }
+        //     },
+        //     autoLoad : false
+        // });
 
         var specific_data_grid=Ext.create('Ext.grid.Panel',{
             id : 'specific_data_grid',
@@ -129,24 +133,41 @@ Ext.define('material.material_Receive',{
             columns:[
                 {
                     text: '原材料名称',
-                    dataIndex: '原材料名称'
+                    dataIndex: 'materialName',
+                    width:"80"
                 },{
                     text: '长',
-                    dataIndex: '长'
+                    dataIndex: 'length'
                 },{
                     text: '类型',
-                    dataIndex: '类型'
+                    dataIndex: 'materialType'
                 },{
                     text: '宽',
-                    dataIndex: '宽'
+                    dataIndex: 'width'
                 },{
                     text: '数量',
-                    dataIndex: '数量'
+                    dataIndex: 'number'
                 },
+                {
+                    text: '领取数量',
+                    //dataIndex: 'number',
+                    editor:{xtype : 'textfield', allowBlank : false}
+                },
+
 
                 ],
             flex:1,
-            selType:'checkboxmodel'
+            //selType:'checkboxmodel',
+            plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
+                clicksToEdit : 2
+            })],
+            listeners: {
+                //监听修改
+                validateedit: function (editor, e) {
+                    var field = e.field
+                    var id = e.record.data.id
+                },
+            }
         });
 
 
@@ -154,7 +175,7 @@ Ext.define('material.material_Receive',{
             id:'win_showmaterialData',
             title: '领取同类型下的具体规格',
             height: 500,
-            width: 800,
+            width: 650,
             layout: 'fit',
             closable : true,
             items:specific_data_grid,
@@ -197,8 +218,27 @@ Ext.define('material.material_Receive',{
 
                 //双击表行响应事件
                 itemdblclick: function(me, record, item, index){
-                    // var select = record.data;
-                    // var id =select.id;
+                    var select = record.data;
+                    var materialName = select.materialName;
+                    console.log(materialName)
+                    var specificMaterialList = Ext.create('Ext.data.Store',{
+                        //id,materialName,length,width,materialType,number
+                        fields:['materialName','length','materialType','width','number'],
+                        proxy : {
+                            type : 'ajax',
+                            url : 'material/materiallsitbyname.do?materialName='+materialName,//获取同类型的原材料
+                            reader : {
+                                type : 'json',
+                                rootProperty: 'materialstoreList',
+                            },
+                            // params:{
+                            //     materialName:materialName,
+                            //     // start: 0,
+                            //     // limit: itemsPerPage
+                            // }
+                        },
+                        autoLoad : true
+                    });
                     // var tableName=select.tableName;
                     // var url='showData.jsp?taxTableName='
                     //     + tableName
@@ -207,6 +247,8 @@ Ext.define('material.material_Receive',{
                     // url=encodeURI(url)
                     // window.open(url,
                     //     '_blank','width=800, height=500');
+                    specific_data_grid.setStore(specificMaterialList);
+                     console.log('22222222')
                     Ext.getCmp('win_showmaterialData').show();
                 }
             }

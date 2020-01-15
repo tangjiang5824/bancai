@@ -146,6 +146,8 @@ public class ProjectController {
      */
     @RequestMapping("/material/materiallsitbyname.do")
     public void findmateriallistbybname(String materialName,HttpServletResponse response) throws IOException {
+
+        //System.out.println("---------------------------------------1");
         DataList materialtList = insertProjectService.findmateriallistbyname(materialName);
         //写回前端
         JSONObject object = new JSONObject();
@@ -155,6 +157,7 @@ public class ProjectController {
         response.getWriter().write(object.toString());
         response.getWriter().flush();
         response.getWriter().close();
+        //log.info(response);
 
     }
     @Test
