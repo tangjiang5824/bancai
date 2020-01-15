@@ -220,6 +220,7 @@ Ext.define('material.material_Receive',{
                 itemdblclick: function(me, record, item, index){
                     var select = record.data;
                     var materialName = select.materialName;
+                    console.log("22222")
                     console.log(materialName)
                     var specificMaterialList = Ext.create('Ext.data.Store',{
                         //id,materialName,length,width,materialType,number
