@@ -5,6 +5,7 @@ import cg.service.InsertProjectService;
 import domain.DataList;
 import domain.DataRow;
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -164,8 +165,8 @@ public class ProjectController {
         //String[]b=a[0].split("\\+");
        // double b=Double.parseDouble(a[0]); //java.lang.NumberFormatException: For input string: "a*b"
         System.out.println(Arrays.toString(a));
+        ObjectMapper objectMapper=new ObjectMapper();
         //System.out.println(Arrays.toString(b));
-
 
     }
 
