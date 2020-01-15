@@ -118,7 +118,7 @@ public class ProjectController {
     }
     @RequestMapping(value="/material/findStore.do")
     public void findStorePosition(HttpServletResponse response) throws IOException {
-        DataList StoreName = insertProjectService.findallbytableName("storeName","warehouseNo","warehouseName");
+        DataList StoreName = insertProjectService.findallbytableName("storeposition","warehouseNo","warehouseName");
 //        DataList rowNum=insertProjectService.findallbytableName("storeposition","rowNum");
 //        DataList columnNum=insertProjectService.findallbytableName("storeposition","columnNum");
         //写回前端
@@ -135,7 +135,6 @@ public class ProjectController {
         response.getWriter().write(object.toString());
         response.getWriter().flush();
         response.getWriter().close();
-
     }
 
 
