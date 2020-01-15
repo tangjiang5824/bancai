@@ -115,7 +115,7 @@ Ext.define('product.query_Pcatergory_baseInfo',{
             pageSize: itemsPerPage, // items per page
             proxy:{
                 //url:"hisExcelList.do",
-                url : "？？？？",
+                url : "material/findProductbasicinfoList.do",
                 type: 'ajax',
                 method:'POST',
                 reader:{

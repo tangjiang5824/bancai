@@ -115,7 +115,7 @@ Ext.define('material.query_Mcatergory_baseInfo',{
             pageSize: itemsPerPage, // items per page
             proxy:{
                 //url:"hisExcelList.do",
-                url : "？？？？",
+                url : "material/findMaterialbasicinfoList.do",
                 type: 'ajax',
                 method:'POST',
                 reader:{

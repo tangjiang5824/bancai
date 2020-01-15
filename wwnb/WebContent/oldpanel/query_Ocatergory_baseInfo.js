@@ -115,7 +115,7 @@ Ext.define('oldpanel.query_Ocatergory_baseInfo',{
             pageSize: itemsPerPage, // items per page
             proxy:{
                 //url:"hisExcelList.do",
-                url : "？？？？",
+                url : "material/findOldpanelbasicinfoList.do",
                 type: 'ajax',
                 method:'POST',
                 reader:{
