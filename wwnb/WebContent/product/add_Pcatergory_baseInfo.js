@@ -1,13 +1,12 @@
-Ext.define('oldpanel.Old_Upload_Data', {
+Ext.define('product.add_Pcatergory_baseInfo', {
     extend : 'Ext.panel.Panel',
     region : 'center',
     layout : "fit",
-    title : '旧板材库数据上传',
-    requires : [ 'component.TableList', "component.YearList" ],
+    title : '新增产品基础信息',
     reloadPage : function() {
         var p = Ext.getCmp('functionPanel');
         p.removeAll();
-        cmp = Ext.create("oldpanel.Old_Upload_Data");
+        cmp = Ext.create("product.add_Pcatergory_baseInfo");
         p.add(cmp);
     },
     clearGrid : function() {
@@ -19,7 +18,7 @@ Ext.define('oldpanel.Old_Upload_Data', {
     initComponent : function() {
         var me = this;
         //定义表名
-        // var tableName="materialstore";
+        // var tableName="productbasicinfo";
         // var materialtype="0";
         var toolbar2 = Ext.create("Ext.toolbar.Toolbar", {
             dock : "top",

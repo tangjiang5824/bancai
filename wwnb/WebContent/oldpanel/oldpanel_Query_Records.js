@@ -1,13 +1,12 @@
-Ext.define('material.material_Query_Records',{
+Ext.define('oldpanel.oldpanel_Query_Records',{
     extend:'Ext.panel.Panel',
     region: 'center',
     layout:'fit',
-    title: '原材料出入库记录查询',
+    title: '旧板出入库记录查询',
     initComponent: function(){
         var itemsPerPage = 50;
-        var tableName="material";
+        var tableName="oldpanel";
         //var materialType="1";
-        //项目名称选择
         var projectListStore = Ext.create('Ext.data.Store',{
             fields : [ "项目名称","id"],
             proxy : {
@@ -24,7 +23,7 @@ Ext.define('material.material_Query_Records',{
         var projectName = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '项目名',
             labelWidth : 45,
-            width : 400,
+            width : 300,
             id :  'projectName',
             name : '项目名称',
             matchFieldWidth: false,
@@ -41,8 +40,7 @@ Ext.define('material.material_Query_Records',{
 
         });
 
-        //操作类型
-        //操作类型选择
+        //出库or入库选择
         var optionTypeList = Ext.create('Ext.data.Store', {
             fields: ['abbr', 'name'],
             data : [
@@ -55,14 +53,15 @@ Ext.define('material.material_Query_Records',{
         var optionType = Ext.create('Ext.form.ComboBox', {
             fieldLabel: '操作类型',
             store: optionTypeList,
-            margin : '0 20 0 20',
-            width: 160,
-            labelWidth: 60,
             queryMode: 'local',
             displayField: 'name',
             valueField: 'abbr',
+            margin : '0 20 0 20',
+            width: 160,
+            labelWidth: 60,
             renderTo: Ext.getBody()
         });
+
         var toobar = Ext.create('Ext.toolbar.Toolbar',{
             dock: 'top',
             items: [
@@ -85,7 +84,6 @@ Ext.define('material.material_Query_Records',{
                     labelWidth : 60,
                     id : "startTime",
                     name : 'startTime',
-                    //align: 'right',
                     format : 'Y-m-d',
                     editable : false,
                     //value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
@@ -157,7 +155,7 @@ Ext.define('material.material_Query_Records',{
                 //         }
                 //     }
                 // }
-                ]
+            ]
         });
 
         var material_Query_Records_Store = Ext.create('Ext.data.Store',{
@@ -206,7 +204,7 @@ Ext.define('material.material_Query_Records',{
             },
             columns : [
                 { text: '材料单编号', dataIndex: '材料单编号', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '操作人员',  dataIndex: '操作人员' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
+                { text: '上传人',  dataIndex: '上传人' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
                 { text: '上传时间', dataIndex: '上传时间', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
                 { text: '项目名称', dataIndex: '项目名称',flex :1,editor:{xtype : 'textfield', allowBlank : false} },
                 {
@@ -253,14 +251,6 @@ Ext.define('material.material_Query_Records',{
         });
 
         this.items = [grid];
-        // this.dockedItems = [toobar,toobar1,grid,{
-        //     xtype: 'pagingtoolbar',
-        //     store: material_Query_Records_Store,   // same store GridPanel is using
-        //     dock: 'bottom',
-        //     displayInfo: true,
-        //     displayMsg:'显示{0}-{1}条，共{2}条',
-        //     emptyMsg:'无数据'
-        // }];
         this.callParent(arguments);
     }
 })

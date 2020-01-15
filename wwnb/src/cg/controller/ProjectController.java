@@ -5,6 +5,7 @@ import cg.service.InsertProjectService;
 import domain.DataList;
 import domain.DataRow;
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -20,14 +21,12 @@ import vo.WebResponse;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 public class ProjectController {
 
-    private Logger log = Logger.getLogger(Upload_Data_Service.class);
+    private Logger log = Logger.getLogger(ProjectController.class);
     @Autowired
     private ProjectService projectService;
     @Autowired
@@ -85,7 +84,7 @@ public class ProjectController {
             String BuildOwner = (String) jsonTemp.get("buildingOwner");
 
             //插入楼栋信息
-            String sql2="insert into building (buildingNo,buildingName,buildingOwner,projectId) values(?,?,?,?)";
+            String sql2="insert into building (buildingNo,buildingName,buildingLeader,projectId) values(?,?,?,?)";
             //插入到planlist表的同时返回planlistid
             String BuildingId=insertProjectService.insertDataToTable(sql2,BuildingNo,BuildName,BuildOwner,projectId)+"";
         }
@@ -110,6 +109,8 @@ public class ProjectController {
         JSONArray array = new JSONArray(projectList);
         object.put("typeList", array);
        // System.out.println("类型1：--"+array.getClass().getName().toString());
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html");
         response.getWriter().write(object.toString());
         response.getWriter().flush();
         response.getWriter().close();
@@ -118,18 +119,20 @@ public class ProjectController {
 
     /**
      * 通过projectId查询对应的领料单
-     * @param projectid
+     * @param proejctId
      * @param response
      * @throws IOException
      */
     @RequestMapping("/material/materiallsitbyproject.do")
-    public void findmateriallistbyproject(String projectid,HttpServletResponse response) throws IOException {
-        DataList materialtList = insertProjectService.findmateriallist(projectid);
+    public void findmateriallistbyproject(String proejctId,HttpServletResponse response) throws IOException {
+        DataList materialtList = insertProjectService.findmateriallist(proejctId);
         //写回前端
         JSONObject object = new JSONObject();
         JSONArray array = new JSONArray(materialtList);
         object.put("materialList", array);
        // System.out.println("类型1：--"+array.getClass().getName().toString());
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html");
         response.getWriter().write(object.toString());
         response.getWriter().flush();
         response.getWriter().close();
@@ -144,6 +147,8 @@ public class ProjectController {
      */
     @RequestMapping("/material/materiallsitbyname.do")
     public void findmateriallistbybname(String materialName,HttpServletResponse response) throws IOException {
+
+        //System.out.println("---------------------------------------1");
         DataList materialtList = insertProjectService.findmateriallistbyname(materialName);
         //写回前端
         JSONObject object = new JSONObject();
@@ -153,25 +158,20 @@ public class ProjectController {
         response.getWriter().write(object.toString());
         response.getWriter().flush();
         response.getWriter().close();
+        //log.info(response);
 
     }
     @Test
     public void test(){
-        DataRow dr=new DataRow();
-        dr.put("姓名","陈钢");
-        dr.put("年龄","25");
-        DataRow dr1=new DataRow();
-        dr1.put("姓名","陈钢1");
-        dr1.put("年龄","251");
-        DataList dl=new DataList();
-        dl.add(dr);
-        dl.add(dr1);
-        JSONArray array = new JSONArray();
-        for (DataRow dataRow : dl) {
-          array.put(dataRow);
-        }
-        System.out.println(array);
+        String s="a*b LS（SN） m LA";
+        String[]a=s.split(" ");
+        //String[]b=a[0].split("\\+");
+       // double b=Double.parseDouble(a[0]); //java.lang.NumberFormatException: For input string: "a*b"
+        System.out.println(Arrays.toString(a));
+        ObjectMapper objectMapper=new ObjectMapper();
+        //System.out.println(Arrays.toString(b));
 
     }
+
 
 }

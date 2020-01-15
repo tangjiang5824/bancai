@@ -22,7 +22,7 @@ public class Material_Service extends BaseService {
 	public int addMaterialData(String tableName,String materialName,int proNum,String Length,String Type,String Width,String scale,String respo,String respoNum,int count,double cost,String location,String userid){
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 		//int i= jo.update(sql,userid,startTime,projectName,"1",keyHolder);
-		String sql = "insert into "+ tableName+" (materialName,品号,长,类型,宽,规格,库存单位,仓库编号,数量,成本,存放位置,uploadID) values(?,?,?,?,?,?,?,?,?,?,?,?)";
+		String sql = "insert into "+ tableName+" (材料名,品号,长,类型,宽,规格,库存单位,仓库编号,数量,成本,存放位置,uploadId) values(?,?,?,?,?,?,?,?,?,?,?,?)";
 		int j=jo.update(new PreparedStatementCreator(){
 							@Override
 							public PreparedStatement createPreparedStatement(Connection conn) throws SQLException {

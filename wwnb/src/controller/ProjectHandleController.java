@@ -326,11 +326,14 @@ public class ProjectHandleController {
     public void findProjectList(HttpServletResponse response) throws IOException {
         System.out.println("???????????");
         DataList projectList = projectService.findProjectList();
+        System.out.println(projectList);
         //写回前端
         JSONObject object = new JSONObject();
         JSONArray array = new JSONArray(projectList);
         object.put("projectList", array);
         System.out.println("类型1：--"+array.getClass().getName().toString());
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html");
         response.getWriter().write(object.toString());
         response.getWriter().flush();
         response.getWriter().close();

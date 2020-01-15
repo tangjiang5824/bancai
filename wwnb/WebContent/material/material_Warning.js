@@ -1,8 +1,9 @@
-Ext.define('material.material_Inbound', {
-    extend : 'Ext.panel.Panel',
-    region : 'center',
-    layout : "fit",
-    title : '原材料入库',
+Ext.define('material.material_Warning',{
+    extend:'Ext.panel.Panel',
+    region: 'center',
+    layout:'fit',
+    title: '原材料预警',
+
     reloadPage : function() {
         var p = Ext.getCmp('functionPanel');
         p.removeAll();
@@ -20,7 +21,6 @@ Ext.define('material.material_Inbound', {
         var tableName="material";
         //var materialtype="1";
 
-        //原材料类型
         var MaterialNameList = Ext.create('Ext.data.Store',{
             fields : [ 'materialName'],
             proxy : {
@@ -41,8 +41,8 @@ Ext.define('material.material_Inbound', {
             name : 'materialName',
             matchFieldWidth: false,
             emptyText : "--请选择--",
-            displayField: 'materialName',
-            valueField: 'materialType',
+            displayField: '原材料名称',
+            valueField: '原材料类型',
             editable : false,
             store: MaterialNameList,
             listeners:{
@@ -171,7 +171,7 @@ Ext.define('material.material_Inbound', {
 
                         // console.log(Ext.getCmp('length').getValue());
                         // console.log(Ext.getCmp('cost').getValue());
-                        Ext.getCmp('addDataGrid').getStore().loadData(data,
+                        Ext.getCmp('material_Warning_addDataGrid').getStore().loadData(data,
                             true);
                     }
                 }
@@ -200,7 +200,7 @@ Ext.define('material.material_Inbound', {
                 handler : function() {
 
                     // 取出grid的字段名字段类型
-                    var select = Ext.getCmp('addDataGrid').getStore()
+                    var select = Ext.getCmp('material_Warning_addDataGrid').getStore()
                         .getData();
                     var s = new Array();
                     select.each(function(rec) {
@@ -240,123 +240,123 @@ Ext.define('material.material_Inbound', {
 
 
 
-        var grid = Ext.create("Ext.grid.Panel", {
-            id : 'addDataGrid',
+        var material_Warning_grid = Ext.create("Ext.grid.Panel", {
+            id : 'material_Warning_addDataGrid',
             //dockedItems : [toolbar2],
             store : {
-                 fields: ['材料名','品号', '长',"；类型","宽",'规格','库存单位','仓库编号','数量','成本','存放位置']
+                fields: ['材料名','品号', '长',"；类型","宽",'规格','库存单位','仓库编号','数量','成本','存放位置']
                 //fields: ['长',"类型","宽",'数量','成本','存放位置','品号','规格','库存单位','仓库编号']
             },
 
             columns : [
                 {
-                dataIndex: '原材料名称',
-                text: '材料名',
-                //width : 110,
-                editor: {// 文本字段
-                    xtype: 'textfield',
-                    allowBlank: false,
-                }
-            },{
-                dataIndex : '品号',
-                name : '品号',
-                text : '品号',
-                //width : 110,
-                editor : {// 文本字段
-                    xtype : 'textfield',
-                    allowBlank : false
-                }
-            },
+                    dataIndex: '原材料名称',
+                    text: '材料名',
+                    //width : 110,
+                    editor: {// 文本字段
+                        xtype: 'textfield',
+                        allowBlank: false,
+                    }
+                },{
+                    dataIndex : '品号',
+                    name : '品号',
+                    text : '品号',
+                    //width : 110,
+                    editor : {// 文本字段
+                        xtype : 'textfield',
+                        allowBlank : false
+                    }
+                },
                 {
-                dataIndex : '长',
-                text : '长',
-                //width : 110,
-                editor : {// 文本字段
-                    xtype : 'textfield',
-                    allowBlank : false,
+                    dataIndex : '长',
+                    text : '长',
+                    //width : 110,
+                    editor : {// 文本字段
+                        xtype : 'textfield',
+                        allowBlank : false,
 
-                }
+                    }
 
-            }, {
-                dataIndex : '类型',
-                text : '类型',
-                //width : 110,
-                editor : {// 文本字段
-                    xtype : 'textfield',
-                    allowBlank : false,
+                }, {
+                    dataIndex : '类型',
+                    text : '类型',
+                    //width : 110,
+                    editor : {// 文本字段
+                        xtype : 'textfield',
+                        allowBlank : false,
 
-                }
+                    }
 
-            },{
-                dataIndex : '宽',
-                text : '宽',
-                //width : 110,
-                editor : {// 文本字段
-                    xtype : 'textfield',
-                    allowBlank : false,
+                },{
+                    dataIndex : '宽',
+                    text : '宽',
+                    //width : 110,
+                    editor : {// 文本字段
+                        xtype : 'textfield',
+                        allowBlank : false,
 
-                }
+                    }
 
-            },
+                },
                 {
-                dataIndex : '规格',
-                text : '规格',
-                //width : 192,
-                editor : {
-                    xtype : 'textfield',
-                    allowBlank : false
-                }
-            }, {
-                dataIndex : '库存单位',
-                text : '库存单位',
-                //width : 110,
-                editor : {// 文本字段
-                    id : 'isNullCmb',
-                    xtype : 'textfield',
-                    allowBlank : false
+                    dataIndex : '规格',
+                    text : '规格',
+                    //width : 192,
+                    editor : {
+                        xtype : 'textfield',
+                        allowBlank : false
+                    }
+                }, {
+                    dataIndex : '库存单位',
+                    text : '库存单位',
+                    //width : 110,
+                    editor : {// 文本字段
+                        id : 'isNullCmb',
+                        xtype : 'textfield',
+                        allowBlank : false
 
-                }
+                    }
 
-            }, {
-                dataIndex : '仓库编号',
-                name : '仓库编号',
-                text : '仓库编号',
-                //width : 130,
+                }, {
+                    dataIndex : '仓库编号',
+                    name : '仓库编号',
+                    text : '仓库编号',
+                    //width : 130,
 
-                editor : {// 文本字段
-                    xtype : 'textfield',
-                    allowBlank : false
-                }
-            },
+                    editor : {// 文本字段
+                        xtype : 'textfield',
+                        allowBlank : false
+                    }
+                },
                 {
-                dataIndex : '数量',
-                name : '数量',
-                text : '数量',
-                //width : 160,
-                editor : {
-                    xtype : 'textfield',
-                    allowBlank : false
-                }
+                    dataIndex : '数量',
+                    name : '数量',
+                    text : '数量',
+                    //width : 160,
+                    editor : {
+                        xtype : 'textfield',
+                        allowBlank : false
+                    }
 
-            },{
-                dataIndex : '成本',
-                name : '成本',
-                text : '成本',
-                //width : 160,
-                editor : {
-                    xtype : 'textfield',
-                    allowBlank : false
+                },{
+                    dataIndex : '成本',
+                    name : '成本',
+                    text : '成本',
+                    //width : 160,
+                    editor : {
+                        xtype : 'textfield',
+                        allowBlank : false
+                    }
+                },{
+                    dataIndex : '存放位置',
+                    name : '存放位置',
+                    text : '存放位置',
+                    //width : 160,
+                    editor : {
+                        xtype : 'textfield',
+                        allowBlank : false
+                    }
                 }
-            },{
-                dataIndex : '存放位置',
-                name : '存放位置',
-                text : '存放位置',
-                //width : 160,
-                editor : {
-                    xtype : 'textfield',
-                    allowBlank : false
-                }
-            }
             ],
             viewConfig : {
                 plugins : {
@@ -371,7 +371,7 @@ Ext.define('material.material_Inbound', {
         });
         this.dockedItems = [toolbar,
             //toobar,
-            toolbar1, grid,toolbar3];
+            toolbar1, material_Warning_grid,toolbar3];
         //this.items = [ me.grid ];
         this.callParent(arguments);
 

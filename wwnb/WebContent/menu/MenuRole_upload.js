@@ -11,16 +11,16 @@ Ext.define("menu.MenuRole_upload", {
 				text : '旧板管理',
 				expanded : true,
 				children : [ {
-					text : '旧板批量入库（Excel）',
+					text : '旧板批量入库',
 					id : 'oldpanel.Old_Upload_Data',
 					leaf : true
 				} , {
-					text : '旧板手动入库（下拉框）',
-					//id : ,//'oldpanel.Old_Upload_Data',
+					text : '旧板手动入库',
+					id : 'oldpanel.oldpanel_Inbound',
 					leaf : true
 				} ,{
 					text : '旧板出库（左右两个界面，可选出库数量）',
-					//id : 'oldpanel.Old_Query_Data',
+					id : '',
 					leaf : true
 				}, {
 					text : '旧板库存查询（显示旧板表）',
@@ -28,18 +28,18 @@ Ext.define("menu.MenuRole_upload", {
 					leaf : true
 				}, {
 					text : '旧板出入库记录查询（出入库日志）',
-					//id : 'oldpanel.Old_Query_Data',
+					id : 'oldpanel.oldpanel_Query_Records',
 					leaf : true
 				}, {
 					text : '旧板出入库记录统计',
-					//id : 'oldpanel.Old_Query_Data',
+					id : 'oldpanel.oldpanel_Statistics_Records',
 					leaf : true
 				}]
 			} ,{
 				text : '原材料管理',
 				expanded : true,
 				children : [ {
-					text : '原材料领料（左右两个界面，可选出库数量）',
+					text : '原材料领料',
 					id : 'material.material_Receive',
 					leaf : true
 				} , {
@@ -47,7 +47,7 @@ Ext.define("menu.MenuRole_upload", {
 					id : 'material.material_Inbound',
 					leaf : true
 				} ,{
-					text : '原材料数据上传',
+					text : '原材料批量入库',
 					id : 'material.material_Upload_Data',
 					leaf : true
 				},
@@ -58,19 +58,19 @@ Ext.define("menu.MenuRole_upload", {
 					leaf : true
 				}, {
 					text : '原材料出入库记录查询（出入库日志）',
-					//id : 'oldpanel.Old_Query_Data',
-					leaf : true
-				}, {
-					text : '原材料出入库记录统计',
 					id : 'material.material_Query_Records',
 					leaf : true
 				}, {
-					text : '预警',
-					//id : 'oldpanel.Old_Query_Data',
+					text : '原材料出入库记录统计',
+					id : 'material.material_Statistics_Records',
 					leaf : true
 				}, {
-					text : '报警',
-					//id : 'oldpanel.Old_Query_Data',
+					text : '原材料预警',
+					id : 'material.material_Warning',
+					leaf : true
+				}, {
+					text : '原材料报警',
+					id : 'material.material_Alarm',
 					leaf : true
 				}]
 			},{
@@ -78,25 +78,14 @@ Ext.define("menu.MenuRole_upload", {
 				expanded : true,
 				children : [ {
 					text : '产品信息录入',
-					//id : 'material.material_Upload_Data',
+					id : 'product.product_Inbound',
 					leaf : true
 				} , {
 					text : '产品信息查询',
-					//id : 'material.material_Upload_Data',
+					id : 'product.product_Query_Data',
 					leaf : true
-				} , {
-					text : '产品信息修改',
-					//id : 'oldpanel.Old_Query_Data',
-					leaf : true
-				}, {
-					text : '产品信息删除（待定）',
-					//id : 'oldpanel.Old_Query_Data',
-					leaf : true
-				}, {
-					text : '',
-					//id : 'oldpanel.Old_Query_Data',
-					leaf : true
-				}]
+				} ,
+				]
 			},{
 				text : '项目管理',
 				expanded : true,
@@ -133,6 +122,53 @@ Ext.define("menu.MenuRole_upload", {
 					id : '',
 					leaf : true
 				}]
+			},{
+				text : '基础信息管理',
+				expanded : true,
+				children : [ {
+					text : '原材料种类管理',
+					//leaf : true
+					expanded : true,
+					children : [{
+						text : '添加新的类型',
+						id : 'material.add_Mcatergory_baseInfo',
+						leaf : true
+					},{
+						text : '查看原材料类型',
+						id : 'material.query_Mcatergory_baseInfo',
+						leaf : true
+					}
+					]
+				} , {
+					text : '旧版种类管理',
+					//leaf : true
+					expanded : true,
+					children : [{
+						text : '添加新的类型',
+						id : 'oldpanel.add_Ocatergory_baseInfo',
+						leaf : true
+					},{
+						text : '查看旧版基础信息',
+						id : 'oldpanel.query_Ocatergory_baseInfo',
+						leaf : true
+					}
+					]
+				} , {
+					text : '产品种类管理',
+					//leaf : true
+					expanded : true,
+					children : [{
+						text : '添加新的类型',
+						id : 'product.add_Pcatergory_baseInfo',
+						leaf : true
+					},{
+						text : '查看产品基础信息',
+						id : 'product.query_Pcatergory_baseInfo',//
+						leaf : true
+					}
+					]
+				}
+				]
 			}
 			]
 		}
