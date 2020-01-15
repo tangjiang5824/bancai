@@ -23,7 +23,12 @@ public class InsertProjectService extends BaseService {
     @Autowired
     private QueryService queryService;
 
-
+    /**
+     * 插入通用接口，sql和要插入的字段值，所有插入都是String
+     * @param sql
+     * @param args
+     * @return
+     */
     @Transactional
     public int insertDataToTable(String sql,String... args){
         log.debug(sql);
@@ -67,7 +72,7 @@ public class InsertProjectService extends BaseService {
 
 
     /**
-     * 通过表名和要查的字段查询结果，如果全查第二个参数设为空
+     * 通用接口  通过表名和要查的字段查询结果，如果全查第二个参数设为空
      * @param tablename
      * @param args
      * @return
@@ -88,12 +93,29 @@ public class InsertProjectService extends BaseService {
         DataList typelist = queryService.query(sql);
         return typelist;
     }
+    //重载 全查 只用传入tablename
     @Transactional
     public DataList findallbytableName(String tablename){
         String sql = "select * from "+tablename;
         DataList typelist = queryService.query(sql);
         return typelist;
     }
+
+    //通过表名和一个键值对查询
+    @Transactional
+    public DataList findallbytableNameAndinfo(String tablename,String variable,String value){
+        String sql = "select * from "+tablename+" where "+variable+"= ?";
+        DataList list = queryService.query(sql,value);
+        return list;
+    }
+
+
+
+
+
+    //-----------------------------------------------------------------------------------
+
+
     /**
      * 查询返回对应projectId的领料单
      * @return
