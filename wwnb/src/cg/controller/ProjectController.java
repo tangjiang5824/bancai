@@ -145,6 +145,25 @@ public class ProjectController {
         DataList table = insertProjectService.findallbytableName(tableName);
         //写回前端
         JSONObject object = new JSONObject();
+        JSONArray StoreArray = new JSONArray(table);
+        object.put(tableName, StoreArray);
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html");
+        response.getWriter().write(object.toString());
+        response.getWriter().flush();
+        response.getWriter().close();
+    }
+
+    /**
+     * 返回任意表的所有字段,需要传递一个字段和值作为查询条件
+     * @param response
+     * @throws IOException
+     */
+    @RequestMapping(value="/material/findAllbyTableNameAndOnlyOneCondition.do")
+    public void findAllbyTableNameAndOnlyOneCondition(HttpServletResponse response,String tableName,String columnName,String columnValue) throws IOException {
+        DataList table = insertProjectService.findallbytableNameAndinfo(tableName,columnName,columnValue);
+        //写回前端
+        JSONObject object = new JSONObject();
         JSONArray StoreNamearray = new JSONArray(table);
         object.put(tableName, StoreNamearray);
         response.setCharacterEncoding("UTF-8");
