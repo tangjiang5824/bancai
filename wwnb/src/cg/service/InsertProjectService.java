@@ -58,6 +58,18 @@ public class InsertProjectService extends BaseService {
         DataList typelist = queryService.query(sql);
         return typelist;
     }
+    /**
+     * 查询返回所有的旧板类型
+     * @return
+     */
+    @Transactional
+    public DataList findOldpanelType(){
+        String sql = "select * from oldpaneltype";
+        DataList typelist = queryService.query(sql);
+        return typelist;
+
+    }
+
 
     /**
      * 通用接口  通过表名和要查的字段查询结果，如果全查第二个参数设为空
