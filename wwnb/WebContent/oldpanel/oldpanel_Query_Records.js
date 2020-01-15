@@ -169,11 +169,10 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
         });
 
         var sampleData=[{
-            // materialName:1,
-            // length:'Zeng',
-            // materialType:'2',
-            // width:'ttt',
-            // number:'12'
+             oldpanellogId:'1',
+             oldpanelName:'Zeng',
+             count:'2',
+             specification:'ttt',
         }];
         var material_Query_Records_store1=Ext.create('Ext.data.Store',{
             id: 'material_Query_Records_store1',
@@ -184,12 +183,12 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
 
         var material_Query_Records_specific_data_grid=Ext.create('Ext.grid.Panel',{
             id : 'material_Query_Records_specific_data_grid',
-            store:material_Query_Records_store1,//specificMaterialList，store1的数据固定
+            store:material_Query_Records_store1,//oldpanellogdetailList，store1的数据固定
             dock: 'bottom',
             columns:[
                 {
                     text: '旧板领料记录单编号',
-                    dataIndex: 'id',
+                    dataIndex: 'oldpanellogId',
                     width:"80"
                 },{
                     text: '旧板名称',
@@ -264,26 +263,23 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
                 itemdblclick: function(me, record, item, index){
                     var select = record.data;
                     var id = select.id;
-                    console.log(materialName)
-                    var specificMaterialList = Ext.create('Ext.data.Store',{
+                    console.log(id);
+                    var oldpanellogdetailList = Ext.create('Ext.data.Store',{
                         //id,materialName,length,width,materialType,number
-                        fields:['oldpanelId','oldpanelName','count','specification'],
+                        fields:['oldpanellogId','oldpanelName','count','specification'],
                         //fields:['materialName','length','materialType','width','number'],//'oldpanelId','oldpanelName','count'
                         proxy : {
                             type : 'ajax',
                             url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName=oldpanellogdetail&columnName=oldpanellogId&columnValue='+id,//获取同类型的原材料
-                            // params:{
-                            //     start: 0,
-                            //     limit: itemsPerPage
-                            // },
                             reader : {
                                 type : 'json',
-                                rootProperty: 'materialstoreList',
+                                rootProperty: 'oldpanellogdetail',
                             },
                         },
                         autoLoad : true
                     });
-                    material_Query_Records_specific_data_grid.setStore(specificMaterialList);
+                    material_Query_Records_specific_data_grid.setStore(oldpanellogdetailList);
+                    console.log(oldpanellogdetailList);
                     Ext.getCmp('material_Query_Records_win_showmaterialData').show();
                 }
             }
