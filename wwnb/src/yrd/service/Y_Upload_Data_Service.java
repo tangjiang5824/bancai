@@ -1,5 +1,6 @@
 package yrd.service;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -69,43 +70,55 @@ public class Y_Upload_Data_Service extends BaseService {
         //updateEnterpriseInfo(tableName);
         return true;
     }
-//    /**
-//     * 上传旧板匹配数据
-//     *
-//     * @param inputStream
-//     * @return
-//     * @throws IOException
-//     */
-//    @Transactional
-//    public UploadDataResult oldpanelUploadMatchData(InputStream inputStream) throws IOException {
-//        UploadDataResult result = new UploadDataResult();
-//        wb = new HSSFWorkbook(inputStream);
-//        int sheetNum = wb.getNumberOfSheets();
-//        for (int n = 0; n < sheetNum; n++) {
-//            HSSFSheet sheet = wb.getSheetAt(n);
-//            HSSFRow row = sheet.getRow(1);
-//            HSSFCell cell1 = row.getCell(0);
-//            String buildingNum = cell1.getStringCellValue();//该表格对应的楼栋名称
-//            int rowNum = sheet.getLastRowNum();
-//            // 正文内容应该从第二行开始,第一行为表头的标题
-//            for (int i = 1; i <= rowNum; i++) {
-//                row = sheet.getRow(i);
-//                HSSFCell cell2 = row.getCell(1);
-//                String panelName = cell1.getStringCellValue();
-//                String oldpanelName = oldpanelMatchName(panelName);
-//                cell2.setCellValue(oldpanelName);
-//            }
-//
-//        }
-//        result.success = true;
-//        return result;
-//    }
-//
-//    private String oldpanelMatchName(String panelName){
-//        String oldpanelName = "";
-//
-//        return oldpanelName;
-//    }
+    /**
+     * 上传旧板匹配数据
+     *
+     * @param inputStream
+     * @return
+     * @throws IOException
+     */
+    @Transactional
+    public UploadDataResult oldpanelUploadMatchData(InputStream inputStream) throws IOException {
+        UploadDataResult result = new UploadDataResult();
+        wb = new HSSFWorkbook(inputStream);
+        int sheetNum = wb.getNumberOfSheets();
+        for (int n = 0; n < sheetNum; n++) {
+            HSSFSheet sheet = wb.getSheetAt(n);
+            HSSFRow row = sheet.getRow(1);
+            HSSFCell cell1 = row.getCell(0);
+            String buildingNum = cell1.getStringCellValue();//该表格对应的楼栋名称
+            int rowNum = sheet.getLastRowNum();
+            int rowResultNum = 1;
+            // 正文内容应该从第二行开始,第一行为表头的标题
+            for (int i = 1; i <= rowNum; i++) {
+                row = sheet.getRow(i);
+                cell1 = row.getCell(0);
+                HSSFRow rowResult = sheet.getRow(rowResultNum);
+                HSSFCell cell2 = rowResult.getCell(1);
+                String panelName = cell1.getStringCellValue();
+                oldpanelMatchName(cell2, panelName);
+                rowResultNum ++;
+            }
+
+        }
+        result.success = true;
+        return result;
+    }
+
+    private void oldpanelMatchName(HSSFCell cell, String panelName){
+        String str = "500 BS 700";
+        String[] splited = str.split("\\s+");
+        String reg = "^[0-9]+(.[0-9]+)?$";
+        int a;
+        for(String res : splited){
+            if (res.matches(reg)){
+                a = 1;
+            }else{
+                a = 0;
+            }
+            System.out.println(res+"==="+a);
+        }
+    }
 
     private void oldpanel_Save_Data(DataList dataList, String tableName, int userid) {
         for (int i = 0; i < dataList.size(); i += 1) {
@@ -123,21 +136,5 @@ public class Y_Upload_Data_Service extends BaseService {
         }
     }
 
-//    @Test
-//    public void main() {
-//        String str = "500 BS 700";
-//        String[] splited = str.split("\\s+");
-//        String reg = "^[0-9]+(.[0-9]+)?$";
-//        int a;
-//        for(String res : splited){
-//            if (res.matches(reg)==true){
-//                a = 1;
-//            }else{
-//                a = 0;
-//            }
-//            System.out.println(res+"==="+a);
-//        }
-//
-//    }
 }
 
