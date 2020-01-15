@@ -12,10 +12,10 @@ Ext.define('material.material_Statistics_Records',{
                 {
                     xtype: 'textfield',
                     margin : '0 10 0 0',
-                    fieldLabel: '上传人',
+                    fieldLabel: '入库人员',
                     //id :'userId',
                     width: 160,
-                    labelWidth: 50,
+                    labelWidth: 60,
                     name: 'userId',
                     value:"",
                 },

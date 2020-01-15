@@ -48,6 +48,11 @@ public class DataList extends ArrayList<DataRow> {
 	{
 		String columns=getColumns();
 		String values=getValues(start,end,uploadId);
+		String number="";
+		for(int i=start;i<end&&i<this.size();i++){
+			DataRow row=this.get(i);
+			//if(row.keySet())
+		}
 		return String.format("insert into %s (%s uploadId) values %s", tableName,columns,values);
 	}
 	
