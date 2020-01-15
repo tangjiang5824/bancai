@@ -29,6 +29,7 @@ public class AllExcelService extends BaseService {
 
 			//注意：toInsertSQL方法解析得到的Colum与数据库中的表的字段是对应的。
 			String sql = dataList.toInsertSQL(i, i + 1000, tableName, userId);
+			//String sql = dataList.toInsertSQL(i, i + 1000, tableName);
 			jo.update(sql);
 		}
 	}
