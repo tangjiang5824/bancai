@@ -116,20 +116,19 @@ public class ProjectController {
         response.getWriter().close();
 
     }
+
+    /**
+     * 返回所有的仓库名
+     * @param response
+     * @throws IOException
+     */
     @RequestMapping(value="/material/findStore.do")
-    public void findStorePosition(HttpServletResponse response) throws IOException {
+    public void findStore(HttpServletResponse response) throws IOException {
         DataList StoreName = insertProjectService.findallbytableName("storeposition","warehouseNo","warehouseName");
-//        DataList rowNum=insertProjectService.findallbytableName("storeposition","rowNum");
-//        DataList columnNum=insertProjectService.findallbytableName("storeposition","columnNum");
         //写回前端
         JSONObject object = new JSONObject();
         JSONArray StoreNamearray = new JSONArray(StoreName);
-//        JSONArray rowNumarray = new JSONArray(rowNum);
-//        JSONArray columnNumarray = new JSONArray(columnNum);
         object.put("StoreName", StoreNamearray);
-//        object.put("rowNum", rowNumarray);
-//        object.put("columnNum", columnNumarray);
-        // System.out.println("类型1：--"+array.getClass().getName().toString());
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html");
         response.getWriter().write(object.toString());
@@ -137,6 +136,37 @@ public class ProjectController {
         response.getWriter().close();
     }
 
+    /**
+     * 通过传入warehouseNo返回对应的行和列
+     * @param response
+     * @param warehouseNo
+     * @throws IOException
+     */
+    @RequestMapping(value="/material/findStorePosition.do")
+    public void findStorePosition(HttpServletResponse response,String warehouseNo) throws IOException {
+          DataList rowNum=insertProjectService.findallbytableNameAndinfo("storeposition","warehouseNo",warehouseNo);
+            List<Map> rowList =new ArrayList<>();
+            List<Map> columnList =new ArrayList<>();
+            for (int i = 1; i < Integer.parseInt(rowNum.get(0).get("rowNum")+"")+1; i++) {
+                Map<String,Integer> rowMap = new HashMap<>();
+                rowMap.put("rowNum",i);
+                rowList.add(rowMap);
+            }
+            for (int i = 1; i < Integer.parseInt(rowNum.get(0).get("columnNum")+"")+1; i++) {
+                Map<String, Integer> columnMap = new HashMap<>();
+                columnMap.put("columnNum",i);
+                columnList.add(columnMap);
+            }
+        //写回前端
+        JSONObject object = new JSONObject();
+        object.put("rowNum", rowList);
+        object.put("columnNum", columnList);
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html");
+        response.getWriter().write(object.toString());
+        response.getWriter().flush();
+        response.getWriter().close();
+    }
 
 
     /**
