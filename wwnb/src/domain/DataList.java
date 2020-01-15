@@ -44,6 +44,8 @@ public class DataList extends ArrayList<DataRow> {
 	* 修改为mysql的语句格式
 	*
 	* */
+
+
 	public String toInsertSQL(int start,int end,String tableName,int uploadId)
 	{
 		String columns=getColumns();
@@ -55,7 +57,6 @@ public class DataList extends ArrayList<DataRow> {
 		}
 		return String.format("insert into %s (%s uploadId) values %s", tableName,columns,values);
 	}
-	
 
 	private String getValues(int start,int end,int uploadId) {
 		String values="";

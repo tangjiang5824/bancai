@@ -123,6 +123,20 @@ Ext.define("menu.MenuRole_upload", {
 					leaf : true
 				}]
 			},{
+				text : '财务管理',
+				expanded : true,
+				children : [ {
+					text : '成本查询',
+					id : 'finance.Query_cost',
+					leaf : true
+				} , {
+					text : '成本统计',
+					id : 'finance.statistics_cost',
+					leaf : true
+				} ,
+				]
+			},
+				{
 				text : '基础信息管理',
 				expanded : true,
 				children : [ {

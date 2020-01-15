@@ -118,6 +118,95 @@ public class ProjectController {
     }
 
     /**
+     * 返回所有的仓库名
+     * @param response
+     * @throws IOException
+     */
+    @RequestMapping(value="/material/findStore.do")
+    public void findStore(HttpServletResponse response) throws IOException {
+        DataList StoreName = insertProjectService.findallbytableName("storeposition","warehouseNo","warehouseName");
+        //写回前端
+        JSONObject object = new JSONObject();
+        JSONArray StoreNamearray = new JSONArray(StoreName);
+        object.put("StoreName", StoreNamearray);
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html");
+        response.getWriter().write(object.toString());
+        response.getWriter().flush();
+        response.getWriter().close();
+    }
+    /**
+     * 返回任意表的所有字段
+     * @param response
+     * @throws IOException
+     */
+    @RequestMapping(value="/material/findAllBytableName.do")
+    public void findAllbyTableName(HttpServletResponse response,String tableName) throws IOException {
+        DataList table = insertProjectService.findallbytableName(tableName);
+        //写回前端
+        JSONObject object = new JSONObject();
+        JSONArray StoreArray = new JSONArray(table);
+        object.put(tableName, StoreArray);
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html");
+        response.getWriter().write(object.toString());
+        response.getWriter().flush();
+        response.getWriter().close();
+    }
+
+    /**
+     * 返回任意表的所有字段,需要传递一个字段和值作为查询条件
+     * @param response
+     * @throws IOException
+     */
+    @RequestMapping(value="/material/findAllbyTableNameAndOnlyOneCondition.do")
+    public void findAllbyTableNameAndOnlyOneCondition(HttpServletResponse response,String tableName,String columnName,String columnValue) throws IOException {
+        DataList table = insertProjectService.findallbytableNameAndinfo(tableName,columnName,columnValue);
+        //写回前端
+        JSONObject object = new JSONObject();
+        JSONArray StoreNamearray = new JSONArray(table);
+        object.put(tableName, StoreNamearray);
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html");
+        response.getWriter().write(object.toString());
+        response.getWriter().flush();
+        response.getWriter().close();
+    }
+
+    /**
+     * 通过传入warehouseNo返回对应的行和列
+     * @param response
+     * @param warehouseNo
+     * @throws IOException
+     */
+    @RequestMapping(value="/material/findStorePosition.do")
+    public void findStorePosition(HttpServletResponse response,String warehouseNo) throws IOException {
+          DataList rowNum=insertProjectService.findallbytableNameAndinfo("storeposition","warehouseNo",warehouseNo);
+            List<Map> rowList =new ArrayList<>();
+            List<Map> columnList =new ArrayList<>();
+            for (int i = 1; i < Integer.parseInt(rowNum.get(0).get("rowNum")+"")+1; i++) {
+                Map<String,Integer> rowMap = new HashMap<>();
+                rowMap.put("rowNum",i);
+                rowList.add(rowMap);
+            }
+            for (int i = 1; i < Integer.parseInt(rowNum.get(0).get("columnNum")+"")+1; i++) {
+                Map<String, Integer> columnMap = new HashMap<>();
+                columnMap.put("columnNum",i);
+                columnList.add(columnMap);
+            }
+        //写回前端
+        JSONObject object = new JSONObject();
+        object.put("rowNum", rowList);
+        object.put("columnNum", columnList);
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html");
+        response.getWriter().write(object.toString());
+        response.getWriter().flush();
+        response.getWriter().close();
+    }
+
+
+    /**
      * 通过projectId查询对应的领料单
      * @param proejctId
      * @param response
@@ -159,7 +248,6 @@ public class ProjectController {
         response.getWriter().flush();
         response.getWriter().close();
         //log.info(response);
-
     }
     @Test
     public void test(){
