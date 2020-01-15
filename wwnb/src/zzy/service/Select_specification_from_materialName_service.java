@@ -18,8 +18,8 @@ public class Select_specification_from_materialName_service extends BaseService{
      * */
 
     @Transactional
-    public DataList findMaterialbasicinfo_SpecificationList(String materialName){
-        String sql = "select specification from materialbasicinfo where materialName = '"+materialName+"'";
+    public DataList findMaterial_SpecificationList(String materialName){
+        String sql = "select specification from material where materialName = '"+materialName+"'";
         DataList list = queryService.query(sql);
         return list;
     }
