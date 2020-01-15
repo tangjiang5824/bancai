@@ -45,7 +45,7 @@ Ext.define('material.material_Receive',{
 
         //查询的数据存放位置
         var MaterialList = Ext.create('Ext.data.Store',{
-            fields:['材料名称','材料数量','已领数量','要领数量'],
+            fields:['materialName','materialCount','countReceived','countNotReceived'],
             proxy : {
                 type : 'ajax',
                 url : 'material/materiallsitbyproject.do',
@@ -58,7 +58,8 @@ Ext.define('material.material_Receive',{
         });
 
         var MaterialList2=Ext.create('Ext.data.Store',{
-            fields:['材料名称','材料数量','已领数量','要领数量']
+            //fields:['材料名称','材料数量','已领数量','要领数量']
+            fields:['materialName','materialCount','countReceived','countNotReceived'],
         });
 
         var clms=[
@@ -67,28 +68,28 @@ Ext.define('material.material_Receive',{
             //     text:'项目名'
             // },
             {
-                dataIndex:'材料名称',
+                dataIndex:'materialName',
                 text:'材料名',
             },
             {
-                dataIndex:'材料数量',
+                dataIndex:'materialCount',
                 text:'材料数量',
             },
             {
-                dataIndex:'已领数量',
+                dataIndex:'countReceived',
                 text:'已领数量',
             },
             {
-                dataIndex:'要领数量',
+                dataIndex:'countNotReceived',
                 text:'要领数量',
                 editor:{xtype : 'textfield', allowBlank : false}
             }];
         var clms1=[ {
-                dataIndex:'材料名称',
+                dataIndex:'materialName',
                 text:'材料名',
             },
             {
-                dataIndex:'要领数量',
+                dataIndex:'countNotReceived',
                 text:'要领数量',
                 //editor:{xtype : 'textfield', allowBlank : false}
             }];
@@ -273,8 +274,8 @@ Ext.define('material.material_Receive',{
                         var records=grid1.getSelectionModel().getSelection();
                         console.log(records)
                         console.log(records[0].previousValues==undefined)//代领的数量，未修改前的数量
-                        //console.log(records[0].data['已领数量'])
-                        console.log(records[0].data['要领数量'])//最终的数量
+                        //console.log(records[0].data['countReceived'])
+                        console.log(records[0].data['countNotReceived'])//最终的数量
 
                         //若未修改数量，不变.直接remove
                         if(records[0].previousValues==undefined){
