@@ -17,6 +17,7 @@ import zzy.service.Select_specification_from_materialName_service;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.text.ParseException;
 
 @RestController
 public class Select_specification_from_materialName_controller {
@@ -38,5 +39,36 @@ public class Select_specification_from_materialName_controller {
 		return wr;
 	}
 
+	/*
+	 * 查询出入库记录
+	 * */
+	@RequestMapping(value = "/oldpanel/oldpanel_query_records.do")
+	public WebResponse materialDataList(Integer start, Integer limit, String projectId,
+										String optionType, String startTime, String endTime, String userId) throws ParseException {
+		//log.debug(startWidth+" "+endWidth);
+
+		String tableName = "oldpanellog";
+//		System.out.println(startWidth);
+//		System.out.println(endWidth);
+//
+		mysqlcondition c=new mysqlcondition();
+		if (projectId.length() != 0) {
+			c.and(new mysqlcondition("projectId", "=", projectId));
+		}
+		if (optionType.length() != 0) {
+			c.and(new mysqlcondition("type", "=", optionType));
+		}
+		if (startTime.length() != 0) {
+			c.and(new mysqlcondition("time", ">=", startTime));
+		}
+		if (endTime.length() != 0) {
+			c.and(new mysqlcondition("time", "<=", endTime));
+		}
+		if (userId.length() != 0) {
+			c.and(new mysqlcondition("userId", "=", userId));
+		}
+		WebResponse wr=queryAllService.queryDataPage(start, limit, c, tableName);
+		return wr;
+	}
 
 }
