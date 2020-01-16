@@ -224,6 +224,48 @@ public class ProjectController {
         return true;
     }
 
+    @RequestMapping(value = "/material/insertIntoOldPanelType.do")
+    @Transactional
+    public boolean insertToOldPanelType(String s){
+        JSONArray jsonArray =new JSONArray(s);
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject=jsonArray.getJSONObject(i);
+            String oldpanelTypeName = jsonObject.get("oldpanelTypeName")+"";
+            String name = jsonObject.get("name")+"";
+            String sql ="insert into oldpaneltype (materialTypeName,name) values(?,?)";
+            boolean flag= insertProjectService.insertIntoTableBySQL(sql,oldpanelTypeName,name);
+            if(!flag){
+                return  false;
+            }
+        }
+        return true;
+    }
+
+    @RequestMapping(value = "/material/insertIntoProductbasicinfo.do")
+    @Transactional
+    public boolean insertIntoProductbasicinfo(String s){
+        JSONArray jsonArray =new JSONArray(s);
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject=jsonArray.getJSONObject(i);
+            String productName = jsonObject.get("productName")+"";
+            String productType = jsonObject.get("productType")+"";
+            String length = jsonObject.get("length")+"";
+            String length2 = jsonObject.get("length2")+"";
+            String width = jsonObject.get("width")+"";
+            String width2 = jsonObject.get("width2")+"";
+            String weight = jsonObject.get("weight")+"";
+            String cost = jsonObject.get("cost")+"";
+            String sql ="insert into productbasicinfo (productName,productType,length,length2,width,width2,weight,cost) values(?,?)";
+            boolean flag= insertProjectService.insertIntoTableBySQL(sql,productName,productType,length,length2,width,width2,weight,cost);
+            if(!flag){
+                return  false;
+            }
+        }
+        return true;
+    }
+
 
     /**
      * 通过projectId查询对应的领料单
