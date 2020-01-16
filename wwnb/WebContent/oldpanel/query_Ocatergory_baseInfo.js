@@ -115,7 +115,7 @@ Ext.define('oldpanel.query_Ocatergory_baseInfo',{
             pageSize: itemsPerPage, // items per page
             proxy:{
                 //url:"hisExcelList.do",
-                url : "material/findOldpanelbasicinfoList.do",
+                url : "material/findOldpanel_oldpaneltypeList.do",
                 type: 'ajax',
                 method:'POST',
                 reader:{
@@ -131,7 +131,7 @@ Ext.define('oldpanel.query_Ocatergory_baseInfo',{
             listeners : {
                 beforeload : function(store, operation, eOpts) {
                     store.getProxy().setExtraParams({
-                        oldpanelCatergory:Ext.getCmp('oldpanelCatergory').getValue(),
+                        //oldpanelCatergory:Ext.getCmp('oldpanelCatergory').getValue(),
                         tableName:tableName,
                     });
                 }
