@@ -37,7 +37,7 @@ public class OldpanelMatchController {
         String tableName = "oldpanel";
         int userid = Integer.parseInt(session.getAttribute("userid").toString());
         try {
-            UploadDataResult result = y_Upload_Data_Service.oldpanel_Upload_Data(uploadFile.getInputStream(),tableName,userid);
+            UploadDataResult result = y_Upload_Data_Service.oldpanelUploadData(uploadFile.getInputStream(),tableName,userid);
             response.setSuccess(result.success);
             response.setErrorCode(result.errorCode);
             response.setValue(result.data);
