@@ -427,7 +427,7 @@ Ext.define('material.material_Inbound', {
                         //s.push();
                     });
 
-                    console.log(s);
+                    console.log(select);
 
                     //获取数据
                     //获得当前操作时间
@@ -470,10 +470,12 @@ Ext.define('material.material_Inbound', {
                     name : '品号',
                     text : '品号',
                     //width : 110,
+                    value:'99',
                     editor : {// 文本字段
                         xtype : 'textfield',
-                        allowBlank : false
-                    }
+                        allowBlank : true
+                    },
+                    //defaultValue:"2333",
                 },
                 {
                     dataIndex : '长1',
@@ -492,9 +494,10 @@ Ext.define('material.material_Inbound', {
                     hidden:true,
                     editor : {// 文本字段
                         xtype : 'textfield',
-                        allowBlank : false,
+                        allowBlank : true,
 
-                    }
+                    },
+                    // defaultValue:"",
 
                 },
                 {
@@ -524,7 +527,7 @@ Ext.define('material.material_Inbound', {
                     hidden:true,
                     editor : {// 文本字段
                         xtype : 'textfield',
-                        allowBlank : false,
+                        allowBlank : true,
                     }
                 },
                 {
@@ -542,7 +545,7 @@ Ext.define('material.material_Inbound', {
                     editor : {// 文本字段
                         id : 'isNullCmb',
                         xtype : 'textfield',
-                        allowBlank : false
+                        allowBlank : true
 
                     }
 
@@ -574,7 +577,7 @@ Ext.define('material.material_Inbound', {
                     //width : 130,
                     editor : {// 文本字段
                         xtype : 'textfield',
-                        allowBlank : false
+                        allowBlank : true
                     }
                 },
                 {
@@ -584,7 +587,7 @@ Ext.define('material.material_Inbound', {
                     //width : 160,
                     editor : {
                         xtype : 'textfield',
-                        allowBlank : false
+                        allowBlank : true
                     }
                 },
                 {
@@ -594,7 +597,7 @@ Ext.define('material.material_Inbound', {
                     //width : 160,
                     editor : {
                         xtype : 'textfield',
-                        allowBlank : false
+                        allowBlank : true
                     }
                 } ,{
                     dataIndex: '原材料名称',

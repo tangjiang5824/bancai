@@ -18,7 +18,7 @@ Ext.define('oldpanel.add_Ocatergory_baseInfo', {
     initComponent : function() {
         var me = this;
         //定义表名
-        // var tableName="oldpanelbasicinfo";
+        var tableName="oldpaneltype";
         // var materialtype="0";
         var toolbar2 = Ext.create("Ext.toolbar.Toolbar", {
             dock : "top",
@@ -30,9 +30,9 @@ Ext.define('oldpanel.add_Ocatergory_baseInfo', {
                 handler : function() {
                     //fields: ['品号', '品名','规格','库存单位','仓库编号','数量','成本','存放位置']
                     var data = [{
-                        '旧版名称' : '',
+                        'name' : '',
                         //'长' : '',
-                        '旧版类型' : '',
+                        'oldpanelTypeName' : '',
                         // '宽' : '',
                         // '数量' : '',
                         // '库存单位' : '',
@@ -70,7 +70,7 @@ Ext.define('oldpanel.add_Ocatergory_baseInfo', {
                         method:'POST',
                         //submitEmptyText : false,
                         params : {
-                            // tableName:tableName,
+                            tableName:tableName,
                             // materialType:materialtype,
                             s : "[" + s + "]",
                             //userid: userid + ""
@@ -110,10 +110,10 @@ Ext.define('oldpanel.add_Ocatergory_baseInfo', {
             dockedItems : [toolbar2],
             store : {
                 //fields: ['旧板名称', '长','类型','宽','数量','库存单位','仓库编号','存放位置','重量']
-                fields: ['旧版名称', '旧版类型']
+                fields: ['name', 'oldpanelTypeName']
             },
             columns : [{
-                dataIndex : '旧版名称',
+                dataIndex : 'name',
                 name : '旧版名称',
                 text : '旧版名称',
                 //width : 110,
@@ -133,7 +133,7 @@ Ext.define('oldpanel.add_Ocatergory_baseInfo', {
                 //     }
                 // },
                 {
-                    dataIndex : '旧版类型',
+                    dataIndex : 'oldpanelTypeName',
                     name : '旧版类型',
                     text : '旧版类型',
                     //width : 110,

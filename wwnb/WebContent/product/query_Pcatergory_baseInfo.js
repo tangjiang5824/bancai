@@ -115,17 +115,18 @@ Ext.define('product.query_Pcatergory_baseInfo',{
             pageSize: itemsPerPage, // items per page
             proxy:{
                 //url:"hisExcelList.do",
-                url : "material/findProductbasicinfoList.do",
+                url : "material/findAllBytableName.do",
                 type: 'ajax',
                 method:'POST',
                 reader:{
                     type : 'json',
-                    rootProperty: 'value',
+                    rootProperty: 'productbasicinfo',
                     totalProperty: 'totalCount'
                 },
                 params:{
                     start: 0,
                     limit: itemsPerPage,
+                    tableName:tableName,
                 }
             },
             listeners : {
@@ -148,8 +149,8 @@ Ext.define('product.query_Pcatergory_baseInfo',{
                 enableTextSelection : true
             },
             columns : [
-                { text: '产品名称',  dataIndex: '产品名称' ,flex :1, editor : {xtype : 'textfield', allowBlank : false}},
-                { text: '类型',  dataIndex: '类型' ,flex :1,editor : {xtype : 'textfield', allowBlank : false}},
+                { text: '产品名称',  dataIndex: 'productName' ,flex :1, editor : {xtype : 'textfield', allowBlank : false}},
+                { text: '类型',  dataIndex: 'productType' ,flex :1,editor : {xtype : 'textfield', allowBlank : false}},
             ],
 
             tbar: toobar,

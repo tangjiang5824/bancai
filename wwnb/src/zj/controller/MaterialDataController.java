@@ -65,7 +65,7 @@ public class MaterialDataController {
             }
 
             System.out.println(jsonTemp);
-            int materialNo=Integer.parseInt(jsonTemp.get("品号").toString());
+            String materialNo=jsonTemp.get("品号").toString()+"";
             String materialName=(String) jsonTemp.get("原材料名称");
             String length=jsonTemp.get("长1")+"";
             //String length2=jsonTemp.get("长2")+"";
