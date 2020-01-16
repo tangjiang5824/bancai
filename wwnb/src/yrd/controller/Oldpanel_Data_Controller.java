@@ -4,6 +4,7 @@ import cg.service.InsertProjectService;
 import commonMethod.NewCondition;
 import commonMethod.QueryAllService;
 import domain.DataList;
+import domain.DataRow;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -20,6 +21,8 @@ import yrd.service.Y_Upload_Data_Service;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Iterator;
 
 @RestController
 public class Oldpanel_Data_Controller {
@@ -77,12 +80,12 @@ public class Oldpanel_Data_Controller {
      * */
 
     @RequestMapping(value = "/oldpanel/uploadExcel.do",produces = { "text/html;charset=UTF-8" })
-    public String oldpanel_Upload_Data(MultipartFile uploadFile, HttpSession session) {
+    public String oldpanelUploadData(MultipartFile uploadFile, HttpSession session) {
         WebResponse response = new WebResponse();
         String tableName = "oldpanel";
         int userid = Integer.parseInt(session.getAttribute("userid").toString());
         try {
-            UploadDataResult result = y_Upload_Data_Service.oldpanel_Upload_Data(uploadFile.getInputStream(),tableName,userid);
+            UploadDataResult result = y_Upload_Data_Service.oldpanelUploadData(uploadFile.getInputStream(),tableName,userid);
             response.setSuccess(result.success);
             response.setErrorCode(result.errorCode);
             response.setValue(result.data);
@@ -101,22 +104,38 @@ public class Oldpanel_Data_Controller {
      * 查旧板表
      */
     @RequestMapping(value="/oldpanel/updateData.do")
-    public WebResponse oldpanel_Find_List(Integer start, Integer limit,String tableName, String startLength, String endLength, String startWidth, String endWidth, String mType, HttpSession session){
+    public WebResponse oldpanelFindList(Integer start, Integer limit,String tableName, String oldpanelType){
+//            , String startLength, String endLength, String startWidth, String endWidth, String mType, HttpSession session){
+//        log.debug("search["+tableName+"]length:"+startLength+"--"+endLength+";width"+startWidth+"--"+endWidth);
 
-        log.debug("search["+tableName+"]length:"+startLength+"--"+endLength+";width"+startWidth+"--"+endWidth);
-
+        log.debug("search["+tableName+"]oldpanelType:"+oldpanelType);
         //根据输入的数据查询
         //DataList dataList = testAddService.findList(proName);
         //查询字段不为空
-        if((startLength !=null)||(endLength !=null)||(startWidth !=null)||(endWidth !=null)){
+//        if((startLength !=null)||(endLength !=null)||(startWidth !=null)||(endWidth !=null)){
+//            NewCondition c=new NewCondition();
+//            if ((startLength.length() != 0)&&(endLength.length() != 0)&&(startWidth.length() != 0)&&(endWidth.length() != 0)) {
+//                c.and(new NewCondition("长", " between", startLength, endLength));
+//                c.and(new NewCondition("宽", " between", startWidth, endWidth));
+//                c.and(new NewCondition("类型", "=", mType));
+//            }
+//            //调用函数，查询满足条件的所有数据
+//            return queryService.queryPage(start, limit, c, tableName);
+//        }
+//        System.out.println(oldpanelType);
+        if(oldpanelType !=null){
             NewCondition c=new NewCondition();
-            if ((startLength.length() != 0)&&(endLength.length() != 0)&&(startWidth.length() != 0)&&(endWidth.length() != 0)) {
-                c.and(new NewCondition("长", " between", startLength, endLength));
-                c.and(new NewCondition("宽", " between", startWidth, endWidth));
-                c.and(new NewCondition("类型", "=", mType));
+            WebResponse re=new WebResponse();
+            if (oldpanelType.length() != 0) {
+                c.and(new NewCondition("oldpanelType", "=", oldpanelType));
             }
-            //调用函数，查询满足条件的所有数据
-            return queryService.queryPage(start, limit, c, tableName);
+            re = queryService.queryPage(start, limit, c, tableName);
+            String typeTableName = "oldpaneltype";
+//            System.out.println(re);
+            re = y_Upload_Data_Service.ChangeQueryPageFromAToB(re, typeTableName,"oldpanelType","oldpanelTypeName");
+//                System.out.println(re);
+            return re;
+
         }
 
 //        System.out.println("-------------------------------------------------------33");

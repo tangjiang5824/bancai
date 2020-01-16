@@ -93,7 +93,7 @@ public class InsertProjectService extends BaseService {
         DataList typelist = queryService.query(sql);
         return typelist;
     }
-    //重载 全查 只用传入tablename
+    //通用接口 重载 全查 只用传入tablename
     @Transactional
     public DataList findallbytableName(String tablename){
         String sql = "select * from "+tablename;
@@ -101,15 +101,22 @@ public class InsertProjectService extends BaseService {
         return typelist;
     }
 
-    //通过表名和一个键值对查询
+    //通用接口    通过表名和一个键值对查询
     @Transactional
     public DataList findallbytableNameAndinfo(String tablename,String variable,String value){
         String sql = "select * from "+tablename+" where "+variable+"= ?";
         DataList list = queryService.query(sql,value);
         return list;
     }
-
-
+    //通用接口
+    @Transactional
+    public boolean insertIntoTableBySQL(String sql,String...args){
+        int i=jo.update(sql,args);
+        if(i!=0){
+            return true;
+        }
+        return false;
+    }
 
 
 
