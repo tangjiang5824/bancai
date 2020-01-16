@@ -18,7 +18,7 @@ Ext.define('material.add_Mcatergory_baseInfo', {
     initComponent : function() {
         var me = this;
         //定义表名
-        // var tableName="materialbasicinfo";
+        var tableName="materialtype";
         // var materialtype="0";
         var toolbar2 = Ext.create("Ext.toolbar.Toolbar", {
             dock : "top",
@@ -30,15 +30,8 @@ Ext.define('material.add_Mcatergory_baseInfo', {
                 handler : function() {
                     //fields: ['品号', '品名','规格','库存单位','仓库编号','数量','成本','存放位置']
                     var data = [{
-                        '原材料名称' : '',
-                        //'长' : '',
-                        '类型' : '',
-                        // '宽' : '',
-                        // '数量' : '',
-                        // '库存单位' : '',
-                        // '仓库编号' : '',
-                        // '存放位置' : '',
-                        // '重量' : '',
+                        'name' : '',
+                        'materialTypeName' : '',
                     }];
                     //Ext.getCmp('addDataGrid')返回定义的对象
                     Ext.getCmp('addDataGrid').getStore().loadData(data,
@@ -70,7 +63,7 @@ Ext.define('material.add_Mcatergory_baseInfo', {
                         method:'POST',
                         //submitEmptyText : false,
                         params : {
-                            // tableName:tableName,
+                            tableName:tableName,
                             // materialType:materialtype,
                             s : "[" + s + "]",
                             //userid: userid + ""
@@ -110,10 +103,10 @@ Ext.define('material.add_Mcatergory_baseInfo', {
             dockedItems : [toolbar2],
             store : {
                 //fields: ['旧板名称', '长','类型','宽','数量','库存单位','仓库编号','存放位置','重量']
-                fields: ['原材料名称', '类型']
+                fields: ['name', 'materialTypeName']
             },
             columns : [{
-                dataIndex : '原材料名称',
+                dataIndex : 'name',
                 name : '原材料名称',
                 text : '原材料名称',
                 //width : 110,
@@ -133,7 +126,7 @@ Ext.define('material.add_Mcatergory_baseInfo', {
             //     }
             // },
                 {
-                dataIndex : '类型',
+                dataIndex : 'materialTypeName',
                 name : '类型',
                 text : '类型',
                 //width : 110,

@@ -56,7 +56,6 @@ public class MaterialDataController {
             JSONObject jsonTemp = jsonArray.getJSONObject(i);
             String length2="";
             String width2="";
-            String materialNo=null;
            try{
               length2=jsonTemp.get("长2")+"";
            }catch (JSONException e){
@@ -67,7 +66,9 @@ public class MaterialDataController {
             }catch (JSONException e){
                 width2=null;
             }
-            //int materialNo=Integer.parseInt(jsonTemp.get("品号")+"");
+
+            System.out.println(jsonTemp);
+            String materialNo=jsonTemp.get("品号").toString()+"";
             String materialName=jsonTemp.get("原材料名称")+"";
             String length=jsonTemp.get("长1")+"";
             //String length2=jsonTemp.get("长2")+"";
@@ -158,11 +159,7 @@ public class MaterialDataController {
         return wr;
     }
 
-
-    /*
-     * 根据选中的id删除数据
-     *
-     * */
+    
 
 
 

@@ -19,7 +19,7 @@ public class Material_Service extends BaseService {
 
 
 	@Transactional   //specification,inventoryUnit,warehouseNo
-	public int addMaterialData(String tableName,String materialName,int materialNo,String length,String length2,String Type,String width,String width2,String specification,String inventoryUnit,int warehouseNo,int count,double cost,int row,int col,String userId){
+	public int addMaterialData(String tableName,String materialName,String materialNo,String length,String length2,String Type,String width,String width2,String specification,String inventoryUnit,int warehouseNo,int count,double cost,int row,int col,String userId){
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 		//int i= jo.update(sql,userid,startTime,projectName,"1",keyHolder);
 		String sql = "insert into "+ tableName+" (materialName,materialNo,length,length2,materialType,width,width2,specification,inventoryUnit,warehouseNo,number,cost,rowNo,columNo,uploadId) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
@@ -28,7 +28,7 @@ public class Material_Service extends BaseService {
 							public PreparedStatement createPreparedStatement(Connection conn) throws SQLException {
 								PreparedStatement ps = conn.prepareStatement(sql,new String[] { "id" });
 								ps.setString(1, materialName);
-								ps.setInt(2, materialNo);
+								ps.setString(2, materialNo);
 								ps.setString(3, length);
 								ps.setString(4, length2);
 								ps.setString(5, Type);
