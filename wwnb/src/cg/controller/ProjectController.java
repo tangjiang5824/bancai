@@ -266,6 +266,17 @@ public class ProjectController {
         return true;
     }
 
+    @RequestMapping(value = "/material/updateMaterialNum.do")
+    @Transactional
+    public boolean updateMaterialNum(String materialName,String length,String width,String number){
+        String sql="update material set number=number-? where materialName=? and length=? and width=?";
+        boolean flag=insertProjectService.insertIntoTableBySQL(sql,number,materialName,length,width);
+        if(!flag){
+            return  false;
+        }
+        return true;
+    }
+
 
     /**
      * 通过projectId查询对应的领料单
