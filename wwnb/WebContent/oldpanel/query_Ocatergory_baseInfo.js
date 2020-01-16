@@ -5,7 +5,7 @@ Ext.define('oldpanel.query_Ocatergory_baseInfo',{
     title: '旧板材库数据查询',
     initComponent: function(){
         var itemsPerPage = 50;
-        var tableName="oldpanelbasicinfo";
+        var tableName="oldpaneltype";
         var toobar = Ext.create('Ext.toolbar.Toolbar',{
             items: [{
                 xtype: 'textfield',
@@ -115,23 +115,24 @@ Ext.define('oldpanel.query_Ocatergory_baseInfo',{
             pageSize: itemsPerPage, // items per page
             proxy:{
                 //url:"hisExcelList.do",
-                url : "material/findOldpanelbasicinfoList.do",
+                url : "material/findAllBytableName.do",
                 type: 'ajax',
                 method:'POST',
                 reader:{
                     type : 'json',
-                    rootProperty: 'value',
+                    rootProperty: 'oldpaneltype',
                     totalProperty: 'totalCount'
                 },
                 params:{
                     start: 0,
                     limit: itemsPerPage,
+                    tableName:tableName,
                 }
             },
             listeners : {
                 beforeload : function(store, operation, eOpts) {
                     store.getProxy().setExtraParams({
-                        oldpanelCatergory:Ext.getCmp('oldpanelCatergory').getValue(),
+                        //oldpanelCatergory:Ext.getCmp('oldpanelCatergory').getValue(),
                         tableName:tableName,
                     });
                 }
@@ -148,8 +149,8 @@ Ext.define('oldpanel.query_Ocatergory_baseInfo',{
                 enableTextSelection : true
             },
             columns : [
-                { text: '旧版名称',  dataIndex: '旧版名称' ,flex :1, editor : {xtype : 'textfield', allowBlank : false}},
-                { text: '类型',  dataIndex: '类型' ,flex :1,editor : {xtype : 'textfield', allowBlank : false}},
+                { text: '旧版名称',  dataIndex: 'name' ,flex :1, editor : {xtype : 'textfield', allowBlank : false}},
+                { text: '类型',  dataIndex: 'oldpanelTypeName' ,flex :1,editor : {xtype : 'textfield', allowBlank : false}},
             ],
 
             tbar: toobar,

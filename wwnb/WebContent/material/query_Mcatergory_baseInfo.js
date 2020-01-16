@@ -5,7 +5,7 @@ Ext.define('material.query_Mcatergory_baseInfo',{
     title: '原材料基础信息查询',
     initComponent: function(){
         var itemsPerPage = 50;
-        var tableName="materialbasicinfo";
+        var tableName="materialtype";
         var toobar = Ext.create('Ext.toolbar.Toolbar',{
             items: [{
                 xtype: 'textfield',
@@ -115,23 +115,24 @@ Ext.define('material.query_Mcatergory_baseInfo',{
             pageSize: itemsPerPage, // items per page
             proxy:{
                 //url:"hisExcelList.do",
-                url : "material/findMaterialbasicinfoList.do",
+                url : "material/findAllBytableName.do",
                 type: 'ajax',
                 method:'POST',
                 reader:{
                     type : 'json',
-                    rootProperty: 'value',
+                    rootProperty: 'materialtype',
                     totalProperty: 'totalCount'
                 },
                 params:{
                     start: 0,
                     limit: itemsPerPage,
+                    tableName:tableName,
                 }
             },
             listeners : {
                 beforeload : function(store, operation, eOpts) {
                     store.getProxy().setExtraParams({
-                        materialCatergory:Ext.getCmp('materialCatergory').getValue(),
+                        //materialCatergory:Ext.getCmp('materialCatergory').getValue(),
                         tableName:tableName,
                     });
                 }
@@ -148,8 +149,8 @@ Ext.define('material.query_Mcatergory_baseInfo',{
                 enableTextSelection : true
             },
             columns : [
-                { text: '原材料名称',  dataIndex: '原材料名称' ,flex :1, editor : {xtype : 'textfield', allowBlank : false}},
-                { text: '类型',  dataIndex: '类型' ,flex :1,editor : {xtype : 'textfield', allowBlank : false}},
+                { text: '原材料名称',  dataIndex: 'name' ,flex :1, editor : {xtype : 'textfield', allowBlank : false}},
+                { text: '类型',  dataIndex: 'materialTypeName' ,flex :1,editor : {xtype : 'textfield', allowBlank : false}},
                 ],
 
             tbar: toobar,

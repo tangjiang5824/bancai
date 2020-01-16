@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import commonMethod.NewCondition;
+import commonMethod.QueryAllService;
 import domain.DataList;
 import domain.DataRow;
 import org.apache.log4j.Logger;
@@ -26,11 +28,14 @@ import service.BaseService;
 import service.QueryService;
 import util.Excel;
 import vo.UploadDataResult;
+import vo.WebResponse;
 
 @Service
 public class Y_Upload_Data_Service extends BaseService {
     private Logger log = Logger.getLogger(Y_Upload_Data_Service.class);
     private HSSFWorkbook wb;
+    @Autowired
+    private QueryAllService queryService;
     /**
      * 添加数据
      */
@@ -40,7 +45,8 @@ public class Y_Upload_Data_Service extends BaseService {
         log.debug("yrd.service.Y_Upload_Data_Service.oldpanelAddData");
 
         jo.update("insert into "+tableName+"(oldpanelNo,oldpanelName,length,length2,oldpanelType,width," +
-                        "width2,width3,inventoryUnit,warehouseNo,position,countUse,countStore,weight,uploadId) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                        "width2,width3,inventoryUnit,warehouseNo,position,countUse,countStore,weight,uploadId) " +
+                        "values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                 oldpanelNo,oldpanelName,length,length2,oldpanelType,width,
                 width2,width3,inventoryUnit,warehouseNo,position,number,number,weight,uploadId);
         //return true;
@@ -54,22 +60,22 @@ public class Y_Upload_Data_Service extends BaseService {
      * @throws IOException
      */
     @Transactional
-    public UploadDataResult oldpanel_Upload_Data(InputStream inputStream, String tableName, int userid) throws IOException {
+    public UploadDataResult oldpanelUploadData(InputStream inputStream, String tableName, int userid) throws IOException {
         DataList dataList;
         UploadDataResult result = new UploadDataResult();
         Excel excel = new Excel(inputStream);
 
         dataList = excel.readExcelContent();
 
-        boolean upload = oldpanel_Upload(dataList,tableName,userid);
+        boolean upload = oldpanelUpload(dataList,tableName,userid);
         result.dataList = dataList;
         result.success = upload;
         return result;
     }
 
     @Transactional
-    boolean oldpanel_Upload(DataList dataList, String tableName, int userid) {
-        oldpanel_Save_Data(dataList,tableName,userid);
+    boolean oldpanelUpload(DataList dataList, String tableName, int userid) {
+        oldpanelSaveData(dataList,tableName,userid);
         //updateEnterpriseInfo(tableName);
         return true;
     }
@@ -123,21 +129,54 @@ public class Y_Upload_Data_Service extends BaseService {
         }
     }
 
-    private void oldpanel_Save_Data(DataList dataList, String tableName, int userid) {
-        for (int i = 0; i < dataList.size(); i += 1) {
-            String oldpanelName =(String)dataList.get(i).get("旧板名称");
-            String length = (String) dataList.get(i).get("长");
-            String type = (String) dataList.get(i).get("类型");
-            String width = (String) dataList.get(i).get("宽");
-            String number = (String) dataList.get(i).get("数量");
-            String respo = (String) dataList.get(i).get("库存单位");
-            String respoNum = (String) dataList.get(i).get("仓库编号");
-            String location = (String) dataList.get(i).get("存放位置");
-            String weight = (String) dataList.get(i).get("重量");
-            String sql = "insert into "+tableName+"(oldpanelName,长,类型,宽,可用数量,库存数量,库存单位,仓库编号,存放位置,重量,uploadId) values(?,?,?,?,?,?,?,?,?,?,?)";
-            jo.update(sql,oldpanelName,length,type,width,number,number,respo,respoNum,location,weight,userid);
+    private void oldpanelSaveData(DataList dataList, String tableName, int userid) {
+        for (DataRow dataRow : dataList) {
+            String oldpanelNo = (String) dataRow.get("oldpanelNo");
+            String oldpanelName = (String) dataRow.get("oldpanelName");
+            String length = (String) dataRow.get("length");
+            String length2 = (String) dataRow.get("length2");
+            String oldpanelTypeName = (String) dataRow.get("oldpanelType");
+            String width = (String) dataRow.get("width");
+            String width2 = (String) dataRow.get("width2");
+            String width3 = (String) dataRow.get("width3");
+            String inventoryUnit = (String) dataRow.get("inventoryUnit");
+            String warehouseNo = (String) dataRow.get("warehouseNo");
+            String position = (String) dataRow.get("position");
+            String number = (String) dataRow.get("number");
+            String weight = (String) dataRow.get("weight");
+
+            DataList list = queryService.query("select oldpanelType from oldpanelType where oldpanelTypeName=?", oldpanelTypeName);
+            int oldpanelType = Integer.parseInt(String.valueOf(list.get(0).get("oldpanelType")));
+
+            String sql = "insert into " + tableName + "(oldpanelNo,oldpanelName,length,length2,oldpanelType,width," +
+                    "width2,width3,inventoryUnit,warehouseNo,position,countUse,countStore,weight,uploadId) " +
+                    "values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            jo.update(sql, oldpanelNo, oldpanelName, length, length2, oldpanelType, width,
+                    width2, width3, inventoryUnit, warehouseNo, position, number, number, weight, userid);
         }
     }
+
+    /**
+     * queryPage替换指定属性值为对应另一属性值
+     *
+     * @param
+     * @return
+     */
+    @Transactional
+    public WebResponse ChangeQueryPageFromAToB(WebResponse re, String tableName, String ChangeFrom, String ChangeTo){
+        DataList dataList=(DataList)re.get("value");
+
+        for (DataRow dataRow : dataList) {
+            int type=Integer.parseInt( dataRow.get(ChangeFrom)+"");
+            DataList list = queryService.query("select "+ChangeTo+" from "+tableName+" where "+ChangeFrom+"=?", type);
+            String typeName = String.valueOf(list.get(0).get(ChangeTo));
+            dataRow.put(ChangeFrom,typeName);
+        }
+
+        re.setValue(dataList);
+        return re;
+    }
+
 
 }
 

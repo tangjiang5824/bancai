@@ -10,6 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import service.ProductService;
@@ -203,6 +204,24 @@ public class ProjectController {
         response.getWriter().write(object.toString());
         response.getWriter().flush();
         response.getWriter().close();
+    }
+    //向materialtype原材料类型表插入
+    @RequestMapping(value = "/material/insertIntoMaterialType.do")
+    @Transactional
+    public boolean insertToMaterialType(String s){
+        JSONArray jsonArray =new JSONArray(s);
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject=jsonArray.getJSONObject(i);
+            String materialTypeName = jsonObject.get("materialTypeName")+"";
+            String name = jsonObject.get("name")+"";
+            String sql ="insert into materialtype (materialTypeName,name) values(?,?)";
+            boolean flag= insertProjectService.insertIntoTableBySQL(sql,materialTypeName,name);
+            if(!flag){
+                return  false;
+            }
+        }
+        return true;
     }
 
 

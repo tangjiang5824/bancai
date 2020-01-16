@@ -6,58 +6,94 @@ Ext.define('oldpanel.Old_Query_Data',{
     initComponent: function(){
         var itemsPerPage = 50;
         var tableName="oldpanel";
+
+        var oldPanelNameList = Ext.create('Ext.data.Store',{
+            fields : [ 'oldpanelName'],
+            proxy : {
+                type : 'ajax',
+                url : 'oldpanel/oldpanelType.do',
+                reader : {
+                    type : 'json',
+                    rootProperty: 'typeList',
+                }
+            },
+            autoLoad : true
+        });
+        var oldpanelTypeList = Ext.create('Ext.form.ComboBox',{
+            fieldLabel : '旧板类型',
+            labelWidth : 70,
+            width : 230,
+            id :  'oldpanelType',
+            name : 'oldpanelType',
+            matchFieldWidth: false,
+            emptyText : "--请选择--",
+            displayField: 'oldpanelTypeName',
+            valueField: 'oldpanelType',
+            editable : false,
+            store: oldPanelNameList,
+            listeners:{
+                select: function(combo, record, index) {
+
+                    console.log(oldpanelTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
+                    //console.log(record[0].data.materialName);
+                }
+            }
+
+        });
         var toobar = Ext.create('Ext.toolbar.Toolbar',{
-            items: [{
-                xtype: 'textfield',
-                fieldLabel: '长度下限:',
-                // labelSeparator: '',
-                id :'startLength',
-                labelWidth: 60,
-                width: 180,
-                margin : '0 10 0 0',
-                name: 'startLength',
-                value:"",
-            },{
-                xtype: 'textfield',
-                fieldLabel: '长度上限:',
-                // labelSeparator: '',
-                id :'endLength',
-                labelWidth: 60,
-                width: 180,
-                margin : '0 10 0 0',
-                name: 'endLength',
-                value:"",
-            },{
-                xtype: 'textfield',
-                fieldLabel: '宽度下限:',
-                // labelSeparator: '',
-                id :'startWidth',
-                labelWidth: 60,
-                width: 180,
-                margin : '0 10 0 0',
-                name: 'startWidth',
-                value:"",
-            },{
-                xtype: 'textfield',
-                fieldLabel: '宽度上限:',
-                // labelSeparator: '',
-                id :'endWidth',
-                labelWidth: 60,
-                width: 180,
-                margin : '0 10 0 0',
-                name: 'endWidth',
-                value:"",
-            },{
-                xtype: 'textfield',
-                fieldLabel: '板材类型:',
-                // labelSeparator: '',
-                id :'mType',
-                labelWidth: 60,
-                width: 180,
-                margin : '0 10 0 0',
-                name: 'mType',
-                value:"",
-            },{
+            items: [oldpanelTypeList,
+            //     {
+            //     xtype: 'textfield',
+            //     fieldLabel: '长度下限:',
+            //     // labelSeparator: '',
+            //     id :'startLength',
+            //     labelWidth: 60,
+            //     width: 180,
+            //     margin : '0 10 0 0',
+            //     name: 'startLength',
+            //     value:"",
+            // },{
+            //     xtype: 'textfield',
+            //     fieldLabel: '长度上限:',
+            //     // labelSeparator: '',
+            //     id :'endLength',
+            //     labelWidth: 60,
+            //     width: 180,
+            //     margin : '0 10 0 0',
+            //     name: 'endLength',
+            //     value:"",
+            // },{
+            //     xtype: 'textfield',
+            //     fieldLabel: '宽度下限:',
+            //     // labelSeparator: '',
+            //     id :'startWidth',
+            //     labelWidth: 60,
+            //     width: 180,
+            //     margin : '0 10 0 0',
+            //     name: 'startWidth',
+            //     value:"",
+            // },{
+            //     xtype: 'textfield',
+            //     fieldLabel: '宽度上限:',
+            //     // labelSeparator: '',
+            //     id :'endWidth',
+            //     labelWidth: 60,
+            //     width: 180,
+            //     margin : '0 10 0 0',
+            //     name: 'endWidth',
+            //     value:"",
+            // },{
+            //     xtype: 'textfield',
+            //     fieldLabel: '板材类型:',
+            //     // labelSeparator: '',
+            //     id :'mType',
+            //     labelWidth: 60,
+            //     width: 180,
+            //     margin : '0 10 0 0',
+            //     name: 'mType',
+            //     value:"",
+            // },
+                {
                 xtype : 'button',
                 text: '查询',
                 width: 80,
@@ -66,11 +102,12 @@ Ext.define('oldpanel.Old_Query_Data',{
                 handler: function(){
                     uploadRecordsStore.load({
                         params : {
-                            startWidth : Ext.getCmp('startWidth').getValue(),
-                            endTWidth : Ext.getCmp('endWidth').getValue(),
-                            startLength:Ext.getCmp('startLength').getValue(),
-                            endLength:Ext.getCmp('endLength').getValue(),
-                            mType:Ext.getCmp('mType').getValue(),
+                            // startWidth : Ext.getCmp('startWidth').getValue(),
+                            // endTWidth : Ext.getCmp('endWidth').getValue(),
+                            // startLength:Ext.getCmp('startLength').getValue(),
+                            // endLength:Ext.getCmp('endLength').getValue(),
+                            // mType:Ext.getCmp('mType').getValue(),
+                            oldpanelType:Ext.getCmp('oldpanelType').getValue(),
                             tableName:tableName,
 
                         }
@@ -176,11 +213,12 @@ Ext.define('oldpanel.Old_Query_Data',{
             listeners : {
                 beforeload : function(store, operation, eOpts) {
                     store.getProxy().setExtraParams({
-                        startWidth : Ext.getCmp('startWidth').getValue(),
-                        endWidth : Ext.getCmp('endWidth').getValue(),
-                        startLength:Ext.getCmp('startLength').getValue(),
-                        endLength:Ext.getCmp('endLength').getValue(),
-                        mType:Ext.getCmp('mType').getValue(),
+                        // startWidth : Ext.getCmp('startWidth').getValue(),
+                        // endWidth : Ext.getCmp('endWidth').getValue(),
+                        // startLength:Ext.getCmp('startLength').getValue(),
+                        // endLength:Ext.getCmp('endLength').getValue(),
+                        // mType:Ext.getCmp('mType').getValue(),
+                        oldpanelType:Ext.getCmp('oldpanelType').getValue(),
                         tableName:tableName,
 
                     });
@@ -197,18 +235,21 @@ Ext.define('oldpanel.Old_Query_Data',{
                 enableTextSelection : true
             },
             columns : [
-                { text: '旧板名称',  dataIndex: 'oldpanelName' ,flex :1, editor : {xtype : 'textfield', allowBlank : false}},
-                { text: '长', dataIndex: '长', flex :1, editor : {xtype : 'textfield', allowBlank : false}},
-                { text: '类型',  dataIndex: '类型' ,flex :1,editor : {xtype : 'textfield', allowBlank : false}},
-                { text: '宽', dataIndex: '宽', flex :1,editor : {xtype : 'textfield', allowBlank : false}},
-                { text: '重量', dataIndex: '重量',flex :1 ,editor : {xtype : 'textfield', allowBlank : false}},
-                { text: '库存单位', dataIndex: '库存单位', flex :1 ,editor : {xtype : 'textfield', allowBlank : false}},
-                { text: '库存数量', dataIndex: '库存数量', flex :1,editor : {xtype : 'textfield', allowBlank : false}},
-                { text: '可用数量', dataIndex: '可用数量',flex :1 ,editor : {xtype : 'textfield', allowBlank : false}},
-                { text: '仓库编号', dataIndex:'仓库编号',flex :1 ,editor : {xtype : 'textfield', allowBlank : false}},
-                { text: '存放位置', dataIndex: '存放位置',flex :1 ,editor : {xtype : 'textfield', allowBlank : false}},
-                { text: '上传者ID', dataIndex: 'uploadId',flex :1 ,editor : {xtype : 'textfield', allowBlank : false}}
-                ],
+                {dataIndex : 'oldpanelType', text : '旧板类型', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
+                {dataIndex : 'length', text : '长一', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'length2', text : '长二', flex :1, editor : {xtype : 'textfield', allowBlank : true,}},
+                {dataIndex : 'width', text : '宽一', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'width2', text : '宽二', flex :1, editor : {xtype : 'textfield', allowBlank : true,}},
+                {dataIndex : 'width3', text : '宽三', flex :1, editor : {xtype : 'textfield', allowBlank : true,}},
+                {dataIndex : 'oldpanelNo', text : '品号', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'oldpanelName', text : '旧板名称', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'inventoryUnit', text : '库存单位', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'countUse', text : '可用数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'countStore', text : '库存数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'weight', text : '重量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'warehouseNo', text : '仓库编号', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'location', text : '存放位置', flex :1, editor : {xtype : 'textfield', allowBlank : false,}}
+            ],
 
             tbar: toobar,
             dockedItems: [{
