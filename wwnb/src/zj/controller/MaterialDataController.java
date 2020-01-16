@@ -144,11 +144,7 @@ public class MaterialDataController {
         return wr;
     }
 
-
-    /*
-     * 根据选中的id删除数据
-     *
-     * */
+    
 
 
 

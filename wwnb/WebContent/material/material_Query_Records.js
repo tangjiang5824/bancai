@@ -7,9 +7,8 @@ Ext.define('material.material_Query_Records',{
         var itemsPerPage = 50;
         var tableName="material";
         //var materialType="1";
-        //项目名称选择
         var projectListStore = Ext.create('Ext.data.Store',{
-            fields : [ "项目名称","id"],
+            fields : [ "projectName","id"],
             proxy : {
                 type : 'ajax',
                 url : 'project/findProjectList.do',
@@ -24,12 +23,12 @@ Ext.define('material.material_Query_Records',{
         var projectName = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '项目名',
             labelWidth : 45,
-            width : 400,
+            width : 180,
             id :  'projectName',
-            name : '项目名称',
+            name : 'projectName',
             matchFieldWidth: false,
             emptyText : "--请选择--",
-            displayField: '项目名称',
+            displayField: 'projectName',
             valueField: 'id',
             editable : false,
             store: projectListStore,
@@ -41,8 +40,7 @@ Ext.define('material.material_Query_Records',{
 
         });
 
-        //操作类型
-        //操作类型选择
+        //出库or入库选择
         var optionTypeList = Ext.create('Ext.data.Store', {
             fields: ['abbr', 'name'],
             data : [
@@ -54,15 +52,18 @@ Ext.define('material.material_Query_Records',{
 
         var optionType = Ext.create('Ext.form.ComboBox', {
             fieldLabel: '操作类型',
+            name: 'material_query_records_optionType',
+            id: 'material_query_records_optionType',
             store: optionTypeList,
-            margin : '0 20 0 20',
-            width: 160,
-            labelWidth: 60,
             queryMode: 'local',
             displayField: 'name',
             valueField: 'abbr',
+            margin : '0 20 0 20',
+            width: 160,
+            labelWidth: 60,
             renderTo: Ext.getBody()
         });
+
         var toobar = Ext.create('Ext.toolbar.Toolbar',{
             dock: 'top',
             items: [
@@ -71,7 +72,7 @@ Ext.define('material.material_Query_Records',{
                     margin : '0 20 0 20',
                     fieldLabel: '操作员',
                     id :'userId',
-                    width: 200,
+                    width: 150,
                     labelWidth: 50,
                     name: 'userId',
                     value:"",
@@ -81,11 +82,10 @@ Ext.define('material.material_Query_Records',{
                     xtype : 'datefield',
                     margin : '0 20 0 20',
                     fieldLabel : '开始时间',
-                    width : 200,
+                    width : 180,
                     labelWidth : 60,
                     id : "startTime",
                     name : 'startTime',
-                    //align: 'right',
                     format : 'Y-m-d',
                     editable : false,
                     //value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
@@ -103,7 +103,7 @@ Ext.define('material.material_Query_Records',{
                     xtype : 'datefield',
                     margin : '0 20 0 20',
                     fieldLabel : '结束时间',
-                    width : 200,
+                    width : 180,
                     labelWidth : 60,
                     id : "endTime",
                     name : 'endTime',
@@ -123,41 +123,13 @@ Ext.define('material.material_Query_Records',{
                                 userId : Ext.getCmp('userId').getValue(),
                                 endTime : Ext.getCmp('endTime').getValue(),
                                 startTime:Ext.getCmp('startTime').getValue(),
-                                projectName:Ext.getCmp('projectName').getValue(),
+                                projectId:Ext.getCmp('projectName').getValue(),
+                                optionType:Ext.getCmp('material_query_records_optionType').getValue(),
                             }
                         });
                     }
                 },
-
-                // {
-                //     text: '删除',
-                //     width: 80,
-                //     margin: '0 0 0 15',
-                //     handler: function(){
-                //         var select = grid.getSelectionModel().getSelection();
-                //         if(select.length==0){
-                //             Ext.Msg.alert('错误', '请选择要删除的记录')
-                //         }
-                //         else{
-                //             Ext.Ajax.request({
-                //                 url:"data/deleteItemById.do",  //公共方法，在commonMethod包下
-                //                 params:{
-                //                     tableName:tableName,
-                //                     id:select[0].data.id
-                //                 },
-                //                 success:function (response) {
-                //                     Ext.MessageBox.alert("提示","删除成功！")
-                //                     grid.store.remove(grid.getSelectionModel().getSelection());
-                //                 },
-                //                 failure:function (reponse) {
-                //                     Ext.MessageBox.alert("提示","删除失败！")
-                //
-                //                 }
-                //             })
-                //         }
-                //     }
-                // }
-                ]
+            ]
         });
 
         var material_Query_Records_Store = Ext.create('Ext.data.Store',{
@@ -166,7 +138,8 @@ Ext.define('material.material_Query_Records',{
             fields: [],
             pageSize: itemsPerPage, // items per page
             proxy:{
-                url : "",//"material/historyDataList.do",
+                url : "material/material_query_records.do",
+                //url : 'material/findAllbyTableNameAndOnlyOneCondition.do?',//获取同类型的原材料
                 type: 'ajax',
                 reader:{
                     type : 'json',
@@ -175,18 +148,23 @@ Ext.define('material.material_Query_Records',{
                 },
                 params:{
                     start: 0,
-                    limit: itemsPerPage
+                    limit: itemsPerPage,
+                    userId : Ext.getCmp('userId').getValue(),
+                    endTime : Ext.getCmp('endTime').getValue(),
+                    startTime:Ext.getCmp('startTime').getValue(),
+                    projectId:Ext.getCmp('projectName').getValue(),
+                    optionType:Ext.getCmp('material_query_records_optionType').getValue(),
                 }
             },
             listeners : {
                 beforeload : function(store, operation, eOpts) {
                     store.getProxy().setExtraParams({
-                        tableName :tableName,
-                        userId:Ext.getCmp('userId').getValue(),
-                        endTime:Ext.getCmp('endTime').getValue(),
+
+                        userId : Ext.getCmp('userId').getValue(),
+                        endTime : Ext.getCmp('endTime').getValue(),
                         startTime:Ext.getCmp('startTime').getValue(),
-                        projectName:Ext.getCmp('projectName').getValue(),
-                        //materialType:materialType
+                        projectId:Ext.getCmp('projectName').getValue(),
+                        optionType:Ext.getCmp('material_query_records_optionType').getValue(),
 
                     });
                 }
@@ -196,6 +174,64 @@ Ext.define('material.material_Query_Records',{
 
         });
 
+        var sampleData=[{
+            materiallogId:'1',
+            materialName:'Zeng',
+            count:'2',
+            specification:'ttt',
+        }];
+        var material_Query_Records_store1=Ext.create('Ext.data.Store',{
+            id: 'material_Query_Records_store1',
+            fields:['旧板领料记录单编号','旧板名称','领取数量','规格'],
+            data:sampleData
+        });
+
+
+        var material_Query_Records_specific_data_grid=Ext.create('Ext.grid.Panel',{
+            id : 'material_Query_Records_specific_data_grid',
+            store:material_Query_Records_store1,//oldpanellogdetailList，store1的数据固定
+            dock: 'bottom',
+            columns:[
+                {
+                    text: '旧板领料记录单编号',
+                    dataIndex: 'materiallogId',
+                    width:"80"
+                },{
+                    text: '旧板名称',
+                    dataIndex: 'materialName'
+                },{
+                    text: '领取数量',
+                    dataIndex: 'count'
+                },{
+                    text: '规格',
+                    dataIndex: 'specification'
+                },
+                //fields:['oldpanelId','oldpanelName','count'],specification
+
+            ],
+            flex:1,
+            //selType:'checkboxmodel',
+            plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
+                clicksToEdit : 2
+            })],
+            listeners: {
+                //监听修改
+                validateedit: function (editor, e) {
+                    var field = e.field
+                    var id = e.record.data.id
+                },
+            }
+        });
+
+        var material_Query_Records_win_showmaterialData = Ext.create('Ext.window.Window', {
+            id:'material_Query_Records_win_showmaterialData',
+            title: '旧板领取详细信息',
+            height: 500,
+            width: 650,
+            layout: 'fit',
+            closable : true,
+            items:material_Query_Records_specific_data_grid,
+        });
 
         var grid = Ext.create('Ext.grid.Panel',{
             id: 'material_Query_Records_Main',
@@ -205,17 +241,11 @@ Ext.define('material.material_Query_Records',{
                 editable:true
             },
             columns : [
-                { text: '材料单编号', dataIndex: '材料单编号', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '操作人员',  dataIndex: '操作人员' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '上传时间', dataIndex: '上传时间', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '项目名称', dataIndex: '项目名称',flex :1,editor:{xtype : 'textfield', allowBlank : false} },
-                {
-                    header: "操作", dataIndex: 'Gender',
-                    renderer: function() {                      //此处为主要代码
-                        var str = "<input type='button' value='查看' onclick='look()'>";
-                        return str;
-                    }
-                },
+                { text: '原材料领料记录单编号', dataIndex: 'id', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
+                { text: '操作员',  dataIndex: 'userId' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
+                { text: '上传时间', dataIndex: 'time', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
+                { text: '项目名称', dataIndex: 'projectName', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
+
             ],
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 3
@@ -230,37 +260,39 @@ Ext.define('material.material_Query_Records',{
                 emptyMsg:'无数据'
             }],
             listeners: {
+                //监听修改
                 validateedit : function(editor, e) {
                     var field=e.field
                     var id=e.record.data.id
-                    Ext.Ajax.request({
-                        url:"",//"data/EditCellById.do",  //EditDataById.do
-                        params:{
-                            tableName:tableName,
-                            field:field,
-                            value:e.value,
-                            id:id
-                        },
-                        success:function (response) {
-                            //console.log(response.responseText);
-                        }
-                    })
-                    // console.log("value is "+e.value);
-                    // console.log(e.record.data["id"]);
+                },
 
+                //双击表行响应事件
+                itemdblclick: function(me, record, item, index){
+                    var select = record.data;
+                    var id = select.id;
+                    console.log(id);
+                    var materiallogdetailList = Ext.create('Ext.data.Store',{
+                        //id,materialName,length,width,materialType,number
+                        fields:['materiallogId','materialName','count','specification'],
+                        //fields:['materialName','length','materialType','width','number'],//'oldpanelId','oldpanelName','count'
+                        proxy : {
+                            type : 'ajax',
+                            url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName=materiallogdetail&columnName=materiallogId&columnValue='+id,//获取同类型的原材料
+                            reader : {
+                                type : 'json',
+                                rootProperty: 'materiallogdetail',
+                            },
+                        },
+                        autoLoad : true
+                    });
+                    material_Query_Records_specific_data_grid.setStore(materiallogdetailList);
+                    console.log(materiallogdetailList);
+                    Ext.getCmp('material_Query_Records_win_showmaterialData').show();
                 }
             }
         });
 
         this.items = [grid];
-        // this.dockedItems = [toobar,toobar1,grid,{
-        //     xtype: 'pagingtoolbar',
-        //     store: material_Query_Records_Store,   // same store GridPanel is using
-        //     dock: 'bottom',
-        //     displayInfo: true,
-        //     displayMsg:'显示{0}-{1}条，共{2}条',
-        //     emptyMsg:'无数据'
-        // }];
         this.callParent(arguments);
     }
 })
