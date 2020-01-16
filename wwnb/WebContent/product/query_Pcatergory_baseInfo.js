@@ -131,7 +131,7 @@ Ext.define('product.query_Pcatergory_baseInfo',{
             listeners : {
                 beforeload : function(store, operation, eOpts) {
                     store.getProxy().setExtraParams({
-                        productCatergory:Ext.getCmp('productCatergory').getValue(),
+                        //productCatergory:Ext.getCmp('productCatergory').getValue(),
                         tableName:tableName,
                     });
                 }

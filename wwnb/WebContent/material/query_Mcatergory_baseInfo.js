@@ -115,7 +115,7 @@ Ext.define('material.query_Mcatergory_baseInfo',{
             pageSize: itemsPerPage, // items per page
             proxy:{
                 //url:"hisExcelList.do",
-                url : "material/findMaterialbasicinfoList.do",
+                url : "material/findMaterial_materialtypeList.do",
                 type: 'ajax',
                 method:'POST',
                 reader:{
@@ -131,7 +131,7 @@ Ext.define('material.query_Mcatergory_baseInfo',{
             listeners : {
                 beforeload : function(store, operation, eOpts) {
                     store.getProxy().setExtraParams({
-                        materialCatergory:Ext.getCmp('materialCatergory').getValue(),
+                        //materialCatergory:Ext.getCmp('materialCatergory').getValue(),
                         tableName:tableName,
                     });
                 }

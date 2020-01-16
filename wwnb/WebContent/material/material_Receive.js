@@ -107,29 +107,65 @@ Ext.define('material.material_Receive',{
             data:sampleData
         });
 
-        //弹窗的数据
-        // var specificMaterialList = Ext.create('Ext.data.Store',{
-        //     fields:['材料名称','材料数量','已领数量','要领数量'],
-        //     proxy : {
-        //         type : 'ajax',
-        //         url : 'material/materiallsitbyname.do',//获取同类型的原材料
-        //         reader : {
-        //             type : 'json',
-        //             rootProperty: 'materialstoreList',
-        //         },
-        //         params:{
-        //             //materialName:materialName,
-        //             // start: 0,
-        //             // limit: itemsPerPage
-        //         }
-        //     },
-        //     autoLoad : false
-        // });
+        //
+        var toolbar4 = Ext.create('Ext.toolbar.Toolbar', {
+            dock : "bottom",
+            id : "toolbar4",
+            //style:{float:'center',},
+            //margin-right: '2px',
+            //padding: '0 0 0 750',
+            style:{
+                //marginLeft: '900px'
+                layout: 'right'
+            },
+            items : [{
+                xtype : 'button',
+                iconAlign : 'center',
+                iconCls : 'rukuicon ',
+                text : '确认',
+                region:'center',
+                bodyStyle: 'background:#fff;',
+                handler : function() {
+                    // 取出grid的字段名字段类型
+                    var select = Ext.getCmp('pickingMaterialGrid').getStore()
+                        .getData();
+                    var s = new Array();
+                    select.each(function(rec) {
+                        s.push(JSON.stringify(rec.data));
+
+                    });
+
+                    //获取数据
+                    //获得当前操作时间
+                    //var sTime=Ext.Date.format(Ext.getCmp('startTime').getValue(), 'Y-m-d H:i:s');
+                    Ext.Ajax.request({
+                        //url : 'addMaterial.do', //原材料入库
+                        method:'POST',
+                        //submitEmptyText : false,
+                        params : {
+                            tableName:tableName,
+                            //materialType:materialtype,
+                            s : "[" + s + "]",//S存储选择领料的数量
+                        },
+                        success : function(response) {
+                            //var message =Ext.decode(response.responseText).showmessage;
+                            Ext.MessageBox.alert("提示","入库成功" );
+                        },
+                        failure : function(response) {
+                            //var message =Ext.decode(response.responseText).showmessage;
+                            Ext.MessageBox.alert("提示","入库失败" );
+                        }
+                    });
+
+                }
+            }]
+        });
 
         var specific_data_grid=Ext.create('Ext.grid.Panel',{
             id : 'specific_data_grid',
             store:store1,//specificMaterialList，store1的数据固定
             dock: 'bottom',
+            bbar:toolbar4,
             columns:[
                 {
                     text: '原材料名称',
@@ -179,24 +215,6 @@ Ext.define('material.material_Receive',{
             layout: 'fit',
             closable : true,
             items:specific_data_grid,
-            // items: {  // Let's put an empty grid in just to illustrate fit layout
-            //     xtype: 'grid',
-            //     border: false,
-            //     // 仅仅用来显示一个头部。没有数据，
-            //     columns: [{header: '原材料名称'},
-            //         {header: '长'},
-            //         {header: '类型'},
-            //         {header: '宽'},
-            //         {header: '数量'},
-            //
-            //     ],
-            //     store: Ext.create('Ext.data.ArrayStore', {fields:['原材料名称','长','类型','宽','数量'],
-            //         data:{原材料名称:1,
-            //             长:'Zeng',
-            //             类型:'2',
-            //             宽:'ttt',
-            //             数量:'12'}}) // 一个假的空的数据存储
-            // }
         });
 
 
