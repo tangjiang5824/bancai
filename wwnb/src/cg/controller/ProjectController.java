@@ -273,7 +273,12 @@ public class ProjectController {
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject=jsonArray.getJSONObject(i);
             String id =jsonObject.get("id")+"";
-            String tempPickNum=jsonObject.get("tempPickNum")+"";
+            String tempPickNum="0";
+            try {
+                tempPickNum = jsonObject.get("tempPickNum") + "";
+            }catch (Exception e){
+
+            }
             String sql="update material set number=number-? where id=?";
             boolean flag=insertProjectService.insertIntoTableBySQL(sql,tempPickNum,id);
             if(!flag){
