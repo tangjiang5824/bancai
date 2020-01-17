@@ -411,7 +411,7 @@ Ext.define('project.import_design_list', {
 					Ext.Ajax.request({
 						url:'project/getSelectedBuildingName.do',
 						params:{
-							//projectName:Ext.getCmp('projectName').getValue(),
+							projectName:Ext.getCmp('projectName').getValue(),
 							buildingName:Ext.getCmp('buildingName').getValue(),
 						},
 						success:function (response,config) {
