@@ -124,21 +124,22 @@ Ext.define('material.material_Receive',{
                 bodyStyle: 'background:#fff;',
                 handler : function() {
                     // 取出grid的字段名字段类型
-                    var select = Ext.getCmp('pickingMaterialGrid').getStore()
+                    var select = Ext.getCmp('specific_data_grid').getStore()
                         .getData();
+
                     var s = new Array();
                     select.each(function(rec) {
                         s.push(JSON.stringify(rec.data));
                     });
+                    console.log('33');
+                    console.log(select);
 
                     //点击确认后将数据返回到前一个页面，操作数据
                     Ext.Ajax.request({
-                        url : 'material/updateprojectmateriallist.do', //原材料入库
+                        url : 'material/updateMaterialNum.do', //原材料入库
                         method:'POST',
                         //submitEmptyText : false,
                         params : {
-                            //tableName:tableName,
-                            //materialType:materialtype,
                             s : "[" + s + "]",//S存储选择领料的数量
                         },
                         success : function(response) {
@@ -183,20 +184,22 @@ Ext.define('material.material_Receive',{
                 },
                 {
                     text: '领取数量',
-                    //dataIndex: 'number',
+                    dataIndex: 'tempPickNum',
                     editor:{xtype : 'textfield', allowBlank : false}
-                },
+                }
                 ],
             flex:1,
             //selType:'checkboxmodel',
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
-                clicksToEdit : 1
+                clicksToEdit : 2
             })],
             listeners: {
                 //监听修改
                 validateedit: function (editor, e) {
                     var field = e.field
                     var id = e.record.data.id
+                    console.log(e.record)
+                    console.log(field)
                 },
             }
         });
@@ -243,6 +246,7 @@ Ext.define('material.material_Receive',{
 
 
         var grid1=Ext.create('Ext.grid.Panel',{
+            id : 'PickingListGrid',
             store:MaterialList,
             dock: 'bottom',
             columns:clms,
@@ -412,13 +416,13 @@ Ext.define('material.material_Receive',{
                 xtype : 'button',
                 iconAlign : 'center',
                 iconCls : 'rukuicon ',
-                text : '确认入库',
+                text : '确认领料',
                 region:'center',
                 bodyStyle: 'background:#fff;',
                 handler : function() {
 
-                    // 取出grid的字段名字段类型
-                    var select = Ext.getCmp('pickingMaterialGrid').getStore()
+                    // 取出grid的字段名字段类型pickingMaterialGrid
+                    var select = Ext.getCmp('PickingListGrid').getStore()
                         .getData();
                     var s = new Array();
                     select.each(function(rec) {
@@ -442,11 +446,11 @@ Ext.define('material.material_Receive',{
                         },
                         success : function(response) {
                             //var message =Ext.decode(response.responseText).showmessage;
-                            Ext.MessageBox.alert("提示","入库成功" );
+                            Ext.MessageBox.alert("提示","领取成功" );
                         },
                         failure : function(response) {
                             //var message =Ext.decode(response.responseText).showmessage;
-                            Ext.MessageBox.alert("提示","入库失败" );
+                            Ext.MessageBox.alert("提示","领取失败" );
                         }
                     });
 
