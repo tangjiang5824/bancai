@@ -268,15 +268,22 @@ public class ProjectController {
     //原材料仓库出库，直接进行给定数值的仓库扣减
     @RequestMapping(value = "/material/updateMaterialNum.do")
     @Transactional
-    public boolean updateMaterialNum(String materialName,String length,String width,String number){
-        String sql="update material set number=number-? where materialName=? and length=? and width=?";
-        boolean flag=insertProjectService.insertIntoTableBySQL(sql,number,materialName,length,width);
-        if(!flag){
-            return  false;
+    public boolean updateMaterialNum(String s){
+        JSONArray jsonArray =new JSONArray(s);
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject=new JSONObject(i);
+            String id =jsonObject.get("id")+"";
+            String tempPickNum=jsonObject.get("tempPickNum")+"";
+            String sql="update material set number=number-? where id=?";
+            boolean flag=insertProjectService.insertIntoTableBySQL(sql,tempPickNum,id);
+            if(!flag){
+                return  false;
+            }
         }
+
         return true;
     }
-    //原材料仓库出库，直接进行给定数值的仓库扣减
+    //
     @RequestMapping(value = "/material/updateprojectmateriallist.do")
     @Transactional
     public boolean updateprojectmateriallist(String s){
