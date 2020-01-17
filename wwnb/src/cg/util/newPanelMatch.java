@@ -9,8 +9,9 @@ import java.util.stream.Stream;
 
 public class newPanelMatch {
 
-    public Map<String,String> newpanel(String name){
+    public static Map<String,Integer> newpanel(String name){
         Logger log = Logger.getLogger(newPanelMatch.class);
+        name=name.trim();//去掉前后空白
         String[] s = name.split(" ");
         double n=0;
         double a=0;
@@ -182,6 +183,6 @@ public class newPanelMatch {
             //case :
         }
 
-        return new HashMap<>();
+        return map;
     }
 }

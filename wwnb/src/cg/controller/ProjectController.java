@@ -2,6 +2,7 @@ package cg.controller;
 
 
 import cg.service.InsertProjectService;
+import cg.util.newPanelMatch;
 import domain.DataList;
 import domain.DataRow;
 import org.apache.log4j.Logger;
@@ -70,8 +71,8 @@ public class ProjectController {
                 return ;
             }
         }catch (Exception e){
-           e.printStackTrace();
-        }
+        e.printStackTrace();
+    }
         //生成project计划表
         String sql1="insert into project (uploadId,startTime,projectName,proEndTime,planLeader,produceLeader,purchaseLeader,financeLeader,storeLeader,statusId) values(?,?,?,?,?,?,?,?,?,?) ";
         //插入到project表的同时返回projectId
@@ -82,7 +83,7 @@ public class ProjectController {
             //获得第i条数据的各个属性值
             String BuildingNo = jsonTemp.get("buildingNo")+"";
             String BuildName = jsonTemp.get("buildingName")+"";
-            String BuildOwner = (String) jsonTemp.get("buildingOwner");
+            String BuildOwner = jsonTemp.get("buildingOwner")+"";
 
             //插入楼栋信息
             String sql2="insert into building (buildingNo,buildingName,buildingLeader,projectId) values(?,?,?,?)";
@@ -95,6 +96,71 @@ public class ProjectController {
                 "{'success':true,'showmessage':'创建成功！'}");
         response.getWriter().flush();
         response.getWriter().close();
+    }
+
+    public void newPanelMatch(){
+        DataList dataList = insertProjectService.findallbytableNameAndinfo("designlight","status","0");
+        ArrayList<Map> arrayList = new ArrayList<Map>();
+        for (DataRow row : dataList) {
+            Map<String,String> map=new HashMap<>();
+            String name = (row.get("productName")+"").trim();
+            if(name.contains("（")){
+                name.replace("（","(");
+            }
+            if(name.contains("）")){
+                name.replace("）",")");
+            }
+            String id =row.get("id")+"";
+            map.put(name,id);
+            arrayList.add(map);
+        }
+        ArrayList<Map> rsarrayList =new ArrayList<>();
+        for (Map map : arrayList) {
+            for (Object o : map.keySet()) {
+                String temp=o+"";
+                Map<String, Integer> newpanellsit = newPanelMatch.newpanel(temp);
+                rsarrayList.add(newpanellsit);
+                String id= map.get(temp)+"";
+                String sql="update designlist set status='0' where id="+id;
+                int flag=insertProjectService.update(sql);
+                if(flag==0){
+                    log.error("update错误");
+                }
+            }
+        }
+
+        HashMap<String, Integer> listmap = new HashMap<>();
+//        for (int i = 0; i < rsarrayList.size(); i++) {
+//            Map<String,Integer> map= rsarrayList.get(i);
+//            for(Map.Entry<String, Integer> entry : map.entrySet()){
+//                String mapKey = entry.getKey();
+//                int mapValue = entry.getValue();
+//                if(listmap)
+//            }
+//        }
+
+
+    }
+
+
+
+
+
+    //返回对应projectId的所有项目信息和对应的楼栋信息
+    @RequestMapping(value="/project/findProjectAndBuilding.do")
+    public void findProjectAndBuilding(String projectId,HttpServletResponse response) throws IOException {
+            DataList projectList= insertProjectService.findallbytableNameAndinfo("project","id",projectId);
+            DataList buildingList=insertProjectService.findallbytableNameAndinfo("building","projectId",projectId);
+            JSONObject object=new JSONObject();
+            JSONArray parray =new JSONArray(projectList);
+            JSONArray barray=new JSONArray(buildingList);
+            object.put("project",parray);
+            object.put("building",barray);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html");
+            response.getWriter().write(object.toString());
+            response.getWriter().flush();
+            response.getWriter().close();
     }
 
     /**
