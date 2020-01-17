@@ -271,7 +271,7 @@ public class ProjectController {
     public boolean updateMaterialNum(String s){
         JSONArray jsonArray =new JSONArray(s);
         for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonObject=new JSONObject(i);
+            JSONObject jsonObject=jsonArray.getJSONObject(i);
             String id =jsonObject.get("id")+"";
             String tempPickNum=jsonObject.get("tempPickNum")+"";
             String sql="update material set number=number-? where id=?";
@@ -290,12 +290,12 @@ public class ProjectController {
         JSONArray jsonArray = new JSONArray(s);
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject=jsonArray.getJSONObject(i);
-
             //String countReceived=jsonObject.get("countReceived")+"";
            // String countNotReceived=jsonObject.get("countNotReceived")+"";
             String number=jsonObject.get("number")+"";
+            String id=jsonObject.get("id")+"";
             String sql="update projectmateriallist set countReceived=countReceived+? ,countNotReceived=countNotReceived-? where id=?";
-            boolean flag=insertProjectService.insertIntoTableBySQL(sql,number,number);
+            boolean flag=insertProjectService.insertIntoTableBySQL(sql,number,number,id);
             if(!flag){
                 return  false;
             }
