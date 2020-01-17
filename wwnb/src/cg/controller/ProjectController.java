@@ -233,7 +233,7 @@ public class ProjectController {
             jsonObject=jsonArray.getJSONObject(i);
             String oldpanelTypeName = jsonObject.get("oldpanelTypeName")+"";
             String name = jsonObject.get("name")+"";
-            String sql ="insert into oldpaneltype (materialTypeName,name) values(?,?)";
+            String sql ="insert into oldpaneltype (oldpanelTypeName,name) values(?,?)";
             boolean flag= insertProjectService.insertIntoTableBySQL(sql,oldpanelTypeName,name);
             if(!flag){
                 return  false;
@@ -256,8 +256,8 @@ public class ProjectController {
             String width = jsonObject.get("width")+"";
             String width2 = jsonObject.get("width2")+"";
             String weight = jsonObject.get("weight")+"";
-            String cost = jsonObject.get("cost")+"";
-            String sql ="insert into productbasicinfo (productName,productType,length,length2,width,width2,weight,cost) values(?,?)";
+            String cost = "0";//jsonObject.get("cost")+""
+            String sql ="insert into productbasicinfo (productName,productType,length,length2,width,width2,weight,cost) values(?,?,?,?,?,?,?,?)";
             boolean flag= insertProjectService.insertIntoTableBySQL(sql,productName,productType,length,length2,width,width2,weight,cost);
             if(!flag){
                 return  false;
