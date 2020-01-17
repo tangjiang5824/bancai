@@ -79,28 +79,49 @@ public class OldpanelMatchService extends BaseService{
 //        }
     }
 
-    private DataList oldpanelMatchNameList(String productName){
-        DataList oldpanelMatchList = new DataList();
+    private void oldpanelMatch(int projectId,int buildingId, String productName){//匹配，并插表
         String oldpanelName;
         String str = "50B BS 700";
         String[] splited = productName.split("\\s+");
         String isPureNumber = "^[0-9]+(.[0-9]+)?$";
         String isPureWord = "^[A-Za-z]+$";
         int l = splited.length;
+        DataList queryList = new DataList();
+        String sql = "update designlist set status = ? where projectId = ? and buildingId = ?";
+        String sql2 = "update oldpanel set countUse = ? where id = ?";
+        String sql3 = "insert into oldpanellist (projectId,productName,oldpanelId,designlistId) values (?,?,?,?)";
+        DataList queryList2 = new DataList();
+        queryList2 = queryService.query("select * from designlist where projectId = ? and buildingId = ?",projectId,buildingId);
+        int designlistId = Integer.parseInt(queryList2.get(0).get("id").toString());
+        int status = 1;//更改扣板后designlist中status
         if (splited[0].matches(isPureWord)){
-            switch (splited[0]){
+            String oldpanelTypeName = splited[0];
+            String m;
+            switch (oldpanelTypeName){
                 case "EC":
                 case "ECD":
-                    oldpanelName = "EC "+splited[1];
-                    break;
                 case "EB":
-                    oldpanelName = "EB "+splited[1];
-                    break;
                 case "MB":
-                    oldpanelName = "MB "+splited[1];
+                    m = splited[1];
+                    oldpanelName = oldpanelTypeName+" "+m;
+                    queryList = queryService.query("SELECT * FROM oldpanel WHERE oldpanelType IN " +
+                            "(SELECT oldpanelType FROM oldpaneltype WHERE oldpanelTypeName =? ) and width =?",oldpanelTypeName,m);
+                    if(queryList.size()!=0){//有匹配到的旧板
+                        for (int i = 0; i < queryList.size(); i++) {//遍历
+                            double countUse = Double.parseDouble(queryList.get(i).get("countUse").toString());
+                            if (countUse > 1){//可用数量大于1，扣旧板可用数量1，改变designlist中status为1，插oldpanellist表
+                                countUse--;
+                                jo.update(sql,status,projectId,buildingId);
+                                int oldpanelId = Integer.parseInt(queryList.get(i).get("id").toString());
+                                jo.update(sql2,countUse,oldpanelId);
+                                jo.update(sql3,projectId,productName,oldpanelId,designlistId);
+                                break;
+                            }
+                        }
+                    }
                     break;
                 case "SS":
-                    oldpanelName = "SS";
+                    oldpanelName = oldpanelTypeName;
                     break;
                 default:
                     break;
@@ -111,16 +132,6 @@ public class OldpanelMatchService extends BaseService{
             }
         }
 
-        int a;
-        for(String res : splited){
-            if (res.matches(isPureNumber)){
-                a = 1;
-            }else{
-                a = 0;
-            }
-            System.out.println(res+"==="+a);
-        }
-        return oldpanelMatchList;
     }
     @Test
     public void test(){
@@ -139,7 +150,17 @@ public class OldpanelMatchService extends BaseService{
             System.out.println(res+"==="+a);
         }
         DataList dataList = new DataList();
-        System.out.println(dataList.isEmpty());
+        System.out.println(!dataList.isEmpty());
+        Double dou = 1.00001;
+        dou--;
+        System.out.println(dou);
+        for (int i = 0; i < 5; i++) {
+            if(i==2){
+                System.out.println(i);
+                break;
+            }
+            System.out.println(i);
+        }
 //        for (int i = 0; i < 5; i++) {
 //            DataRow dataRow = new DataRow();
 //            dataRow.put("1","AA"+i);
@@ -156,19 +177,15 @@ public class OldpanelMatchService extends BaseService{
 
     private void HandleDesignList(DataList dataList, int projectId, int buildingId){
         int status = 0;
-        for (DataRow dataRow : dataList){//对于每一条板材数据
+        for (DataRow dataRow : dataList) {//对于每一条板材数据
             ArrayList<String> productList = new ArrayList(dataRow.values());
             String productName = productList.get(0);
 //            DataList list = queryService.query("select id from building where projectId =? and buildingName=?", projectId, buildingName);
 //            String buildingId = String.valueOf(list.get(0).get("id"));
             String sql = "insert into designlist (projectId,buildingId,productName,status) values (?,?,?,?)";
-            jo.update(sql,projectId,buildingId,productName,status);//插入designlist表
-//            DataList list2 = oldpanelMatchNameList(productName);
-//            if(list2.isEmpty()){
-//                //没有匹配到
-//            }else {
-//                //匹配到
-//            }
+            jo.update(sql, projectId, buildingId, productName, status);//插入designlist表
+            oldpanelMatch(projectId, buildingId, productName);
+
         }
 
     }
