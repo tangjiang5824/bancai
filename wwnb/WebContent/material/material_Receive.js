@@ -9,6 +9,9 @@ Ext.define('material.material_Receive',{
         var tableName="material";
         //var materialType="1";
 
+        //存放所选的原材料的具体规格
+        var materialList = '';
+
         //项目名称选择
         var tableListStore = Ext.create('Ext.data.Store',{
             fields : [ "项目名称","id"],
@@ -134,28 +137,32 @@ Ext.define('material.material_Receive',{
                     });
                     console.log('335553');
                     var a = "[" + s + "]";
-                    console.log(a);
+                    // console.log(a);
+                    materialList = materialList + s;
+                    materialList = materialList+',';
+
+                    //点击确认后将数据传到前一个页面
 
                     //点击确认后将数据返回到前一个页面，操作数据
-                    Ext.Ajax.request({
-                        url : 'material/updateMaterialNum.do', //原材料入库
-                        method:'POST',
-                        //submitEmptyText : false,
-                        params : {
-                            s : "[" + s + "]",//S存储选择领料的数量
-                        },
-                        success : function(response) {
-                            //var message =Ext.decode(response.responseText).showmessage;
-                            Ext.MessageBox.alert("提示","领取成功" );
-                            //出库成功，关闭窗口
-                            Ext.getCmp('win_showmaterialData').close();
-
-                        },
-                        failure : function(response) {
-                            //var message =Ext.decode(response.responseText).showmessage;
-                            Ext.MessageBox.alert("提示","领取失败" );
-                        }
-                    });
+                    // Ext.Ajax.request({
+                    //     url : 'material/updateMaterialNum.do', //原材料入库
+                    //     method:'POST',
+                    //     //submitEmptyText : false,
+                    //     params : {
+                    //         s : "[" + s + "]",//S存储选择领料的数量
+                    //     },
+                    //     success : function(response) {
+                    //         //var message =Ext.decode(response.responseText).showmessage;
+                    //         Ext.MessageBox.alert("提示","领取成功" );
+                    //         //出库成功，关闭窗口
+                    //         Ext.getCmp('win_showmaterialData').close();
+                    //
+                    //     },
+                    //     failure : function(response) {
+                    //         //var message =Ext.decode(response.responseText).showmessage;
+                    //         Ext.MessageBox.alert("提示","领取失败" );
+                    //     }
+                    // });
 
                 }
             }]
@@ -358,47 +365,49 @@ Ext.define('material.material_Receive',{
             width:600,
             height:500,
 
-            items:[grid1,{
-                xtype:'container',
-                flex:0.3,
-                items:[{
-                    xtype:'button',
-                    margin: '0 0 0 30',
-                    text:'选择',
-                    itemId:'move_right',
-                    handler:function(){
-                        var records=grid1.getSelectionModel().getSelection();
-                        console.log(records)
-                        console.log(records[0].previousValues==undefined)//代领的数量，未修改前的数量
-                        //console.log(records[0].data['countReceived'])
-                        console.log(records[0].data['countNotReceived'])//最终的数量
-
-                        //若未修改数量，不变.直接remove
-                        if(records[0].previousValues==undefined){
-                            MaterialList.remove(records);
-                            MaterialList2.add(records);
-
-                        }
-                        //若修改领取数量,则不remove
-                        else{
-                            MaterialList2.add(records);
-
-                        }
-
-                        //若要领数量<领取数量，则不能直接remove，需要更改数量值
-
-                    }
-                },{
-                    xtype:'button',
-                    text:'撤销',
-                    itemId:'move_left',
-                    handler:function(){
-                        var records=grid2.getSelectionModel().getSelection();
-                        MaterialList2.remove(records);
-                        MaterialList.add(records);
-                    }
-                }]
-            },grid2],
+            items:[grid1,
+            //     {
+            //     xtype:'container',
+            //     flex:0.3,
+            //     items:[{
+            //         xtype:'button',
+            //         margin: '0 0 0 30',
+            //         text:'选择',
+            //         itemId:'move_right',
+            //         handler:function(){
+            //             var records=grid1.getSelectionModel().getSelection();
+            //             console.log(records)
+            //             console.log(records[0].previousValues==undefined)//代领的数量，未修改前的数量
+            //             //console.log(records[0].data['countReceived'])
+            //             console.log(records[0].data['countNotReceived'])//最终的数量
+            //
+            //             //若未修改数量，不变.直接remove
+            //             if(records[0].previousValues==undefined){
+            //                 MaterialList.remove(records);
+            //                 MaterialList2.add(records);
+            //
+            //             }
+            //             //若修改领取数量,则不remove
+            //             else{
+            //                 MaterialList2.add(records);
+            //
+            //             }
+            //
+            //             //若要领数量<领取数量，则不能直接remove，需要更改数量值
+            //
+            //         }
+            //     },{
+            //         xtype:'button',
+            //         text:'撤销',
+            //         itemId:'move_left',
+            //         handler:function(){
+            //             var records=grid2.getSelectionModel().getSelection();
+            //             MaterialList2.remove(records);
+            //             MaterialList.add(records);
+            //         }
+            //     }]
+            // },grid2
+            ],
         });
         //确认入库按钮，
         var toolbar3 = Ext.create('Ext.toolbar.Toolbar', {
@@ -421,23 +430,22 @@ Ext.define('material.material_Receive',{
                 handler : function() {
 
                     // 取出grid的字段名字段类型pickingMaterialGrid
+                    console.log('===========')
+                    console.log(materialList)
                     var select = Ext.getCmp('PickingListGrid').getStore()
                         .getData();
                     var s = new Array();
                     select.each(function(rec) {
                         s.push(JSON.stringify(rec.data));
-
                     });
-                    console.log("领料----");
-                    console.log(s);
-
                     //获取数据
                     Ext.Ajax.request({
                         url : 'material/updateprojectmateriallist.do', //原材料入库
                         method:'POST',
                         //submitEmptyText : false,
                         params : {
-                            s : "[" + s + "]",//S存储选择领料的数量
+                            s : "[" + s + "]",//存储选择领料的数量
+                            materialList : "[" + materialList + "]",
                         },
                         success : function(response) {
                             //var message =Ext.decode(response.responseText).showmessage;
