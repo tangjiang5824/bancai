@@ -288,19 +288,17 @@ public class ProjectController {
 
         return true;
     }
-    //
+    //修改待领、已领、本次领取数量
     @RequestMapping(value = "/material/updateprojectmateriallist.do")
     @Transactional
     public boolean updateprojectmateriallist(String s){
         JSONArray jsonArray = new JSONArray(s);
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject=jsonArray.getJSONObject(i);
-            //String countReceived=jsonObject.get("countReceived")+"";
-           // String countNotReceived=jsonObject.get("countNotReceived")+"";
-            String number=jsonObject.get("number")+"";
+            String countTemp=jsonObject.get("countTemp")+"";
             String id=jsonObject.get("id")+"";
-            String sql="update projectmateriallist set countReceived=countReceived+? ,countNotReceived=countNotReceived-? where id=?";
-            boolean flag=insertProjectService.insertIntoTableBySQL(sql,number,number,id);
+            String sql="update projectmateriallist set countTemp=countNotReceived-? ,countReceived=countReceived+? ,countNotReceived=countNotReceived-?  where id=?";
+            boolean flag=insertProjectService.insertIntoTableBySQL(sql,countTemp,countTemp,countTemp,id);
             if(!flag){
                 return  false;
             }
