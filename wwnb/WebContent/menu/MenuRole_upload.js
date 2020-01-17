@@ -20,7 +20,7 @@ Ext.define("menu.MenuRole_upload", {
 					leaf : true
 				} ,{
 					text : '旧板出库（左右两个界面，可选出库数量）',
-					id : '',
+					id : 'oldpanel.oldpanel_Receive',
 					leaf : true
 				}, {
 					text : '旧板库存查询（显示旧板表）',

@@ -233,7 +233,7 @@ public class ProjectController {
             jsonObject=jsonArray.getJSONObject(i);
             String oldpanelTypeName = jsonObject.get("oldpanelTypeName")+"";
             String name = jsonObject.get("name")+"";
-            String sql ="insert into oldpaneltype (materialTypeName,name) values(?,?)";
+            String sql ="insert into oldpaneltype (oldpanelTypeName,name) values(?,?)";
             boolean flag= insertProjectService.insertIntoTableBySQL(sql,oldpanelTypeName,name);
             if(!flag){
                 return  false;
@@ -256,8 +256,8 @@ public class ProjectController {
             String width = jsonObject.get("width")+"";
             String width2 = jsonObject.get("width2")+"";
             String weight = jsonObject.get("weight")+"";
-            String cost = jsonObject.get("cost")+"";
-            String sql ="insert into productbasicinfo (productName,productType,length,length2,width,width2,weight,cost) values(?,?)";
+            String cost = "0";//jsonObject.get("cost")+""
+            String sql ="insert into productbasicinfo (productName,productType,length,length2,width,width2,weight,cost) values(?,?,?,?,?,?,?,?)";
             boolean flag= insertProjectService.insertIntoTableBySQL(sql,productName,productType,length,length2,width,width2,weight,cost);
             if(!flag){
                 return  false;
@@ -266,13 +266,63 @@ public class ProjectController {
         return true;
     }
 
-    @RequestMapping(value = "/material/updateMaterialNum.do")
+    //原材料仓库出库，直接进行给定数值的仓库扣减
+//    @RequestMapping(value = "/material/updateMaterialNum.do")
+//    @Transactional
+//    public boolean updateMaterialNum(String s){
+//        JSONArray jsonArray =new JSONArray(s);
+//        for (int i = 0; i < jsonArray.length(); i++) {
+//            JSONObject jsonObject=jsonArray.getJSONObject(i);
+//            String id =jsonObject.get("id")+"";
+//            String tempPickNum="0";
+//            try {
+//                tempPickNum = jsonObject.get("tempPickNum") + "";
+//            }catch (Exception e){
+//
+//            }
+//            String sql="update material set number=number-? where id=?";
+//            boolean flag=insertProjectService.insertIntoTableBySQL(sql,tempPickNum,id);
+//            if(!flag){
+//                return  false;
+//            }
+//        }
+//
+//        return true;
+//    }
+
+    //修改待领、已领、本次领取数量
+    @RequestMapping(value = "/material/updateprojectmateriallist.do")
     @Transactional
-    public boolean updateMaterialNum(String materialName,String length,String width,String number){
-        String sql="update material set number=number-? where materialName=? and length=? and width=?";
-        boolean flag=insertProjectService.insertIntoTableBySQL(sql,number,materialName,length,width);
-        if(!flag){
-            return  false;
+    public boolean updateprojectmateriallist(String s,String materialList){
+        //原材料,原材料仓库出库，直接进行给定数值的仓库扣减
+        JSONArray jsonArray1 =new JSONArray(materialList);
+        for (int i = 0; i < jsonArray1.length(); i++) {
+            JSONObject jsonObject=jsonArray1.getJSONObject(i);
+            String id =jsonObject.get("id")+"";
+            String tempPickNum="0";
+            try {
+                tempPickNum = jsonObject.get("tempPickNum") + "";
+            }catch (Exception e){
+
+            }
+            String sql="update material set number=number-? where id=?";
+            boolean flag=insertProjectService.insertIntoTableBySQL(sql,tempPickNum,id);
+            if(!flag){
+                return  false;
+            }
+        }
+
+        //领料单
+        JSONArray jsonArray = new JSONArray(s);
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject=jsonArray.getJSONObject(i);
+            String countTemp=jsonObject.get("countTemp")+"";
+            String id=jsonObject.get("id")+"";
+            String sql="update projectmateriallist set countTemp=countNotReceived-? ,countReceived=countReceived+? ,countNotReceived=countNotReceived-?  where id=?";
+            boolean flag=insertProjectService.insertIntoTableBySQL(sql,countTemp,countTemp,countTemp,id);
+            if(!flag){
+                return  false;
+            }
         }
         return true;
     }

@@ -66,7 +66,7 @@ Ext.define('oldpanel.add_Ocatergory_baseInfo', {
                     //alert(s);//数组s存放表格中的数据，每条数据以json格式存放
 
                     Ext.Ajax.request({
-                        url : '？？？？？', //HandleDataController
+                        url : 'material/insertIntoOldPanelType.do', //HandleDataController
                         method:'POST',
                         //submitEmptyText : false,
                         params : {

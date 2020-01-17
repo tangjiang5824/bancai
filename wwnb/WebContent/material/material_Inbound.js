@@ -214,7 +214,7 @@ Ext.define('material.material_Inbound', {
             }
         });
 
-
+        //长1 长2 宽1 宽2 库存单位
         var toolbar = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
             items: [
@@ -277,6 +277,7 @@ Ext.define('material.material_Inbound', {
                 },
             ]
         });
+        //成本 数量 存放位置
         var toolbar1 = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
             items: [

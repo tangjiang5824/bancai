@@ -1,8 +1,8 @@
-Ext.define('material.material_Receive',{
+Ext.define('oldpanel.oldpanel_Receive',{
     extend:'Ext.panel.Panel',
     region: 'center',
     layout:'fit',
-    title: '原材料领料',
+    title: '旧板领取',
 
     initComponent: function(){
         var itemsPerPage = 50;
@@ -25,6 +25,7 @@ Ext.define('material.material_Receive',{
             },
             autoLoad : true
         });
+        //项目名称下拉框
         var tableList = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '项目名',
             labelWidth : 45,
@@ -45,7 +46,7 @@ Ext.define('material.material_Receive',{
 
         });
 
-        //查询的数据存放位置 左侧界面
+        //查询的数据存放位置的store 左侧界面
         var MaterialList = Ext.create('Ext.data.Store',{
             fields:['materialName','materialCount','countReceived','countNotReceived','countTemp'],
             proxy : {
@@ -58,7 +59,7 @@ Ext.define('material.material_Receive',{
             },
             autoLoad : false
         });
-
+        //查询的数据存放位置的测试store 左侧界面
         var MaterialList2=Ext.create('Ext.data.Store',{
             //fields:['材料名称','材料数量','已领数量','要领数量']
             fields:['materialName','materialCount','countReceived','countNotReceived','countTemp'],
@@ -104,14 +105,14 @@ Ext.define('material.material_Receive',{
             width:'ttt',
             number:'12'
         }];
-
+        //弹窗的测试store
         var store1=Ext.create('Ext.data.Store',{
             id: 'store1',
             fields:['原材料名称','长','类型','宽','数量','领取数量'],
             data:sampleData
         });
 
-        //
+        //弹窗的确认按钮事件
         var toolbar4 = Ext.create('Ext.toolbar.Toolbar', {
             dock : "bottom",
             id : "toolbar4",
@@ -167,7 +168,7 @@ Ext.define('material.material_Receive',{
                 }
             }]
         });
-
+        //弹窗的表格
         var specific_data_grid=Ext.create('Ext.grid.Panel',{
             id : 'specific_data_grid',
             store:store1,//specificMaterialList，store1的数据固定
@@ -212,7 +213,7 @@ Ext.define('material.material_Receive',{
                 },
             }
         });
-
+        //弹窗的toolbar
         var toolbar5 = Ext.create('Ext.toolbar.Toolbar', {
             dock: "top",
             id: "toolbar5",
@@ -239,7 +240,7 @@ Ext.define('material.material_Receive',{
             }
             ]
         });
-
+        //弹窗
         var win_showmaterialData = Ext.create('Ext.window.Window', {
             id:'win_showmaterialData',
             title: '领取同类型下的具体规格',
@@ -253,7 +254,7 @@ Ext.define('material.material_Receive',{
             modal:true,//模态窗口，背景窗口不可编辑
         });
 
-
+        //主界面表格，双击响应事件
         var grid1=Ext.create('Ext.grid.Panel',{
             id : 'PickingListGrid',
             store:MaterialList,
@@ -335,7 +336,7 @@ Ext.define('material.material_Receive',{
             items: [tableList,
                 {
                     xtype : 'button',
-                    text: '领料单查询',
+                    text: '旧板领取详情查询',
                     width: 80,
                     margin: '0 0 0 10',
                     layout: 'right',
@@ -409,7 +410,7 @@ Ext.define('material.material_Receive',{
             // },grid2
             ],
         });
-        //确认入库按钮，
+        //确认领取按钮，
         var toolbar3 = Ext.create('Ext.toolbar.Toolbar', {
             dock : "bottom",
             id : "toolbar3",
@@ -424,7 +425,7 @@ Ext.define('material.material_Receive',{
                 xtype : 'button',
                 iconAlign : 'center',
                 iconCls : 'rukuicon ',
-                text : '确认领料',
+                text : '确认领取',
                 region:'center',
                 bodyStyle: 'background:#fff;',
                 handler : function() {
