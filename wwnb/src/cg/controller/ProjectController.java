@@ -265,7 +265,7 @@ public class ProjectController {
         }
         return true;
     }
-
+    //原材料仓库出库，直接进行给定数值的仓库扣减
     @RequestMapping(value = "/material/updateMaterialNum.do")
     @Transactional
     public boolean updateMaterialNum(String materialName,String length,String width,String number){
@@ -273,6 +273,25 @@ public class ProjectController {
         boolean flag=insertProjectService.insertIntoTableBySQL(sql,number,materialName,length,width);
         if(!flag){
             return  false;
+        }
+        return true;
+    }
+    //原材料仓库出库，直接进行给定数值的仓库扣减
+    @RequestMapping(value = "/material/updateprojectmateriallist.do")
+    @Transactional
+    public boolean updateprojectmateriallist(String s){
+        JSONArray jsonArray = new JSONArray(s);
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject=jsonArray.getJSONObject(i);
+
+            //String countReceived=jsonObject.get("countReceived")+"";
+           // String countNotReceived=jsonObject.get("countNotReceived")+"";
+            String number=jsonObject.get("number")+"";
+            String sql="update projectmateriallist set countReceived=countReceived+? ,countNotReceived=countNotReceived-? where id=?";
+            boolean flag=insertProjectService.insertIntoTableBySQL(sql,number,number);
+            if(!flag){
+                return  false;
+            }
         }
         return true;
     }
