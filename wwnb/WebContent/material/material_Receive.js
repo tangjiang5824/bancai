@@ -85,7 +85,8 @@ Ext.define('material.material_Receive',{
             },{
                 dataIndex:'countTemp',
                 text:'本次领取数量',
-                editor:{xtype : 'textfield', allowBlank : false}
+                editor:{xtype : 'textfield', allowBlank : true},
+
             }
         ];
         var clms1=[ {dataIndex:'materialName', text:'材料名',},
@@ -131,8 +132,9 @@ Ext.define('material.material_Receive',{
                     select.each(function(rec) {
                         s.push(JSON.stringify(rec.data));
                     });
-                    console.log('33');
-                    console.log(select);
+                    console.log('335553');
+                    var a = "[" + s + "]";
+                    console.log(a);
 
                     //点击确认后将数据返回到前一个页面，操作数据
                     Ext.Ajax.request({
@@ -334,15 +336,13 @@ Ext.define('material.material_Receive',{
                         var url='material/materiaPickingWin.jsp';
                         url=encodeURI(url)
                         //window.open(url,"_blank");
-                        //window.open(url, 'mywindow1', 'width=500, height=400');
-                        //store1.loadData(action.result['value']);
                         console.log('sss')
+                        //传入所选项目的id
                         console.log(Ext.getCmp('projectName').getValue())
                         MaterialList.load({
                             params : {
-                                //proNum : Ext.getCmp('proNum').getValue(),
-                                //proejctId:Ext.getCmp('projectName').getValue(),
-                                proejctId:'1',
+                                proejctId:Ext.getCmp('projectName').getValue(),
+                                //proejctId:'1',
                             }
                         });
                     }
@@ -381,7 +381,6 @@ Ext.define('material.material_Receive',{
                         }
                         //若修改领取数量,则不remove
                         else{
-                            console.log("ceshi???")
                             MaterialList2.add(records);
 
                         }
@@ -433,20 +432,19 @@ Ext.define('material.material_Receive',{
                     console.log(s);
 
                     //获取数据
-                    //获得当前操作时间
-                    //var sTime=Ext.Date.format(Ext.getCmp('startTime').getValue(), 'Y-m-d H:i:s');
                     Ext.Ajax.request({
-                        //url : 'addMaterial.do', //原材料入库
+                        url : 'material/updateprojectmateriallist.do', //原材料入库
                         method:'POST',
                         //submitEmptyText : false,
                         params : {
-                            tableName:tableName,
-                            //materialType:materialtype,
                             s : "[" + s + "]",//S存储选择领料的数量
                         },
                         success : function(response) {
                             //var message =Ext.decode(response.responseText).showmessage;
                             Ext.MessageBox.alert("提示","领取成功" );
+                            //刷新页面
+                            MaterialList.reload();
+
                         },
                         failure : function(response) {
                             //var message =Ext.decode(response.responseText).showmessage;
