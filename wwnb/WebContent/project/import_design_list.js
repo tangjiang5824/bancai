@@ -155,6 +155,7 @@ Ext.define('project.import_design_list', {
 			id : 'addDataGrid',
 			dockedItems : [toolbar2],
 			store : {
+				id: 'designlistStore',
 				fields: ['产品编号', '产品名称','产品安装位置','是否由旧板生产']
 //				fields : ['fieldName', 'fieldType', 'taxUnitCode',
 //						'taxUnitName', 'isNull', 'fieldCheck', 'width']
@@ -242,7 +243,8 @@ Ext.define('project.import_design_list', {
 
 										exceluploadform.submit({
 											//excel上传的接口
-											url : 'project/Upload_Design_List_Excel.do？projectId='+projectId+'&buildingId='+buildingId,//上传excel文件，同时传入项目的id和楼栋的id
+											//url : 'project/Upload_Design_List_Excel.do？projectId='+projectId+'&buildingId='+buildingId,//上传excel文件，同时传入项目的id和楼栋的id
+											url : 'oldpanel/uploadMatchExcel.do？projectId='+projectId+'&buildingId='+buildingId,//上传excel文件，同时传入项目的id和楼栋的id
 											waitMsg : '正在上传...',
 											// params : {
 											// 	tableName:tableName,
@@ -257,6 +259,13 @@ Ext.define('project.import_design_list', {
 //												toolbar2.setVisible(false);
 //												toolbar3.setVisible(false);
 //												me.showDataGrid(tableName, response.uploadId);
+												//上传成功
+												//回显
+
+												console.log(action.result['value']);
+												Ext.MessageBox.alert("提示", "上传成功!");
+												//重新加载数据
+												designlistStore.loadData(action.result['value']);
 											},
 											failure : function(exceluploadform, action) {
 												var response = action.result;
@@ -380,6 +389,7 @@ Ext.define('project.import_design_list', {
 							type : 'ajax',
 							//通用接口，material/findAllbyTableNameAndOnlyOneCondition.do传入表名，属性及属性值
 							url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName='+tableName+'&columnName='+projectId+'&columnValue='+id,//根据项目id查询对应的楼栋名
+							//url : 'project/findBuildingList.do?projectId='+id,//根据项目id查询对应的楼栋名
 							// params : {
 							// 	projectName:Ext.getCmp('projectName').getValue(),
 							// 	//buildingName:Ext.getCmp('buildingName').getValue(),
@@ -443,6 +453,7 @@ Ext.define('project.import_design_list', {
 			//store: tableListStore2,
 			listeners: {
 				select:function () {
+
 					// // projectName:Ext.getCmp('projectName').getValue();
 					// // buildingName:Ext.getCmp('buildingName').getValue();
 					// Ext.Ajax.request({
@@ -458,6 +469,7 @@ Ext.define('project.import_design_list', {
 					// 		//alert("combox1把数据传到后台成功");
 					// 	}
 					// })
+
 				}
 			}
 		});
