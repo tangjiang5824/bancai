@@ -64,7 +64,7 @@ Ext.define('product.add_Pcatergory_baseInfo', {
                     //alert(s);//数组s存放表格中的数据，每条数据以json格式存放
 
                     Ext.Ajax.request({
-                        url : 'oldpanel/addData.do', //HandleDataController
+                        url : 'material/insertIntoProductbasicinfo.do', //HandleDataController
                         method:'POST',
                         //submitEmptyText : false,
                         params : {
@@ -147,7 +147,7 @@ Ext.define('product.add_Pcatergory_baseInfo', {
                     //width : 110,
                     editor : {// 文本字段
                         xtype : 'textfield',
-                        allowBlank : false,
+                        allowBlank : true,
 
                     }
 
@@ -171,14 +171,14 @@ Ext.define('product.add_Pcatergory_baseInfo', {
                 //width : 110,
                 editor : {// 文本字段
                     xtype : 'textfield',
-                    allowBlank : false,
+                    allowBlank : true,
 
                 }
 
             },{
                 dataIndex : 'weight',
-                name : '数量',
-                text : '数量',
+                name : '重量',
+                text : '重量',
                 //width : 192,
                 editor : {
                     xtype : 'textfield',

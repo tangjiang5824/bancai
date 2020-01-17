@@ -42,7 +42,7 @@ Ext.define('material.material_Receive',{
 
         });
 
-        //查询的数据存放位置
+        //查询的数据存放位置 左侧界面
         var MaterialList = Ext.create('Ext.data.Store',{
             fields:['materialName','materialCount','countReceived','countNotReceived','countTemp'],
             proxy : {
@@ -133,11 +133,11 @@ Ext.define('material.material_Receive',{
 
                     //点击确认后将数据返回到前一个页面，操作数据
                     Ext.Ajax.request({
-                        //url : 'addMaterial.do', //原材料入库
+                        url : 'material/updateprojectmateriallist.do', //原材料入库
                         method:'POST',
                         //submitEmptyText : false,
                         params : {
-                            tableName:tableName,
+                            //tableName:tableName,
                             //materialType:materialtype,
                             s : "[" + s + "]",//S存储选择领料的数量
                         },
