@@ -58,8 +58,8 @@ public class Project_impot_design_list_controller {
 		System.out.println("getSelectedProjectName===="+projectName);
 	}
 	@RequestMapping(value="/project/getSelectedBuildingName.do")
-	public void getSelectedBuildingName(String buildingName, HttpSession session) throws IOException {
-		session.setAttribute("buildingName", buildingName);
+	public void getSelectedBuildingName(String buildingName, String projectName,HttpSession session) throws IOException {
+		//session.setAttribute("buildingName", buildingName);
 		System.out.println("getSelectedProjectName===="+buildingName);
 		//获得buildingName对应的buildingId
 		DataList buildingId = project_import_design_list_service.findBuildingId(buildingName);

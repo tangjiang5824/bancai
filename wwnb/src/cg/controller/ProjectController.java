@@ -331,13 +331,39 @@ public class ProjectController {
         }
         return true;
     }
+
     //原材料仓库出库，直接进行给定数值的仓库扣减
-    @RequestMapping(value = "/material/updateMaterialNum.do")
+//    @RequestMapping(value = "/material/updateMaterialNum.do")
+//    @Transactional
+//    public boolean updateMaterialNum(String s){
+//        JSONArray jsonArray =new JSONArray(s);
+//        for (int i = 0; i < jsonArray.length(); i++) {
+//            JSONObject jsonObject=jsonArray.getJSONObject(i);
+//            String id =jsonObject.get("id")+"";
+//            String tempPickNum="0";
+//            try {
+//                tempPickNum = jsonObject.get("tempPickNum") + "";
+//            }catch (Exception e){
+//
+//            }
+//            String sql="update material set number=number-? where id=?";
+//            boolean flag=insertProjectService.insertIntoTableBySQL(sql,tempPickNum,id);
+//            if(!flag){
+//                return  false;
+//            }
+//        }
+//
+//        return true;
+//    }
+
+    //修改待领、已领、本次领取数量
+    @RequestMapping(value = "/material/updateprojectmateriallist.do")
     @Transactional
-    public boolean updateMaterialNum(String s){
-        JSONArray jsonArray =new JSONArray(s);
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonObject=jsonArray.getJSONObject(i);
+    public boolean updateprojectmateriallist(String s,String materialList){
+        //原材料,原材料仓库出库，直接进行给定数值的仓库扣减
+        JSONArray jsonArray1 =new JSONArray(materialList);
+        for (int i = 0; i < jsonArray1.length(); i++) {
+            JSONObject jsonObject=jsonArray1.getJSONObject(i);
             String id =jsonObject.get("id")+"";
             String tempPickNum="0";
             try {
@@ -352,12 +378,7 @@ public class ProjectController {
             }
         }
 
-        return true;
-    }
-    //修改待领、已领、本次领取数量
-    @RequestMapping(value = "/material/updateprojectmateriallist.do")
-    @Transactional
-    public boolean updateprojectmateriallist(String s){
+        //领料单
         JSONArray jsonArray = new JSONArray(s);
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject=jsonArray.getJSONObject(i);

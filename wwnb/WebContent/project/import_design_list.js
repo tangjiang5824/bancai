@@ -155,6 +155,7 @@ Ext.define('project.import_design_list', {
 			id : 'addDataGrid',
 			dockedItems : [toolbar2],
 			store : {
+				id: 'designlistStore',
 				fields: ['产品编号', '产品名称','产品安装位置','是否由旧板生产']
 //				fields : ['fieldName', 'fieldType', 'taxUnitCode',
 //						'taxUnitName', 'isNull', 'fieldCheck', 'width']
@@ -222,9 +223,11 @@ Ext.define('project.import_design_list', {
 				name : 'uploadFile',
 				//id : 'uploadFile',
 				listeners : {
+
 					change : function(file, value, eOpts) {
 						if (value.indexOf('.xls',value.length-4)==-1) {
 							Ext.Msg.alert('错误', '文件格式错误，请重新选择xls格式的文件！')
+
 						} else {
 							Ext.Msg.show({
 								title : '操作确认',
@@ -233,16 +236,21 @@ Ext.define('project.import_design_list', {
 								icon : Ext.Msg.QUESTION,
 								fn : function(btn) {
 									if (btn === 'yes') {
-										var check=Ext.getCmp("check").getValue();
+										//var check=Ext.getCmp("check").getValue();
+										var projectId = Ext.getCmp("projectName").getValue();
+										var buildingId = Ext.getCmp("buildingName").getValue();
+										console.log(projectId)
 
 										exceluploadform.submit({
-											url : 'project/Upload_Design_List_Excel.do',
+											//excel上传的接口
+											//url : 'project/Upload_Design_List_Excel.do？projectId='+projectId+'&buildingId='+buildingId,//上传excel文件，同时传入项目的id和楼栋的id
+											url : 'oldpanel/uploadMatchExcel.do？projectId='+projectId+'&buildingId='+buildingId,//上传excel文件，同时传入项目的id和楼栋的id
 											waitMsg : '正在上传...',
-											params : {
-												tableName:tableName,
-												materialtype:materialtype,
-												check:check
-											},
+											// params : {
+											// 	tableName:tableName,
+											// 	materialtype:materialtype,
+											// 	check:check
+											// },
 											success : function(exceluploadform, action) {
 												var response = action.result;
 												Ext.MessageBox.alert("提示", "上传成功!");
@@ -251,6 +259,13 @@ Ext.define('project.import_design_list', {
 //												toolbar2.setVisible(false);
 //												toolbar3.setVisible(false);
 //												me.showDataGrid(tableName, response.uploadId);
+												//上传成功
+												//回显
+
+												console.log(action.result['value']);
+												Ext.MessageBox.alert("提示", "上传成功!");
+												//重新加载数据
+												designlistStore.loadData(action.result['value']);
 											},
 											failure : function(exceluploadform, action) {
 												var response = action.result;
@@ -351,48 +366,80 @@ Ext.define('project.import_design_list', {
 			matchFieldWidth: false,
 			emptyText : "--请选择--",
 			displayField: 'projectName',
-			valueField: 'projectName',
+			valueField: 'id',
 			editable : false,
 			store: tableListStore1,
 			listeners: {
-				select:function () {
+				select:function (combo, record) {
 					projectName:Ext.getCmp('projectName').getValue();
-					Ext.Ajax.request({
-						url:'project/getSelectedProjectName.do',
-						params:{
-							projectName:Ext.getCmp('projectName').getValue()
+					//选中后
+					var select = record[0].data;
+					var id = select.id;//项目名对应的id
+					console.log(id)
+
+					//重新加载行选项
+					//表名
+					var tableName = 'building';
+					//属性名
+					var projectId = 'projectId';
+
+					var tableListStore2 = Ext.create('Ext.data.Store',{
+						fields : [ 'buildingName'],
+						proxy : {
+							type : 'ajax',
+							//通用接口，material/findAllbyTableNameAndOnlyOneCondition.do传入表名，属性及属性值
+							url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName='+tableName+'&columnName='+projectId+'&columnValue='+id,//根据项目id查询对应的楼栋名
+							//url : 'project/findBuildingList.do?projectId='+id,//根据项目id查询对应的楼栋名
+							// params : {
+							// 	projectName:Ext.getCmp('projectName').getValue(),
+							// 	//buildingName:Ext.getCmp('buildingName').getValue(),
+							// },
+							reader : {
+								type : 'json',
+								rootProperty: 'building',
+							}
 						},
-						success:function (response,config) {
-							//alert("combox1把数据传到后台成功");
-						},
-						failure:function (form, action) {
-							//alert("combox1把数据传到后台成功");
-						}
-					})
+						autoLoad : true
+					});
+					//buildingName,下拉框重新加载数据
+					buildingName.setStore(tableListStore2);
+
+					// Ext.Ajax.request({
+					// 	url:'project/getSelectedProjectName.do',
+					// 	params:{
+					// 		projectName:Ext.getCmp('projectName').getValue()
+					// 	},
+					// 	success:function (response,config) {
+					// 		//alert("combox1把数据传到后台成功");
+					// 	},
+					// 	failure:function (form, action) {
+					// 		//alert("combox1把数据传到后台成功");
+					// 	}
+					// })
 				}
 			}
 
 		});
 
 
-		var tableListStore2 = Ext.create('Ext.data.Store',{
-			fields : [ 'buildingName'],
-			proxy : {
-				type : 'ajax',
-				url : 'project/findBuildingList.do',
-				params : {
-					projectName:Ext.getCmp('projectName').getValue(),
-					//buildingName:Ext.getCmp('buildingName').getValue(),
-				},
-				reader : {
-					type : 'json',
-					rootProperty: 'buildingList',
-				}
-			},
-			autoLoad : true
-		});
+		// var tableListStore2 = Ext.create('Ext.data.Store',{
+		// 	fields : [ 'buildingName'],
+		// 	proxy : {
+		// 		type : 'ajax',
+		// 		url : 'project/findBuildingList.do',
+		// 		params : {
+		// 			projectName:Ext.getCmp('projectName').getValue(),
+		// 			//buildingName:Ext.getCmp('buildingName').getValue(),
+		// 		},
+		// 		reader : {
+		// 			type : 'json',
+		// 			rootProperty: 'buildingList',
+		// 		}
+		// 	},
+		// 	autoLoad : true
+		// });
 
-		var tableList2 = Ext.create('Ext.form.ComboBox',{
+		var buildingName = Ext.create('Ext.form.ComboBox',{
 			fieldLabel : '楼栋名',
 			labelWidth : 60,
 			width : 300,
@@ -401,26 +448,28 @@ Ext.define('project.import_design_list', {
 			matchFieldWidth: false,
 			emptyText : "--请选择--",
 			displayField: 'buildingName',
-			valueField: 'buildingName',
+			valueField: 'id',//楼栋的id
 			editable : false,
-			store: tableListStore2,
+			//store: tableListStore2,
 			listeners: {
 				select:function () {
-					projectName:Ext.getCmp('projectName').getValue();
-					buildingName:Ext.getCmp('buildingName').getValue();
-					Ext.Ajax.request({
-						url:'project/getSelectedBuildingName.do',
-						params:{
-							//projectName:Ext.getCmp('projectName').getValue(),
-							buildingName:Ext.getCmp('buildingName').getValue(),
-						},
-						success:function (response,config) {
-							//alert("combox1把数据传到后台成功");
-						},
-						failure:function (form, action) {
-							//alert("combox1把数据传到后台成功");
-						}
-					})
+
+					// // projectName:Ext.getCmp('projectName').getValue();
+					// // buildingName:Ext.getCmp('buildingName').getValue();
+					// Ext.Ajax.request({
+					// 	url:'project/getSelectedBuildingName.do',
+					// 	params:{
+					// 		//projectName:Ext.getCmp('projectName').getValue(),
+					// 		buildingName:Ext.getCmp('buildingName').getValue(),
+					// 	},
+					// 	success:function (response,config) {
+					// 		//alert("combox1把数据传到后台成功");
+					// 	},
+					// 	failure:function (form, action) {
+					// 		//alert("combox1把数据传到后台成功");
+					// 	}
+					// })
+
 				}
 			}
 		});
@@ -430,21 +479,7 @@ Ext.define('project.import_design_list', {
 		var toolbar2 = Ext.create('Ext.toolbar.Toolbar', {
 			dock : "top",
 			id : "toolbar2",
-			items : [tableList1,tableList2,
-				{
-					xtype: 'button',
-					text: '查询',
-					margin : '0 10 0 0',
-					handler: function(){
-						console.log(Ext.getCmp('projectName').getValue())
-						uploadRecordsStore.load({
-							params : {
-								projectName:Ext.getCmp('projectName').getValue(),
-							}
-						});
-					}
-				}
-				,exceluploadform]
+			items : [tableList1,buildingName,exceluploadform]
 		});
 
 		this.dockedItems = [
