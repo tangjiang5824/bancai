@@ -1,5 +1,6 @@
 package cg.service;
 
+import commonMethod.QueryAllService;
 import domain.DataList;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -21,7 +22,7 @@ public class InsertProjectService extends BaseService {
 
     private Logger log = Logger.getLogger(InsertProjectService.class);
     @Autowired
-    private QueryService queryService;
+    private QueryAllService queryService;
 
     /**
      * 插入通用接口，sql和要插入的字段值，所有插入都是String
@@ -67,6 +68,11 @@ public class InsertProjectService extends BaseService {
         String sql = "select * from oldpaneltype";
         DataList typelist = queryService.query(sql);
         return typelist;
+
+    }
+    @Transactional
+    public int update(String sql){
+        return jo.update(sql);
 
     }
 

@@ -310,7 +310,7 @@ Ext.define('project.management.buildproject', {
                     var s = new Array();
                     select.each(function(rec) {
                         //delete rec.data.id;
-                        if(rec.data.楼栋编号!="")
+                        if(rec.data.buildingNo!="")
                         s.push(JSON.stringify(rec.data));
                     });
 
