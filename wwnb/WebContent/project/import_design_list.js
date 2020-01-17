@@ -369,25 +369,30 @@ Ext.define('project.import_design_list', {
 					console.log(id)
 
 					//重新加载行选项
+					//表名
+					var tableName = 'building';
+					//属性名
+					var projectId = 'projectId';
 
 					var tableListStore2 = Ext.create('Ext.data.Store',{
 						fields : [ 'buildingName'],
 						proxy : {
 							type : 'ajax',
-							url : 'project/findBuildingList.do?projectId='+id,//根据项目id查询对应的楼栋名
+							//通用接口，material/findAllbyTableNameAndOnlyOneCondition.do传入表名，属性及属性值
+							url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName='+tableName+'&columnName='+projectId+'&columnValue='+id,//根据项目id查询对应的楼栋名
 							// params : {
 							// 	projectName:Ext.getCmp('projectName').getValue(),
 							// 	//buildingName:Ext.getCmp('buildingName').getValue(),
 							// },
 							reader : {
 								type : 'json',
-								rootProperty: 'buildingList',
+								rootProperty: 'building',
 							}
 						},
 						autoLoad : true
 					});
 					//buildingName,下拉框重新加载数据
-					tableList2.setStore(tableListStore2);
+					buildingName.setStore(tableListStore2);
 
 					// Ext.Ajax.request({
 					// 	url:'project/getSelectedProjectName.do',
@@ -424,7 +429,7 @@ Ext.define('project.import_design_list', {
 		// 	autoLoad : true
 		// });
 
-		var tableList2 = Ext.create('Ext.form.ComboBox',{
+		var buildingName = Ext.create('Ext.form.ComboBox',{
 			fieldLabel : '楼栋名',
 			labelWidth : 60,
 			width : 300,
@@ -462,7 +467,7 @@ Ext.define('project.import_design_list', {
 		var toolbar2 = Ext.create('Ext.toolbar.Toolbar', {
 			dock : "top",
 			id : "toolbar2",
-			items : [tableList1,tableList2,exceluploadform]
+			items : [tableList1,buildingName,exceluploadform]
 		});
 
 		this.dockedItems = [
