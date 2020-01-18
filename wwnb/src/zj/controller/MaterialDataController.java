@@ -137,19 +137,19 @@ public class MaterialDataController {
         mysqlcondition c=new mysqlcondition();
         //String loginName = (String) session.getAttribute("loginName");
         if (startWidth.length() != 0) {
-            c.and(new mysqlcondition("宽", ">=", startWidth));
+            c.and(new mysqlcondition("width", ">=", startWidth));
         }
         if (endWidth.length() != 0) {
-            c.and(new mysqlcondition("宽", "<=", endWidth));
+            c.and(new mysqlcondition("width", "<=", endWidth));
         }
         if (startLength.length() != 0) {
-            c.and(new mysqlcondition("长", ">=", startLength));
+            c.and(new mysqlcondition("length", ">=", startLength));
         }
         if (endLength.length() != 0) {
-            c.and(new mysqlcondition("长", "<=", endLength));
+            c.and(new mysqlcondition("length", "<=", endLength));
         }
         if (mType.length() != 0) {
-            c.and(new mysqlcondition("类型", "=", mType));
+            c.and(new mysqlcondition("materialType", "=", mType));
         }
 //        if (materialType.length() != 0) {
 //            c.and(new mysqlcondition("materialtype", "=", materialType));

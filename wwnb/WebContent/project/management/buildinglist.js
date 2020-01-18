@@ -17,6 +17,8 @@ Ext.define('project.management.buildinglist', {
 
     initComponent : function() {
         var me = this;
+        var project_Id;
+        var table_name="building";
         //定义表名,计划清单
         // var tableName="planList";
         //var materialtype="0";
@@ -57,6 +59,16 @@ Ext.define('project.management.buildinglist', {
             },
             autoLoad : true
         });
+
+        //
+        // var buidingStore = Ext.create('Ext.data.Store', {
+        //     id: 'buidingStore',
+        //     //autoLoad: true,
+        //     fields: ['buildingNo','buildingName','buildingLeader']
+        // });
+
+
+
         var tableList = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '项目名',
             labelWidth : 60,
@@ -70,10 +82,98 @@ Ext.define('project.management.buildinglist', {
             editable : false,
             store: tableListStore,
             listeners:{
-                select: function(combo, record, index) {
-                    console.log(record[0].data.projectName);
+                // select: function(combo, record, index) {
+                //     console.log(record[0].data.projectName);
+                // }
+                select:function (combo, record) {
+                    projectName:Ext.getCmp('projectName').getValue();//获得选中的项目的id
+                    //选中后
+                    var select = record[0].data;
+                    var id = select.id;//项目名对应的id
+                    project_Id=id;
+                    Ext.Ajax.request({
+                        url:"project/findProjectAndBuilding.do?projectId="+id,  //EditDataById.do
+                        // params:{
+                        //     tableName:tableName,
+                        //     field:field,
+                        //     value:e.value,
+                        //     id:id
+                        // },
+                        success:function (response) {
+                            //console.log(response.responseText);
+                            var a= Ext.decode(response.responseText);
+                            console.log('aaaaaazz');
 
+                            //后端响应
+                            var projectInfo = response.responseText//.//['project'];
+                            var project_Buildingjson = JSON.parse(projectInfo);
+                            var pro = (project_Buildingjson.project[0]);
+                            var build = (project_Buildingjson.project[1]);
+                            console.log(projectInfo.toString())
+
+                            //动态修改值,项目信息
+                            Ext.getCmp("planLeader").setValue(pro['planLeader'])//setText(pro['planLeader']);//计划负责人
+                            Ext.getCmp("produceLeader").setValue(pro['produceLeader']);//生产负责人
+                            Ext.getCmp("purchaseLeader").setValue(pro['purchaseLeader']);//采购负责人
+                            Ext.getCmp("financeLeader").setValue(pro['financeLeader']);//财务负责人
+                            Ext.getCmp("storeLeader").setValue(pro['storeLeader']);//仓库负责人
+                            Ext.getCmp("startTime").setValue(pro['startTime']);//开始时间
+                            Ext.getCmp("proEndTime").setValue(pro['proEndTime']);//开始时间
+                            //动态修改值,楼栋信息
+                            var buidingStore = Ext.create('Ext.data.Store',{
+                                id: 'buidingStore',
+                                fields: ['buildingNo','buildingName','buildingLeader'],
+                                //pageSize: itemsPerPage, // items per page
+                                //method:
+                                proxy:{
+                                    url : "project/findBuilding.do?projectId="+id,
+                                    type: 'ajax',
+                                    reader:{
+                                        type : 'json',
+                                        rootProperty: 'building',
+                                        //totalProperty: 'totalCount'
+                                    }
+                                    // ,
+                                    // params:{
+                                    //     projectId:id,
+                                    // }
+                                },
+                                autoLoad : true,
+                            });
+                            console.log(buidingStore);
+                            Ext.getCmp('addDataGrid').setStore(buidingStore);
+
+
+
+                            //Ext.getCmp('buidingStore').loadData(projectInfo);loadData
+                            //buidingStore.loadData(projectInfo.toString());
+
+                        }
+                    });
+
+                    // var buildingStoreTemp = Ext.create('Ext.data.Store', {
+                    //     fields: ['buildingName'],
+                    //     proxy: {
+                    //         type: 'ajax',
+                    //         //通用接口，material/findAllbyTableNameAndOnlyOneCondition.do传入表名，属性及属性值
+                    //         url: 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName=' + tableName + '&columnName=' + projectId + '&columnValue=' + id,//根据项目id查询对应的楼栋名
+                    //         //url : 'project/findBuildingList.do?projectId='+id,//根据项目id查询对应的楼栋名
+                    //         // params : {
+                    //         // 	projectName:Ext.getCmp('projectName').getValue(),
+                    //         // 	//buildingName:Ext.getCmp('buildingName').getValue(),
+                    //         // },
+                    //         reader: {
+                    //             type: 'json',
+                    //             rootProperty: 'building',
+                    //         }
+                    //     },
+                    //     autoLoad: true
+                    // });
+                    //buildingName,下拉框重新加载数据
+                    //动态修改值
+                    //Ext.getCmp("toolbar5").items.items[1].setText(pickNum);
                 }
+
             }
 
         });
@@ -93,7 +193,7 @@ Ext.define('project.management.buildinglist', {
                     //align: 'right',
                     format : 'Y-m',
                     editable : false,
-                    value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.MONTH), "Y-m-d")
+                    //value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.MONTH), "Y-m-d")
                 },  {
                     xtype : 'monthfield',
                     margin : '0 10 0 0',
@@ -115,6 +215,7 @@ Ext.define('project.management.buildinglist', {
                     labelWidth: 80,
                     name: 'planLeader',
                     value:"",
+                    //dataIndex:'planLeader'
 
                 }]
         });
@@ -168,7 +269,7 @@ Ext.define('project.management.buildinglist', {
                 xtype : 'button',
                 iconAlign : 'center',
                 iconCls : 'rukuicon ',
-                text : '添加表项',
+                text : '增加楼栋',
                 handler : function() {
                     //fields: ['品号', '品名','规格','库存单位','仓库编号','数量','成本','存放位置']
                     var data = [{
@@ -184,26 +285,26 @@ Ext.define('project.management.buildinglist', {
 
                 }
 
-            },{
-                xtype : 'button',
-                iconAlign : 'center',
-                iconCls : 'rukuicon ',
-                text : '添加字段名',
-                // handler : function() {
-                // 	//fields: ['品号', '品名','规格','库存单位','仓库编号','数量','成本','存放位置']
-                // 	var data = [{
-                // 		'品号' : '',
-                // 		'长' : '',
-                // 		'类型' : '',
-                // 		'宽' : '',
-                // 	}];
-                // 	//Ext.getCmp('addDataGrid')返回定义的对象
-                // 	Ext.getCmp('addDataGrid').getStore().loadData(data,
-                // 		true);
-                //
-                // }
-
             },
+            //     xtype : 'button',
+            //     iconAlign : 'center',
+            //     iconCls : 'rukuicon ',
+            //     text : '添加字段名',
+            //     // handler : function() {
+            //     // 	//fields: ['品号', '品名','规格','库存单位','仓库编号','数量','成本','存放位置']
+            //     // 	var data = [{
+            //     // 		'品号' : '',
+            //     // 		'长' : '',
+            //     // 		'类型' : '',
+            //     // 		'宽' : '',
+            //     // 	}];
+            //     // 	//Ext.getCmp('addDataGrid')返回定义的对象
+            //     // 	Ext.getCmp('addDataGrid').getStore().loadData(data,
+            //     // 		true);
+            //     //
+            //     // }
+            //
+            // },
                 // 	{
                 // 	xtype : 'button',
                 // 	iconAlign : 'center',
@@ -249,11 +350,15 @@ Ext.define('project.management.buildinglist', {
         var grid = Ext.create("Ext.grid.Panel", {
             id : 'addDataGrid',
             dockedItems : [toolbar2],
-            store : {
-                fields: ['楼栋编号',"楼栋名","楼栋负责人"]
-//				fields : ['fieldName', 'fieldType', 'taxUnitCode',
-//						'taxUnitName', 'isNull', 'fieldCheck', 'width']
+            viewConfig : {
+                enableTextSelection : true,
+                editable:true
             },
+            //store : buidingStore,
+            //     {
+            //     id: 'buidingStore',
+            //     fields: ['buildingNo','buildingName','buildingLeader']
+            // },
             columns : [ {
                 dataIndex : 'buildingNo',
                 text : '楼栋编号',
@@ -275,7 +380,7 @@ Ext.define('project.management.buildinglist', {
                 }
 
             },{
-                dataIndex : 'buildingOwner',
+                dataIndex : 'buildingLeader',
                 text : '楼栋负责人',
                 width : 150,
                 editor : {// 文本字段
@@ -291,9 +396,36 @@ Ext.define('project.management.buildinglist', {
                 }
             },
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
-                clicksToEdit : 1
+                clicksToEdit : 2
             })],
             selType : 'rowmodel',
+            listeners: {
+                validateedit : function(editor, e) {
+                    var field=e.field
+                    var id=e.record.data.id
+                    var flag=false;
+                    if(id === "" || id ==null|| isNaN(id)){
+                        flag=true;
+                        id='0'
+                    }
+                    Ext.Ajax.request({
+                        url:"data/BuildingEditCellById.do",  //EditDataById.do
+                        params:{
+                            tableName:table_name,
+                            projectId:project_Id,
+                            field:field,
+                            value:e.value,
+                            id:id
+                        },
+                        success:function (response) {
+                            if(flag){
+                                e.record.data.id=response.responseText;
+                            }
+
+                        }
+                    })
+                }
+            }
         });
 
         var toolbar2 = Ext.create('Ext.toolbar.Toolbar', {
@@ -370,7 +502,7 @@ Ext.define('project.management.buildinglist', {
             }]
         });
 
-        this.dockedItems = [toobar,toobar_2,toolbar2,grid,toolbar3];
+        this.dockedItems = [toobar,toobar_2,toolbar2,grid];
         //this.items = [ me.grid ];
         this.callParent(arguments);
 

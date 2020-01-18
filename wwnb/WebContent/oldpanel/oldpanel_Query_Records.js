@@ -228,6 +228,7 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
             width: 650,
             layout: 'fit',
             closable : true,
+            closeAction : 'close',
             items:oldpanel_Query_Records_specific_data_grid,
         });
 
@@ -275,7 +276,7 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
                         //fields:['materialName','length','materialType','width','number'],//'oldpanelId','oldpanelName','count'
                         proxy : {
                             type : 'ajax',
-                            url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName=oldpanellogdetail&columnName=oldpanellogId&columnValue='+id,//获取同类型的原材料
+                            url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName=oldpanellogdetail&columnName=oldpanellogId&columnValue='+id,
                             reader : {
                                 type : 'json',
                                 rootProperty: 'oldpanellogdetail',

@@ -175,7 +175,7 @@ public class UserController {
 	}
 	/**
 	 * TODO 不明白此函数是干吗。。。
-	 * @param roleId
+	 * @param
 	 * @return
 	 */
 	@RequestMapping(value = "/system/userAdmin/organizationList.do")
@@ -192,9 +192,9 @@ public class UserController {
 	 * @param pwd
 	 * @param roleId
 	 * @param name
-	 * @param addr
+	 * @param
 	 * @param tel
-	 * @param mailbox
+	 * @param
 	 * @param organizationId
 	 * @return
 	 */

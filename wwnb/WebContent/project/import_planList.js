@@ -1,6 +1,6 @@
-Ext.define('material.material_Upload_Data', {
+Ext.define('project.import_planList', {
     extend : 'Ext.panel.Panel',
-    id:'material_Upload_Data',
+    id:'Upload_Data22',
     region : 'center',
     layout : "fit",
     title : '原材料入库',
@@ -25,8 +25,8 @@ Ext.define('material.material_Upload_Data', {
 
         //新增表项和保存的按钮
 
-        var MaterialStore = Ext.create('Ext.data.Store',{
-            id: 'MaterialStore',
+        var MaterialStore1 = Ext.create('Ext.data.Store',{
+            id: 'MaterialStore1',
             autoLoad: true,
             fields: [],
             pageSize: itemsPerPage, // items per page
@@ -47,27 +47,13 @@ Ext.define('material.material_Upload_Data', {
         });
 
         var grid = Ext.create('Ext.grid.Panel',{
-            id: 'uploadRecordsMain',
-            store: MaterialStore,
+            id: 'uploadRecordsMain1',
+            store: MaterialStore1,
             viewConfig : {
                 enableTextSelection : true,
                 editable:true
             },
             columns : [
-                // { text: '材料名', dataIndex: 'materialName', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-                // { text: '品号',  dataIndex: '品号' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
-                // { text: '长1', dataIndex: '长1', flex :0.7 ,editor:{xtype : 'textfield', allowBlank : false}},
-                // { text: '长2', dataIndex: '长2', flex :0.7 ,editor:{xtype : 'textfield', allowBlank : false}},
-                // { text: '类型', dataIndex: '类型',flex :1,editor:{xtype : 'textfield', allowBlank : false} },
-                // { text: '宽1', dataIndex: '宽1', flex :0.7 ,editor:{xtype : 'textfield', allowBlank : false}},
-                // { text: '宽2', dataIndex: '宽2', flex :0.7 ,editor:{xtype : 'textfield', allowBlank : false}},
-                // { text: '数量', dataIndex: '数量', flex :1,editor:{xtype : 'textfield', allowBlank : false} },
-                // { text: '成本', dataIndex: '成本', flex :1,editor:{xtype : 'textfield', allowBlank : false}},
-                // { text: '规格',  dataIndex: '规格' ,flex :1,editor:{xtype : 'textfield', allowBlank : false}},
-                // { text: '库存单位', dataIndex: '库存单位', flex :1,editor:{xtype : 'textfield', allowBlank : false}},
-                // { text: '仓库编号', dataIndex: '仓库编号',flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-                // { text: '位置-行', dataIndex: '行',flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-                // { text: '位置-列', dataIndex: '列',flex :1 ,editor:{xtype : 'textfield', allowBlank : false}}
                 { text: '材料名', dataIndex: 'materialName', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
                 { text: '品号',  dataIndex: 'materialNo' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
                 { text: '长1', dataIndex: 'length', flex :0.7 ,editor:{xtype : 'textfield', allowBlank : false}},
@@ -117,7 +103,7 @@ Ext.define('material.material_Upload_Data', {
             }
         });
 
-        var form = Ext.create("Ext.form.Panel", {
+        var form1 = Ext.create("Ext.form.Panel", {
             border : false,
             items : [ {
                 xtype : 'filefield',
@@ -139,14 +125,16 @@ Ext.define('material.material_Upload_Data', {
                                 fn : function(btn) {
                                     if (btn === 'yes') {
                                         //var check=Ext.getCmp("check").getValue();
+                                        // var projectId = Ext.getCmp("projectName").getValue();
+                                        // var buildingId = Ext.getCmp("buildingName").getValue();
 
-                                        form.submit({
-                                            url : 'uploadMaterialExcel.do', //上传excel文件，并回显数据
+                                        form1.submit({
+                                            url : 'oldpanel/uploadMatchExcel.do', //上传excel文件，并回显数据
+
                                             waitMsg : '正在上传...',
                                             params : {
-                                                tableName:tableName,
-                                                //materialtype:materialtype,
-                                                //check:check
+                                                projectId:'71',//projectId
+                                                buildingId:'1',//buildingId
                                             },
                                             success : function(form, action) {
                                                 //上传成功
@@ -156,7 +144,7 @@ Ext.define('material.material_Upload_Data', {
                                                 console.log(action.result['value']);
                                                 Ext.MessageBox.alert("提示", "上传成功!");
                                                 //重新加载数据
-                                                MaterialStore.loadData(action.result['value']);
+                                                MaterialStore1.loadData(action.result['value']);
 
                                             },
                                             failure : function(form, action) {
@@ -218,7 +206,7 @@ Ext.define('material.material_Upload_Data', {
                                                         Ext.MessageBox.alert("错误原因", response.msg);
                                                         break;
                                                     default:
-                                                        Ext.MessageBox.alert("错误", "服务器异常，请检查网络连接，或者联系管理员");
+                                                        Ext.MessageBox.alert("错误", "上传出错");
                                                 }
 
                                             }
@@ -261,7 +249,7 @@ Ext.define('material.material_Upload_Data', {
             dock : "top",
             id : "toolbar2",
             items : [
-                form
+                form1
             ]
         });
         var toolbar1 = Ext.create('Ext.toolbar.Toolbar', {
@@ -293,7 +281,7 @@ Ext.define('material.material_Upload_Data', {
         this.dockedItems = [toolbar1,toolbar,grid,
             {
                 xtype: 'pagingtoolbar',
-                store: MaterialStore,   // same store GridPanel is using    uploadMaterialRecordsStore
+                store: MaterialStore1,   // same store GridPanel is using    uploadMaterialRecordsStore
                 dock: 'bottom',
                 displayInfo: true,
                 displayMsg:'显示{0}-{1}条，共{2}条',

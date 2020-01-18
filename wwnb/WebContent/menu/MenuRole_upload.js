@@ -99,15 +99,15 @@ Ext.define("menu.MenuRole_upload", {
 					leaf : true
 					}, {
 					text : '导入设计清单',
-					id : 'project.import_design_list',
+					id : 'project.import_design_list',//project.import_planList
 					leaf : true
 				} , {
 					text : '项目旧板材料清单',
-					id : '',
+					id : 'project.oldpanel_material_list',
 					leaf : true
 				} , {
 					text : '项目新板材料清单',
-					id : '',
+					id : 'project.newpanel_material_list',
 					leaf : true
 				} , {
 					text : '项目生产材料单',
@@ -115,7 +115,7 @@ Ext.define("menu.MenuRole_upload", {
 					leaf : true
 				}, {
 					text : '项目领料单',
-					id : '',
+					id : 'project.project_material_picklist',
 					leaf : true
 				}, {
 					text : '项目产品工单',

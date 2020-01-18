@@ -1,5 +1,6 @@
 package commonMethod;
 
+import cg.service.InsertProjectService;
 import controller.DataHistoryController;
 import db.Condition;
 import db.mysqlcondition;
@@ -18,6 +19,7 @@ import service.Upload_Data_Service;
 import vo.UploadDataResult;
 import vo.WebResponse;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -38,6 +40,8 @@ public class CommonDataController {
     private Upload_Data_Service Upload_Data_Service;
     @Autowired
     private Excel_Service excel_Service;
+    @Autowired
+    private InsertProjectService insertProjectService;
 
     Logger log=Logger.getLogger(DataHistoryController.class);
 
@@ -53,6 +57,24 @@ public class CommonDataController {
             return false;
         }
         return true;
+    }
+
+    @RequestMapping(value = "/data/BuildingEditCellById.do")
+    public void BuildingEditCellById(String tableName, String field , String projectId, String value, String id, HttpServletResponse response) throws IOException {
+        int cid= Integer.parseInt(id);
+        String sql;
+        int i;
+        if(cid!=0) {
+            sql = "update " + tableName + " set " + field + "= '" + value + "' where id =" + id;
+            i= jo.update(sql);
+        }else {
+            sql="insert into "+tableName+" ("+field+", projectId)"+" values (?,?)";
+            i = insertProjectService.insertDataToTable(sql,value,projectId);
+        }
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html");
+        response.getWriter().write(
+                i+"");
     }
 
     /*
