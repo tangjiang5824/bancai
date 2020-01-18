@@ -87,7 +87,7 @@ public class OldpanelMatchService extends BaseService{
 //        }
     }
 
-    private void oldpanelMatch(int projectId,int buildingId, String productName){//匹配，并插表
+    private void oldpanelMatch(Integer projectId,Integer buildingId, String productName){//匹配，并插表
         String oldpanelName;
         String str = "50B BS 700";
         String[] splited = productName.split("\\s+");
