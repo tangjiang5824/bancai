@@ -17,7 +17,7 @@ import yrd.service.Y_Upload_Data_Service;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-
+@RestController
 public class OldpanelMatchController {
     @Autowired
     private TableService tableService;
