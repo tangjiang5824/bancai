@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import service.TableService;
 import vo.UploadDataResult;
 import vo.WebResponse;
+import yrd.service.OldpanelMatchService;
 import yrd.service.Y_Upload_Data_Service;
 
 import javax.servlet.http.HttpSession;
@@ -23,7 +24,7 @@ public class OldpanelMatchController {
     @Autowired
     private QueryAllService queryService;
     @Autowired
-    private Y_Upload_Data_Service y_Upload_Data_Service;
+    private yrd.service.OldpanelMatchService OldpanelMatchService;
 
     Logger log=Logger.getLogger(OldpanelMatchController.class);
 
@@ -32,12 +33,14 @@ public class OldpanelMatchController {
      * */
 
     @RequestMapping(value = "/oldpanel/uploadMatchExcel.do",produces = { "text/html;charset=UTF-8" })
-    public String oldpanelUploadMatchData(MultipartFile uploadFile, HttpSession session) {
+    public String oldpanelUploadMatchData(MultipartFile uploadFile, String projectId, String buildingId, HttpSession session) {
         WebResponse response = new WebResponse();
-        String tableName = "oldpanel";
-        int userid = Integer.parseInt(session.getAttribute("userid").toString());
+//        String tableName = "oldpanel";
+//        int userid = Integer.parseInt(session.getAttribute("userid").toString());
+        int projectid = Integer.parseInt(projectId);
+        int buildingid = Integer.parseInt(buildingId);
         try {
-            UploadDataResult result = y_Upload_Data_Service.oldpanelUploadData(uploadFile.getInputStream(),tableName,userid);
+            UploadDataResult result = OldpanelMatchService.oldpanelUploadMatchData(uploadFile.getInputStream(), projectid, buildingid);
             response.setSuccess(result.success);
             response.setErrorCode(result.errorCode);
             response.setValue(result.data);

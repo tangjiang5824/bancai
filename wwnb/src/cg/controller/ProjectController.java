@@ -2,6 +2,7 @@ package cg.controller;
 
 
 import cg.service.InsertProjectService;
+import cg.util.newPanelMatch;
 import domain.DataList;
 import domain.DataRow;
 import org.apache.log4j.Logger;
@@ -70,8 +71,8 @@ public class ProjectController {
                 return ;
             }
         }catch (Exception e){
-           e.printStackTrace();
-        }
+        e.printStackTrace();
+    }
         //生成project计划表
         String sql1="insert into project (uploadId,startTime,projectName,proEndTime,planLeader,produceLeader,purchaseLeader,financeLeader,storeLeader,statusId) values(?,?,?,?,?,?,?,?,?,?) ";
         //插入到project表的同时返回projectId
@@ -82,7 +83,7 @@ public class ProjectController {
             //获得第i条数据的各个属性值
             String BuildingNo = jsonTemp.get("buildingNo")+"";
             String BuildName = jsonTemp.get("buildingName")+"";
-            String BuildOwner = (String) jsonTemp.get("buildingOwner");
+            String BuildOwner = jsonTemp.get("buildingOwner")+"";
 
             //插入楼栋信息
             String sql2="insert into building (buildingNo,buildingName,buildingLeader,projectId) values(?,?,?,?)";
@@ -95,6 +96,83 @@ public class ProjectController {
                 "{'success':true,'showmessage':'创建成功！'}");
         response.getWriter().flush();
         response.getWriter().close();
+    }
+
+    @RequestMapping("/cg/test.do")
+    public void newPanelMatch(String projectId,String buildingId){
+        //只设置了status一个查询条件
+        DataList dataList = insertProjectService.findallbytableNameAndinfo("designlist","status","0");
+        ArrayList<Map> arrayList = new ArrayList<>();
+        for (DataRow row : dataList) {
+            Map<String,String> map=new HashMap<>();
+            String name = (row.get("productName")+"").trim();
+            if(name.contains("（")){
+                name.replace("（","(");
+            }
+            if(name.contains("）")){
+                name.replace("）",")");
+            }
+            String id =row.get("id")+"";
+            map.put(name,id);
+            arrayList.add(map);
+        }
+        ArrayList<Map> rsarrayList =new ArrayList<>();
+        for (Map map : arrayList) {
+            for (Object o : map.keySet()) {
+                String temp=o+"";
+                Map<String, Integer> newpanellsit = newPanelMatch.newpanel(temp);
+                rsarrayList.add(newpanellsit);
+                String id= map.get(temp)+"";
+                String sql="update designlist set status='1' where id="+id;
+                int flag=insertProjectService.update(sql);
+                if(flag==0){
+                    log.error("update错误");
+                }
+            }
+        }
+
+        HashMap<String, Integer> listmap = new HashMap<>();
+        for (int i = 0; i < rsarrayList.size(); i++) {
+            Map<String,Integer> map= rsarrayList.get(i);
+            for(Map.Entry<String, Integer> entry : map.entrySet()){
+                String mapKey = entry.getKey();
+                int mapValue = entry.getValue();
+                if(listmap.containsKey(mapKey)){
+                    int temp=listmap.get(mapKey);
+                    listmap.put(mapKey,mapValue+temp);
+                }else {
+                    listmap.put(mapKey,mapValue);
+                }
+            }
+        }
+        String sql2="insert into newpanelmateriallist (projectId,buildingId,materialName,materialCount) values(?,?,?,?)";
+        for(Map.Entry<String,Integer> entry: listmap.entrySet()){
+            String materialName= entry.getKey();
+            String materialCount=entry.getValue()+"";
+            int i= insertProjectService.insertDataToTable(sql2,projectId,buildingId,materialName,materialCount);
+        }
+
+    }
+
+
+
+
+
+    //返回对应projectId的所有项目信息和对应的楼栋信息
+    @RequestMapping(value="/project/findProjectAndBuilding.do")
+    public void findProjectAndBuilding(String projectId,HttpServletResponse response) throws IOException {
+            DataList projectList= insertProjectService.findallbytableNameAndinfo("project","id",projectId);
+            DataList buildingList=insertProjectService.findallbytableNameAndinfo("building","projectId",projectId);
+            JSONObject object=new JSONObject();
+            JSONArray parray =new JSONArray(projectList);
+            JSONArray barray=new JSONArray(buildingList);
+            object.put("project",parray);
+            object.put("building",barray);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html");
+            response.getWriter().write(object.toString());
+            response.getWriter().flush();
+            response.getWriter().close();
     }
 
     /**
@@ -265,39 +343,13 @@ public class ProjectController {
         }
         return true;
     }
-
     //原材料仓库出库，直接进行给定数值的仓库扣减
-//    @RequestMapping(value = "/material/updateMaterialNum.do")
-//    @Transactional
-//    public boolean updateMaterialNum(String s){
-//        JSONArray jsonArray =new JSONArray(s);
-//        for (int i = 0; i < jsonArray.length(); i++) {
-//            JSONObject jsonObject=jsonArray.getJSONObject(i);
-//            String id =jsonObject.get("id")+"";
-//            String tempPickNum="0";
-//            try {
-//                tempPickNum = jsonObject.get("tempPickNum") + "";
-//            }catch (Exception e){
-//
-//            }
-//            String sql="update material set number=number-? where id=?";
-//            boolean flag=insertProjectService.insertIntoTableBySQL(sql,tempPickNum,id);
-//            if(!flag){
-//                return  false;
-//            }
-//        }
-//
-//        return true;
-//    }
-
-    //修改待领、已领、本次领取数量
-    @RequestMapping(value = "/material/updateprojectmateriallist.do")
+    @RequestMapping(value = "/material/updateMaterialNum.do")
     @Transactional
-    public boolean updateprojectmateriallist(String s,String materialList){
-        //原材料,原材料仓库出库，直接进行给定数值的仓库扣减
-        JSONArray jsonArray1 =new JSONArray(materialList);
-        for (int i = 0; i < jsonArray1.length(); i++) {
-            JSONObject jsonObject=jsonArray1.getJSONObject(i);
+    public boolean updateMaterialNum(String s){
+        JSONArray jsonArray =new JSONArray(s);
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject=jsonArray.getJSONObject(i);
             String id =jsonObject.get("id")+"";
             String tempPickNum="0";
             try {
@@ -312,7 +364,12 @@ public class ProjectController {
             }
         }
 
-        //领料单
+        return true;
+    }
+    //修改待领、已领、本次领取数量
+    @RequestMapping(value = "/material/updateprojectmateriallist.do")
+    @Transactional
+    public boolean updateprojectmateriallist(String s){
         JSONArray jsonArray = new JSONArray(s);
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject=jsonArray.getJSONObject(i);
@@ -375,13 +432,14 @@ public class ProjectController {
     public void test(){
         String s="a*b LS（SN） m LA";
         String[]a=s.split(" ");
+        double i=5.1;
         //String[]b=a[0].split("\\+");
        // double b=Double.parseDouble(a[0]); //java.lang.NumberFormatException: For input string: "a*b"
-        System.out.println(Arrays.toString(a));
         ObjectMapper objectMapper=new ObjectMapper();
         //System.out.println(Arrays.toString(b));
 
     }
 
 
-}
+
+    }

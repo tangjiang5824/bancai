@@ -1,5 +1,6 @@
 package cg.service;
 
+import commonMethod.QueryAllService;
 import domain.DataList;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -21,7 +22,7 @@ public class InsertProjectService extends BaseService {
 
     private Logger log = Logger.getLogger(InsertProjectService.class);
     @Autowired
-    private QueryService queryService;
+    private QueryAllService queryService;
 
     /**
      * 插入通用接口，sql和要插入的字段值，所有插入都是String
@@ -39,7 +40,7 @@ public class InsertProjectService extends BaseService {
                             public PreparedStatement createPreparedStatement(Connection conn) throws SQLException {
                                 PreparedStatement ps = conn.prepareStatement(sql,PreparedStatement.RETURN_GENERATED_KEYS);
                                 for (int i = 1; i < args.length+1; i++) {
-                                    ps.setString(i, args[i-1]);
+                                    ps.setObject(i, args[i-1]);
                                 }
                                 return ps;
                             }
@@ -67,6 +68,11 @@ public class InsertProjectService extends BaseService {
         String sql = "select * from oldpaneltype";
         DataList typelist = queryService.query(sql);
         return typelist;
+
+    }
+    @Transactional
+    public int update(String sql){
+        return jo.update(sql);
 
     }
 
