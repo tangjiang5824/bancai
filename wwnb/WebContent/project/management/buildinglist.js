@@ -17,6 +17,8 @@ Ext.define('project.management.buildinglist', {
 
     initComponent : function() {
         var me = this;
+        var project_Id;
+        var table_name="building";
         //定义表名,计划清单
         // var tableName="planList";
         //var materialtype="0";
@@ -88,6 +90,7 @@ Ext.define('project.management.buildinglist', {
                     //选中后
                     var select = record[0].data;
                     var id = select.id;//项目名对应的id
+                    project_Id=id;
                     Ext.Ajax.request({
                         url:"project/findProjectAndBuilding.do?projectId="+id,  //EditDataById.do
                         // params:{
@@ -266,7 +269,7 @@ Ext.define('project.management.buildinglist', {
                 xtype : 'button',
                 iconAlign : 'center',
                 iconCls : 'rukuicon ',
-                text : '添加表项',
+                text : '增加楼栋',
                 handler : function() {
                     //fields: ['品号', '品名','规格','库存单位','仓库编号','数量','成本','存放位置']
                     var data = [{
@@ -282,26 +285,26 @@ Ext.define('project.management.buildinglist', {
 
                 }
 
-            },{
-                xtype : 'button',
-                iconAlign : 'center',
-                iconCls : 'rukuicon ',
-                text : '添加字段名',
-                // handler : function() {
-                // 	//fields: ['品号', '品名','规格','库存单位','仓库编号','数量','成本','存放位置']
-                // 	var data = [{
-                // 		'品号' : '',
-                // 		'长' : '',
-                // 		'类型' : '',
-                // 		'宽' : '',
-                // 	}];
-                // 	//Ext.getCmp('addDataGrid')返回定义的对象
-                // 	Ext.getCmp('addDataGrid').getStore().loadData(data,
-                // 		true);
-                //
-                // }
-
             },
+            //     xtype : 'button',
+            //     iconAlign : 'center',
+            //     iconCls : 'rukuicon ',
+            //     text : '添加字段名',
+            //     // handler : function() {
+            //     // 	//fields: ['品号', '品名','规格','库存单位','仓库编号','数量','成本','存放位置']
+            //     // 	var data = [{
+            //     // 		'品号' : '',
+            //     // 		'长' : '',
+            //     // 		'类型' : '',
+            //     // 		'宽' : '',
+            //     // 	}];
+            //     // 	//Ext.getCmp('addDataGrid')返回定义的对象
+            //     // 	Ext.getCmp('addDataGrid').getStore().loadData(data,
+            //     // 		true);
+            //     //
+            //     // }
+            //
+            // },
                 // 	{
                 // 	xtype : 'button',
                 // 	iconAlign : 'center',
@@ -347,6 +350,10 @@ Ext.define('project.management.buildinglist', {
         var grid = Ext.create("Ext.grid.Panel", {
             id : 'addDataGrid',
             dockedItems : [toolbar2],
+            viewConfig : {
+                enableTextSelection : true,
+                editable:true
+            },
             //store : buidingStore,
             //     {
             //     id: 'buidingStore',
@@ -389,9 +396,36 @@ Ext.define('project.management.buildinglist', {
                 }
             },
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
-                clicksToEdit : 1
+                clicksToEdit : 2
             })],
             selType : 'rowmodel',
+            listeners: {
+                validateedit : function(editor, e) {
+                    var field=e.field
+                    var id=e.record.data.id
+                    var flag=false;
+                    if(id === "" || id ==null|| isNaN(id)){
+                        flag=true;
+                        id='0'
+                    }
+                    Ext.Ajax.request({
+                        url:"data/BuildingEditCellById.do",  //EditDataById.do
+                        params:{
+                            tableName:table_name,
+                            projectId:project_Id,
+                            field:field,
+                            value:e.value,
+                            id:id
+                        },
+                        success:function (response) {
+                            if(flag){
+                                e.record.data.id=response.responseText;
+                            }
+
+                        }
+                    })
+                }
+            }
         });
 
         var toolbar2 = Ext.create('Ext.toolbar.Toolbar', {
@@ -468,7 +502,7 @@ Ext.define('project.management.buildinglist', {
             }]
         });
 
-        this.dockedItems = [toobar,toobar_2,toolbar2,grid,toolbar3];
+        this.dockedItems = [toobar,toobar_2,toolbar2,grid];
         //this.items = [ me.grid ];
         this.callParent(arguments);
 
