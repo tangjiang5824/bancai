@@ -47,14 +47,11 @@ Ext.define('project.newpanel_material_list',{
                     margin: '0 0 0 15',
                     layout: 'right',
                     handler: function(){
-                        material_Query_Data_Store.load({
+                        newpanelMaterial_Store.load({
                             params : {
-                                //proNum : Ext.getCmp('proNum').getValue(),
-                                startWidth : Ext.getCmp('startWidth').getValue(),
-                                endTWidth : Ext.getCmp('endWidth').getValue(),
-                                startLength:Ext.getCmp('startLength').getValue(),
-                                endLength:Ext.getCmp('endLength').getValue(),
-                                mType:Ext.getCmp('mType').getValue()
+                                tableName:'newpanelmateriallist_name',
+                                columnName:'projectId',
+                                columnValue:Ext.getCmp('projectName').getValue()//''
                             }
                         });
                     }
@@ -89,39 +86,35 @@ Ext.define('project.newpanel_material_list',{
                 // }
                 ]
         })
-        var material_Query_Data_Store = Ext.create('Ext.data.Store',{
-            id: 'material_Query_Data_Store',
-            autoLoad: true,
+        var newpanelMaterial_Store = Ext.create('Ext.data.Store',{
+            id: 'newpanelMaterial_Store',
+            autoLoad: false,
             fields: [],
             pageSize: itemsPerPage, // items per page
             proxy:{
-                url : "material/historyDataList.do",
+                url : "material/findAllbyTableNameAndOnlyOneCondition.do",//通用接口
                 type: 'ajax',
                 reader:{
                     type : 'json',
-                    rootProperty: 'value',
+                    rootProperty: 'newpanelmateriallist_name',
                     totalProperty: 'totalCount'
                 },
-                params:{
-                    start: 0,
-                    limit: itemsPerPage
-                }
             },
-            listeners : {
-                beforeload : function(store, operation, eOpts) {
-                    store.getProxy().setExtraParams({
-                        tableName :tableName,
-                        startWidth:Ext.getCmp('startWidth').getValue(),
-                        endWidth:Ext.getCmp('endWidth').getValue(),
-                        startLength:Ext.getCmp('startLength').getValue(),
-                        endLength:Ext.getCmp('endLength').getValue(),
-                        mType:Ext.getCmp('mType').getValue(),
-                        //materialType:materialType
-
-                    });
-                }
-
-            }
+            // listeners : {
+            //     beforeload : function(store, operation, eOpts) {
+            //         store.getProxy().setExtraParams({
+            //             tableName :tableName,
+            //             startWidth:Ext.getCmp('startWidth').getValue(),
+            //             endWidth:Ext.getCmp('endWidth').getValue(),
+            //             startLength:Ext.getCmp('startLength').getValue(),
+            //             endLength:Ext.getCmp('endLength').getValue(),
+            //             mType:Ext.getCmp('mType').getValue(),
+            //             //materialType:materialType
+            //
+            //         });
+            //     }
+            //
+            // }
 
 
         });
@@ -129,37 +122,16 @@ Ext.define('project.newpanel_material_list',{
 
         var grid = Ext.create('Ext.grid.Panel',{
             id: 'material_Query_Data_Main',
-            store: material_Query_Data_Store,
+            store: newpanelMaterial_Store,
             viewConfig : {
                 enableTextSelection : true,
                 editable:true
             },
             columns : [
-                // { text: '材料名', dataIndex: 'materialName', flex :0.5 ,editor:{xtype : 'textfield', allowBlank : false}},
-                // { text: '品号',  dataIndex: '品号' ,flex :0.4, editor:{xtype : 'textfield', allowBlank : false}},
-                // { text: '长', dataIndex: '长', flex :2 ,editor:{xtype : 'textfield', allowBlank : false}},
-                // { text: '类型', dataIndex: '类型',flex :1,editor:{xtype : 'textfield', allowBlank : false} },
-                // { text: '宽', dataIndex: '宽', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-                // { text: '规格',  dataIndex: '规格' ,flex :0.4,editor:{xtype : 'textfield', allowBlank : false}},
-                // { text: '库存单位', dataIndex: '库存单位', flex :2,editor:{xtype : 'textfield', allowBlank : false}},
-                // { text: '仓库编号', dataIndex: '仓库编号',flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-                // { text: '数量', dataIndex: '数量', flex :1,editor:{xtype : 'textfield', allowBlank : false} },
-                // { text: '成本', dataIndex: '成本', flex :1,editor:{xtype : 'textfield', allowBlank : false}},
-                // { text: '存放位置', dataIndex: '存放位置',flex :1 ,editor:{xtype : 'textfield', allowBlank : false}}
-                { text: '材料名', dataIndex: 'materialName', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '品号',  dataIndex: 'materialNo' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '长1', dataIndex: 'length', flex :0.7 ,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '长2', dataIndex: 'length2', flex :0.7 ,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '类型', dataIndex: 'materialType',flex :1,editor:{xtype : 'textfield', allowBlank : false} },
-                { text: '宽1', dataIndex: 'width', flex :0.7 ,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '宽2', dataIndex: 'width2', flex :0.7 ,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '数量', dataIndex: 'number', flex :1,editor:{xtype : 'textfield', allowBlank : false} },
-                { text: '成本', dataIndex: 'cost', flex :1,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '规格',  dataIndex: 'specification' ,flex :1,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '库存单位', dataIndex: 'inventoryUnit', flex :1,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '仓库编号', dataIndex: 'warehouseNo',flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '位置-行', dataIndex: 'rowNO',flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '位置-列', dataIndex: 'columNo',flex :1 ,editor:{xtype : 'textfield', allowBlank : false}}
+                { text: '产品名', dataIndex: 'productName', flex :1,editor:{xtype : 'textfield', allowBlank : false}},
+                { text: '原材料名', dataIndex: 'materialName', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
+                { text: '原材料数量', dataIndex: 'materialCount', flex :1,editor:{xtype : 'textfield', allowBlank : false} },
+                { text: '楼栋Id', dataIndex: 'buildingId',flex :1, editor:{xtype : 'textfield', allowBlank : false}},
             ],
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 3
@@ -167,7 +139,7 @@ Ext.define('project.newpanel_material_list',{
             tbar: toobar,
             dockedItems: [{
                 xtype: 'pagingtoolbar',
-                store: material_Query_Data_Store,   // same store GridPanel is using
+                store: newpanelMaterial_Store,   // same store GridPanel is using
                 dock: 'bottom',
                 displayInfo: true,
                 displayMsg:'显示{0}-{1}条，共{2}条',
@@ -189,8 +161,6 @@ Ext.define('project.newpanel_material_list',{
                             //console.log(response.responseText);
                         }
                     })
-                    // console.log("value is "+e.value);
-                    // console.log(e.record.data["id"]);
 
                 }
             }
