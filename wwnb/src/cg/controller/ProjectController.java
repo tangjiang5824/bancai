@@ -174,6 +174,22 @@ public class ProjectController {
             response.getWriter().flush();
             response.getWriter().close();
     }
+    //返回对应projectId的楼栋信息
+    @RequestMapping(value="/project/findBuilding.do")
+    public void findProjectBuilding(String projectId,HttpServletResponse response) throws IOException {
+        //DataList projectList= insertProjectService.findallbytableNameAndinfo("project","id",projectId);
+        DataList buildingList=insertProjectService.findallbytableNameAndinfo("building","projectId",projectId);
+        JSONObject object=new JSONObject();
+        //JSONArray parray =new JSONArray(projectList);
+        JSONArray barray=new JSONArray(buildingList);
+        //object.put("project",parray);
+        object.put("building",barray);
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html");
+        response.getWriter().write(object.toString());
+        response.getWriter().flush();
+        response.getWriter().close();
+    }
 
     /**
      * 下拉选择原材料类型
