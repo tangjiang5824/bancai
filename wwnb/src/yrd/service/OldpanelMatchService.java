@@ -46,14 +46,14 @@ public class OldpanelMatchService extends BaseService{
      */
     @Transactional
     public UploadDataResult oldpanelUploadMatchData(InputStream inputStream, int projectId, int buildingId) throws IOException {
+        System.out.println("===oldpanelUploadMatchData");
         UploadDataResult result = new UploadDataResult();
         Excel excel = new Excel(inputStream);
         DataList dataList;
         dataList = excel.readExcelContent(1);
-        HandleDesignList(dataList, projectId, buildingId);
-//        boolean upload = oldpanelUpload(dataList,tableName,userid);
-//        result.dataList = dataList;
-//        result.success = upload;
+        boolean upload = HandleDesignList(dataList, projectId, buildingId);
+        result.dataList = dataList;
+        result.success = upload;
         return result;
 
 //        wb = new HSSFWorkbook(inputStream);
@@ -98,8 +98,9 @@ public class OldpanelMatchService extends BaseService{
             String oldpanelTypeName = splited[0];
             String m;
             switch (oldpanelTypeName){
-                case "EC":
                 case "ECD":
+                    oldpanelTypeName = "EC";
+                case "EC":
                 case "EB":
                 case "MB":
                     m = splited[1];
@@ -161,6 +162,24 @@ public class OldpanelMatchService extends BaseService{
             }
             System.out.println(i);
         }
+        System.out.println("=====");
+        int k = 1;
+        switch (k){
+            case 0:
+                System.out.println(0);
+                break;
+            case 1:
+                System.out.println(1);
+            case 2:
+                System.out.println(2);
+            case 3:
+                System.out.println(3);
+                System.out.println(k);
+                break;
+            default:
+                System.out.println(7);
+                break;
+        }
 //        for (int i = 0; i < 5; i++) {
 //            DataRow dataRow = new DataRow();
 //            dataRow.put("1","AA"+i);
@@ -175,7 +194,7 @@ public class OldpanelMatchService extends BaseService{
 //        }
     }
 
-    private void HandleDesignList(DataList dataList, int projectId, int buildingId){
+    private boolean HandleDesignList(DataList dataList, int projectId, int buildingId){
         int status = 0;
         for (DataRow dataRow : dataList) {//对于每一条板材数据
             ArrayList<String> productList = new ArrayList(dataRow.values());
@@ -187,6 +206,7 @@ public class OldpanelMatchService extends BaseService{
             oldpanelMatch(projectId, buildingId, productName);
 
         }
+        return true;
 
     }
 
