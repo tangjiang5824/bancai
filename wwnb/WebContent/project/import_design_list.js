@@ -507,7 +507,7 @@ Ext.define('project.import_design_list', {
 								rootProperty: 'building',
 							}
 						},
-						autoLoad : true
+						autoLoad : false
 					});
 					//buildingName,下拉框重新加载数据
 					buildingName.setStore(tableListStore2);
