@@ -99,7 +99,7 @@ Ext.define("menu.MenuRole_upload", {
 					leaf : true
 					}, {
 					text : '导入设计清单',
-					id : 'project.import_design_list',
+					id : 'project.import_design_list',//project.import_planList
 					leaf : true
 				} , {
 					text : '项目旧板材料清单',
