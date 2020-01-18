@@ -6,7 +6,7 @@ Ext.define('oldpanel.oldpanel_Receive',{
 
     initComponent: function(){
         var itemsPerPage = 50;
-        var tableName="material";
+        var tableName="oldpanel";
         //var materialType="1";
 
         //存放所选的原材料的具体规格
@@ -25,7 +25,6 @@ Ext.define('oldpanel.oldpanel_Receive',{
             },
             autoLoad : true
         });
-        //项目名称下拉框
         var tableList = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '项目名',
             labelWidth : 45,
@@ -46,23 +45,25 @@ Ext.define('oldpanel.oldpanel_Receive',{
 
         });
 
-        //查询的数据存放位置的store 左侧界面
+        //查询的数据存放位置 左侧界面
         var MaterialList = Ext.create('Ext.data.Store',{
-            fields:['materialName','materialCount','countReceived','countNotReceived','countTemp'],
+            //fields:['materialName','materialCount','countReceived','countNotReceived','countTemp'],
+            fields:['oldpanelName','oldpanelCount','countReceived','countNotReceived','countTemp'],
             proxy : {
                 type : 'ajax',
-                url : 'material/materiallsitbyproject.do',
+                //url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName=oldpanellistreceive_projectid_buildingid&columnName=projectId&columnValue='+projectId,
+                url : 'material/findAllbyTableNameAndOnlyOneCondition.do',
                 reader : {
                     type : 'json',
-                    rootProperty: 'materialList',
+                    rootProperty: 'oldpanellistreceive',
                 }
             },
             autoLoad : false
         });
-        //查询的数据存放位置的测试store 左侧界面
+
         var MaterialList2=Ext.create('Ext.data.Store',{
             //fields:['材料名称','材料数量','已领数量','要领数量']
-            fields:['materialName','materialCount','countReceived','countNotReceived','countTemp'],
+            fields:['oldpanelName','materialCount','countReceived','countNotReceived','countTemp'],
         });
 
         var clms=[
@@ -71,7 +72,7 @@ Ext.define('oldpanel.oldpanel_Receive',{
             //     text:'项目名'
             // },
             {
-                dataIndex:'materialName',
+                dataIndex:'oldpanelName',
                 text:'材料名',
             },
             {
@@ -93,26 +94,26 @@ Ext.define('oldpanel.oldpanel_Receive',{
 
             }
         ];
-        var clms1=[ {dataIndex:'materialName', text:'材料名',},
-                    {dataIndex:'countNotReceived', text:'要领数量',
-                     //editor:{xtype : 'textfield', allowBlank : false}
-                    }];
+        var clms1=[ {dataIndex:'oldpanelName', text:'材料名',},
+            {dataIndex:'countNotReceived', text:'要领数量',
+                //editor:{xtype : 'textfield', allowBlank : false}
+            }];
 
         var sampleData=[{
-            materialName:1,
+            oldpanelName:1,
             length:'Zeng',
             materialType:'2',
             width:'ttt',
             number:'12'
         }];
-        //弹窗的测试store
+
         var store1=Ext.create('Ext.data.Store',{
             id: 'store1',
-            fields:['原材料名称','长','类型','宽','数量','领取数量'],
+            fields:['旧板名称','长','类型','宽','数量','领取数量'],
             data:sampleData
         });
 
-        //弹窗的确认按钮事件
+        //
         var toolbar4 = Ext.create('Ext.toolbar.Toolbar', {
             dock : "bottom",
             id : "toolbar4",
@@ -142,6 +143,9 @@ Ext.define('oldpanel.oldpanel_Receive',{
                     materialList = materialList + s;
                     materialList = materialList+',';
 
+                    //点击确认后，关闭窗口
+                    Ext.getCmp('win_showmaterialData').close();
+
                     //点击确认后将数据传到前一个页面
 
                     //点击确认后将数据返回到前一个页面，操作数据
@@ -168,7 +172,7 @@ Ext.define('oldpanel.oldpanel_Receive',{
                 }
             }]
         });
-        //弹窗的表格
+
         var specific_data_grid=Ext.create('Ext.grid.Panel',{
             id : 'specific_data_grid',
             store:store1,//specificMaterialList，store1的数据固定
@@ -176,8 +180,8 @@ Ext.define('oldpanel.oldpanel_Receive',{
             bbar:toolbar4,
             columns:[
                 {
-                    text: '原材料名称',
-                    dataIndex: 'materialName',
+                    text: '旧板名称',
+                    dataIndex: 'oldpanelName',
                     width:"80"
                 },{
                     text: '长',
@@ -197,7 +201,7 @@ Ext.define('oldpanel.oldpanel_Receive',{
                     dataIndex: 'tempPickNum',
                     editor:{xtype : 'textfield', allowBlank : false}
                 }
-                ],
+            ],
             flex:1,
             //selType:'checkboxmodel',
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
@@ -213,7 +217,7 @@ Ext.define('oldpanel.oldpanel_Receive',{
                 },
             }
         });
-        //弹窗的toolbar
+
         var toolbar5 = Ext.create('Ext.toolbar.Toolbar', {
             dock: "top",
             id: "toolbar5",
@@ -240,7 +244,7 @@ Ext.define('oldpanel.oldpanel_Receive',{
             }
             ]
         });
-        //弹窗
+
         var win_showmaterialData = Ext.create('Ext.window.Window', {
             id:'win_showmaterialData',
             title: '领取同类型下的具体规格',
@@ -254,7 +258,7 @@ Ext.define('oldpanel.oldpanel_Receive',{
             modal:true,//模态窗口，背景窗口不可编辑
         });
 
-        //主界面表格，双击响应事件
+
         var grid1=Ext.create('Ext.grid.Panel',{
             id : 'PickingListGrid',
             store:MaterialList,
@@ -278,7 +282,7 @@ Ext.define('oldpanel.oldpanel_Receive',{
                 itemdblclick: function(me, record, item, index){
                     var select = record.data;
                     //类型名
-                    var materialName = select.materialName;
+                    var oldpanelName = select.oldpanelName;
                     //该类型领取的数量
                     var pickNum= select.countTemp;
                     console.log(select.countTemp)
@@ -287,13 +291,15 @@ Ext.define('oldpanel.oldpanel_Receive',{
                     // console.log(index)
                     var specificMaterialList = Ext.create('Ext.data.Store',{
                         //id,materialName,length,width,materialType,number
-                        fields:['materialName','length','materialType','width','number'],
+                        fields:['oldpanelName','length','oldpanelType','width','number'],
                         proxy : {
                             type : 'ajax',
-                            url : 'material/materiallsitbyname.do?materialName='+materialName,//获取同类型的原材料  +'&pickNum='+pickNum
+                            //url : 'material/materiallsitbyname.do?materialName='+materialName,//获取同类型的原材料  +'&pickNum='+pickNum
+                            url:'material/findAllbyTableNameAndOnlyOneCondition.do?tableName=oldpanel&columnName=oldpanelName&columnValue='+oldpanelName,
                             reader : {
                                 type : 'json',
-                                rootProperty: 'materialstoreList',
+                                //rootProperty: 'materialstoreList',
+                                rootProperty: 'oldpanel',
                             },
                             // params:{
                             //     materialName:materialName,
@@ -336,7 +342,7 @@ Ext.define('oldpanel.oldpanel_Receive',{
             items: [tableList,
                 {
                     xtype : 'button',
-                    text: '旧板领取详情查询',
+                    text: '领料单查询',
                     width: 80,
                     margin: '0 0 0 10',
                     layout: 'right',
@@ -349,7 +355,11 @@ Ext.define('oldpanel.oldpanel_Receive',{
                         console.log(Ext.getCmp('projectName').getValue())
                         MaterialList.load({
                             params : {
-                                proejctId:Ext.getCmp('projectName').getValue(),
+                                //tableName=oldpanellistreceive_projectid_buildingid&columnName=projectId&columnValue='+projectId
+                                columnValue:Ext.getCmp('projectName').getValue(),
+                                tableName:'oldpanellistreceive',
+                                columnName:'projectId',
+
                                 //proejctId:'1',
                             }
                         });
@@ -367,50 +377,50 @@ Ext.define('oldpanel.oldpanel_Receive',{
             height:500,
 
             items:[grid1,
-            //     {
-            //     xtype:'container',
-            //     flex:0.3,
-            //     items:[{
-            //         xtype:'button',
-            //         margin: '0 0 0 30',
-            //         text:'选择',
-            //         itemId:'move_right',
-            //         handler:function(){
-            //             var records=grid1.getSelectionModel().getSelection();
-            //             console.log(records)
-            //             console.log(records[0].previousValues==undefined)//代领的数量，未修改前的数量
-            //             //console.log(records[0].data['countReceived'])
-            //             console.log(records[0].data['countNotReceived'])//最终的数量
-            //
-            //             //若未修改数量，不变.直接remove
-            //             if(records[0].previousValues==undefined){
-            //                 MaterialList.remove(records);
-            //                 MaterialList2.add(records);
-            //
-            //             }
-            //             //若修改领取数量,则不remove
-            //             else{
-            //                 MaterialList2.add(records);
-            //
-            //             }
-            //
-            //             //若要领数量<领取数量，则不能直接remove，需要更改数量值
-            //
-            //         }
-            //     },{
-            //         xtype:'button',
-            //         text:'撤销',
-            //         itemId:'move_left',
-            //         handler:function(){
-            //             var records=grid2.getSelectionModel().getSelection();
-            //             MaterialList2.remove(records);
-            //             MaterialList.add(records);
-            //         }
-            //     }]
-            // },grid2
+                //     {
+                //     xtype:'container',
+                //     flex:0.3,
+                //     items:[{
+                //         xtype:'button',
+                //         margin: '0 0 0 30',
+                //         text:'选择',
+                //         itemId:'move_right',
+                //         handler:function(){
+                //             var records=grid1.getSelectionModel().getSelection();
+                //             console.log(records)
+                //             console.log(records[0].previousValues==undefined)//代领的数量，未修改前的数量
+                //             //console.log(records[0].data['countReceived'])
+                //             console.log(records[0].data['countNotReceived'])//最终的数量
+                //
+                //             //若未修改数量，不变.直接remove
+                //             if(records[0].previousValues==undefined){
+                //                 MaterialList.remove(records);
+                //                 MaterialList2.add(records);
+                //
+                //             }
+                //             //若修改领取数量,则不remove
+                //             else{
+                //                 MaterialList2.add(records);
+                //
+                //             }
+                //
+                //             //若要领数量<领取数量，则不能直接remove，需要更改数量值
+                //
+                //         }
+                //     },{
+                //         xtype:'button',
+                //         text:'撤销',
+                //         itemId:'move_left',
+                //         handler:function(){
+                //             var records=grid2.getSelectionModel().getSelection();
+                //             MaterialList2.remove(records);
+                //             MaterialList.add(records);
+                //         }
+                //     }]
+                // },grid2
             ],
         });
-        //确认领取按钮，
+        //确认入库按钮，
         var toolbar3 = Ext.create('Ext.toolbar.Toolbar', {
             dock : "bottom",
             id : "toolbar3",
@@ -425,7 +435,7 @@ Ext.define('oldpanel.oldpanel_Receive',{
                 xtype : 'button',
                 iconAlign : 'center',
                 iconCls : 'rukuicon ',
-                text : '确认领取',
+                text : '确认领料',
                 region:'center',
                 bodyStyle: 'background:#fff;',
                 handler : function() {

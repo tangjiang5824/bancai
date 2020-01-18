@@ -146,10 +146,12 @@ public class ProjectController {
             }
         }
         String sql2="insert into newpanelmateriallist (projectId,buildingId,materialName,materialCount) values(?,?,?,?)";
+        String sql3="insert into projectmateriallist (projectId,buildingId,materialName,materialCount,countReceived,countNotReceived,countTemp) values(?,?,?,?,?,?,?)";
         for(Map.Entry<String,Integer> entry: listmap.entrySet()){
             String materialName= entry.getKey();
             String materialCount=entry.getValue()+"";
             int i= insertProjectService.insertDataToTable(sql2,projectId,buildingId,materialName,materialCount);
+            int j =insertProjectService.insertDataToTable(sql3,projectId,buildingId,materialName,materialCount,"0",materialCount,materialCount);
         }
 
     }
@@ -452,6 +454,27 @@ public class ProjectController {
         JSONArray array = new JSONArray(materialtList);
         object.put("materialList", array);
        // System.out.println("类型1：--"+array.getClass().getName().toString());
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html");
+        response.getWriter().write(object.toString());
+        response.getWriter().flush();
+        response.getWriter().close();
+
+    }
+    /**
+     * 通过projectId查询对应的旧板领料单
+     * @param proejctId
+     * @param response
+     * @throws IOException
+     */
+    @RequestMapping("/material/oldpanellsitbyproject.do")
+    public void findoldpanellistbyproject(String proejctId,HttpServletResponse response) throws IOException {
+        DataList materialtList = insertProjectService.findmateriallist(proejctId);
+        //写回前端
+        JSONObject object = new JSONObject();
+        JSONArray array = new JSONArray(materialtList);
+        object.put("materialList", array);
+        // System.out.println("类型1：--"+array.getClass().getName().toString());
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html");
         response.getWriter().write(object.toString());
