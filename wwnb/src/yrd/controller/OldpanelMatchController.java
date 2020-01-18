@@ -39,6 +39,7 @@ public class OldpanelMatchController {
 //        int userid = Integer.parseInt(session.getAttribute("userid").toString());
         int projectid = Integer.parseInt(projectId);
         int buildingid = Integer.parseInt(buildingId);
+        System.out.println(projectId+"==="+buildingId);
         try {
             UploadDataResult result = OldpanelMatchService.oldpanelUploadMatchData(uploadFile.getInputStream(), projectid, buildingid);
             response.setSuccess(result.success);
