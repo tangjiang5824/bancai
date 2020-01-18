@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import service.TableService;
 import vo.UploadDataResult;
 import vo.WebResponse;
+import yrd.service.OldpanelMatchService;
 import yrd.service.Y_Upload_Data_Service;
 
 import javax.servlet.http.HttpServletResponse;
@@ -36,21 +37,21 @@ public class Oldpanel_Data_Controller {
     @Autowired
     private InsertProjectService insertProjectService;
 
-    Logger log=Logger.getLogger(Oldpanel_Data_Controller.class);
+    Logger log = Logger.getLogger(Oldpanel_Data_Controller.class);
 
     /*
      * 添加单个数据
      * */
-    @RequestMapping(value="/oldpanel/addData.do")
+    @RequestMapping(value = "/oldpanel/addData.do")
     public boolean oldpanelAddData(String s, HttpSession session) {
 
-        JSONArray jsonArray =new JSONArray(s);
+        JSONArray jsonArray = new JSONArray(s);
         String tableName = "oldpanel";
         int uploadId = Integer.parseInt(session.getAttribute("userid").toString());
-        for(int i = 0; i < jsonArray.length(); i++) {
+        for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonTemp = jsonArray.getJSONObject(i);
             //获得第i条数据的各个属性值
-            log.debug(tableName+"第"+i+"个:userid="+uploadId+"---"+jsonTemp);
+            log.debug(tableName + "第" + i + "个:userid=" + uploadId + "---" + jsonTemp);
             int oldpanelNo = Integer.parseInt(jsonTemp.get("oldpanelNo").toString());
             String oldpanelName = (String) jsonTemp.get("oldpanelName");
             double length = Double.parseDouble(jsonTemp.get("length").toString());
@@ -66,8 +67,8 @@ public class Oldpanel_Data_Controller {
             double weight = Double.parseDouble(jsonTemp.get("weight").toString());
 
             //对每条数据处理
-            y_Upload_Data_Service.oldpanelAddData(tableName,oldpanelNo,oldpanelName,length,length2,oldpanelType,width,
-                    width2,width3,inventoryUnit,warehouseNo,position,number,weight,uploadId);
+            y_Upload_Data_Service.oldpanelAddData(tableName, oldpanelNo, oldpanelName, length, length2, oldpanelType, width,
+                    width2, width3, inventoryUnit, warehouseNo, position, number, weight, uploadId);
 
         }
 
@@ -79,13 +80,13 @@ public class Oldpanel_Data_Controller {
      * 上传excel文件
      * */
 
-    @RequestMapping(value = "/oldpanel/uploadExcel.do",produces = { "text/html;charset=UTF-8" })
+    @RequestMapping(value = "/oldpanel/uploadExcel.do", produces = {"text/html;charset=UTF-8"})
     public String oldpanelUploadData(MultipartFile uploadFile, HttpSession session) {
         WebResponse response = new WebResponse();
         String tableName = "oldpanel";
         int userid = Integer.parseInt(session.getAttribute("userid").toString());
         try {
-            UploadDataResult result = y_Upload_Data_Service.oldpanelUploadData(uploadFile.getInputStream(),tableName,userid);
+            UploadDataResult result = y_Upload_Data_Service.oldpanelUploadData(uploadFile.getInputStream(), tableName, userid);
             response.setSuccess(result.success);
             response.setErrorCode(result.errorCode);
             response.setValue(result.data);
@@ -96,19 +97,19 @@ public class Oldpanel_Data_Controller {
             response.setErrorCode(1000); //未知错误
             response.setMsg(e.getMessage());
         }
-        net.sf.json.JSONObject json= net.sf.json.JSONObject.fromObject(response);
+        net.sf.json.JSONObject json = net.sf.json.JSONObject.fromObject(response);
         return json.toString();
     }
 
     /**
      * 查旧板表
      */
-    @RequestMapping(value="/oldpanel/updateData.do")
-    public WebResponse oldpanelFindList(Integer start, Integer limit,String tableName, String oldpanelType){
+    @RequestMapping(value = "/oldpanel/updateData.do")
+    public WebResponse oldpanelFindList(Integer start, Integer limit, String tableName, String oldpanelType) {
 //            , String startLength, String endLength, String startWidth, String endWidth, String mType, HttpSession session){
 //        log.debug("search["+tableName+"]length:"+startLength+"--"+endLength+";width"+startWidth+"--"+endWidth);
 
-        log.debug("search["+tableName+"]oldpanelType:"+oldpanelType);
+        log.debug("search[" + tableName + "]oldpanelType:" + oldpanelType);
         //根据输入的数据查询
         //DataList dataList = testAddService.findList(proName);
         //查询字段不为空
@@ -123,23 +124,23 @@ public class Oldpanel_Data_Controller {
 //            return queryService.queryPage(start, limit, c, tableName);
 //        }
 //        System.out.println(oldpanelType);
-        if(oldpanelType !=null){
-            NewCondition c=new NewCondition();
-            WebResponse re=new WebResponse();
+        if (oldpanelType != null) {
+            NewCondition c = new NewCondition();
+            WebResponse re = new WebResponse();
             if (oldpanelType.length() != 0) {
                 c.and(new NewCondition("oldpanelType", "=", oldpanelType));
             }
             re = queryService.queryPage(start, limit, c, tableName);
             String typeTableName = "oldpaneltype";
 //            System.out.println(re);
-            re = y_Upload_Data_Service.ChangeQueryPageFromAToB(re, typeTableName,"oldpanelType","oldpanelTypeName");
+            re = y_Upload_Data_Service.ChangeQueryPageFromAToB(re, typeTableName, "oldpanelType", "oldpanelTypeName");
 //                System.out.println(re);
             return re;
 
         }
 
 //        System.out.println("-------------------------------------------------------33");
-        return queryService.queryPage(start,limit,"select * from " + tableName);
+        return queryService.queryPage(start, limit, "select * from " + tableName);
     }
     /**
      * 下拉选择旧板类型
