@@ -261,7 +261,6 @@ Ext.define('project.import_design_list', {
 //												me.showDataGrid(tableName, response.uploadId);
 												//上传成功
 												//回显
-
 												console.log(action.result['value']);
 												Ext.MessageBox.alert("提示", "上传成功!");
 												//重新加载数据

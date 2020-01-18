@@ -152,7 +152,7 @@ Ext.define('material.material_Upload_Data', {
                                                 //上传成功
                                                 var response = action.result;
                                                 //回显
-
+                                                console.log('1100000')
                                                 console.log(action.result['value']);
                                                 Ext.MessageBox.alert("提示", "上传成功!");
                                                 //重新加载数据
