@@ -3,6 +3,8 @@ package yrd.service;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +12,7 @@ import java.util.Map;
 
 import commonMethod.NewCondition;
 import commonMethod.QueryAllService;
+import config.DataSourceConfig;
 import domain.DataList;
 import domain.DataRow;
 import org.apache.log4j.Logger;
@@ -22,13 +25,18 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import service.BaseService;
 import service.QueryService;
 import util.Excel;
 import vo.UploadDataResult;
 import vo.WebResponse;
+
+import javax.sql.DataSource;
 
 @Service
 public class OldpanelMatchService extends BaseService{
@@ -50,7 +58,7 @@ public class OldpanelMatchService extends BaseService{
         UploadDataResult result = new UploadDataResult();
         Excel excel = new Excel(inputStream);
         DataList dataList;
-        dataList = excel.readExcelContent(1);
+        dataList = excel.readExcelContent(0);
         boolean upload = HandleDesignList(dataList, projectId, buildingId);
         result.dataList = dataList;
         result.success = upload;
@@ -194,7 +202,8 @@ public class OldpanelMatchService extends BaseService{
 //        }
     }
 
-    private boolean HandleDesignList(DataList dataList, int projectId, int buildingId){
+    @Transactional
+    private boolean HandleDesignList(DataList dataList, int projectId, int buildingId) {
         int status = 0;
         for (DataRow dataRow : dataList) {//对于每一条板材数据
             ArrayList<String> productList = new ArrayList(dataRow.values());
@@ -202,14 +211,31 @@ public class OldpanelMatchService extends BaseService{
 //            DataList list = queryService.query("select id from building where projectId =? and buildingName=?", projectId, buildingName);
 //            String buildingId = String.valueOf(list.get(0).get("id"));
             String sql = "insert into designlist (projectId,buildingId,productName,status) values (?,?,?,?)";
-            jo.update(sql, projectId, buildingId, productName, status);//插入designlist表
-            oldpanelMatch(projectId, buildingId, productName);
+//            int j = jo.update(sql, projectId, buildingId, productName, status);//插入designlist表
+//            if (j == 0) {
+//                return false;
+//            }
+            DataSourceConfig config = new DataSourceConfig();
+            try {
+                Connection connection= DataSourceUtils.getConnection(config.dataSource());
+                connection.setAutoCommit(false);
+                PreparedStatement pre= connection.prepareStatement(sql);
+                pre.setObject(1,projectId);
+                pre.setObject(2,buildingId);
+                pre.setObject(3,productName);
+                pre.setObject(4,status);
+                int len= pre.executeUpdate();
+                if(len==0){
+                    connection.rollback();
+                }
+                else connection.commit();
+            } catch (Exception e) {
 
+            }
+            oldpanelMatch(projectId, buildingId, productName);
         }
         return true;
 
     }
-
-
 
 }
