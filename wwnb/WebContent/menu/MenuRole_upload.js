@@ -94,10 +94,14 @@ Ext.define("menu.MenuRole_upload", {
 					id : 'project.management.buildproject',
 					leaf : true
 				}, {
+					text : '项目信息查询',
+					id : 'project.management.queryproject',
+					leaf : true
+				}, {
 					text : '项目楼栋信息查询',
 					id : 'project.management.buildinglist',
 					leaf : true
-					}, {
+				}, {
 					text : '导入设计清单',
 					id : 'project.import_design_list',//project.import_planList
 					leaf : true
