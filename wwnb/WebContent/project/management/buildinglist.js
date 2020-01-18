@@ -119,25 +119,26 @@ Ext.define('project.management.buildinglist', {
                             //动态修改值,楼栋信息
                             var buidingStore = Ext.create('Ext.data.Store',{
                                 id: 'buidingStore',
-                                autoLoad: false,
-                                fields: [],
-                                pageSize: itemsPerPage, // items per page
+                                fields: ['buildingNo','buildingName','buildingLeader'],
+                                //pageSize: itemsPerPage, // items per page
+                                //method:
                                 proxy:{
-                                    url : "material/historyDataList.do？projectId="+id,
+                                    url : "project/findBuilding.do?projectId="+id,
                                     type: 'ajax',
                                     reader:{
                                         type : 'json',
-                                        rootProperty: 'buiding',
-                                        totalProperty: 'totalCount'
-                                    },
-                                    params:{
-                                        start: 0,
-                                        limit: itemsPerPage
+                                        rootProperty: 'building',
+                                        //totalProperty: 'totalCount'
                                     }
+                                    // ,
+                                    // params:{
+                                    //     projectId:id,
+                                    // }
                                 },
-
-
+                                autoLoad : true,
                             });
+                            console.log(buidingStore);
+                            Ext.getCmp('addDataGrid').setStore(buidingStore);
 
 
 
@@ -346,7 +347,7 @@ Ext.define('project.management.buildinglist', {
         var grid = Ext.create("Ext.grid.Panel", {
             id : 'addDataGrid',
             dockedItems : [toolbar2],
-            store : buidingStore,
+            //store : buidingStore,
             //     {
             //     id: 'buidingStore',
             //     fields: ['buildingNo','buildingName','buildingLeader']
