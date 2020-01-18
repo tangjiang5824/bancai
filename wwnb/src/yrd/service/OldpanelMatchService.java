@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cg.service.InsertProjectService;
 import commonMethod.NewCondition;
 import commonMethod.QueryAllService;
 import config.DataSourceConfig;
@@ -44,6 +45,8 @@ public class OldpanelMatchService extends BaseService{
     private HSSFWorkbook wb;
     @Autowired
     private QueryAllService queryService;
+    @Autowired
+    private InsertProjectService insertProjectService;
 
     /**
      * 上传旧板匹配数据
@@ -53,12 +56,12 @@ public class OldpanelMatchService extends BaseService{
      * @throws IOException
      */
     @Transactional
-    public UploadDataResult oldpanelUploadMatchData(InputStream inputStream, int projectId, int buildingId) throws IOException {
+    public UploadDataResult oldpanelUploadMatchData(InputStream inputStream, String projectId, String buildingId) throws IOException {
         System.out.println("===oldpanelUploadMatchData");
         UploadDataResult result = new UploadDataResult();
         Excel excel = new Excel(inputStream);
         DataList dataList;
-        dataList = excel.readExcelContent(1);
+        dataList = excel.readExcelContent(0);
         boolean upload = HandleDesignList(dataList, projectId, buildingId);
         result.dataList = dataList;
         result.success = upload;
@@ -87,7 +90,47 @@ public class OldpanelMatchService extends BaseService{
 //        }
     }
 
-    private void oldpanelMatch(int projectId,int buildingId, String productName){//匹配，并插表
+    @Transactional
+    private boolean HandleDesignList(DataList dataList, String projectId, String buildingId){
+        String status = "0";
+        for (DataRow dataRow : dataList) {//对于每一条板材数据
+            ArrayList<String> productList = new ArrayList(dataRow.values());
+            String productName = productList.get(0);
+//            DataList list = queryService.query("select id from building where projectId =? and buildingName=?", projectId, buildingName);
+//            String buildingId = String.valueOf(list.get(0).get("id"));
+            String sql = "insert into designlist (projectId,buildingId,productName,status) values (?,?,?,?)";
+//            int j = 0;
+//            j = jo.update(sql, projectId, buildingId, productName, status);//插入designlist表
+//            if(j==0){
+//                return false;
+//            }
+//            DataSourceConfig config = new DataSourceConfig();
+//            try {
+//                Connection connection= DataSourceUtils.getConnection(config.dataSource());
+//                connection.setAutoCommit(false);
+//                PreparedStatement pre= connection.prepareStatement(sql);
+//                pre.setObject(1,projectId);
+//                pre.setObject(2,buildingId);
+//                pre.setObject(3,productName);
+//                pre.setObject(4,status);
+//                int len= pre.executeUpdate();
+//                if(len==0){
+//                    connection.rollback();
+//                }
+//                else connection.commit();
+//            } catch (Exception e) {
+//
+//            }
+            int designlistid = insertProjectService.insertDataToTable(sql,projectId,buildingId,productName,status);
+            String designlistId = String.valueOf(designlistid);
+            oldpanelMatch(projectId, productName, designlistId);
+
+        }
+        return true;
+
+    }
+
+    private void oldpanelMatch(String projectId, String productName, String designlistId){//匹配，并插表
         String oldpanelName;
         String str = "50B BS 700";
         String[] splited = productName.split("\\s+");
@@ -99,26 +142,33 @@ public class OldpanelMatchService extends BaseService{
         Boolean MatchResult = false;//匹配结果，false为未匹配到旧板
         if (splited[0].matches(isPureWord)){
             String panelTypeName = splited[0];
+            System.out.println("===="+panelTypeName);
             String m;
             switch (panelTypeName){
                 case "ECD":
                     oldpanelTypeName = "EC";
-                case "EC":
-                case "EB":
-                case "MB":
                     m = splited[1];
-                    oldpanelTypeName = panelTypeName;
                     queryList = queryService.query("select * from oldpanel where oldpanelType in " +
                             "(select oldpanelType from oldpaneltype where oldpanelTypeName=? ) " +
                             "and width=?",oldpanelTypeName,m);
-                    HandleMatchQueryList(queryList,projectId,buildingId,productName);
+                    HandleMatchQueryList(queryList,projectId,productName,designlistId);
+                    break;
+                case "EC":
+                case "EB":
+                case "MB":
+                    oldpanelTypeName = panelTypeName;
+                    m = splited[1];
+                    queryList = queryService.query("select * from oldpanel where oldpanelType in " +
+                            "(select oldpanelType from oldpaneltype where oldpanelTypeName=? ) " +
+                            "and width=?",oldpanelTypeName,m);
+                    HandleMatchQueryList(queryList,projectId,productName,designlistId);
                     break;
                 case "SS":
                     oldpanelTypeName = panelTypeName;
                     queryList = queryService.query("select * from oldpanel where oldpanelType in " +
                                     "(select oldpanelType from oldpaneltype where oldpanelTypeName=? )"
                             ,oldpanelTypeName);
-                    HandleMatchQueryList(queryList,projectId,buildingId,productName);
+                    HandleMatchQueryList(queryList,projectId,productName,designlistId);
                     break;
                 default:
                     break;
@@ -134,7 +184,7 @@ public class OldpanelMatchService extends BaseService{
                     queryList = queryService.query("select * from oldpanel WHERE oldpanelType in " +
                             "(select oldpanelType from oldpaneltype where oldpanelTypeName=? ) " +
                             "and length=? and width=?",oldpanelTypeName,length,width);
-                    HandleMatchQueryList(queryList,projectId,buildingId,productName);
+                    HandleMatchQueryList(queryList,projectId,productName,designlistId);
                     break;
                 case "SP":
                     if((productName.equals("400 SP 1100"))||(productName.equals("1100 SP 400"))){
@@ -144,7 +194,7 @@ public class OldpanelMatchService extends BaseService{
                         queryList = queryService.query("select * from oldpanel WHERE oldpanelType in " +
                                 "(select oldpanelType from oldpaneltype where oldpanelTypeName=? ) " +
                                 "and length=? and width=?",oldpanelTypeName,length,width);
-                        HandleMatchQueryList(queryList,projectId,buildingId,productName);
+                        HandleMatchQueryList(queryList,projectId,productName,designlistId);
                         break;
                     }else {}
                 case "B":
@@ -168,58 +218,19 @@ public class OldpanelMatchService extends BaseService{
 
     }
 
-    @Transactional
-    private boolean HandleDesignList(DataList dataList, int projectId, int buildingId){
-        int status = 0;
-        for (DataRow dataRow : dataList) {//对于每一条板材数据
-            ArrayList<String> productList = new ArrayList(dataRow.values());
-            String productName = productList.get(0);
-//            DataList list = queryService.query("select id from building where projectId =? and buildingName=?", projectId, buildingName);
-//            String buildingId = String.valueOf(list.get(0).get("id"));
-            String sql = "insert into designlist (projectId,buildingId,productName,status) values (?,?,?,?)";
-//            int j = 0;
-//            j = jo.update(sql, projectId, buildingId, productName, status);//插入designlist表
-//            if(j==0){
-//                return false;
-//            }
-            DataSourceConfig config = new DataSourceConfig();
-            try {
-                Connection connection= DataSourceUtils.getConnection(config.dataSource());
-                connection.setAutoCommit(false);
-                PreparedStatement pre= connection.prepareStatement(sql);
-                pre.setObject(1,projectId);
-                pre.setObject(2,buildingId);
-                pre.setObject(3,productName);
-                pre.setObject(4,status);
-                int len= pre.executeUpdate();
-                if(len==0){
-                    connection.rollback();
-                }
-                else connection.commit();
-            } catch (Exception e) {
 
-            }
-            oldpanelMatch(projectId, buildingId, productName);
-
-        }
-        return true;
-
-    }
-
-    private boolean HandleMatchQueryList(DataList queryList,int projectId,int buildingId,String productName){
-        String sql = "update designlist set status = ? where projectId = ? and buildingId = ?";
+    private boolean HandleMatchQueryList(DataList queryList,String projectId,String productName,String designlistId){
+        System.out.println("HandleMatchQueryList===designlistId="+designlistId);
+        String sql = "update designlist set status = ? where id = ?";
         String sql2 = "update oldpanel set countUse = ? where id = ?";
         String sql3 = "insert into oldpanellist (projectId,productName,oldpanelId,designlistId) values (?,?,?,?)";
-        int status = 1;//更改扣板后designlist中status
-        DataList queryList2 = new DataList();
-        queryList2 = queryService.query("select * from designlist where projectId = ? and buildingId = ?",projectId,buildingId);
-        int designlistId = Integer.parseInt(queryList2.get(0).get("id").toString());
+        String status = "1";//更改扣板后designlist中status
         if(queryList.size()!=0){//有匹配到的旧板
             for (int i = 0; i < queryList.size(); i++) {//遍历
                 double countUse = Double.parseDouble(queryList.get(i).get("countUse").toString());
                 if (countUse > 1){//可用数量大于1，扣旧板可用数量1，改变designlist中status为1，插oldpanellist表
                     countUse--;
-                    jo.update(sql,status,projectId,buildingId);
+                    jo.update(sql,status,designlistId);
                     int oldpanelId = Integer.parseInt(queryList.get(i).get("id").toString());
                     jo.update(sql2,countUse,oldpanelId);
                     jo.update(sql3,projectId,productName,oldpanelId,designlistId);
