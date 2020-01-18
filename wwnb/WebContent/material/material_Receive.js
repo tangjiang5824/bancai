@@ -141,6 +141,9 @@ Ext.define('material.material_Receive',{
                     materialList = materialList + s;
                     materialList = materialList+',';
 
+                    //点击确认后，关闭窗口
+                    Ext.getCmp('win_showmaterialData').close();
+
                     //点击确认后将数据传到前一个页面
 
                     //点击确认后将数据返回到前一个页面，操作数据
