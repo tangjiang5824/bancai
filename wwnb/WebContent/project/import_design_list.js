@@ -213,6 +213,70 @@ Ext.define('project.import_design_list', {
 					})],
 			selType : 'rowmodel'
 		});
+
+		var form = Ext.create("Ext.form.Panel", {
+			border : false,
+			items : [ {
+				xtype : 'filefield',
+				width : 400,
+				margin: '1 0 0 0',
+				buttonText : '上传数据文件',
+				name : 'uploadFile',
+				//id : 'uploadFile',
+				listeners : {
+					change : function(file, value, eOpts) {
+						if (value.indexOf('.xls',value.length-4)==-1) {
+							Ext.Msg.alert('错误', '文件格式错误，请重新选择xls格式的文件！')
+						} else {
+							Ext.Msg.show({
+								title : '操作确认',
+								message : '将上传数据，选择“是”否确认？',
+								buttons : Ext.Msg.YESNO,
+								icon : Ext.Msg.QUESTION,
+								fn : function(btn) {
+									if (btn === 'yes') {
+										//var check=Ext.getCmp("check").getValue();
+										var projectId = Ext.getCmp("projectName").getValue();
+										var buildingId = Ext.getCmp("buildingName").getValue();
+
+										form.submit({
+											//url : 'uploadMaterialExcel.do', //上传excel文件，并回显数据
+											//url : 'oldpanel/uploadMatchExcel.do?projectId=' + projectId +'&buildingId=' + buildingId,
+											url : 'oldpanel/uploadMatchExcel.do',
+											waitMsg : '正在上传...',
+											params : {
+												projectId:'71',//projectId
+												buildingId:'1',//buildingId
+											},
+											success : function(form, action) {
+												//上传成功
+												var response = action.result;
+												//回显
+												console.log('1100000')
+												Ext.MessageBox.alert("提示", "上传成功!");
+												//重新加载数据
+												//MaterialStore.loadData(action.result['value']);
+
+											},
+											failure : function(form, action) {
+												var response = action.result;
+												Ext.MessageBox.alert("错误", "上传失败！！！");
+
+											}
+										});
+									}
+								}
+							});
+						}
+					}
+				}
+			}
+
+			]
+		});
+
+
+
 		var exceluploadform = Ext.create("Ext.form.Panel", {
 			border : false,
 			items : [ {
@@ -244,12 +308,11 @@ Ext.define('project.import_design_list', {
 										exceluploadform.submit({
 											//excel上传的接口
 											//url : 'project/Upload_Design_List_Excel.do？projectId='+projectId+'&buildingId='+buildingId,//上传excel文件，同时传入项目的id和楼栋的id
-											url : 'oldpanel/uploadMatchExcel.do？projectId='+projectId+'&buildingId='+buildingId,//上传excel文件，同时传入项目的id和楼栋的id
+											url : 'oldpanel/uploadMatchExcel.do?projectId=' + projectId +'&buildingId=' + buildingId,//',//?projectId=\'+projectId+\'&buildingId=\'+buildingId上传excel文件，同时传入项目的id和楼栋的id
 											waitMsg : '正在上传...',
 											// params : {
-											// 	tableName:tableName,
-											// 	materialtype:materialtype,
-											// 	check:check
+											// 	projectId:projectId,
+											// 	buildingId:buildingId
 											// },
 											success : function(exceluploadform, action) {
 												var response = action.result;
@@ -325,7 +388,7 @@ Ext.define('project.import_design_list', {
 													Ext.MessageBox.alert("错误原因", response.msg);
 													break;
 												default:
-													Ext.MessageBox.alert("错误", "服务器异常，请检查网络连接，或者联系管理员");
+													Ext.MessageBox.alert("错误", "上传失败");
 												}
 
 											}
@@ -398,7 +461,7 @@ Ext.define('project.import_design_list', {
 								rootProperty: 'building',
 							}
 						},
-						autoLoad : true
+						autoLoad : false
 					});
 					//buildingName,下拉框重新加载数据
 					buildingName.setStore(tableListStore2);
@@ -478,7 +541,7 @@ Ext.define('project.import_design_list', {
 		var toolbar2 = Ext.create('Ext.toolbar.Toolbar', {
 			dock : "top",
 			id : "toolbar2",
-			items : [tableList1,buildingName,exceluploadform]
+			items : [tableList1,buildingName,form]///////////exceluploadform
 		});
 
 		this.dockedItems = [
