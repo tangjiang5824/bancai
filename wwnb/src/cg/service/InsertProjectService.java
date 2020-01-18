@@ -40,7 +40,7 @@ public class InsertProjectService extends BaseService {
                             public PreparedStatement createPreparedStatement(Connection conn) throws SQLException {
                                 PreparedStatement ps = conn.prepareStatement(sql,PreparedStatement.RETURN_GENERATED_KEYS);
                                 for (int i = 1; i < args.length+1; i++) {
-                                    ps.setString(i, args[i-1]);
+                                    ps.setObject(i, args[i-1]);
                                 }
                                 return ps;
                             }
