@@ -459,6 +459,27 @@ public class ProjectController {
         response.getWriter().close();
 
     }
+    /**
+     * 通过projectId查询对应的旧板领料单
+     * @param proejctId
+     * @param response
+     * @throws IOException
+     */
+    @RequestMapping("/material/oldpanellsitbyproject.do")
+    public void findoldpanellistbyproject(String proejctId,HttpServletResponse response) throws IOException {
+        DataList materialtList = insertProjectService.findmateriallist(proejctId);
+        //写回前端
+        JSONObject object = new JSONObject();
+        JSONArray array = new JSONArray(materialtList);
+        object.put("materialList", array);
+        // System.out.println("类型1：--"+array.getClass().getName().toString());
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html");
+        response.getWriter().write(object.toString());
+        response.getWriter().flush();
+        response.getWriter().close();
+
+    }
 
     /**
      * 通过领料单中的materialname 返回有库存中有哪些，数量多少

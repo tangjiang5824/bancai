@@ -11,23 +11,23 @@ Ext.define("menu.MenuRole_upload", {
 				text : '旧板管理',
 				expanded : true,
 				children : [ {
-					text : '旧板批量入库',
-					id : 'oldpanel.Old_Upload_Data',
-					leaf : true
-				} , {
-					text : '旧板手动入库',
-					id : 'oldpanel.oldpanel_Inbound',
-					leaf : true
-				} ,{
-					text : '旧板出库（左右两个界面，可选出库数量）',
+					text : '旧板领料',
 					id : 'oldpanel.oldpanel_Receive',
 					leaf : true
 				}, {
-					text : '旧板库存查询（显示旧板表）',
+					text : '旧板入库',
+					id : 'oldpanel.oldpanel_Inbound',
+					leaf : true
+				} ,{
+					text : '旧板批量入库',
+					id : 'oldpanel.Old_Upload_Data',
+					leaf : true
+				} ,{
+					text : '旧板库存查询',
 					id : 'oldpanel.Old_Query_Data',
 					leaf : true
 				}, {
-					text : '旧板出入库记录查询（出入库日志）',
+					text : '旧板出入库记录查询',
 					id : 'oldpanel.oldpanel_Query_Records',
 					leaf : true
 				}, {
@@ -57,7 +57,7 @@ Ext.define("menu.MenuRole_upload", {
 					id : 'material.material_Query_Data',
 					leaf : true
 				}, {
-					text : '原材料出入库记录查询（出入库日志）',
+					text : '原材料出入库记录查询',
 					id : 'material.material_Query_Records',
 					leaf : true
 				}, {
