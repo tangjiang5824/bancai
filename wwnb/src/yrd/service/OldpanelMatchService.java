@@ -162,7 +162,6 @@ public class OldpanelMatchService extends BaseService{
 
     }
 
-    //@Rollback(false)
     private boolean HandleDesignList(DataList dataList, int projectId, int buildingId){
         int status = 0;
         for (DataRow dataRow : dataList) {//对于每一条板材数据
@@ -171,11 +170,8 @@ public class OldpanelMatchService extends BaseService{
 //            DataList list = queryService.query("select id from building where projectId =? and buildingName=?", projectId, buildingName);
 //            String buildingId = String.valueOf(list.get(0).get("id"));
             String sql = "insert into designlist (projectId,buildingId,productName,status) values (?,?,?,?)";
-            int j = 0;
-            j = jo.update(sql, projectId, buildingId, productName, status);//插入designlist表
-            if(j==0){
-                return false;
-            }
+            jo.update(sql, projectId, buildingId, productName, status);//插入designlist表
+
             oldpanelMatch(projectId, buildingId, productName);
 
         }
