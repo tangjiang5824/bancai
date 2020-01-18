@@ -146,10 +146,12 @@ public class ProjectController {
             }
         }
         String sql2="insert into newpanelmateriallist (projectId,buildingId,materialName,materialCount) values(?,?,?,?)";
+        String sql3="insert into projectmateriallist (projectId,buildingId,materialName,materialCount,countReceived,countNotReceived,countTemp) values(?,?,?,?,?,?,?)";
         for(Map.Entry<String,Integer> entry: listmap.entrySet()){
             String materialName= entry.getKey();
             String materialCount=entry.getValue()+"";
             int i= insertProjectService.insertDataToTable(sql2,projectId,buildingId,materialName,materialCount);
+            int j =insertProjectService.insertDataToTable(sql3,projectId,buildingId,materialName,materialCount,"0",materialCount,materialCount);
         }
 
     }

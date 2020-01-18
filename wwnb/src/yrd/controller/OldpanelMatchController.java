@@ -38,11 +38,11 @@ public class OldpanelMatchController {
         WebResponse response = new WebResponse();
 //        String tableName = "oldpanel";
 //        int userid = Integer.parseInt(session.getAttribute("userid").toString());
-        int projectid = Integer.parseInt(projectId);
-        int buildingid = Integer.parseInt(buildingId);
+//        int projectid = Integer.parseInt(projectId);
+//        int buildingid = Integer.parseInt(buildingId);
         System.out.println(projectId+"==="+buildingId);
         try {
-            UploadDataResult result = OldpanelMatchService.oldpanelUploadMatchData(uploadFile.getInputStream(), projectid, buildingid);
+            UploadDataResult result = OldpanelMatchService.oldpanelUploadMatchData(uploadFile.getInputStream(), projectId, buildingId);
             response.setSuccess(result.success);
             response.setErrorCode(result.errorCode);
             response.setValue(result.data);
