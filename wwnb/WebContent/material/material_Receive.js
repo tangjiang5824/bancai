@@ -85,9 +85,11 @@ Ext.define('material.material_Receive',{
                 dataIndex:'countNotReceived',
                 text:'待领数量',
                 //editor:{xtype : 'textfield', allowBlank : false}
-            },{
-                dataIndex:'countTemp',
+            },
+            {
+                dataIndex:'temp',//countTemp
                 text:'本次领取数量',
+                id:'temp',
                 editor:{xtype : 'textfield', allowBlank : true},
 
             }
@@ -145,6 +147,25 @@ Ext.define('material.material_Receive',{
                     Ext.getCmp('win_showmaterialData').close();
 
                     //点击确认后将数据传到前一个页面
+                    //选择的总数
+                    console.log('总数');
+                    //console.log(s)
+                    //计算总米数
+                    var count = 0;
+                    select.each(function(rec) {
+                        if(undefined == rec.data.tempPickNum)
+                            console.log('没有值');
+                        else
+                            count += parseFloat(rec.data.tempPickNum)*parseFloat(rec.data.length);
+                    });
+                    console.log(count)
+                    //Ext.getCmp('temp').setText(count);
+                    //Ext.getCmp('temp').setText(count);
+                    // 修改指定行的数据
+                    //this.up('panel').
+                    console.log(Ext.getCmp('PickingListGrid').getSelectionModel().getSelection()[0].data.materialName);
+                    Ext.getCmp('PickingListGrid').getSelectionModel().getSelection().temp.setValue(count);
+                    //console.log(Ext.getCmp('PickingListGrid').store.get(Ext.getCmp('PickingListGrid').getSelectionModel().getSelection()));//remove(grid.getSelectionModel().getSelection());
 
                     //点击确认后将数据返回到前一个页面，操作数据
                     // Ext.Ajax.request({
@@ -239,6 +260,16 @@ Ext.define('material.material_Receive',{
                 text: ' ',//默认为空
                 region: 'center',
                 bodyStyle: 'background:#fff;',
+            },
+            {
+                xtype: 'tbtext',
+                id:'rowNum',
+                iconAlign: 'center',
+                iconCls: 'rukuicon ',
+                text: 'q ',//默认为空
+                hidden:true,
+                region: 'center',
+                bodyStyle: 'background:#fff;',
             }
             ]
         });
@@ -277,16 +308,16 @@ Ext.define('material.material_Receive',{
                 },
 
                 //双击表行响应事件
-                itemdblclick: function(me, record, item, index){
+                itemdblclick: function(me, record, item, index,rowModel){
                     var select = record.data;
                     //类型名
                     var materialName = select.materialName;
                     //该类型领取的数量
-                    var pickNum= select.countTemp;
-                    console.log(select.countTemp)
+                    //var pickNum= select.countTemp;
+                    var pickNum = select.countNotReceived;
+                    console.log(select.countNotReceived)
+                    console.log(index+1)
                     //var pickNumber = select.
-                    // console.log(item)
-                    // console.log(index)
                     var specificMaterialList = Ext.create('Ext.data.Store',{
                         //id,materialName,length,width,materialType,number
                         fields:['materialName','length','materialType','width','number'],
@@ -305,7 +336,10 @@ Ext.define('material.material_Receive',{
                         },
                         autoLoad : true
                     });
+
                     Ext.getCmp("toolbar5").items.items[1].setText(pickNum);//修改id为win_num的值，动态显示在窗口中
+                    //传rowNum响应的行号:index+1
+                    Ext.getCmp("toolbar5").items.items[2].setText(index+1)
                     // var tableName=select.tableName;
                     // var url='showData.jsp?taxTableName='
                     //     + tableName
