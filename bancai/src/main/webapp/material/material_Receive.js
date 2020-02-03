@@ -87,10 +87,10 @@ Ext.define('material.material_Receive',{
                 //editor:{xtype : 'textfield', allowBlank : false}
             },
             {
-                dataIndex:'temp',//countTemp
+                dataIndex:'countTemp',//countTemp
                 text:'本次领取数量',
                 id:'temp',
-                editor:{xtype : 'textfield', allowBlank : true},
+                //editor:{xtype : 'textfield', allowBlank : true},
 
             }
         ];
@@ -159,14 +159,10 @@ Ext.define('material.material_Receive',{
                             count += parseFloat(rec.data.tempPickNum)*parseFloat(rec.data.length);
                     });
                     console.log(count)
-                    //Ext.getCmp('temp').setText(count);
-                    //Ext.getCmp('temp').setText(count);
-                    // 修改指定行的数据
+                    // 修改指定行的数据.getSelection()[0].data
                     //this.up('panel').
-                    console.log(Ext.getCmp('PickingListGrid').getSelectionModel().getSelection()[0].data.materialName);
-                    Ext.getCmp('PickingListGrid').getSelectionModel().getSelection().temp.setValue(count);
-                    //console.log(Ext.getCmp('PickingListGrid').store.get(Ext.getCmp('PickingListGrid').getSelectionModel().getSelection()));//remove(grid.getSelectionModel().getSelection());
-
+                    //console.log(Ext.getCmp('PickingListGrid').getSelectionModel().getSelection()[0].set('countTemp',count));
+                    Ext.getCmp("PickingListGrid").getSelectionModel().getSelection()[0].set('countTemp',count);
                     //点击确认后将数据返回到前一个页面，操作数据
                     // Ext.Ajax.request({
                     //     url : 'material/updateMaterialNum.do', //原材料入库
@@ -509,23 +505,6 @@ Ext.define('material.material_Receive',{
                 enableTextSelection : true,
                 editable:true
             },
-            // columns : [
-            //     { text: '材料名', dataIndex: 'materialName', flex :0.5 ,editor:{xtype : 'textfield', allowBlank : false}},
-            //     { text: '品号',  dataIndex: '品号' ,flex :0.4, editor:{xtype : 'textfield', allowBlank : false}},
-            //     { text: '长', dataIndex: '长', flex :2 ,editor:{xtype : 'textfield', allowBlank : false}},
-            //     { text: '类型', dataIndex: '类型',flex :1,editor:{xtype : 'textfield', allowBlank : false} },
-            //     { text: '宽', dataIndex: '宽', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-            //     { text: '规格',  dataIndex: '规格' ,flex :0.4,editor:{xtype : 'textfield', allowBlank : false}},
-            //     { text: '库存单位', dataIndex: '库存单位', flex :2,editor:{xtype : 'textfield', allowBlank : false}},
-            //     { text: '仓库编号', dataIndex: '仓库编号',flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-            //     { text: '数量', dataIndex: '数量', flex :1,editor:{xtype : 'textfield', allowBlank : false} },
-            //     { text: '成本', dataIndex: '成本', flex :1,editor:{xtype : 'textfield', allowBlank : false}},
-            //     { text: '存放位置', dataIndex: '存放位置',flex :1 ,editor:{xtype : 'textfield', allowBlank : false}}
-            // ],
-            // plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
-            //     clicksToEdit : 3
-            // })],
-            //tbar: toolbar,
 
         });
 

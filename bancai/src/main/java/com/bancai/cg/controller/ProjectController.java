@@ -405,7 +405,7 @@ public class ProjectController {
     @Transactional
     public boolean updateprojectmateriallist(String s,String materialList) throws JSONException {
         //原材料,原材料仓库出库，直接进行给定数值的仓库扣减
-        JSONArray jsonArray1 =new JSONArray(materialList);
+        JSONArray jsonArray1 = new JSONArray(materialList);
         for (int i = 0; i < jsonArray1.length(); i++) {
             JSONObject jsonObject=jsonArray1.getJSONObject(i);
             String id =jsonObject.get("id")+"";
