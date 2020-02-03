@@ -97,9 +97,11 @@ public class ProjectController {
     }
 
     @RequestMapping("/com/bancai/cg/test.do")
-    public void newPanelMatch(String projectId,String buildingId){
+    public void newPanelMatch(String projectId,String buildingId,String start,String limit){
+        if(null==start) start="0";
+        if(null==limit) limit="50";
         //只设置了status一个查询条件
-        DataList dataList = insertProjectService.findallbytableNameAndinfo("designlist","status","0");
+        DataList dataList = insertProjectService.findallbytableNameAndinfo("designlist","status","0",start,limit);
         ArrayList<Map> arrayList = new ArrayList<>();
         for (DataRow row : dataList) {
             Map<String,String> map=new HashMap<>();
@@ -160,9 +162,11 @@ public class ProjectController {
 
     //返回对应projectId的所有项目信息和对应的楼栋信息
     @RequestMapping(value="/project/findProjectAndBuilding.do")
-    public void findProjectAndBuilding(String projectId,HttpServletResponse response) throws IOException, JSONException {
-            DataList projectList= insertProjectService.findallbytableNameAndinfo("project","id",projectId);
-            DataList buildingList=insertProjectService.findallbytableNameAndinfo("building","projectId",projectId);
+    public void findProjectAndBuilding(String projectId,String start,String limit,HttpServletResponse response) throws IOException, JSONException {
+            if(null==start) start="0";
+            if(null==limit) limit="50";
+            DataList projectList= insertProjectService.findallbytableNameAndinfo("project","id",projectId,start,limit);
+            DataList buildingList=insertProjectService.findallbytableNameAndinfo("building","projectId",projectId,start,limit);
             JSONObject object=new JSONObject();
             JSONArray parray =new JSONArray(projectList);
             JSONArray barray=new JSONArray(buildingList);
@@ -176,9 +180,11 @@ public class ProjectController {
     }
     //返回对应projectId的楼栋信息
     @RequestMapping(value="/project/findBuilding.do")
-    public void findProjectBuilding(String projectId,HttpServletResponse response) throws IOException, JSONException {
+    public void findProjectBuilding(String projectId,String start,String limit,HttpServletResponse response) throws IOException, JSONException {
         //DataList projectList= insertProjectService.findallbytableNameAndinfo("project","id",projectId);
-        DataList buildingList=insertProjectService.findallbytableNameAndinfo("building","projectId",projectId);
+        if(null==start) start="0";
+        if(null==limit) limit="50";
+        DataList buildingList=insertProjectService.findallbytableNameAndinfo("building","projectId",projectId,start,limit);
         JSONObject object=new JSONObject();
         //JSONArray parray =new JSONArray(projectList);
         JSONArray barray=new JSONArray(buildingList);
@@ -197,8 +203,10 @@ public class ProjectController {
      * @throws IOException
      */
     @RequestMapping(value="/material/materialType.do")
-    public void findmaterialtype(HttpServletResponse response) throws IOException, JSONException {
-        DataList projectList = insertProjectService.findmaterialtype();
+    public void findmaterialtype(HttpServletResponse response,String start,String limit) throws IOException, JSONException {
+        if(null==start) start="0";
+        if(null==limit) limit="50";
+        DataList projectList = insertProjectService.findmaterialtype(start,limit);
         //写回前端
         JSONObject object = new JSONObject();
         JSONArray array = new JSONArray(projectList);
@@ -218,8 +226,10 @@ public class ProjectController {
      * @throws IOException
      */
     @RequestMapping(value="/material/findStore.do")
-    public void findStore(HttpServletResponse response) throws IOException, JSONException {
-        DataList StoreName = insertProjectService.findallbytableName("storeposition","warehouseNo","warehouseName");
+    public void findStore(HttpServletResponse response,String start,String limit) throws IOException, JSONException {
+        if(null==start) start="0";
+        if(null==limit) limit="50";
+        DataList StoreName = insertProjectService.findallbytableName("storeposition",start,limit,"warehouseNo","warehouseName");
         //写回前端
         JSONObject object = new JSONObject();
         JSONArray StoreNamearray = new JSONArray(StoreName);
@@ -236,8 +246,10 @@ public class ProjectController {
      * @throws IOException
      */
     @RequestMapping(value="/material/findAllBytableName.do")
-    public void findAllbyTableName(HttpServletResponse response,String tableName) throws IOException, JSONException {
-        DataList table = insertProjectService.findallbytableName(tableName);
+    public void findAllbyTableName(HttpServletResponse response,String tableName,String start,String limit) throws IOException, JSONException {
+        if(null==start) start="0";
+        if(null==limit) limit="50";
+        DataList table = insertProjectService.findallbytableName(tableName,start,limit);
         //写回前端
         JSONObject object = new JSONObject();
         JSONArray StoreArray = new JSONArray(table);
@@ -255,8 +267,10 @@ public class ProjectController {
      * @throws IOException
      */
     @RequestMapping(value="/material/findAllbyTableNameAndOnlyOneCondition.do")
-    public void findAllbyTableNameAndOnlyOneCondition(HttpServletResponse response,String tableName,String columnName,String columnValue) throws IOException, JSONException {
-        DataList table = insertProjectService.findallbytableNameAndinfo(tableName,columnName,columnValue);
+    public void findAllbyTableNameAndOnlyOneCondition(HttpServletResponse response,String start,String limit,String tableName,String columnName,String columnValue) throws IOException, JSONException {
+        if(null==start) start="0";
+        if(null==limit) limit="50";
+        DataList table = insertProjectService.findallbytableNameAndinfo(tableName,columnName,columnValue,start,limit);
         //写回前端
         JSONObject object = new JSONObject();
         JSONArray StoreNamearray = new JSONArray(table);
@@ -275,8 +289,10 @@ public class ProjectController {
      * @throws IOException
      */
     @RequestMapping(value="/material/findStorePosition.do")
-    public void findStorePosition(HttpServletResponse response,String warehouseNo) throws IOException, JSONException {
-          DataList rowNum=insertProjectService.findallbytableNameAndinfo("storeposition","warehouseNo",warehouseNo);
+    public void findStorePosition(HttpServletResponse response,String start,String limit,String warehouseNo) throws IOException, JSONException {
+        if(null==start) start="0";
+        if(null==limit) limit="50";
+        DataList rowNum=insertProjectService.findallbytableNameAndinfo("storeposition","warehouseNo",warehouseNo,start,limit);
             List<Map> rowList =new ArrayList<>();
             List<Map> columnList =new ArrayList<>();
             for (int i = 1; i < Integer.parseInt(rowNum.get(0).get("rowNum")+"")+1; i++) {
@@ -445,8 +461,10 @@ public class ProjectController {
      * @throws IOException
      */
     @RequestMapping("/material/materiallsitbyproject.do")
-    public void findmateriallistbyproject(String proejctId,HttpServletResponse response) throws IOException, JSONException {
-        DataList materialtList = insertProjectService.findmateriallist(proejctId);
+    public void findmateriallistbyproject(String proejctId,HttpServletResponse response,String start,String limit) throws IOException, JSONException {
+        if(null==start) start="0";
+        if(null==limit) limit="50";
+        DataList materialtList = insertProjectService.findmateriallist(proejctId,start,limit);
         //写回前端
         JSONObject object = new JSONObject();
         JSONArray array = new JSONArray(materialtList);
@@ -466,8 +484,10 @@ public class ProjectController {
      * @throws IOException
      */
     @RequestMapping("/material/oldpanellsitbyproject.do")
-    public void findoldpanellistbyproject(String proejctId,HttpServletResponse response) throws IOException, JSONException {
-        DataList materialtList = insertProjectService.findmateriallist(proejctId);
+    public void findoldpanellistbyproject(String proejctId,HttpServletResponse response,String start,String limit) throws IOException, JSONException {
+        if(null==start) start="0";
+        if(null==limit) limit="50";
+        DataList materialtList = insertProjectService.findmateriallist(proejctId,start,limit);
         //写回前端
         JSONObject object = new JSONObject();
         JSONArray array = new JSONArray(materialtList);
@@ -488,10 +508,11 @@ public class ProjectController {
      * @throws IOException
      */
     @RequestMapping("/material/materiallsitbyname.do")
-    public void findmateriallistbybname(String materialName,HttpServletResponse response) throws IOException, JSONException {
-
+    public void findmateriallistbybname(String materialName,HttpServletResponse response,String start,String limit) throws IOException, JSONException {
+        if(null==start) start="0";
+        if(null==limit) limit="50";
         //System.out.println("---------------------------------------1");
-        DataList materialtList = insertProjectService.findmateriallistbyname(materialName);
+        DataList materialtList = insertProjectService.findmateriallistbyname(materialName,start,limit);
         //写回前端
         JSONObject object = new JSONObject();
         JSONArray array = new JSONArray(materialtList);

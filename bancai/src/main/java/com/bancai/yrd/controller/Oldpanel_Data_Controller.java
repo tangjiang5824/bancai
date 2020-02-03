@@ -144,8 +144,10 @@ public class Oldpanel_Data_Controller {
      * @throws IOException
      */
     @RequestMapping(value="/oldpanel/oldpanelType.do")
-    public void findOldpanelType(HttpServletResponse response) throws IOException, JSONException {
-        DataList projectList = insertProjectService.findOldpanelType();
+    public void findOldpanelType(HttpServletResponse response,String start,String limit) throws IOException, JSONException {
+        if(null==start) start="0";
+        if(null==limit) limit="50";
+        DataList projectList = insertProjectService.findOldpanelType(start,limit);
         //写回前端
         JSONObject object = new JSONObject();
         JSONArray array = new JSONArray(projectList);
