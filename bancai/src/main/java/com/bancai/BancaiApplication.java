@@ -5,7 +5,9 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.ServletComponentScan;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
@@ -14,7 +16,7 @@ import javax.sql.DataSource;
 
 //@ServletComponentScan
 @SpringBootApplication
-public class BancaiApplication {
+public class BancaiApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
         SpringApplication.run(BancaiApplication.class, args);
@@ -31,8 +33,10 @@ public class BancaiApplication {
         basicDataSource.setMaxTotal(30);
         return basicDataSource;
     }
-
-
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder builder){
+        return builder.sources(BancaiApplication.class);
+    }
 
 
 }

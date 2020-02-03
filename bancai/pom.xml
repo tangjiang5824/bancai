@@ -12,6 +12,7 @@
     <artifactId>bancai</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>bancai</name>
+    <packaging>war</packaging>
     <description>bancai project for Spring Boot</description>
 
     <properties>
@@ -41,6 +42,13 @@
                     <artifactId>junit-vintage-engine</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <!--打包时排除tomcat-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>provided</scope>
         </dependency>
         <!--热部署配置-->
         <dependency>
