@@ -54,8 +54,8 @@ public class InsertProjectService extends BaseService {
      * @return
      */
     @Transactional
-    public DataList findmaterialtype(){
-        String sql = "select * from materialtype";
+    public DataList findmaterialtype(String start,String limit){
+        String sql = "select * from materialtype limit "+start+","+limit;
         DataList typelist = queryService.query(sql);
         return typelist;
     }
@@ -64,8 +64,8 @@ public class InsertProjectService extends BaseService {
      * @return
      */
     @Transactional
-    public DataList findOldpanelType(){
-        String sql = "select * from oldpaneltype";
+    public DataList findOldpanelType(String start,String limit){
+        String sql = "select * from oldpaneltype limit "+start+","+limit;
         DataList typelist = queryService.query(sql);
         return typelist;
 
@@ -84,7 +84,7 @@ public class InsertProjectService extends BaseService {
      * @return
      */
     @Transactional
-    public DataList findallbytableName(String tablename,String...args){
+    public DataList findallbytableName(String tablename,String start,String limit,String...args){
         String colum="";
         if(null==args){
             colum="*";
@@ -95,23 +95,23 @@ public class InsertProjectService extends BaseService {
             int index=colum.lastIndexOf(",");
             colum=colum.substring(0,index);
         }
-        String sql = "select "+colum+" from "+tablename;
+        String sql = "select "+colum+" from "+tablename+" limit "+start+","+limit;
         DataList typelist = queryService.query(sql);
         return typelist;
     }
     //通用接口 重载 全查 只用传入tablename
     @Transactional
-    public DataList findallbytableName(String tablename){
-        String sql = "select * from "+tablename;
+    public DataList findallbytableName(String tablename,String start,String limit){
+        String sql = "select * from "+tablename+" limit "+start+","+limit;
         DataList typelist = queryService.query(sql);
         return typelist;
     }
 
     //通用接口    通过表名和一个键值对查询
     @Transactional
-    public DataList findallbytableNameAndinfo(String tablename,String variable,String value){
-        String sql = "select * from "+tablename+" where "+variable+"= ?";
-        DataList list = queryService.query(sql,value);
+    public DataList findallbytableNameAndinfo(String tablename,String variable,String value,String start,String limit){
+        String sql = "select * from "+tablename+" where "+variable+"= ? limit ?,?";
+        DataList list = queryService.query(sql,value,start,limit);
         return list;
     }
     //通用接口
@@ -134,8 +134,8 @@ public class InsertProjectService extends BaseService {
      * @return
      */
     @Transactional
-    public DataList findmateriallist(String projectId){
-        String sql = "select * from projectmateriallist where projectId=?";
+    public DataList findmateriallist(String projectId,String start,String limit){
+        String sql = "select * from projectmateriallist where projectId=? limit "+start+","+limit;
         DataList materiallist = queryService.query(sql,projectId);
         return materiallist;
     }
@@ -146,8 +146,8 @@ public class InsertProjectService extends BaseService {
      * @return
      */
     @Transactional
-    public DataList findmateriallistbyname(String materialName){
-        String sql = "select id,materialName,length,width,materialType,number from material where materialName=? and number>0";
+    public DataList findmateriallistbyname(String materialName,String start,String limit){
+        String sql = "select id,materialName,length,width,materialType,number from material where materialName=? and number>0 limit "+start+","+limit;
         DataList materiallist = queryService.query(sql,materialName);
         return materiallist;
     }
@@ -251,8 +251,8 @@ public class InsertProjectService extends BaseService {
      * */
 
     @Transactional
-    public DataList findProjectList(){
-        String sql = "select projectName from project";
+    public DataList findProjectList(String start,String limit){
+        String sql = "select projectName from project limit "+start+","+limit;
         DataList namelist = queryService.query(sql);
         return namelist;
 
@@ -262,9 +262,9 @@ public class InsertProjectService extends BaseService {
      * 根据项目名查询,产品名，材料名
      * */
     @Transactional
-    public DataList findProjectByName(String projectName){
+    public DataList findProjectByName(String projectName,String start,String limit){
         //String sql = "select * from projectlist where projectId in (select id from project where  projectName = ?)";
-        String sql = "select 长, 类型, 宽, number, materialName, productName from project_info where id in (select id from project where  projectName = ?)";
+        String sql = "select 长, 类型, 宽, number, materialName, productName from project_info where id in (select id from project where  projectName = ?) limit "+start+","+limit ;
         DataList cellList = queryService.query(sql,projectName);
         return cellList;
 
