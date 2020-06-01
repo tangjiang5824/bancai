@@ -25,10 +25,10 @@ public class BancaiApplication extends SpringBootServletInitializer {
     @Bean
     public DataSource dataSource() {
         BasicDataSource basicDataSource=new BasicDataSource();
-        basicDataSource.setUrl("jdbc:mysql://116.62.24.156:3306/bancai?serverTimezone=UTC");
+        basicDataSource.setUrl("jdbc:mysql://47.105.55.200:3306/bancai?serverTimezone=UTC");
         basicDataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
         basicDataSource.setUsername("root");
-        basicDataSource.setPassword("root");
+        basicDataSource.setPassword("123456");
         basicDataSource.setInitialSize(5);
         basicDataSource.setMaxTotal(30);
         return basicDataSource;
