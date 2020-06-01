@@ -50,6 +50,11 @@
             <artifactId>spring-boot-starter-tomcat</artifactId>
             <scope>provided</scope>
         </dependency>
+        <!--JSP依赖-->
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-jasper</artifactId>
+        </dependency>
         <!--热部署配置-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
