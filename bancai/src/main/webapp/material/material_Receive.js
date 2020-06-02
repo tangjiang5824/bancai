@@ -277,6 +277,7 @@ Ext.define('material.material_Receive',{
             width: 650,
             layout: 'fit',
             closable : true,
+            draggable:true,
             tbar:toolbar5,
             items:specific_data_grid,
             closeAction : 'hide',
@@ -312,6 +313,7 @@ Ext.define('material.material_Receive',{
                     //var pickNum= select.countTemp;
                     var pickNum = select.countNotReceived;
                     console.log(select.countNotReceived)
+
                     console.log(index+1)
                     //var pickNumber = select.
                     var specificMaterialList = Ext.create('Ext.data.Store',{
