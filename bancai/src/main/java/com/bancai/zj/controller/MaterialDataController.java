@@ -21,6 +21,8 @@ import com.bancai.zj.service.Material_Service;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @RestController
 public class MaterialDataController {
@@ -49,6 +51,11 @@ public class MaterialDataController {
 
         JSONArray jsonArray =new JSONArray(s);
         String userId = (String)session.getAttribute("userid");
+        //入库记录sql
+        String sql_in = "insert into materiallog (type,userId,time) values(?,?,?)";
+        Date date=new Date();
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        int main_key= insertProjectService.insertDataToTable(sql_in,"0",userId,simpleDateFormat.format(date));
         for(int i=0;i< jsonArray.length();i++) {
             JSONObject jsonTemp = jsonArray.getJSONObject(i);
             String length2="";
@@ -83,6 +90,12 @@ public class MaterialDataController {
             String sql = "insert into "+ tableName+" (materialName,materialNo,length,length2,materialType,width,width2,specification,inventoryUnit,warehouseNo,number,cost,rowNo,columNo,uploadId) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             boolean isright= insertProjectService.insertIntoTableBySQL(sql,materialName,materialNo,length,length2,Type,width,width2,specification,inventoryUnit,warehouseNo,count,cost,rowNo,columNo,userId);
             if(!isright){
+                return false;
+            }
+            //插入log详细信息
+            String sql_detail="insert into materiallogdetail (materialName,count,specification,materiallogId) values (?,?,?,?) ";
+            boolean is_log_right= insertProjectService.insertIntoTableBySQL(sql,materialName,count,specification,String.valueOf(main_key));
+            if(!is_log_right){
                 return false;
             }
         }
