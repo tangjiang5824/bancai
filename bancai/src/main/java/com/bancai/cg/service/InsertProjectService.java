@@ -110,8 +110,8 @@ public class InsertProjectService extends BaseService {
     //通用接口    通过表名和一个键值对查询
     @Transactional
     public DataList findallbytableNameAndinfo(String tablename,String variable,String value,String start,String limit){
-        String sql = "select * from "+tablename+" where "+variable+"= ? limit ?,?";
-        DataList list = queryService.query(sql,value,start,limit);
+        String sql = "select * from "+tablename+" where "+variable+"= ? limit "+start+","+limit;
+        DataList list = queryService.query(sql,value);
         return list;
     }
     //通用接口
