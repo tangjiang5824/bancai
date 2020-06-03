@@ -7,6 +7,14 @@ Ext.define('material.material_Query_Records',{
         var itemsPerPage = 50;
         var tableName="material";
         //var materialType="1";
+        //操作类型：枚举类型
+        Ext.define('Soims.model.application.ApplicationState', {
+            statics: { // 关键
+                1: { value: '1', name: '出库' },
+                0: { value: '0', name: '入库' }
+            }
+        });
+
         var projectListStore = Ext.create('Ext.data.Store',{
             fields : [ "projectName","id"],
             proxy : {
@@ -182,7 +190,7 @@ Ext.define('material.material_Query_Records',{
         }];
         var material_Query_Records_store1=Ext.create('Ext.data.Store',{
             id: 'material_Query_Records_store1',
-            fields:['旧板领料记录单编号','旧板名称','领取数量','规格'],
+            fields:['原材料名称','数量'],
             data:sampleData
         });
 
@@ -196,21 +204,25 @@ Ext.define('material.material_Query_Records',{
                 {
                     text: '原材料名',
                     dataIndex: 'materialName',
+                    flex :1,
                     width:"80"
-                },{
-                    text: '长',
-                    dataIndex: 'length'
-                },{
-                    text: '类型',
-                    dataIndex: 'materialType'
-                },{
-                    text: '宽',
-                    dataIndex: 'width'
-                },{
-                    id:'outOrinNum',
-                    text: '数量',
-                    dataIndex: 'number'
                 },
+                // {
+                //     text: '长',
+                //     dataIndex: 'length'
+                // },{
+                //     text: '类型',
+                //     dataIndex: 'materialType'
+                // },{
+                //     text: '宽',
+                //     dataIndex: 'width'
+                // },
+                {
+                    // id:'outOrinNum',
+                    text: '数量',
+                    flex :1,
+                    dataIndex: 'number'
+                }
                 //fields:['oldpanelId','oldpanelName','count'],specification
 
             ],
@@ -248,10 +260,18 @@ Ext.define('material.material_Query_Records',{
                 editable:true
             },
             columns : [
-                { text: '原材料领料记录单编号', dataIndex: 'id', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
+                // { text: '原材料领料记录单编号', dataIndex: 'id', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
                 { text: '操作员',  dataIndex: 'username' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '操作类型',  dataIndex: 'type' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '上传时间', dataIndex: 'time', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
+                {   text: '操作类型',
+                    dataIndex: 'type' ,
+                    flex :1,
+                    //枚举，1：出库，0：入库
+                    renderer: function (value) {
+                        return Soims.model.application.ApplicationState[value].name; // key-value
+                    },
+                    editor:{xtype : 'textfield', allowBlank : false}
+                    },
+                { text: '操作时间', dataIndex: 'time', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
                 { text: '项目名称', dataIndex: 'projectName', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
 
             ],
@@ -296,13 +316,13 @@ Ext.define('material.material_Query_Records',{
                         },
                         autoLoad : true
                     });
-                    // 根据出入库0/1，改变弹出框表格列名
-                    var col4 = material_Query_Records_specific_data_grid.columns[4];
+                    // 根据出入库0/1，决定弹出框表格列名
+                    var col = material_Query_Records_specific_data_grid.columns[1];
                     if(opType == 1){
-                        col4.setText("出库数量");
+                        col.setText("出库数量");
                     }
                     else{
-                        col4.setText("入库数量");
+                        col.setText("入库数量");
                     }
 
 
