@@ -187,24 +187,29 @@ Ext.define('material.material_Query_Records',{
         });
 
 
+        //弹出框
         var material_Query_Records_specific_data_grid=Ext.create('Ext.grid.Panel',{
             id : 'material_Query_Records_specific_data_grid',
             store:material_Query_Records_store1,//oldpanellogdetailList，store1的数据固定
             dock: 'bottom',
             columns:[
                 {
-                    text: '旧板领料记录单编号',
-                    dataIndex: 'materiallogId',
+                    text: '原材料名',
+                    dataIndex: 'materialName',
                     width:"80"
                 },{
-                    text: '旧板名称',
-                    dataIndex: 'materialName'
+                    text: '长',
+                    dataIndex: 'length'
                 },{
-                    text: '领取数量',
-                    dataIndex: 'count'
+                    text: '类型',
+                    dataIndex: 'materialType'
                 },{
-                    text: '规格',
-                    dataIndex: 'specification'
+                    text: '宽',
+                    dataIndex: 'width'
+                },{
+                    id:'outOrinNum',
+                    text: '数量',
+                    dataIndex: 'number'
                 },
                 //fields:['oldpanelId','oldpanelName','count'],specification
 
@@ -225,11 +230,12 @@ Ext.define('material.material_Query_Records',{
 
         var material_Query_Records_win_showmaterialData = Ext.create('Ext.window.Window', {
             id:'material_Query_Records_win_showmaterialData',
-            title: '旧板领取详细信息',
+            title: '原材料出入库详细信息',
             height: 500,
             width: 650,
             layout: 'fit',
             closable : true,
+            draggable:true,
             closeAction : 'close',
             items:material_Query_Records_specific_data_grid,
         });
@@ -244,6 +250,7 @@ Ext.define('material.material_Query_Records',{
             columns : [
                 { text: '原材料领料记录单编号', dataIndex: 'id', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
                 { text: '操作员',  dataIndex: 'username' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
+                { text: '操作类型',  dataIndex: 'type' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
                 { text: '上传时间', dataIndex: 'time', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
                 { text: '项目名称', dataIndex: 'projectName', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
 
@@ -271,10 +278,13 @@ Ext.define('material.material_Query_Records',{
                 itemdblclick: function(me, record, item, index){
                     var select = record.data;
                     var id = select.id;
+                    //操作类型opType
+                    var opType = select.type;
                     console.log(id);
+                    console.log(opType)
                     var materiallogdetailList = Ext.create('Ext.data.Store',{
                         //id,materialName,length,width,materialType,number
-                        fields:['materiallogId','materialName','count','specification'],
+                        fields:['materialName','length','width','materialType','number'],
                         //fields:['materialName','length','materialType','width','number'],//'oldpanelId','oldpanelName','count'
                         proxy : {
                             type : 'ajax',
@@ -286,6 +296,16 @@ Ext.define('material.material_Query_Records',{
                         },
                         autoLoad : true
                     });
+                    // 根据出入库0/1，改变弹出框表格列名
+                    var col4 = material_Query_Records_specific_data_grid.columns[4];
+                    if(opType == 1){
+                        col4.setText("出库数量");
+                    }
+                    else{
+                        col4.setText("入库数量");
+                    }
+
+
                     material_Query_Records_specific_data_grid.setStore(materiallogdetailList);
                     console.log(materiallogdetailList);
                     Ext.getCmp('material_Query_Records_win_showmaterialData').show();
