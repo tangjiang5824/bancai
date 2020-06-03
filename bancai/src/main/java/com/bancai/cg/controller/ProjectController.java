@@ -307,8 +307,10 @@ public class ProjectController {
             }
         //写回前端
         JSONObject object = new JSONObject();
-        object.put("rowNum", rowList);
-        object.put("columnNum", columnList);
+            JSONArray array1=new JSONArray(rowList);
+            JSONArray array2=new JSONArray(columnList);
+        object.put("rowNum", array1);
+        object.put("columnNum", array2);
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html");
         response.getWriter().write(object.toString());
@@ -421,6 +423,8 @@ public class ProjectController {
     @Transactional
     public boolean updateprojectmateriallist(String s,String materialList) throws JSONException {
         //原材料,原材料仓库出库，直接进行给定数值的仓库扣减
+        materialList=materialList.substring(0,materialList.length()-2);
+        materialList=materialList+"]";
         JSONArray jsonArray1 = new JSONArray(materialList);
         for (int i = 0; i < jsonArray1.length(); i++) {
             JSONObject jsonObject=jsonArray1.getJSONObject(i);

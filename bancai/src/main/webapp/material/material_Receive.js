@@ -163,6 +163,15 @@ Ext.define('material.material_Receive',{
                     //this.up('panel').
                     //console.log(Ext.getCmp('PickingListGrid').getSelectionModel().getSelection()[0].set('countTemp',count));
                     Ext.getCmp("PickingListGrid").getSelectionModel().getSelection()[0].set('countTemp',count);
+                    var notP = Ext.getCmp("PickingListGrid").getSelectionModel().getSelection()[0].get('countNotReceived')
+
+                    //判断数值是否规范,本次领取数量不能超过待领数量
+                    if(count > notP){
+                        console.log("领取失败！！！")
+                        Ext.MessageBox.alert("警告","错误，请重新选择领取数量！");
+                        Ext.getCmp("PickingListGrid").getSelectionModel().getSelection()[0].set('countTemp',0);
+                    }
+
                     //点击确认后将数据返回到前一个页面，操作数据
                     // Ext.Ajax.request({
                     //     url : 'material/updateMaterialNum.do', //原材料入库
