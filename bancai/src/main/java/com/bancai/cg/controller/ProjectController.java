@@ -307,8 +307,10 @@ public class ProjectController {
             }
         //写回前端
         JSONObject object = new JSONObject();
-        object.put("rowNum", rowList);
-        object.put("columnNum", columnList);
+            JSONArray array1=new JSONArray(rowList);
+            JSONArray array2=new JSONArray(columnList);
+        object.put("rowNum", array1);
+        object.put("columnNum", array2);
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html");
         response.getWriter().write(object.toString());

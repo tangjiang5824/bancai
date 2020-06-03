@@ -66,10 +66,12 @@ public class MaterialDataController {
                length2=null;
            }
             try{
-                length2=jsonTemp.get("宽2")+"";
+                width2=jsonTemp.get("宽2")+"";
             }catch (JSONException e){
                 width2=null;
             }
+            if (length2.equals("")) length2=null;
+            if(width2.equals("")) width2=null;
 
             System.out.println(jsonTemp);
             String materialNo=jsonTemp.get("品号").toString()+"";
@@ -94,7 +96,7 @@ public class MaterialDataController {
             }
             //插入log详细信息
             String sql_detail="insert into materiallogdetail (materialName,count,specification,materiallogId) values (?,?,?,?) ";
-            boolean is_log_right= insertProjectService.insertIntoTableBySQL(sql,materialName,count,specification,String.valueOf(main_key));
+            boolean is_log_right= insertProjectService.insertIntoTableBySQL(sql_detail,materialName,count,specification,String.valueOf(main_key));
             if(!is_log_right){
                 return false;
             }
