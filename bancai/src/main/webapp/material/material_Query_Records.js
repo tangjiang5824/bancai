@@ -221,7 +221,7 @@ Ext.define('material.material_Query_Records',{
                     // id:'outOrinNum',
                     text: '数量',
                     flex :1,
-                    dataIndex: 'number'
+                    dataIndex: 'count'
                 }
                 //fields:['oldpanelId','oldpanelName','count'],specification
 
@@ -271,7 +271,12 @@ Ext.define('material.material_Query_Records',{
                     },
                     editor:{xtype : 'textfield', allowBlank : false}
                     },
-                { text: '操作时间', dataIndex: 'time', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
+                { text: '操作时间',
+                    dataIndex: 'time',
+                    flex :1 ,
+                    editor:{xtype : 'textfield', allowBlank : false},
+                    renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')
+                    },
                 { text: '项目名称', dataIndex: 'projectName', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
 
             ],
@@ -304,8 +309,8 @@ Ext.define('material.material_Query_Records',{
                     console.log(opType)
                     var materiallogdetailList = Ext.create('Ext.data.Store',{
                         //id,materialName,length,width,materialType,number
-                        fields:['materialName','length','width','materialType','number'],
-                        //fields:['materialName','length','materialType','width','number'],//'oldpanelId','oldpanelName','count'
+                        fields:['materialName','length','width','materialType','count'],
+                        //fields:['materialName','length','materialType','width','count'],//'oldpanelId','oldpanelName','count'
                         proxy : {
                             type : 'ajax',
                             url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName=materiallogdetail&columnName=materiallogId&columnValue='+id,//获取同类型的原材料

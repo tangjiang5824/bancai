@@ -11,47 +11,55 @@ Ext.define('material.material_Statistics_Records',{
             items: [
                 {
                     xtype: 'textfield',
-                    margin : '0 10 0 0',
-                    fieldLabel: '入库人员',
+                    margin : '0 20 0 10',
+                    fieldLabel: '操作员',
                     //id :'userId',
                     width: 160,
-                    labelWidth: 60,
+                    labelWidth: 50,
                     name: 'userId',
                     value:"",
                 },
+                // {
+                //     xtype:'tbtext',
+                //     text:'时间',
+                //     // itemId:'move_left'
+                // },
                 {
-                    xtype: 'textfield',
-                    margin : '0 10 0 0',
-                    fieldLabel: '项目名称',
-                    //id :'projectName',
-                    width: 250,
-                    labelWidth: 60,
-                    name: 'projectName',
-                    value:"",
-                },
-                {
-                    xtype: 'textfield',
-                    margin : '0 10 0 0',
-                    fieldLabel: '开始时间',
+                    xtype: 'datefield',
+                    margin : '0 20 0 20',
+                    fieldLabel: '时间',
                     //id :'startTime',
                     width: 180,
-                    labelWidth: 80,
-                    name: 'startTime',
+                    labelWidth: 40,
                     value:"",
+                    id : "startTime",
+                    name : 'startTime',
+                    format : 'Y-m-d',
+                    editable : false,
                 },
                 {
-                    xtype: 'textfield',
+                    xtype:'tbtext',
+                    text:'至 ',
+                    itemId:'move_left',
+                    margin : '0 20 0 0'
+                },
+                {
+                    xtype: 'datefield',
                     margin : '0 10 0 0',
-                    fieldLabel: '结束时间',
+                    // fieldLabel: '结束时间',
                     //id :'endTime',
-                    width: 180,
-                    labelWidth: 80,
-                    name: 'endTime',
+                    width: 140,
+                    // labelWidth: 80,
                     value:"",
+                    id : "endTime",
+                    name : 'endTime',
+                    //align: 'right',
+                    format : 'Y-m-d',
+                    editable : false,
                 },
                 {
                     xtype : 'button',
-                    text: '查询',
+                    text: '入库统计',
                     width: 80,
                     margin: '0 0 0 15',
                     layout: 'right',
@@ -66,6 +74,23 @@ Ext.define('material.material_Statistics_Records',{
                         });
                     }
                 },
+                {
+                    xtype : 'button',
+                    text: '出库统计',
+                    width: 80,
+                    margin: '0 0 0 15',
+                    layout: 'right',
+                    handler: function(){
+                        material_Statistics_Records_Store.load({
+                            params : {
+                                // userId : Ext.getCmp('userId').getValue(),
+                                // endTime : Ext.getCmp('endTime').getValue(),
+                                // startTime:Ext.getCmp('startTime').getValue(),
+                                // projectName:Ext.getCmp('projectName').getValue(),
+                            }
+                        });
+                    }
+                }
                 // {
                 //     text: '删除',
                 //     width: 80,
@@ -141,9 +166,9 @@ Ext.define('material.material_Statistics_Records',{
                 editable:true
             },
             columns : [
-                { text: '材料单编号', dataIndex: '材料单编号', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
+                { text: '材料名', dataIndex: '材料单编号', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
                 { text: '上传人',  dataIndex: '上传人' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '上传时间', dataIndex: '上传时间', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
+                { text: '数量', dataIndex: '上传时间', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
                 { text: '项目名称', dataIndex: '项目名称',flex :1,editor:{xtype : 'textfield', allowBlank : false} },
                 {
                     header: "操作", dataIndex: 'Gender',
