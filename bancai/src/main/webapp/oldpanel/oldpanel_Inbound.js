@@ -186,7 +186,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
             store : {
                 // fields: ['材料名','品号', '长',"；类型","宽",'规格','库存单位','仓库编号','数量','成本','存放位置']
                 fields: ['oldpanelType','length','length2','width','width2','width3','oldpanelNo',
-                    'oldpanelName','inventoryUnit', 'number','weight','warehouseNo','position']
+                    'oldpanelName','inventoryUnit', 'number','weight','warehouseNo','location']
             },
 
             columns : [
@@ -202,7 +202,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                 {dataIndex : 'number', text : '数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'weight', text : '重量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'warehouseNo', text : '仓库编号', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'position', text : '存放位置', flex :1, editor : {xtype : 'textfield', allowBlank : false,}}
+                {dataIndex : 'location', text : '存放位置', flex :1, editor : {xtype : 'textfield', allowBlank : false,}}
             ],
             viewConfig : {
                 plugins : {
