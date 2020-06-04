@@ -52,8 +52,8 @@ Ext.define('material.material_Query_Records',{
         var optionTypeList = Ext.create('Ext.data.Store', {
             fields: ['abbr', 'name'],
             data : [
-                {"abbr":"1", "name":"入库"},
-                {"abbr":"0", "name":"出库"},
+                {"abbr":"0", "name":"入库"},
+                {"abbr":"1", "name":"出库"},
                 //...
             ]
         });
