@@ -7,18 +7,48 @@ Ext.define('material.material_Query_Data',{
         var itemsPerPage = 50;
         var tableName="material";
         //var materialType="1";
+        //查询数据库，返回原材料类型
+        var MaterialNameList = Ext.create('Ext.data.Store',{
+            fields : [ 'materialName'],
+            proxy : {
+                type : 'ajax',
+                url : 'material/materialType.do',
+                reader : {
+                    type : 'json',
+                    rootProperty: 'typeList',
+                }
+            },
+            autoLoad : true
+        });
+
+        //原材料类型，下拉框显示
+        var MaterialTypeList = Ext.create('Ext.form.ComboBox',{
+            fieldLabel : '原材料类型',
+            labelWidth : 70,
+            width : 230,
+            id :  'materialName',
+            name : 'materialName',
+            matchFieldWidth: false,
+            emptyText : "------请选择------",
+            displayField: 'materialTypeName',
+            valueField: 'materialType',
+            editable : false,
+            store: MaterialNameList
+        });
+
         var toobar = Ext.create('Ext.toolbar.Toolbar',{
             items: [
-                {
-                    xtype: 'textfield',
-                    margin : '0 10 0 0',
-                    fieldLabel: '原材料类型',
-                    id :'mType',
-                    width: 180,
-                    labelWidth: 70,
-                    name: 'mType',
-                    value:"",
-                },
+                // {
+                //     xtype: 'textfield',
+                //     margin : '0 10 0 0',
+                //     fieldLabel: '原材料类型',
+                //     id :'mType',
+                //     width: 180,
+                //     labelWidth: 70,
+                //     name: 'mType',
+                //     value:"",
+                // },
+                MaterialTypeList,
                 {
                     xtype: 'textfield',
                     margin : '0 10 0 0',

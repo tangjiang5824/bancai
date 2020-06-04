@@ -3,7 +3,7 @@ Ext.define('material.material_Upload_Data', {
     id:'material_Upload_Data',
     region : 'center',
     layout : "fit",
-    title : '原材料入库',
+    title : '原材料批量入库',
     //requires : [ 'component.TableList', "component.YearList" ],
     reloadPage : function() {
         var p = Ext.getCmp('functionPanel');
@@ -218,7 +218,7 @@ Ext.define('material.material_Upload_Data', {
                                                         Ext.MessageBox.alert("错误原因", response.msg);
                                                         break;
                                                     default:
-                                                        Ext.MessageBox.alert("错误", "服务器异常，请检查网络连接，或者联系管理员");
+                                                        Ext.MessageBox.alert("错误", "上传失败");
                                                 }
 
                                             }

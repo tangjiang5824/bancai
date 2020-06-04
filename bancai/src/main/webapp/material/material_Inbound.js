@@ -111,7 +111,7 @@ Ext.define('material.material_Inbound', {
                     //重新加载行选项
                     var locationNameList_row = Ext.create('Ext.data.Store',{
                         id:'locationNameList_row',
-                        fields : [ 'rowNum'],
+                        fields : ['rowNum'],
                         proxy : {
                             type : 'ajax',
                             url : 'material/findStorePosition.do?warehouseNo='+warehouseNo,
@@ -352,7 +352,7 @@ Ext.define('material.material_Inbound', {
                                 //'存放位置' : location,
                                 '行': row,
                                 '列': col,
-                                '品号' : '',
+                                '品号' : 'a',
                                 '库存单位' : stockUnit,
                                 '仓库编号' : warehouse,
                                 '规格' : '',
@@ -461,7 +461,7 @@ Ext.define('material.material_Inbound', {
             id : 'addDataGrid',
             //dockedItems : [toolbar2],
             store : {
-                fields :['类型','长1','宽1','数量','成本','行','列','品号','库存单位','仓库编号','规格','原材料名称']
+                fields :['类型','长1','宽1','数量','成本','行','列','库存单位','仓库编号','规格','原材料名称']
             },
             //bbar:,
 
