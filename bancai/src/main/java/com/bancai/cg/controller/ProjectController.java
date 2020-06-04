@@ -21,6 +21,7 @@ import com.bancai.service.QueryService;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @RestController
@@ -421,10 +422,15 @@ public class ProjectController {
     //原材料出库以及更新领料单
     @RequestMapping(value = "/material/updateprojectmateriallist.do")
     @Transactional
-    public boolean updateprojectmateriallist(String s,String materialList) throws JSONException {
+    public boolean updateprojectmateriallist(String s,String materialList,HttpSession session) throws JSONException {
         //原材料,原材料仓库出库，直接进行给定数值的仓库扣减
         materialList=materialList.substring(0,materialList.length()-2);
         materialList=materialList+"]";
+        String userid= (String) session.getAttribute("userid");
+        String sql_log="insert into materiallog (type,userId,time) values(?,?,?)";
+        Date date=new Date();
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        int main_key= insertProjectService.insertDataToTable(sql_log,"1",userid,simpleDateFormat.format(date));
         JSONArray jsonArray1 = new JSONArray(materialList);
         for (int i = 0; i < jsonArray1.length(); i++) {
             JSONObject jsonObject=jsonArray1.getJSONObject(i);
@@ -440,7 +446,13 @@ public class ProjectController {
             if(!flag){
                 return  false;
             }
-        }
+//            //插入log详细信息
+//            String sql_detail="insert into materiallogdetail (materialName,count,specification,materiallogId) values (?,?,?,?) ";
+//            boolean is_log_right= insertProjectService.insertIntoTableBySQL(sql_detail,materialName,count,specification,String.valueOf(main_key));
+//            if(!is_log_right){
+//                return false;
+//            }
+         }
 
         //领料单
         JSONArray jsonArray = new JSONArray(s);
