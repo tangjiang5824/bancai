@@ -209,20 +209,32 @@ Ext.define('material.material_Receive',{
                     width:"80"
                 },{
                     text: '长',
-                    dataIndex: 'length'
+                    dataIndex: 'length',
+                    width:"150"
                 },{
                     text: '类型',
-                    dataIndex: 'materialType'
+                    dataIndex: 'materialType',
+                    width:"80"
                 },{
                     text: '宽',
-                    dataIndex: 'width'
-                },{
+                    dataIndex: 'width',
+                    width:"150"
+                },
+                {
+                    text: '规格',
+                    flex:1,
+                    dataIndex: 'specification'
+                },
+                {
                     text: '数量',
+                    flex:1,
                     dataIndex: 'number'
+
                 },
                 {
                     text: '领取数量',
                     dataIndex: 'tempPickNum',
+                    flex:1,
                     editor:{xtype : 'textfield', allowBlank : false}
                 }
                 ],
@@ -327,7 +339,7 @@ Ext.define('material.material_Receive',{
                     //var pickNumber = select.
                     var specificMaterialList = Ext.create('Ext.data.Store',{
                         //id,materialName,length,width,materialType,number
-                        fields:['materialName','length','materialType','width','number'],
+                        fields:['materialName','length','materialType','width','specification','number'],
                         proxy : {
                             type : 'ajax',
                             url : 'material/materiallsitbyname.do?materialName='+materialName,//获取同类型的原材料  +'&pickNum='+pickNum

@@ -427,10 +427,14 @@ public class ProjectController {
         materialList=materialList.substring(0,materialList.length()-2);
         materialList=materialList+"]";
         String userid= (String) session.getAttribute("userid");
-        String sql_log="insert into materiallog (type,userId,time) values(?,?,?)";
+        String sql_log="insert into materiallog (type,userId,time,projectId) values(?,?,?,?)";
         Date date=new Date();
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        int main_key= insertProjectService.insertDataToTable(sql_log,"1",userid,simpleDateFormat.format(date));
+        //领料单 jsonArray
+        JSONArray jsonArray = new JSONArray(s);
+        String projectId= jsonArray.getJSONObject(0).get("projectId")+"";
+        int main_key= insertProjectService.insertDataToTable(sql_log,"1",userid,simpleDateFormat.format(date),projectId);
+        //详细领的material
         JSONArray jsonArray1 = new JSONArray(materialList);
         for (int i = 0; i < jsonArray1.length(); i++) {
             JSONObject jsonObject=jsonArray1.getJSONObject(i);
@@ -440,6 +444,15 @@ public class ProjectController {
                 tempPickNum = jsonObject.get("tempPickNum") + "";
             }catch (Exception e){
 
+            }
+            if(!tempPickNum.equals("0")){
+                String materialName =jsonObject.get("materialName")+"";
+                String specification=jsonObject.get("specification")+"";
+                String sql_log_detail="insert into materiallogdetail (materialName,count,specification,materiallogId) values (?,?,?,?)";
+                boolean is_log_right= insertProjectService.insertIntoTableBySQL(sql_log_detail,materialName,tempPickNum,specification,String.valueOf(main_key));
+                if(!is_log_right){
+                    return false;
+                }
             }
             String sql="update material set number=number-? where id=?";
             boolean flag=insertProjectService.insertIntoTableBySQL(sql,tempPickNum,id);
@@ -455,7 +468,6 @@ public class ProjectController {
          }
 
         //领料单
-        JSONArray jsonArray = new JSONArray(s);
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject=jsonArray.getJSONObject(i);
             String countTemp=jsonObject.get("countTemp")+"";
