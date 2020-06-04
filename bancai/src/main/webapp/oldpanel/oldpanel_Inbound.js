@@ -215,7 +215,8 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                     iconCls : 'rukuicon ',
                     text : '添加',
                     handler: function(){
-                        var oldpanelType = Ext.getCmp('oldpanelType').rawValue;//getValue();
+                        var oldpanelTypeName = Ext.getCmp('oldpanelType').rawValue;//getValue();
+                        var oldpanelType = Ext.getCmp('oldpanelType').getValue();
                         var length = Ext.getCmp('length').getValue();
                         var length2 = Ext.getCmp('length2').getValue();
                         var width = Ext.getCmp('width').getValue();
@@ -232,6 +233,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                         var row = Ext.getCmp('speificLocation_row').getValue();
                         var col = Ext.getCmp('speificLocation_col').getValue();
                         var data = [{
+                            'oldpanelTypeName' : oldpanelTypeName,
                             'oldpanelType' : oldpanelType,
                             'length' : length ,
                             'length2' : length2 ,
@@ -318,12 +320,12 @@ Ext.define('oldpanel.oldpanel_Inbound', {
             //dockedItems : [toolbar2],
             store : {
                 // fields: ['材料名','品号', '长',"；类型","宽",'规格','库存单位','仓库编号','数量','成本','存放位置']
-                fields: ['oldpanelType','length','length2','width','width2','width3','oldpanelNo',
+                fields: ['oldpanelTypeName','length','length2','width','width2','width3','oldpanelNo',
                     'oldpanelName','inventoryUnit', 'number','weight','warehouseNo','location']
             },
 
             columns : [
-                {dataIndex : 'oldpanelType', text : '旧板类型', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
+                {dataIndex : 'oldpanelTypeName', text : '旧板类型', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
                 {dataIndex : 'length', text : '长一', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'length2', text : '长二', flex :1, editor : {xtype : 'textfield', allowBlank : true,}},
                 {dataIndex : 'width', text : '宽一', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
