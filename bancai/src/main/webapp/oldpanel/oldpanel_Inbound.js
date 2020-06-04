@@ -19,6 +19,122 @@ Ext.define('oldpanel.oldpanel_Inbound', {
         var me = this;
         //var materialtype="1";
 
+        //仓库编号
+        var storeNameList = Ext.create('Ext.data.Store',{
+            fields : [ 'warehouseName'],
+            proxy : {
+                type : 'ajax',
+                url : 'material/findStore.do', //查询所有的仓库编号
+                reader : {
+                    type : 'json',
+                    rootProperty: 'StoreName',
+                }
+            },
+            autoLoad : true
+        });
+        var storePosition = Ext.create('Ext.form.ComboBox',{
+            fieldLabel : '仓库名',
+            labelWidth : 50,
+            width : 200,
+            margin: '0 10 0 20',
+            id :  'storePosition',
+            name : 'storePosition',
+            matchFieldWidth: false,
+            emptyText : "--请选择--",
+            displayField: 'warehouseName',
+            valueField: 'warehouseNo',
+            editable : false,
+            store: storeNameList,
+            listeners:{
+                select: function(combo, record, index) {
+                    var type = oldpanelTypeList.rawValue;
+                    //console.log(MaterialTypeList.rawValue)//选择的值
+                    console.log(oldpanelTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
+                    //选中后
+                    var select = record[0].data;
+                    var warehouseNo = select.warehouseNo;
+                    console.log(warehouseNo)
+
+                    //重新加载行选项
+                    var locationNameList_row = Ext.create('Ext.data.Store',{
+                        id:'locationNameList_row',
+                        fields : ['rowNum'],
+                        proxy : {
+                            type : 'ajax',
+                            url : 'material/findStorePosition.do?warehouseNo='+warehouseNo,
+                            reader : {
+                                type : 'json',
+                                rootProperty: 'rowNum',
+                            }
+                        },
+                        autoLoad : true
+                    });
+                    speificLocation_row.setStore(locationNameList_row);
+
+                    //重新加载列选项
+                    var locationNameList_col = Ext.create('Ext.data.Store',{
+                        id:'locationNameList_col',
+                        fields : [ 'columnNum'],
+                        proxy : {
+                            type : 'ajax',
+                            url : 'material/findStorePosition.do?warehouseNo='+warehouseNo,
+                            reader : {
+                                type : 'json',
+                                rootProperty: 'columnNum',
+                            }
+                        },
+                        autoLoad : true
+                    });
+                    speificLocation_col.setStore(locationNameList_col);
+
+                }
+            }
+        });
+        //仓库存放位置--行
+        var speificLocation_row = Ext.create('Ext.form.ComboBox',{
+            fieldLabel : '行',
+            labelWidth : 20,
+            width : 80,
+            margin: '0 10 0 10',
+            id :  'speificLocation_row',
+            name : 'speificLocation_row',
+            matchFieldWidth: false,
+            //emptyText : "--请选择--",
+            displayField: 'rowNum',
+            valueField: 'rowNum',
+            editable : false,
+            //store: locationNameList_row,
+            listeners:{
+                select: function(combo, record, index) {
+                    var type = oldpanelTypeList.rawValue;
+                    //console.log(MaterialTypeList.rawValue)//选择的值
+                    console.log(oldpanelTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
+                    //console.log(record[0].data.materialName);
+                }
+            }
+        });
+        //仓库存放位置--列
+        var speificLocation_col = Ext.create('Ext.form.ComboBox',{
+            fieldLabel : '列',
+            labelWidth : 20,
+            width : 80,
+            id :  'speificLocation_col',
+            name : 'speificLocation_col',
+            matchFieldWidth: false,
+            //emptyText : "--请选择--",
+            displayField: 'columnNum',
+            valueField: 'columnNum',
+            editable : false,
+            //store: locationNameList_col,
+            listeners:{
+                select: function(combo, record, index) {
+                    var type = oldpanelTypeList.rawValue;
+                    //console.log(MaterialTypeList.rawValue)//选择的值
+                    console.log(oldpanelTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
+                    //console.log(record[0].data.materialName);
+                }
+            }
+        });
 
         var oldPanelNameList = Ext.create('Ext.data.Store',{
             fields : [ 'oldpanelName'],
@@ -79,15 +195,27 @@ Ext.define('oldpanel.oldpanel_Inbound', {
             items: [
                 {xtype: 'textfield', fieldLabel: '数量', id: 'number', width: 190, labelWidth: 30, margin: '0 10 0 70', name: 'number', value: ""},
                 {xtype: 'textfield', fieldLabel: '重量', id: 'weight', width: 190, labelWidth: 30, margin: '0 10 0 50', name: 'weight', value: ""},
-                {xtype: 'textfield', fieldLabel: '仓库编号', id: 'warehouseNo', width: 220, labelWidth: 60, margin: '0 10 0 50', name: 'warehouseNo', value: ""},
-                {xtype: 'textfield', fieldLabel: '存放位置', id: 'position', width: 220, labelWidth: 60, margin: '0 10 0 50', name: 'position', value: ""},
+                //{xtype: 'textfield', fieldLabel: '仓库编号', id: 'warehouseNo', width: 220, labelWidth: 60, margin: '0 10 0 50', name: 'warehouseNo', value: ""},
+                //{xtype: 'textfield', fieldLabel: '存放位置', id: 'position', width: 220, labelWidth: 60, margin: '0 10 0 50', name: 'position', value: ""},
+                storePosition,{
+                    xtype:'tbtext',
+                    text:'存放位置:',
+                    margin: '0 0 0 20',
+                    //id: 'number',
+                    width: 60,
+                    //labelWidth: 30,
+                    //name: 'number',
+                    //value: "",
+                },
+                speificLocation_row,
+                speificLocation_col,
                 {xtype : 'button',
                     margin: '0 10 0 70',
                     iconAlign : 'center',
                     iconCls : 'rukuicon ',
                     text : '添加',
                     handler: function(){
-                        var oldpanelType = Ext.getCmp('oldpanelType').getValue();
+                        var oldpanelType = Ext.getCmp('oldpanelType').rawValue;//getValue();
                         var length = Ext.getCmp('length').getValue();
                         var length2 = Ext.getCmp('length2').getValue();
                         var width = Ext.getCmp('width').getValue();
@@ -98,8 +226,11 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                         var inventoryUnit = Ext.getCmp('inventoryUnit').getValue();
                         var number = Ext.getCmp('number').getValue();
                         var weight = Ext.getCmp('weight').getValue();
-                        var warehouseNo = Ext.getCmp('warehouseNo').getValue();
-                        var position = Ext.getCmp('position').getValue();
+                        var warehouseNo = Ext.getCmp('storePosition').getValue();
+                        //var warehouseNo = Ext.getCmp('warehouseNo').getValue();
+                        //var position = Ext.getCmp('position').getValue();
+                        var row = Ext.getCmp('speificLocation_row').getValue();
+                        var col = Ext.getCmp('speificLocation_col').getValue();
                         var data = [{
                             'oldpanelType' : oldpanelType,
                             'length' : length ,
@@ -113,7 +244,9 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                             'number' : number,
                             'weight' : weight,
                             'warehouseNo' : warehouseNo,
-                            'position' : position,
+                            'row':row,
+                            'col':col,
+                            //'position' : position,
                         }];
                         //点击查询获得输入的数据
                         // console.log(Ext.getCmp('length').getValue());
@@ -139,7 +272,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                 xtype : 'button',
                 iconAlign : 'center',
                 iconCls : 'rukuicon ',
-                text : '创建',
+                text : '确认入库',
                 region:'center',
                 bodyStyle: 'background:#fff;',
                 handler : function() {
@@ -202,7 +335,8 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                 {dataIndex : 'number', text : '数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'weight', text : '重量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'warehouseNo', text : '仓库编号', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'location', text : '存放位置', flex :1, editor : {xtype : 'textfield', allowBlank : false,}}
+                {dataIndex : 'row', text : '行', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'col', text : '列', flex :1, editor : {xtype : 'textfield', allowBlank : false,}}
             ],
             viewConfig : {
                 plugins : {
