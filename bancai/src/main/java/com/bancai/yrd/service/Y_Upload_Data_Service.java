@@ -32,15 +32,15 @@ public class Y_Upload_Data_Service extends BaseService {
      * 添加数据
      */
     @Transactional
-    public void oldpanelAddData(String tableName,int oldpanelNo,String oldpanelName,double length,double length2,String oldpanelType,double width,
-                                double width2,double width3,String inventoryUnit,String warehouseNo,String position,double number,double weight,int uploadId){
+    public void oldpanelAddData(String tableName,int oldpanelNo,String oldpanelName,double length,double length2,int oldpanelType,double width,
+                                double width2,double width3,String inventoryUnit,String warehouseNo,int rowNo,int columNo,double number,double weight,int uploadId){
         log.debug("com.bancai.yrd.com.bancai.service.Y_Upload_Data_Service.oldpanelAddData");
 
         jo.update("insert into "+tableName+"(oldpanelNo,oldpanelName,length,length2,oldpanelType,width," +
-                        "width2,width3,inventoryUnit,warehouseNo,position,countUse,countStore,weight,uploadId) " +
+                        "width2,width3,inventoryUnit,warehouseNo,rowNo,columNo,countUse,countStore,weight,uploadId) " +
                         "values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                 oldpanelNo,oldpanelName,length,length2,oldpanelType,width,
-                width2,width3,inventoryUnit,warehouseNo,position,number,number,weight,uploadId);
+                width2,width3,inventoryUnit,warehouseNo,rowNo,columNo,number,number,weight,uploadId);
         //return true;
     }
 
