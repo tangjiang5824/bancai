@@ -58,8 +58,8 @@ public class MaterialDataController {
         int main_key= insertProjectService.insertDataToTable(sql_in,"0",userId,simpleDateFormat.format(date));
         for(int i=0;i< jsonArray.length();i++) {
             JSONObject jsonTemp = jsonArray.getJSONObject(i);
-            String length2="";
-            String width2="";
+            String length2=null;
+            String width2=null;
            try{
               length2=jsonTemp.get("长2")+"";
            }catch (JSONException e){
@@ -70,8 +70,6 @@ public class MaterialDataController {
             }catch (JSONException e){
                 width2=null;
             }
-            if (length2.equals("")) length2=null;
-            if(width2.equals("")) width2=null;
 
             System.out.println(jsonTemp);
             String materialNo=jsonTemp.get("品号").toString()+"";
