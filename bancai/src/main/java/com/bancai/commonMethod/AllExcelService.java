@@ -1,5 +1,6 @@
 package com.bancai.commonMethod;
 
+import com.bancai.cg.service.InsertProjectService;
 import com.bancai.domain.DataList;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,8 @@ public class AllExcelService extends BaseService {
 	private TableService tableService;
 	@Autowired
 	private QueryService queryService;
+	@Autowired
+	private InsertProjectService insertProjectService;
 
 	private void saveData(DataList dataList,String userid,String tableName) {
 		int userId = Integer.parseInt(userid);
@@ -37,7 +40,7 @@ public class AllExcelService extends BaseService {
 
 
 	/**
-	 * 上传数据
+	 * 原材料上传数据
 	 * 
 	 * @param inputStream
 	 * @param userid
@@ -45,12 +48,19 @@ public class AllExcelService extends BaseService {
 	 * @throws IOException
 	 */
 	@Transactional
-	public UploadDataResult uploadExcelData(InputStream inputStream,String userid, String tablename) throws IOException {
+	public UploadDataResult uploadExcelData(InputStream inputStream,String userid, String tablename,String main_key) throws IOException {
 		DataList dataList;
 		UploadDataResult result = new UploadDataResult();
 		Excel excel = new Excel(inputStream);
 		dataList = excel.readExcelContent();
-
+		if (tablename.equals("material")) {
+			for (int i = 0; i < dataList.size(); i++) {
+				String materialName = dataList.get(i).get("materialName") + "";
+				String specification = dataList.get(i).get("specification")+"";
+				String sql_log_detail = "insert into materiallogdetail (materialName,count,specification,materiallogId) values (?,?,?,?)";
+				boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_log_detail,materialName,"1",specification,String.valueOf(main_key));
+			}
+		}
 		// 插入数据
 		//log.debug("materialtype= "+materialtype);
 		boolean upload = uploadData(dataList,userid,tablename);

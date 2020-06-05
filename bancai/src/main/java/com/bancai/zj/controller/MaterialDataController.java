@@ -105,13 +105,18 @@ public class MaterialDataController {
      * 上传excel文件,produces = { "text/html;charset=UTF-8" }
      * */
     @RequestMapping(value = "/uploadMaterialExcel.do")
+    @Transactional
     public WebResponse uploadMaterial(MultipartFile uploadFile, String tableName, HttpSession session) {
         WebResponse response = new WebResponse();
         String userid = (String) session.getAttribute("userid");
-        JSONArray array = new JSONArray();
+        String sql_log="insert into materiallog (type,userId,time) values(?,?,?)";
+        Date date=new Date();
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        int main_key= insertProjectService.insertDataToTable(sql_log,"0",userid,simpleDateFormat.format(date));
+      //  JSONArray array = new JSONArray();
         try {
             //UploadDataResult result = excelService.uploadExcelData(uploadFile.getInputStream(),userid,tableName);
-            UploadDataResult result = allExcelService.uploadExcelData(uploadFile.getInputStream(),userid,tableName);
+            UploadDataResult result = allExcelService.uploadExcelData(uploadFile.getInputStream(),userid,tableName,String.valueOf(main_key));
             response.put("value",result.dataList);
             response.put("totalCount", result.dataList.size());
 
