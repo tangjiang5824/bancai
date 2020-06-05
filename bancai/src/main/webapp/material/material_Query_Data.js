@@ -61,13 +61,13 @@ Ext.define('material.material_Query_Data',{
                 },{
                     xtype:'tbtext',
                     text:'至',
-                    itemId:'move_left',
+                    // itemId:'move_left',
                     // handler:function(){
                     //     var records=grid2.getSelectionModel().getSelection();
                     //     MaterialList2.remove(records);
                     //     MaterialList.add(records);
                     // }
-                }, 
+                },
                 {
                     xtype: 'textfield',
                     fieldLabel: '宽度上限',

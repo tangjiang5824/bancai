@@ -137,7 +137,7 @@ public class MaterialDataController {
      * */
     @RequestMapping(value = "/material/historyDataList.do")
     public WebResponse materialDataList(Integer start, Integer limit, String tableName, String startWidth,
-                                         String endWidth, String startLength, String endLength, String mType) throws ParseException {
+                                         String endWidth, String startLength, String endLength, String materialType) throws ParseException {
         //log.debug(startWidth+" "+endWidth);
 
         System.out.println("------");
@@ -158,8 +158,8 @@ public class MaterialDataController {
         if (endLength.length() != 0) {
             c.and(new mysqlcondition("length", "<=", endLength));
         }
-        if (mType.length() != 0) {
-            c.and(new mysqlcondition("materialType", "=", mType));
+        if (materialType.length() != 0) {
+            c.and(new mysqlcondition("materialType", "=", materialType));
         }
 //        if (materialType.length() != 0) {
 //            c.and(new mysqlcondition("materialtype", "=", materialType));
