@@ -1,6 +1,7 @@
 package com.bancai.yrd.controller;
 
 import com.bancai.cg.service.InsertProjectService;
+import com.bancai.commonMethod.AllExcelService;
 import com.bancai.commonMethod.NewCondition;
 import com.bancai.commonMethod.QueryAllService;
 import com.bancai.domain.DataList;
@@ -34,6 +35,8 @@ public class Oldpanel_Data_Controller {
     private Y_Upload_Data_Service y_Upload_Data_Service;
     @Autowired
     private InsertProjectService insertProjectService;
+    @Autowired
+    private AllExcelService allExcelService;
 
     Logger log = Logger.getLogger(Oldpanel_Data_Controller.class);
 
@@ -131,26 +134,45 @@ public class Oldpanel_Data_Controller {
      * 上传excel文件
      * */
 
-    @RequestMapping(value = "/oldpanel/uploadExcel.do", produces = {"text/html;charset=UTF-8"})
-    public String oldpanelUploadData(MultipartFile uploadFile, HttpSession session) {
+    //produces = {"text/html;charset=UTF-8"}
+    @RequestMapping(value = "/uploadOldpanelExcel.do")
+    public WebResponse uploadOldpanel(MultipartFile uploadFile, String tableName, HttpSession session) {
         WebResponse response = new WebResponse();
-        String tableName = "oldpanel";
-        int userid = Integer.parseInt(session.getAttribute("userid").toString());
+        String userId = (String) session.getAttribute("userid");
+        JSONArray array = new JSONArray();
         try {
-            UploadDataResult result = y_Upload_Data_Service.oldpanelUploadData(uploadFile.getInputStream(), tableName, userid);
-            response.setSuccess(result.success);
-            response.setErrorCode(result.errorCode);
-            response.setValue(result.data);
-
+            UploadDataResult result = allExcelService.uploadExcelData(uploadFile.getInputStream(),userId,tableName);
+            response.put("value",result.dataList);
+            response.put("totalCount", result.dataList.size());
         } catch (IOException e) {
             e.printStackTrace();
             response.setSuccess(false);
             response.setErrorCode(1000); //未知错误
             response.setMsg(e.getMessage());
         }
-        net.sf.json.JSONObject json = net.sf.json.JSONObject.fromObject(response);
-        return json.toString();
+        System.out.println(response.get("success"));
+        System.out.println(response.get("value"));
+        return response;
     }
+//    public String oldpanelUploadData(MultipartFile uploadFile, HttpSession session) {
+//        WebResponse response = new WebResponse();
+//        String tableName = "oldpanel";
+//        int userid = Integer.parseInt(session.getAttribute("userid").toString());
+//        try {
+//            UploadDataResult result = y_Upload_Data_Service.oldpanelUploadData(uploadFile.getInputStream(), tableName, userid);
+//            response.setSuccess(result.success);
+//            response.setErrorCode(result.errorCode);
+//            response.setValue(result.data);
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            response.setSuccess(false);
+//            response.setErrorCode(1000); //未知错误
+//            response.setMsg(e.getMessage());
+//        }
+//        net.sf.json.JSONObject json = net.sf.json.JSONObject.fromObject(response);
+//        return json.toString();
+//    }
 
     /**
      * 查旧板表

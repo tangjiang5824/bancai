@@ -20,7 +20,7 @@ Ext.define("menu.MenuRole_upload", {
 					leaf : true
 				} ,{
 					text : '旧板批量入库',
-					id : 'oldpanel.Old_Upload_Data',
+					id : 'oldpanel.old_Upload_Data',
 					leaf : true
 				} ,{
 					text : '旧板库存查询',
