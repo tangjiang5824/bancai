@@ -20,6 +20,8 @@ import com.bancai.yrd.service.Y_Upload_Data_Service;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @RestController
 public class Oldpanel_Data_Controller {
@@ -43,32 +45,81 @@ public class Oldpanel_Data_Controller {
 
         JSONArray jsonArray = new JSONArray(s);
         String tableName = "oldpanel";
-        int uploadId = Integer.parseInt(session.getAttribute("userid").toString());
+//        int uploadId = Integer.parseInt(session.getAttribute("userid").toString());
+        String uploadId = (String)session.getAttribute("userid");
+        Date date=new Date();
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String sql_addLog = "insert into oldpanellog (type,userId,time) values(?,?,?)";
+        int oldpanellogId= insertProjectService.insertDataToTable(sql_addLog,"0",uploadId,simpleDateFormat.format(date));
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonTemp = jsonArray.getJSONObject(i);
             //获得第i条数据的各个属性值
             System.out.println(tableName + "第" + i + "个:userid=" + uploadId + "---" + jsonTemp);
-            log.debug(tableName + "第" + i + "个:userid=" + uploadId + "---" + jsonTemp);
-            //String oldpanelType = jsonTemp.get("oldpanelType").toString();
-            int oldpanelType = Integer.parseInt(jsonTemp.get("oldpanelType").toString()+"");
-            int oldpanelNo = Integer.parseInt(jsonTemp.get("oldpanelNo").toString()+"");
-            String oldpanelName = (String) jsonTemp.get("oldpanelName");
-            String inventoryUnit = (String) jsonTemp.get("inventoryUnit");
-            double length = Double.parseDouble(jsonTemp.get("length").toString()+"");
-            double length2 = Double.parseDouble(jsonTemp.get("length2").toString()+"");
-            double width = Double.parseDouble(jsonTemp.get("width").toString()+"");
-            double width2 = Double.parseDouble(jsonTemp.get("width2").toString()+"");
-            double width3 = Double.parseDouble(jsonTemp.get("width3").toString()+"");
-            double number = Double.parseDouble(jsonTemp.get("number").toString()+"");
-            double weight = Double.parseDouble(jsonTemp.get("weight").toString()+"");
-            String warehouseNo = (String) jsonTemp.get("warehouseNo");
-            int rowNo = Integer.parseInt(jsonTemp.get("row").toString()+"");
-            int columNo = Integer.parseInt(jsonTemp.get("col").toString()+"");
-            //String position = (String) jsonTemp.get("position");
+            String oldpanelType=jsonTemp.get("oldpanelType")+"";
+            String oldpanelNo=jsonTemp.get("oldpanelNo")+"";
+            String oldpanelName=jsonTemp.get("oldpanelName")+"";
+            String inventoryUnit=jsonTemp.get("inventoryUnit")+"";
+            String specification=jsonTemp.get("specification")+"";
+            String length=jsonTemp.get("length")+"";
+            String length2 = null;
+            try{
+                length2=jsonTemp.get("length2")+"";
+            }catch (JSONException e){
+                length2=null;
+            }
+            String width=jsonTemp.get("width")+"";
+            String width2 = null;
+            try{
+                width2=jsonTemp.get("width2")+"";
+            }catch (JSONException e){
+                width2=null;
+            }
+            String width3 = null;
+            try{
+                width3=jsonTemp.get("width3")+"";
+            }catch (JSONException e){
+                width3=null;
+            }
+            String number=jsonTemp.get("number")+"";
+            String weight=jsonTemp.get("weight")+"";
+            String warehouseNo=jsonTemp.get("warehouseNo")+"";
+            String rowNo=jsonTemp.get("row")+"";
+            String columNo=jsonTemp.get("col")+"";
 
+            String sql_addOldpanel = "insert into "+ tableName +" (oldpanelNo,oldpanelName,length,length2,oldpanelType,width," +
+                    "width2,width3,inventoryUnit,specification,warehouseNo,rowNo,columNo,countUse,countStore,weight,uploadId) " +
+                    "values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            boolean isright= insertProjectService.insertIntoTableBySQL(sql_addOldpanel,oldpanelNo,oldpanelName,length,length2,oldpanelType,
+                    width,width2,width3,inventoryUnit,specification,warehouseNo,rowNo,columNo,number,number,weight,uploadId);
+            if(!isright){
+                return false;
+            }
+            //插入log详细信息
+            String sql_addLogDetail="insert into oldpanellogdetail (oldpanelName,count,specification,oldpanellogId) values (?,?,?,?) ";
+            boolean is_log_right= insertProjectService.insertIntoTableBySQL(sql_addLogDetail,oldpanelName,number,specification,String.valueOf(oldpanellogId));
+            if(!is_log_right){
+                return false;
+            }
+//            log.debug(tableName + "第" + i + "个:userid=" + uploadId + "---" + jsonTemp);
+//            String oldpanelType = jsonTemp.get("oldpanelType").toString();
+//            int oldpanelType = Integer.parseInt(jsonTemp.get("oldpanelType").toString()+"");
+//            int oldpanelNo = Integer.parseInt(jsonTemp.get("oldpanelNo").toString()+"");
+//            String oldpanelName = (String) jsonTemp.get("oldpanelName");
+//            String inventoryUnit = (String) jsonTemp.get("inventoryUnit");
+//            double length = Double.parseDouble(jsonTemp.get("length").toString()+"");
+//            double length2 = Double.parseDouble(jsonTemp.get("length2").toString()+"");
+//            double width = Double.parseDouble(jsonTemp.get("width").toString()+"");
+//            double width2 = Double.parseDouble(jsonTemp.get("width2").toString()+"");
+//            double width3 = Double.parseDouble(jsonTemp.get("width3").toString()+"");
+//            double number = Double.parseDouble(jsonTemp.get("number").toString()+"");
+//            double weight = Double.parseDouble(jsonTemp.get("weight").toString()+"");
+//            String warehouseNo = (String) jsonTemp.get("warehouseNo");
+//            int rowNo = Integer.parseInt(jsonTemp.get("row").toString()+"");
+//            int columNo = Integer.parseInt(jsonTemp.get("col").toString()+"");
+            //String position = (String) jsonTemp.get("position");
             //对每条数据处理
-            y_Upload_Data_Service.oldpanelAddData(tableName, oldpanelNo, oldpanelName, length, length2, oldpanelType, width,
-                    width2, width3, inventoryUnit, warehouseNo, rowNo, columNo, number, weight, uploadId);
+//            y_Upload_Data_Service.oldpanelAddData(tableName, oldpanelNo, oldpanelName, length, length2, oldpanelType, width,
+//                    width2, width3, inventoryUnit, warehouseNo, rowNo, columNo, number, weight, uploadId);
 
         }
 

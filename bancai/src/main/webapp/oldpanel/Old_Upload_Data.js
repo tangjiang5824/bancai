@@ -2,7 +2,7 @@ Ext.define('oldpanel.Old_Upload_Data', {
     extend : 'Ext.panel.Panel',
     region : 'center',
     layout : "fit",
-    title : '旧板材库数据上传',
+    title : '旧板批量入库',
     requires : [ 'component.TableList', "component.YearList" ],
     reloadPage : function() {
         var p = Ext.getCmp('functionPanel');
