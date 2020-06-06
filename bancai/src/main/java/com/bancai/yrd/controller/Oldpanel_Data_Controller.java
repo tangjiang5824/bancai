@@ -138,10 +138,14 @@ public class Oldpanel_Data_Controller {
     @RequestMapping(value = "/uploadOldpanelExcel.do")
     public WebResponse uploadOldpanel(MultipartFile uploadFile, String tableName, HttpSession session) {
         WebResponse response = new WebResponse();
-        String userId = (String) session.getAttribute("userid");
+        String uploadId = (String) session.getAttribute("userid");
+        Date date=new Date();
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String sql_addLog = "insert into oldpanellog (type,userId,time) values(?,?,?)";
+        int oldpanellogId= insertProjectService.insertDataToTable(sql_addLog,"0",uploadId,simpleDateFormat.format(date));
         JSONArray array = new JSONArray();
         try {
-            UploadDataResult result = allExcelService.uploadExcelData(uploadFile.getInputStream(),userId,tableName);
+            UploadDataResult result = allExcelService.uploadExcelData(uploadFile.getInputStream(),uploadId,tableName,String.valueOf(oldpanellogId));
             response.put("value",result.dataList);
             response.put("totalCount", result.dataList.size());
         } catch (IOException e) {
