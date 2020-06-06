@@ -2,7 +2,7 @@ Ext.define('oldpanel.Old_Query_Data',{
     extend:'Ext.panel.Panel',
     region: 'center',
     layout:'fit',
-    title: '旧板材库数据查询',
+    title: '旧板库存查询',
     initComponent: function(){
         var itemsPerPage = 50;
         var tableName="oldpanel";
@@ -248,7 +248,8 @@ Ext.define('oldpanel.Old_Query_Data',{
                 {dataIndex : 'countStore', text : '库存数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'weight', text : '重量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'warehouseNo', text : '仓库编号', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'location', text : '存放位置', flex :1, editor : {xtype : 'textfield', allowBlank : false,}}
+                {dataIndex : 'rowNo', text : '行', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'columNo', text : '列', flex :1, editor : {xtype : 'textfield', allowBlank : false,}}
             ],
 
             tbar: toobar,

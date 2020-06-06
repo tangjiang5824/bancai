@@ -178,6 +178,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                 {xtype: 'textfield', fieldLabel: '品号', id: 'oldpanelNo', width: 190, labelWidth: 30, margin: '0 10 0 85', name: 'oldpanelNo', value: ""},
                 {xtype: 'textfield', fieldLabel: '旧板名称', id: 'oldpanelName', width: 220, labelWidth: 60, margin: '0 10 0 85', name: 'oldpanelName', value: ""},
                 {xtype: 'textfield', fieldLabel: '库存单位', id: 'inventoryUnit', width: 220, labelWidth: 60, margin: '0 10 0 40', name: 'inventoryUnit', value: ""},
+                {xtype: 'textfield', fieldLabel: '规格', id: 'specification', width: 220, labelWidth: 60, margin: '0 10 0 40', name: 'specification', value: ""},
             ]
         });
         var toolbar1 = Ext.create('Ext.toolbar.Toolbar', {
@@ -225,6 +226,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                         var oldpanelNo = Ext.getCmp('oldpanelNo').getValue();
                         var oldpanelName = Ext.getCmp('oldpanelName').getValue();
                         var inventoryUnit = Ext.getCmp('inventoryUnit').getValue();
+                        var specification = Ext.getCmp('specification').getValue();
                         var number = Ext.getCmp('number').getValue();
                         var weight = Ext.getCmp('weight').getValue();
                         var warehouseNo = Ext.getCmp('storePosition').getValue();
@@ -243,6 +245,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                             'oldpanelNo' : oldpanelNo,
                             'oldpanelName' : oldpanelName,
                             'inventoryUnit' : inventoryUnit,
+                            'specification' : specification,
                             'number' : number,
                             'weight' : weight,
                             'warehouseNo' : warehouseNo,
@@ -321,7 +324,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
             store : {
                 // fields: ['材料名','品号', '长',"；类型","宽",'规格','库存单位','仓库编号','数量','成本','存放位置']
                 fields: ['oldpanelTypeName','length','length2','width','width2','width3','oldpanelNo',
-                    'oldpanelName','inventoryUnit', 'number','weight','warehouseNo','location']
+                    'oldpanelName','inventoryUnit', 'specification', 'number','weight','warehouseNo','location']
             },
 
             columns : [
@@ -334,6 +337,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                 {dataIndex : 'oldpanelNo', text : '品号', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'oldpanelName', text : '旧板名称', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'inventoryUnit', text : '库存单位', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'specification', text : '规格', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'number', text : '数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'weight', text : '重量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'warehouseNo', text : '仓库编号', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
