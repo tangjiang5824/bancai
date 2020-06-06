@@ -166,17 +166,17 @@ Ext.define('material.material_Statistics_Records',{
                 editable:true
             },
             columns : [
-                { text: '材料名', dataIndex: '材料单编号', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '上传人',  dataIndex: '上传人' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '数量', dataIndex: '上传时间', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '项目名称', dataIndex: '项目名称',flex :1,editor:{xtype : 'textfield', allowBlank : false} },
-                {
-                    header: "操作", dataIndex: 'Gender',
-                    renderer: function() {                      //此处为主要代码
-                        //var str = "<input type='button' value='查看' onclick='look()'>";
-                        //return str;
-                    }
-                },
+                { text: '操作人员',  dataIndex: 'username' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
+                { text: '操作时间', dataIndex: 'time',flex :1,editor:{xtype : 'textfield', allowBlank : false} },
+                { text: '材料名', dataIndex: 'materialName', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
+                { text: '操作数量', dataIndex: 'count', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
+                // {
+                //     header: "操作", dataIndex: 'Gender',
+                //     renderer: function() {                      //此处为主要代码
+                //         //var str = "<input type='button' value='查看' onclick='look()'>";
+                //         //return str;
+                //     }
+                // },
             ],
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 3
