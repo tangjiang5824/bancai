@@ -80,7 +80,7 @@ Ext.define('material.material_Upload_Data', {
                 { text: '规格',  dataIndex: 'specification' ,flex :1,editor:{xtype : 'textfield', allowBlank : false}},
                 { text: '库存单位', dataIndex: 'inventoryUnit', flex :1,editor:{xtype : 'textfield', allowBlank : false}},
                 { text: '仓库编号', dataIndex: 'warehouseNo',flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '位置-行', dataIndex: 'rowNO',flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
+                { text: '位置-行', dataIndex: 'rowNo',flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
                 { text: '位置-列', dataIndex: 'columNo',flex :1 ,editor:{xtype : 'textfield', allowBlank : false}}
             ],
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {

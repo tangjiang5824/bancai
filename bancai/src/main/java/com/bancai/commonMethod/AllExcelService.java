@@ -40,7 +40,7 @@ public class AllExcelService extends BaseService {
 
 
 	/**
-	 * 原材料上传数据
+	 * 原材料上传数据，旧板上传数据
 	 * 
 	 * @param inputStream
 	 * @param userid
@@ -50,20 +50,58 @@ public class AllExcelService extends BaseService {
 	@Transactional
 	public UploadDataResult uploadExcelData(InputStream inputStream,String userid, String tablename,String main_key) throws IOException {
 		DataList dataList;
+		DataList dataList2;
 		UploadDataResult result = new UploadDataResult();
 		Excel excel = new Excel(inputStream);
 		dataList = excel.readExcelContent();
+		dataList2 = dataList;
+		DataList typeList;
+//		System.out.println(dataList);
 		if (tablename.equals("material")) {
 			for (int i = 0; i < dataList.size(); i++) {
-				String materialName = dataList.get(i).get("materialName") + "";
-				String specification = dataList.get(i).get("specification")+"";
-				String sql_log_detail = "insert into materiallogdetail (materialName,count,specification,materiallogId) values (?,?,?,?)";
-				boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_log_detail,materialName,"1",specification,String.valueOf(main_key));
+				String materialTypeName = dataList.get(i).get("materialType") + "";
+				materialTypeName.toUpperCase();
+				String sql_trans = "select materialType from materialtype where materialTypeName = ?";
+				typeList = queryService.query(sql_trans,materialTypeName);
+				if(typeList.isEmpty()) {
+					result.setErrorCode(2);
+					return result;
+				} else {
+					String materialType = typeList.get(0).get("materialType") + "";
+					dataList2.get(i).put("materialType",materialType);
+					String materialName = dataList.get(i).get("materialName") + "";
+					String specification = dataList.get(i).get("specification")+"";
+					String sql_log_detail = "insert into materiallogdetail (materialName,count,specification,materiallogId) values (?,?,?,?)";
+					boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_log_detail,materialName,"1",specification,String.valueOf(main_key));
+
+				}
+			}
+		} else if (tablename.equals("oldpanel")) {
+			for (int i = 0; i < dataList.size(); i++) {
+				String oldpanelTypeName = dataList.get(i).get("oldpanelType") + "";
+				oldpanelTypeName.toUpperCase();
+				String sql_trans = "select oldpanelType from oldpaneltype where oldpanelTypeName = ?";
+				typeList = queryService.query(sql_trans,oldpanelTypeName);
+				if(typeList.isEmpty())
+				{
+					result.setErrorCode(2);
+					return result;
+				} else {
+					String oldpanelType = typeList.get(0).get("oldpanelType") + "";
+					dataList2.get(i).put("oldpanelType",oldpanelType);
+					String countStore = dataList.get(i).get("countStore") + "";
+					dataList2.get(i).put("countUse",countStore);
+//					System.out.println(dataList2);
+					String oldpanelName = dataList.get(i).get("oldpanelName") + "";
+					String specification = dataList.get(i).get("specification")+"";
+					String sql_log_detail = "insert into oldpanellogdetail (oldpanelName,count,specification,oldpanellogId) values (?,?,?,?)";
+					boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_log_detail,oldpanelName,countStore,specification,String.valueOf(main_key));
+				}
 			}
 		}
 		// 插入数据
 		//log.debug("materialtype= "+materialtype);
-		boolean upload = uploadData(dataList,userid,tablename);
+		boolean upload = uploadData(dataList2,userid,tablename);
 		result.dataList = dataList;
 		result.success = upload;
 		return result;

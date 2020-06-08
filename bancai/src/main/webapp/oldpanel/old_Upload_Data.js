@@ -54,7 +54,7 @@ Ext.define('oldpanel.old_Upload_Data', {
                 editable:true
             },
             columns : [
-                {dataIndex : 'oldpanelTypeName', text : '旧板类型', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
+                {dataIndex : 'oldpanelType', text : '旧板类型', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
                 {dataIndex : 'length', text : '长一', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'length2', text : '长二', flex :1, editor : {xtype : 'textfield', allowBlank : true,}},
                 {dataIndex : 'width', text : '宽一', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
@@ -64,11 +64,11 @@ Ext.define('oldpanel.old_Upload_Data', {
                 {dataIndex : 'oldpanelName', text : '旧板名称', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'inventoryUnit', text : '库存单位', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'specification', text : '规格', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'number', text : '数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'countStore', text : '数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'weight', text : '重量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'warehouseNo', text : '仓库编号', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'row', text : '行', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'col', text : '列', flex :1, editor : {xtype : 'textfield', allowBlank : false,}}
+                {dataIndex : 'rowNo', text : '行', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'columNo', text : '列', flex :1, editor : {xtype : 'textfield', allowBlank : false,}}
             ],
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 3
