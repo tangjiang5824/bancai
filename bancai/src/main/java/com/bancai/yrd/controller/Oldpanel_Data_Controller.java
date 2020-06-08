@@ -141,7 +141,7 @@ public class Oldpanel_Data_Controller {
         String userId = (String) session.getAttribute("userid");
         JSONArray array = new JSONArray();
         try {
-            UploadDataResult result = allExcelService.uploadExcelData(uploadFile.getInputStream(),userId,tableName);
+            UploadDataResult result = allExcelService.uploadExcelData(uploadFile.getInputStream(),userId,tableName,"123");
             response.put("value",result.dataList);
             response.put("totalCount", result.dataList.size());
         } catch (IOException e) {
