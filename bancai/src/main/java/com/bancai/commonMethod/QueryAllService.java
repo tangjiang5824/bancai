@@ -75,7 +75,7 @@ public class QueryAllService extends BaseService {
 		log.debug(c.toString()+"   "+c.getParameters());
 		String whereClause=c.toString();
 		if(whereClause.length()>0)
-			return queryPage(start,limit,"select username,type,time,materialName,sum(count) as sumcount from "+tableName+" where "+whereClause,c.getParameters()+" GROUP BY materialName");
+			return queryPage(start,limit,"select username,type,time,materialName,sum(count) as sumcount from "+tableName+" where "+whereClause+" GROUP BY materialName",c.getParameters());
 		else
 			return queryPage(start,limit,"select username,type,time,materialName,sum(count) as sumcount from "+tableName+" GROUP BY materialName");
 	}
