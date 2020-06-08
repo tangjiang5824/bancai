@@ -16,7 +16,7 @@ Ext.define('material.material_Statistics_Records',{
                     //id :'userId',
                     width: 160,
                     labelWidth: 50,
-                    name: 'userId',
+                    name: 'userName',
                     value:"",
                 },
                 // {
@@ -66,10 +66,10 @@ Ext.define('material.material_Statistics_Records',{
                     handler: function(){
                         material_Statistics_Records_Store.load({
                             params : {
-                                // userId : Ext.getCmp('userId').getValue(),
-                                // endTime : Ext.getCmp('endTime').getValue(),
-                                // startTime:Ext.getCmp('startTime').getValue(),
-                                // projectName:Ext.getCmp('projectName').getValue(),
+                                userName : Ext.getCmp('userName').getValue(),
+                                endTime : Ext.getCmp('endTime').getValue(),
+                                startTime:Ext.getCmp('startTime').getValue(),
+                                optionType:0 //入库为0
                             }
                         });
                     }
@@ -83,10 +83,10 @@ Ext.define('material.material_Statistics_Records',{
                     handler: function(){
                         material_Statistics_Records_Store.load({
                             params : {
-                                // userId : Ext.getCmp('userId').getValue(),
-                                // endTime : Ext.getCmp('endTime').getValue(),
-                                // startTime:Ext.getCmp('startTime').getValue(),
-                                // projectName:Ext.getCmp('projectName').getValue(),
+                                userName : Ext.getCmp('userName').getValue(),
+                                endTime : Ext.getCmp('endTime').getValue(),
+                                startTime:Ext.getCmp('startTime').getValue(),
+                                optionType:1 //出库为1
                             }
                         });
                     }
@@ -127,16 +127,16 @@ Ext.define('material.material_Statistics_Records',{
             fields: [],
             pageSize: itemsPerPage, // items per page
             proxy:{
-                //url : "",//"material/historyDataList.do",
+                url : "material/material_statistic_records.do",//"material/historyDataList.do", //原材料出入库统计
                 type: 'ajax',
                 reader:{
                     type : 'json',
-                    rootProperty: 'value',
+                    rootProperty: 'statisticList',
                     totalProperty: 'totalCount'
                 },
                 params:{
-                    // start: 0,
-                    // limit: itemsPerPage
+                    start: 0,
+                    limit: itemsPerPage
                 }
             },
             listeners : {
