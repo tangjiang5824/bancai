@@ -7,11 +7,16 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.mock.web.DelegatingServletInputStream;
 import org.springframework.stereotype.Service;
 import com.bancai.service.BaseService;
 import com.bancai.vo.WebResponse;
 
+import java.io.Console;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 @Service
 public class QueryAllService extends BaseService {
@@ -36,6 +41,7 @@ public class QueryAllService extends BaseService {
 		response.put("totalCount", countlist.get(0).get("num"));
 		return response;
 	}
+
 	/**
 	 * 按照条件和表名分页查询
 	 * @param start
@@ -64,6 +70,16 @@ public class QueryAllService extends BaseService {
 		else
 			return queryPage(start,limit,"select * from "+tableName+"");
 	}
+	public WebResponse queryDataPage_statistic(Integer start, Integer limit, mysqlcondition c, String tableName)
+	{
+		log.debug(c.toString()+"   "+c.getParameters());
+		String whereClause=c.toString();
+		if(whereClause.length()>0)
+			return queryPage(start,limit,"select username,type,time,materialName,sum(count) as sumcount from "+tableName+" where "+whereClause,c.getParameters()+" GROUP BY materialName");
+		else
+			return queryPage(start,limit,"select username,type,time,materialName,sum(count) as sumcount from "+tableName+" GROUP BY materialName");
+	}
+
 
 	/**
 	 * 按sql查询DataList

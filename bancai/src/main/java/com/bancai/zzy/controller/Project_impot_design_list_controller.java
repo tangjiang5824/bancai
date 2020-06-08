@@ -1,5 +1,6 @@
 package com.bancai.zzy.controller;
 
+import com.bancai.cg.service.InsertProjectService;
 import com.bancai.domain.DataList;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,6 +30,8 @@ public class Project_impot_design_list_controller {
 	private ProjectService projectService;
 	@Autowired
 	private Project_import_design_list_service project_import_design_list_service;
+	@Autowired
+	private InsertProjectService insertProjectService;
 
 	/*
 	*用户登录
