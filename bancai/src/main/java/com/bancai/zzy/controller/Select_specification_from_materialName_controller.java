@@ -104,7 +104,7 @@ public class Select_specification_from_materialName_controller {
 	public WebResponse materialStatisticRecords(Integer start, Integer limit,
 										 String optionType, String startTime, String endTime, String username) throws ParseException {
 		//log.debug(startWidth+" "+endWidth);
-		if(null==start) start=0;
+		if(null==start||start.equals("")) start=0;
 		if(null==limit) limit=50;
 		String tableName = "materiallog_materiallogdetail_user";
 //		System.out.println(startWidth);

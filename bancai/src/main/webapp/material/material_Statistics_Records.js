@@ -13,7 +13,7 @@ Ext.define('material.material_Statistics_Records',{
                     xtype: 'textfield',
                     margin : '0 20 0 10',
                     fieldLabel: '操作员',
-                    //id :'userId',
+                    id :'userName',
                     width: 160,
                     labelWidth: 50,
                     name: 'userName',
@@ -66,7 +66,7 @@ Ext.define('material.material_Statistics_Records',{
                     handler: function(){
                         material_Statistics_Records_Store.load({
                             params : {
-                                userName : Ext.getCmp('userName').getValue(),
+                                username : Ext.getCmp('userName').getValue(),
                                 endTime : Ext.getCmp('endTime').getValue(),
                                 startTime:Ext.getCmp('startTime').getValue(),
                                 optionType:0 //入库为0
@@ -83,7 +83,7 @@ Ext.define('material.material_Statistics_Records',{
                     handler: function(){
                         material_Statistics_Records_Store.load({
                             params : {
-                                userName : Ext.getCmp('userName').getValue(),
+                                username : Ext.getCmp('userName').getValue(),
                                 endTime : Ext.getCmp('endTime').getValue(),
                                 startTime:Ext.getCmp('startTime').getValue(),
                                 optionType:1 //出库为1
@@ -131,23 +131,25 @@ Ext.define('material.material_Statistics_Records',{
                 type: 'ajax',
                 reader:{
                     type : 'json',
-                    rootProperty: 'statisticList',
+                    rootProperty: 'value',
                     totalProperty: 'totalCount'
                 },
                 params:{
                     start: 0,
-                    limit: itemsPerPage
+                    limit: itemsPerPage,
+                    username : Ext.getCmp('userName').getValue(),
+                    endTime : Ext.getCmp('endTime').getValue(),
+                    startTime:Ext.getCmp('startTime').getValue(),
+                    // optionType:1 //出库为1
                 }
             },
             listeners : {
                 beforeload : function(store, operation, eOpts) {
                     store.getProxy().setExtraParams({
-                        // tableName :tableName,
-                        // userId:Ext.getCmp('userId').getValue(),
-                        // endTime:Ext.getCmp('endTime').getValue(),
-                        // startTime:Ext.getCmp('startTime').getValue(),
-                        // projectName:Ext.getCmp('projectName').getValue(),
-                        //materialType:materialType
+                        username : Ext.getCmp('userName').getValue(),
+                        endTime : Ext.getCmp('endTime').getValue(),
+                        startTime:Ext.getCmp('startTime').getValue(),
+                        // optionType:1 //出库为1
 
                     });
                 }
