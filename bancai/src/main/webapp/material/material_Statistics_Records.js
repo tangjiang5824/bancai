@@ -5,8 +5,6 @@ Ext.define('material.material_Statistics_Records',{
     title: '原材料出入库记录统计',
     initComponent: function(){
         var itemsPerPage = 50;
-        //var tableName="material";
-        //var materialType="1";
         var toobar = Ext.create('Ext.toolbar.Toolbar',{
             items: [
                 {

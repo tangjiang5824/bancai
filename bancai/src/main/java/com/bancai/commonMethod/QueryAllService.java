@@ -79,7 +79,15 @@ public class QueryAllService extends BaseService {
 		else
 			return queryPage(start,limit,"select username,type,time,materialName,sum(count) as sumcount from "+tableName+" GROUP BY materialName");
 	}
-
+	public WebResponse queryDataPage_statistic_oldpanel(Integer start, Integer limit, mysqlcondition c, String tableName)
+	{
+		log.debug(c.toString()+"   "+c.getParameters());
+		String whereClause=c.toString();
+		if(whereClause.length()>0)
+			return queryPage(start,limit,"select username,type,time,oldpanelName,sum(count) as sumcount from "+tableName+" where "+whereClause+" GROUP BY oldpanelName",c.getParameters());
+		else
+			return queryPage(start,limit,"select username,type,time,oldpanelName,sum(count) as sumcount from "+tableName+" GROUP BY oldpanelName");
+	}
 
 	/**
 	 * 按sql查询DataList
