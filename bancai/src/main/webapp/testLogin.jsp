@@ -39,13 +39,14 @@
 				blankText:'请选择用户类型',
 				msgTarget:'under',
 				name: 'usertype',
+				id:'usertype',
 				xtype: "combobox",
                 editable: false,
                 emptyText: "--请选择--",
                 mode: 'local',
                 store: new Ext.data.ArrayStore({
                     fields: ['value', 'text'],
-                    data: [[0, '系统管理员'], [1, '审计处'], [2, '生产处'], [3, '采购处'], [4, '财务处'], [5, '仓库']]
+                    data: [[0, '系统管理员'], [1, '计划处'], [2, '财务处']]
                 }),
                 valueField: 'value',
                 displayField: 'text'				
@@ -61,11 +62,8 @@
 		],
 		doLogin: function(){
 			var username=Ext.getCmp('username').getValue();
-			var username=Ext.getCmp('username').getValue();
+			var usertype=Ext.getCmp('usertype').getValue();
 			var success=null;
-			console.log("用户名：");
-			console.log(username);
-			
 			
 			var form = this.getForm();
 			

@@ -64,19 +64,33 @@
 			}
 		}); 
 	}
-	Ext.onReady(function() {
-		var roleId=<c:out value="${roleId}"/>;
-		Ext.tip.QuickTipManager.init();
-		var title='<c:out value="${organizationName}"/>:<c:out value="${loginName}"/>';
-		var organizationId='<c:out value="${organizationId}"/>';
-		var menu=Ext.create("menu.MenuRole"+roleId,{title:title,organizationId:organizationId});
-		var welcome = Ext.create("welcome.Welcome"+roleId);
-		Ext.create('Ext.container.Viewport', {
-			layout : 'border',
-			items : [ menu, welcome ]
-		}).show();
-		sessionTimeOut(roleId);
-	});
+	<%--Ext.onReady(function() {--%>
+	<%--	var roleId=<c:out value="${roleId}"/>;--%>
+	<%--	Ext.tip.QuickTipManager.init();--%>
+	<%--	var title='<c:out value="${organizationName}"/>:<c:out value="${loginName}"/>';--%>
+	<%--	var organizationId='<c:out value="${organizationId}"/>';--%>
+	<%--	var menu=Ext.create("menu.MenuRole"+roleId,{title:title,organizationId:organizationId});--%>
+	<%--	var welcome = Ext.create("welcome.Welcome"+roleId);--%>
+	<%--	Ext.create('Ext.container.Viewport', {--%>
+	<%--		layout : 'border',--%>
+	<%--		items : [ menu, welcome ]--%>
+	<%--	}).show();--%>
+	<%--	sessionTimeOut(roleId);--%>
+	<%--});--%>
+
+    Ext.onReady(function() {
+        var roleId=<c:out value="${roleId}"/>;
+        Ext.tip.QuickTipManager.init();
+        var title='<c:out value="${organizationName}"/>:<c:out value="${loginName}"/>';
+        var organizationId='<c:out value="${organizationId}"/>';
+        var menu=Ext.create("menu.MenuRole"+roleId,{title:title,organizationId:organizationId});
+        var welcome = Ext.create("welcome.Welcome"+roleId);
+        Ext.create('Ext.container.Viewport', {
+            layout : 'border',
+            items : [ menu, welcome ]
+        }).show();
+        sessionTimeOut(roleId);
+    });
 
 	
 </script>

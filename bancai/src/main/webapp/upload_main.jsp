@@ -67,10 +67,14 @@
 	Ext.onReady(function() {
 		var usertype=<c:out value="${usertype}"/>;
 		Ext.tip.QuickTipManager.init();
-		var title='欢迎:<c:out value="${usertype}"/>:<c:out value="${username}"/>';
+		var title='欢迎:<c:out value="${username}"/>'; //<c:out value="${usertype}"/>:
 		var usertype='<c:out value="${usertype}"/>';
-		var menu=Ext.create("menu.MenuRole_upload",{title:title,usertype:usertype});
-		var welcome = Ext.create("welcome.Welcome0");
+        //MenuRole_bc:0:admin,1:计划处，2：财务处
+        var menu=Ext.create("menu.MenuRole_bc"+usertype,{title:title,usertype:usertype});
+        var welcome = Ext.create("welcome.Welcome0");
+		// var menu=Ext.create("menu.MenuRole_upload",{title:title,usertype:usertype});
+		// var welcome = Ext.create("welcome.Welcome0");
+
 		Ext.create('Ext.container.Viewport', {
 			layout : 'border',
 			items : [ menu, welcome ]
