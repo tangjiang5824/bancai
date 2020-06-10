@@ -61,7 +61,10 @@
 		],
 		doLogin: function(){
 			var username=Ext.getCmp('username').getValue();
+			var username=Ext.getCmp('username').getValue();
 			var success=null;
+			console.log("用户名：");
+			console.log(username);
 			
 			
 			var form = this.getForm();
@@ -70,7 +73,8 @@
                 form.submit({
                     success: function(form, action) {
                        Ext.Msg.alert('消息', "登录成功");
-                       window.location.href = "upload_main.jsp";
+                       window.location.href = "upload_main.jsp";  //upload_main
+
                     },
                     failure: function(form, action) {
                         Ext.Msg.alert('消息', "登录失败，请检查用户名和密码");

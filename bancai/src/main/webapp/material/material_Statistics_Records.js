@@ -5,6 +5,15 @@ Ext.define('material.material_Statistics_Records',{
     title: '原材料出入库记录统计',
     initComponent: function(){
         var itemsPerPage = 50;
+        //var tableName="material";
+        //var materialType="1";
+        //操作类型：枚举类型
+        Ext.define('Soims.model.application.ApplicationState', {
+            statics: { // 关键
+                1: { value: '1', name: '出库' },
+                0: { value: '0', name: '入库' }
+            }
+        });
         var toobar = Ext.create('Ext.toolbar.Toolbar',{
             items: [
                 {
@@ -168,8 +177,19 @@ Ext.define('material.material_Statistics_Records',{
             columns : [
                 { text: '操作人员',  dataIndex: 'username' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
                 { text: '操作时间', dataIndex: 'time',flex :1,editor:{xtype : 'textfield', allowBlank : false} },
+                // { text: '操作类型', dataIndex: 'time',flex :1,editor:{xtype : 'textfield', allowBlank : false} },
+                {   text: '操作类型',
+                    dataIndex: 'type' ,
+                    flex :1,
+                    //枚举，1：出库，0：入库
+                    renderer: function (value) {
+                        return Soims.model.application.ApplicationState[value].name; // key-value
+                    },
+                    editor:{xtype : 'textfield', allowBlank : false}
+                },
                 { text: '材料名', dataIndex: 'materialName', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '操作数量', dataIndex: 'count', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
+                { text: '操作数量', dataIndex: 'sumcount', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
+
                 // {
                 //     header: "操作", dataIndex: 'Gender',
                 //     renderer: function() {                      //此处为主要代码
