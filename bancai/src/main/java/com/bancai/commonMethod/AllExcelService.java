@@ -50,11 +50,11 @@ public class AllExcelService extends BaseService {
 	@Transactional
 	public UploadDataResult uploadExcelData(InputStream inputStream,String userid, String tablename,String main_key) throws IOException {
 		DataList dataList;
-		DataList dataList2;
 		UploadDataResult result = new UploadDataResult();
 		Excel excel = new Excel(inputStream);
 		dataList = excel.readExcelContent();
-		dataList2 = dataList;
+		DataList dataList2 = new DataList();
+		dataList2 = excel.readExcelContent();
 		DataList typeList;
 //		System.out.println(dataList);
 		if (tablename.equals("material")) {
