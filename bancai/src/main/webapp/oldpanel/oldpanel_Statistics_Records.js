@@ -5,67 +5,98 @@ Ext.define('oldpanel.oldpanel_Statistics_Records',{
     title: '旧板出入库记录查询',
     initComponent: function(){
         var itemsPerPage = 50;
-        var tableName="material";
-        //var materialType="1";
+
+        //操作类型：枚举类型
+        Ext.define('Soims.model.application.ApplicationState', {
+            statics: { // 关键
+                1: { value: '1', name: '出库' },
+                0: { value: '0', name: '入库' }
+            }
+        });
         var toobar = Ext.create('Ext.toolbar.Toolbar',{
             items: [
                 {
                     xtype: 'textfield',
-                    margin : '0 10 0 0',
-                    fieldLabel: '上传人',
-                    //id :'userId',
+                    margin : '0 20 0 10',
+                    fieldLabel: '操作员',
+                    id :'userName',
                     width: 160,
                     labelWidth: 50,
-                    name: 'userId',
+                    name: 'userName',
                     value:"",
                 },
+                // {
+                //     xtype:'tbtext',
+                //     text:'时间',
+                //     // itemId:'move_left'
+                // },
                 {
-                    xtype: 'textfield',
-                    margin : '0 10 0 0',
-                    fieldLabel: '项目名称',
-                    //id :'projectName',
-                    width: 250,
-                    labelWidth: 60,
-                    name: 'projectName',
-                    value:"",
-                },
-                {
-                    xtype: 'textfield',
-                    margin : '0 10 0 0',
-                    fieldLabel: '上传时间下限',
+                    xtype: 'datefield',
+                    margin : '0 20 0 20',
+                    fieldLabel: '时间',
                     //id :'startTime',
                     width: 180,
-                    labelWidth: 80,
-                    name: 'startTime',
+                    labelWidth: 40,
                     value:"",
+                    id : "startTime",
+                    name : 'startTime',
+                    format : 'Y-m-d',
+                    editable : false,
                 },
                 {
-                    xtype: 'textfield',
+                    xtype:'tbtext',
+                    text:'至 ',
+                    itemId:'move_left',
+                    margin : '0 20 0 0'
+                },
+                {
+                    xtype: 'datefield',
                     margin : '0 10 0 0',
-                    fieldLabel: '上传时间上限',
+                    // fieldLabel: '结束时间',
                     //id :'endTime',
-                    width: 180,
-                    labelWidth: 80,
-                    name: 'endTime',
+                    width: 140,
+                    // labelWidth: 80,
                     value:"",
+                    id : "endTime",
+                    name : 'endTime',
+                    //align: 'right',
+                    format : 'Y-m-d',
+                    editable : false,
                 },
                 {
                     xtype : 'button',
-                    text: '查询',
+                    text: '入库统计',
                     width: 80,
                     margin: '0 0 0 15',
                     layout: 'right',
                     handler: function(){
                         oldpanel_Statistics_Records_Store.load({
                             params : {
-                                // userId : Ext.getCmp('userId').getValue(),
-                                // endTime : Ext.getCmp('endTime').getValue(),
-                                // startTime:Ext.getCmp('startTime').getValue(),
-                                // projectName:Ext.getCmp('projectName').getValue(),
+                                username : Ext.getCmp('userName').getValue(),
+                                endTime : Ext.getCmp('endTime').getValue(),
+                                startTime:Ext.getCmp('startTime').getValue(),
+                                optionType:0 //入库为0
                             }
                         });
                     }
                 },
+                {
+                    xtype : 'button',
+                    text: '出库统计',
+                    width: 80,
+                    margin: '0 0 0 15',
+                    layout: 'right',
+                    handler: function(){
+                        oldpanel_Statistics_Records_Store.load({
+                            params : {
+                                username : Ext.getCmp('userName').getValue(),
+                                endTime : Ext.getCmp('endTime').getValue(),
+                                startTime:Ext.getCmp('startTime').getValue(),
+                                optionType:1 //出库为1
+                            }
+                        });
+                    }
+                }
                 // {
                 //     text: '删除',
                 //     width: 80,
@@ -94,7 +125,7 @@ Ext.define('oldpanel.oldpanel_Statistics_Records',{
                 //         }
                 //     }
                 // }
-                ]
+            ]
         })
         var oldpanel_Statistics_Records_Store = Ext.create('Ext.data.Store',{
             id: 'oldpanel_Statistics_Records_Store',
@@ -102,7 +133,7 @@ Ext.define('oldpanel.oldpanel_Statistics_Records',{
             fields: [],
             pageSize: itemsPerPage, // items per page
             proxy:{
-                //url : "",//"material/historyDataList.do",
+                url : "oldpanel/oldpanel_statistic_records.do",//jiuban出入库统计
                 type: 'ajax',
                 reader:{
                     type : 'json',
@@ -111,18 +142,20 @@ Ext.define('oldpanel.oldpanel_Statistics_Records',{
                 },
                 params:{
                     start: 0,
-                    limit: itemsPerPage
+                    limit: itemsPerPage,
+                    username : Ext.getCmp('userName').getValue(),
+                    endTime : Ext.getCmp('endTime').getValue(),
+                    startTime:Ext.getCmp('startTime').getValue(),
+                    // optionType:1 //出库为1
                 }
             },
             listeners : {
                 beforeload : function(store, operation, eOpts) {
                     store.getProxy().setExtraParams({
-                        //tableName :tableName,
-                        // userId:Ext.getCmp('userId').getValue(),
-                        // endTime:Ext.getCmp('endTime').getValue(),
-                        // startTime:Ext.getCmp('startTime').getValue(),
-                        // projectName:Ext.getCmp('projectName').getValue(),
-                        // //materialType:materialType
+                        username : Ext.getCmp('userName').getValue(),
+                        endTime : Ext.getCmp('endTime').getValue(),
+                        startTime:Ext.getCmp('startTime').getValue(),
+                        // optionType:1 //出库为1
 
                     });
                 }
@@ -134,24 +167,35 @@ Ext.define('oldpanel.oldpanel_Statistics_Records',{
 
 
         var grid = Ext.create('Ext.grid.Panel',{
-            id: 'oldpanel_Statistics_Records_Main',
+            //id: 'oldpanel_Statistics_Records_Main',
             store: oldpanel_Statistics_Records_Store,
             viewConfig : {
                 enableTextSelection : true,
                 editable:true
             },
             columns : [
-                { text: '材料单编号', dataIndex: '材料单编号', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '上传人',  dataIndex: '上传人' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '上传时间', dataIndex: '上传时间', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '项目名称', dataIndex: '项目名称',flex :1,editor:{xtype : 'textfield', allowBlank : false} },
-                {
-                    header: "操作", dataIndex: 'Gender',
-                    renderer: function() {                      //此处为主要代码
-                        var str = "<input type='button' value='查看' onclick='look()'>";
-                        return str;
-                    }
+                { text: '操作人员',  dataIndex: 'username' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
+                { text: '操作时间', dataIndex: 'time',flex :1,editor:{xtype : 'textfield', allowBlank : false} },
+                // { text: '操作类型', dataIndex: 'time',flex :1,editor:{xtype : 'textfield', allowBlank : false} },
+                {   text: '操作类型',
+                    dataIndex: 'type' ,
+                    flex :1,
+                    //枚举，1：出库，0：入库
+                    renderer: function (value) {
+                        return Soims.model.application.ApplicationState[value].name; // key-value
+                    },
+                    editor:{xtype : 'textfield', allowBlank : false}
                 },
+                { text: '材料名', dataIndex: 'oldpanelName', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
+                { text: '操作数量', dataIndex: 'sumcount', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
+
+                // {
+                //     header: "操作", dataIndex: 'Gender',
+                //     renderer: function() {                      //此处为主要代码
+                //         //var str = "<input type='button' value='查看' onclick='look()'>";
+                //         //return str;
+                //     }
+                // },
             ],
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 3
@@ -168,7 +212,7 @@ Ext.define('oldpanel.oldpanel_Statistics_Records',{
             listeners: {
                 validateedit : function(editor, e) {
                     var field=e.field
-                    var id=e.record.data.id
+                    //var id=e.record.data.id
                     Ext.Ajax.request({
                         //url:"",//"data/EditCellById.do",  //EditDataById.do
                         params:{

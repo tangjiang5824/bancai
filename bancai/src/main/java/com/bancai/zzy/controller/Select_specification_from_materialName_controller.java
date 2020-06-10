@@ -126,5 +126,34 @@ public class Select_specification_from_materialName_controller {
 		WebResponse wr=queryAllService.queryDataPage_statistic(start, limit, c, tableName);
 		return wr;
 	}
+	/*
+	 * 原材料查询出入库记录
+	 * */
+	@RequestMapping(value = "/oldpanel/oldpanel_statistic_records.do")
+	public WebResponse oldpanelStatisticRecords(Integer start, Integer limit,
+												String optionType, String startTime, String endTime, String username) throws ParseException {
+		//log.debug(startWidth+" "+endWidth);
+		if(null==start||start.equals("")) start=0;
+		if(null==limit) limit=50;
+		String tableName = "oldpanellog_oldpanellogdetail_user";
+//		System.out.println(startWidth);
+//		System.out.println(endWidth);
+//
+		mysqlcondition c=new mysqlcondition();
+		if (startTime.length() != 0) {
+			c.and(new mysqlcondition("time", ">=", startTime));
+		}
+		if (endTime.length() != 0) {
+			c.and(new mysqlcondition("time", "<=", endTime));
+		}
+		if (username.length() != 0) {
+			c.and(new mysqlcondition("username", "=", username));
+		}
+		if (username.length() != 0) {
+			c.and(new mysqlcondition("type", "=", optionType));
+		}
+		WebResponse wr=queryAllService.queryDataPage_statistic_oldpanel(start, limit, c, tableName);
+		return wr;
+	}
 
 }
