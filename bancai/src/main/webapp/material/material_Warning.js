@@ -8,33 +8,6 @@ Ext.define('material.material_Warning',{
         var tableName="material";
         //var materialType="1";
         //查询数据库，返回原材料类型
-        var MaterialNameList = Ext.create('Ext.data.Store',{
-            fields : [ 'materialName'],
-            proxy : {
-                type : 'ajax',
-                url : 'material/materialType.do',
-                reader : {
-                    type : 'json',
-                    rootProperty: 'typeList',
-                }
-            },
-            autoLoad : true
-        });
-
-        //原材料类型，下拉框显示
-        var MaterialTypeList = Ext.create('Ext.form.ComboBox',{
-            fieldLabel : '原材料类型',
-            labelWidth : 70,
-            width : 230,
-            id :  'materialType',
-            name : 'materialType',
-            matchFieldWidth: false,
-            emptyText : "------请选择------",
-            displayField: 'materialTypeName',
-            valueField: 'materialType',
-            editable : false,
-            store: MaterialNameList
-        });
 
         var toobar = Ext.create('Ext.toolbar.Toolbar',{
             items: [
@@ -48,56 +21,6 @@ Ext.define('material.material_Warning',{
                 //     name: 'mType',
                 //     value:"",
                 // },
-                MaterialTypeList,
-                {
-                    xtype: 'textfield',
-                    margin : '0 10 0 0',
-                    fieldLabel: '宽度下限',
-                    id :'startWidth',
-                    width: 180,
-                    labelWidth: 60,
-                    name: 'startWidth',
-                    value:"",
-                },{
-                    xtype:'tbtext',
-                    text:'至',
-                    // itemId:'move_left',
-                    // handler:function(){
-                    //     var records=grid2.getSelectionModel().getSelection();
-                    //     MaterialList2.remove(records);
-                    //     MaterialList.add(records);
-                    // }
-                },
-                {
-                    xtype: 'textfield',
-                    fieldLabel: '宽度上限',
-                    labelSeparator: '',
-                    id :'endWidth',
-                    labelWidth: 60,
-                    width: 180,
-                    margin : '0 10 0 0',
-                    name: 'endWidth',
-                    value:"",
-                },
-                {
-                    xtype: 'textfield',
-                    margin : '0 10 0 0',
-                    fieldLabel: '长度下限',
-                    id :'startLength',
-                    width: 180,
-                    labelWidth: 60,
-                    name: 'startLength',
-                    value:"",
-                },{
-                    xtype:'tbtext',
-                    text:'至',
-                    itemId:'move_left',
-                    // handler:function(){
-                    //     var records=grid2.getSelectionModel().getSelection();
-                    //     MaterialList2.remove(records);
-                    //     MaterialList.add(records);
-                    // }
-                },
                 {
                     xtype: 'textfield',
                     margin : '0 10 0 0',
@@ -118,11 +41,11 @@ Ext.define('material.material_Warning',{
                         material_Query_Data_Store.load({
                             params : {
                                 //proNum : Ext.getCmp('proNum').getValue(),
-                                startWidth : Ext.getCmp('startWidth').getValue(),
-                                endTWidth : Ext.getCmp('endWidth').getValue(),
-                                startLength:Ext.getCmp('startLength').getValue(),
-                                endLength:Ext.getCmp('endLength').getValue(),
-                                materialType:Ext.getCmp('materialType').getValue()
+                                // startWidth : Ext.getCmp('startWidth').getValue(),
+                                // endTWidth : Ext.getCmp('endWidth').getValue(),
+                                // startLength:Ext.getCmp('startLength').getValue(),
+                                // endLength:Ext.getCmp('endLength').getValue(),
+                                // materialType:Ext.getCmp('materialType').getValue()
                             }
                         });
                     }
@@ -178,11 +101,11 @@ Ext.define('material.material_Warning',{
                 beforeload : function(store, operation, eOpts) {
                     store.getProxy().setExtraParams({
                         tableName :tableName,
-                        startWidth:Ext.getCmp('startWidth').getValue(),
-                        endWidth:Ext.getCmp('endWidth').getValue(),
-                        startLength:Ext.getCmp('startLength').getValue(),
-                        endLength:Ext.getCmp('endLength').getValue(),
-                        materialType:Ext.getCmp('materialType').getValue(),
+                        // startWidth:Ext.getCmp('startWidth').getValue(),
+                        // endWidth:Ext.getCmp('endWidth').getValue(),
+                        // startLength:Ext.getCmp('startLength').getValue(),
+                        // endLength:Ext.getCmp('endLength').getValue(),
+                        // materialType:Ext.getCmp('materialType').getValue(),
                         //materialType:materialType
 
                     });
