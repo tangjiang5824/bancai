@@ -2,7 +2,7 @@ Ext.define('project.import_design_list', {
 	extend : 'Ext.panel.Panel',
 	region : 'center',
 	layout : "fit",
-	title : '旧板材库数据上传',
+	title : '导入设计清单',
 	initComponent : function() {
 		var me = this;
 		//定义表名

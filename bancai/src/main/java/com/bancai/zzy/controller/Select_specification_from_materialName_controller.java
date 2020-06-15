@@ -26,6 +26,8 @@ public class Select_specification_from_materialName_controller {
 	@RequestMapping(value="/material/findMaterial_SpecificationList.do")
 	public WebResponse findMaterialbasicinfoList(Integer start, Integer limit,String materialName) throws IOException {
 		String tableName = "material";
+		if(null==start||start.equals("")) start=0;
+		if(null==limit||limit.equals("")) limit=50;
 		mysqlcondition c=new mysqlcondition();
 		if (materialName.length() != 0) {
 			c.and(new mysqlcondition("materialName", "=", materialName));
@@ -41,7 +43,8 @@ public class Select_specification_from_materialName_controller {
 	public WebResponse materialDataList(Integer start, Integer limit, String projectId,
 										String optionType, String startTime, String endTime, String userId) throws ParseException {
 		//log.debug(startWidth+" "+endWidth);
-
+		if(null==start||start.equals("")) start=0;
+		if(null==limit||limit.equals("")) limit=50;
 		String tableName = "oldpanellog_projectname";
 //		System.out.println(startWidth);
 //		System.out.println(endWidth);
@@ -73,7 +76,8 @@ public class Select_specification_from_materialName_controller {
 	public WebResponse materialDataList1(Integer start, Integer limit, String projectId,
 										String optionType, String startTime, String endTime, String username) throws ParseException {
 		//log.debug(startWidth+" "+endWidth);
-
+		if(null==start||start.equals("")) start=0;
+		if(null==limit||limit.equals("")) limit=50;
 		String tableName = "materiallog_projectname";
 //		System.out.println(startWidth);
 //		System.out.println(endWidth);
@@ -105,7 +109,7 @@ public class Select_specification_from_materialName_controller {
 										 String optionType, String startTime, String endTime, String username) throws ParseException {
 		//log.debug(startWidth+" "+endWidth);
 		if(null==start||start.equals("")) start=0;
-		if(null==limit) limit=50;
+		if(null==limit||limit.equals("")) limit=50;
 		String tableName = "materiallog_materiallogdetail_user";
 //		System.out.println(startWidth);
 //		System.out.println(endWidth);
@@ -134,7 +138,7 @@ public class Select_specification_from_materialName_controller {
 												String optionType, String startTime, String endTime, String username) throws ParseException {
 		//log.debug(startWidth+" "+endWidth);
 		if(null==start||start.equals("")) start=0;
-		if(null==limit) limit=50;
+		if(null==limit||limit.equals("")) limit=50;
 		String tableName = "oldpanellog_oldpanellogdetail_user";
 //		System.out.println(startWidth);
 //		System.out.println(endWidth);
@@ -155,5 +159,54 @@ public class Select_specification_from_materialName_controller {
 		WebResponse wr=queryAllService.queryDataPage_statistic_oldpanel(start, limit, c, tableName);
 		return wr;
 	}
-
+	/*
+	 * 原材料报警
+	 * */
+	@RequestMapping(value = "/material/material_alarm.do")
+	public WebResponse materialAlarm(Integer start, Integer limit, String threshold) throws ParseException {
+		if(null==start||start.equals("")) start=0;
+		if(null==limit||limit.equals("")) limit=50;
+		if(null==threshold||threshold.equals("")) threshold="50";
+		String tableName = "material";
+		mysqlcondition c=new mysqlcondition();
+		if (threshold.length() != 0) {
+			c.and(new mysqlcondition("number", "<=", threshold));
+		}
+		WebResponse wr=queryAllService.queryDataPage(start, limit, c, tableName);
+		return wr;
+	}
+	/*
+	 * 原成本核算
+	 * sql视图：
+	 * select `designlist`.`projectId` AS `projectId`,
+	 * `designlist`.`buildingId` AS `buildingId`,`designlist`.
+	 * `productName` AS `productName`,`product`.`id` AS `productID`,
+	 * `building`.`buildingNo` AS `buildingNo`,`project`.`projectName`
+	 * AS `projectName`,`newpanelmateriallist`.`materialName` AS `newPanelMaterialName`,
+	 * `newpanelmateriallist`.`materialCount` AS `newPanelMaterialCount`,`oldpanelmateriallist`.
+	 * `oldpanelName` AS `oldpanelName`,`oldpanelmateriallist`.`materialName` AS `oldPanelMaterialName`,
+	 * `oldpanelmateriallist`.`materialCount` AS `oldPanelMaterialCount`
+	 * from ((((`designlist` join `product`) join (`building` join `project`
+	 * on((`building`.`projectId` = `project`.`id`)))) join `newpanelmateriallist`)
+	 * join `oldpanelmateriallist`) where ((`designlist`.`productName` = `product`.`productName`)
+	 * and (`designlist`.`buildingId` = `building`.`id`) and (`designlist`.`projectId` = `project`.`id`)
+	 * and (`product`.`id` = `newpanelmateriallist`.`productId`) and
+	 * (`product`.`id` = `oldpanelmateriallist`.`productId`))
+	 * */
+	@RequestMapping(value = "/project/buildingproductcost.do")
+	public WebResponse buildingProductCost(Integer start, Integer limit, String projectId,
+										   String buildingId) throws ParseException {
+		if(null==start||start.equals("")) start=0;
+		if(null==limit||limit.equals("")) limit=50;
+		String tableName = "designlist_product_old_new_materiallist";
+		mysqlcondition c=new mysqlcondition();
+		if (projectId.length() != 0) {
+			c.and(new mysqlcondition("projectId", "=", projectId));
+		}
+		if (buildingId.length() != 0) {
+			c.and(new mysqlcondition("buildingId", "=", projectId));
+		}
+		WebResponse wr=queryAllService.queryDataPage(start, limit, c, tableName);
+		return wr;
+	}
 }
