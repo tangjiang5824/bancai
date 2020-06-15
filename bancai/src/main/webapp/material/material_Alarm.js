@@ -25,10 +25,10 @@ Ext.define('material.material_Alarm',{
                     xtype: 'textfield',
                     margin : '0 10 0 0',
                     fieldLabel: '报警阈值',
-                    id :'endLength',
+                    id :'threshold',
                     width: 180,
                     labelWidth: 60,
-                    name: 'endLength',
+                    name: 'threshold',
                     value:"",
                 },
                 {
@@ -40,12 +40,13 @@ Ext.define('material.material_Alarm',{
                     handler: function(){
                         material_Query_Data_Store.load({
                             params : {
+                                threshold : Ext.getCmp('threshold').getValue(),
                                 //proNum : Ext.getCmp('proNum').getValue(),
-                                startWidth : Ext.getCmp('startWidth').getValue(),
-                                endTWidth : Ext.getCmp('endWidth').getValue(),
-                                startLength:Ext.getCmp('startLength').getValue(),
-                                endLength:Ext.getCmp('endLength').getValue(),
-                                materialType:Ext.getCmp('materialType').getValue()
+                                // startWidth : Ext.getCmp('startWidth').getValue(),
+                                // endTWidth : Ext.getCmp('endWidth').getValue(),
+                                // startLength:Ext.getCmp('startLength').getValue(),
+                                // endLength:Ext.getCmp('endLength').getValue(),
+                                // materialType:Ext.getCmp('materialType').getValue()
                             }
                         });
                     }
@@ -74,11 +75,11 @@ Ext.define('material.material_Alarm',{
                 beforeload : function(store, operation, eOpts) {
                     store.getProxy().setExtraParams({
                         tableName :tableName,
-                        startWidth:Ext.getCmp('startWidth').getValue(),
-                        endWidth:Ext.getCmp('endWidth').getValue(),
-                        startLength:Ext.getCmp('startLength').getValue(),
-                        endLength:Ext.getCmp('endLength').getValue(),
-                        materialType:Ext.getCmp('materialType').getValue(),
+                        // startWidth:Ext.getCmp('startWidth').getValue(),
+                        // endWidth:Ext.getCmp('endWidth').getValue(),
+                        // startLength:Ext.getCmp('startLength').getValue(),
+                        // endLength:Ext.getCmp('endLength').getValue(),
+                        // materialType:Ext.getCmp('materialType').getValue(),
                         //materialType:materialType
 
                     });
