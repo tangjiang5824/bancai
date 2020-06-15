@@ -14,7 +14,7 @@ Ext.define('project.import_design_list', {
 						xtype : 'button',
 						iconAlign : 'center',
 						iconCls : 'rukuicon ',
-						text : '添加表项',
+						text : '添加产品',
 						handler : function() {
 							//fields: ['品号', '品名','规格','库存单位','仓库编号','数量','成本','存放位置']
 							var data = [{										

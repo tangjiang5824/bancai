@@ -175,8 +175,13 @@ Ext.define('oldpanel.oldpanel_Statistics_Records',{
             },
             columns : [
                 { text: '操作人员',  dataIndex: 'username' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '操作时间', dataIndex: 'time',flex :1,editor:{xtype : 'textfield', allowBlank : false} },
-                // { text: '操作类型', dataIndex: 'time',flex :1,editor:{xtype : 'textfield', allowBlank : false} },
+                // { text: '操作时间', dataIndex: 'time',flex :1,editor:{xtype : 'textfield', allowBlank : false} },
+                { text: '操作时间',
+                    dataIndex: 'time',
+                    flex :1 ,
+                    editor:{xtype : 'textfield', allowBlank : false},
+                    renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')
+                },
                 {   text: '操作类型',
                     dataIndex: 'type' ,
                     flex :1,
