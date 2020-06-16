@@ -53,8 +53,8 @@ Ext.define('project.management.buildproject', {
                     margin : '0 10 0 0',
                     fieldLabel: '项目名',
                     id :'projectName',
-                    width: 180,
-                    labelWidth: 80,
+                    width: '35%',
+                    labelWidth: 50,
                     name: 'projectName',
                     value:"",
 

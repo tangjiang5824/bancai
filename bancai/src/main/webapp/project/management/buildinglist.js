@@ -72,10 +72,10 @@ Ext.define('project.management.buildinglist', {
         var tableList = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '项目名',
             labelWidth : 60,
-            width : 180,
+            width : '35%',
             id :  'projectName',
             name : 'projectName',
-            matchFieldWidth: false,
+            matchFieldWidth: true,
             emptyText : "--请选择--",
             displayField: 'projectName',
             valueField: 'projectName',

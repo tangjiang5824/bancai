@@ -235,10 +235,10 @@ Ext.define('project.import_design_list', {
 		var tableList1 = Ext.create('Ext.form.ComboBox',{
 			fieldLabel : '项目名',
 			labelWidth : 60,
-			width : 300,
+			width : '35%',
 			id :  'projectName',
 			name : 'projectName',
-			matchFieldWidth: false,
+			matchFieldWidth: true,
 			emptyText : "--请选择--",
 			displayField: 'projectName',
 			valueField: 'id',

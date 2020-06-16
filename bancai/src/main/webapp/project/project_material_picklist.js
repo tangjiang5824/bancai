@@ -22,10 +22,10 @@ Ext.define('project.project_material_picklist',{
         var projectList = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '项目名',
             labelWidth : 45,
-            width : 400,
+            width : '35%',
             id :  'projectName',
             name : '项目名称',
-            matchFieldWidth: false,
+            matchFieldWidth: true,
             emptyText : "--请选择--",
             displayField: 'projectName',
             valueField: 'id',
