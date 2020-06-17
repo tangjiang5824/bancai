@@ -128,8 +128,8 @@ public class MaterialDataController {
             response.setMsg(e.getMessage());
         }
 
-        System.out.println(response.get("success"));
-        System.out.println(response.get("value"));
+       // System.out.println(response.get("success"));
+       // System.out.println(response.get("value"));
         
         return response;
     }

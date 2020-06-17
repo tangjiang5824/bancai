@@ -8,133 +8,138 @@ Ext.define('project.import_design_list', {
 		//定义表名
 		var tableName="materialstore";
 		var materialtype="0";
-		var toolbar2 = Ext.create("Ext.toolbar.Toolbar", {
-			dock : "top",
-			items : [{
-						xtype : 'button',
-						iconAlign : 'center',
-						iconCls : 'rukuicon ',
-						text : '添加产品',
-						handler : function() {
-							//fields: ['品号', '品名','规格','库存单位','仓库编号','数量','成本','存放位置']
-							var data = [{										
-										'产品编号' : '',
-										'产品名称' : '',
-										'产品安装位置' : '',
-										'是否由旧板生产' : '',
-									}];
-							//Ext.getCmp('addDataGrid')返回定义的对象
-							Ext.getCmp('addDataGrid').getStore().loadData(data,
-									true);
-						}
-					}, {
-						xtype : 'button',
-						iconAlign : 'center',
-						iconCls : 'rukuicon ',
-						text : '保存',
-
-						handler : function() {
-							// 取出grid的字段名字段类型
-							//var userid="<%=session.getAttribute('userid')%>";
-							var select = Ext.getCmp('addDataGrid').getStore()
-									.getData();
-							var s = new Array();
-							select.each(function(rec) {
-										//delete rec.data.id;
-										s.push(JSON.stringify(rec.data));
-										//alert(JSON.stringify(rec.data));//获得表格中的数据
-									});
-							//alert(s);//数组s存放表格中的数据，每条数据以json格式存放
-
-							Ext.Ajax.request({
-								url : 'addData.do', //HandleDataController
-								method:'POST',
-								//submitEmptyText : false,
-								params : {
-									tableName:tableName,
-									materialType:materialtype,
-									s : "[" + s + "]",
-									//userid: userid + ""
-//									tableName : tabName,
-//									organizationId : organizationId,
-//									tableType : tableType,
-//									uploadCycle : uploadCycle,
-//									cycleStart : cycleStart
-
-								},
-								success : function(response) {
-									Ext.MessageBox.alert("提示", "保存成功！");
-							     	me.close();
-//									var obj = Ext.decode(response.responseText);
-//									if (obj) {
+// 		var toolbar2 = Ext.create("Ext.toolbar.Toolbar", {
+// 			dock : "top",
+// 			items : [{
+// 						xtype : 'button',
+// 						iconAlign : 'center',
+// 						iconCls : 'rukuicon ',
+// 						text : '添加产品',
+// 						handler : function() {
+// 							//fields: ['品号', '品名','规格','库存单位','仓库编号','数量','成本','存放位置']
+// 							var data = [{
+// 										'产品编号' : '',
+// 										'productName' : '',
+// 										'产品安装位置' : '',
+// 										'是否由旧板生产' : '',
+// 									}];
+// 							//Ext.getCmp('addDataGrid')返回定义的对象
+// 							Ext.getCmp('addDataGrid').getStore().loadData(data,
+// 									true);
+// 						}
+// 					}, {
+// 						xtype : 'button',
+// 						iconAlign : 'center',
+// 						iconCls : 'rukuicon ',
+// 						text : '保存',
 //
-//										Ext.MessageBox.alert("提示", "保存成功！");
-//										me.close();
+// 						handler : function() {
+// 							// 取出grid的字段名字段类型
+// 							//var userid="<%=session.getAttribute('userid')%>";
+// 							var select = Ext.getCmp('addDataGrid').getStore()
+// 									.getData();
+// 							var s = new Array();
+// 							select.each(function(rec) {
+// 										//delete rec.data.id;
+// 										s.push(JSON.stringify(rec.data));
+// 										//alert(JSON.stringify(rec.data));//获得表格中的数据
+// 									});
+// 							//alert(s);//数组s存放表格中的数据，每条数据以json格式存放
 //
-//									} else {
-//										// 数据库约束，返回值有问题
-//										Ext.MessageBox.alert("提示", "保存失败！");
+// 							Ext.Ajax.request({
+// 								url : 'addData.do', //HandleDataController
+// 								method:'POST',
+// 								//submitEmptyText : false,
+// 								params : {
+// 									tableName:tableName,
+// 									materialType:materialtype,
+// 									s : "[" + s + "]",
+// 									//userid: userid + ""
+// //									tableName : tabName,
+// //									organizationId : organizationId,
+// //									tableType : tableType,
+// //									uploadCycle : uploadCycle,
+// //									cycleStart : cycleStart
 //
-//									}
-
-								},
-								failure : function(response) {
-									Ext.MessageBox.alert("提示", "保存失败！");
-								}
-							});
-
-						}
-					}]
+// 								},
+// 								success : function(response) {
+// 									Ext.MessageBox.alert("提示", "保存成功！");
+// 							     	me.close();
+// //									var obj = Ext.decode(response.responseText);
+// //									if (obj) {
+// //
+// //										Ext.MessageBox.alert("提示", "保存成功！");
+// //										me.close();
+// //
+// //									} else {
+// //										// 数据库约束，返回值有问题
+// //										Ext.MessageBox.alert("提示", "保存失败！");
+// //
+// //									}
+//
+// 								},
+// 								failure : function(response) {
+// 									Ext.MessageBox.alert("提示", "保存失败！");
+// 								}
+// 							});
+//
+// 						}
+// 					}]
+// 		});
+		var designlistStore = Ext.create('Ext.data.Store',{
+			id: 'designlistStore',
+			autoLoad: true,
+			fields: [],
+			//pageSize: itemsPerPage, // items per page
+			data:[],
+			editable:false,
 		});
 		var grid = Ext.create("Ext.grid.Panel", {
 			id : 'addDataGrid',
-			dockedItems : [toolbar2],
-			store : {
-				id: 'designlistStore',
-				fields: ['产品编号', '产品名称','产品安装位置','是否由旧板生产']
-
-			},
+			//dockedItems : [toolbar2],
+			store : 'designlistStore',
 			columns : [
+				// {
+				// 	dataIndex : '产品编号',
+				// 	name : '产品编号',
+				// 	text : '产品编号',
+				// 	//width : 110,
+				// 	editor : {// 文本字段
+				// 		xtype : 'textfield',
+				// 		allowBlank : false
+				// 	}
+				// },
 				{
-					dataIndex : '产品编号',
-					name : '产品编号',
-					text : '产品编号',
-					//width : 110,
-					editor : {// 文本字段
-						xtype : 'textfield',
-						allowBlank : false
-					}
-				},
-				{
-					dataIndex : '产品名称',
+					dataIndex : 'productName',
 					name : '产品名称',
 					text : '产品名称',
 					//width : 110,
 					editor : {// 文本字段
 						xtype : 'textfield',
 						allowBlank : false,
-					}
+					},
+					editable:false,
 				},
-				{
-					dataIndex : '产品安装位置',
-					text:'产品安装位置',
-					name:'产品安装位置',
-					//width : 110,
-					editor : {// 文本字段
-						xtype : 'textfield',
-						allowBlank : false,
-					}
-				},
-				{
-					dataIndex : '是否由旧板生产',
-					text:'是否由旧板生产',
-					name:'是否由旧板生产',
-					//width : 110,
-					editor : {// 文本字段
-						xtype : 'textfield',
-						allowBlank : false,
-					}
-				},
+				// {
+				// 	dataIndex : '产品安装位置',
+				// 	text:'产品安装位置',
+				// 	name:'产品安装位置',
+				// 	//width : 110,
+				// 	editor : {// 文本字段
+				// 		xtype : 'textfield',
+				// 		allowBlank : false,
+				// 	}
+				// },
+				// {
+				// 	dataIndex : '是否由旧板生产',
+				// 	text:'是否由旧板生产',
+				// 	name:'是否由旧板生产',
+				// 	//width : 110,
+				// 	editor : {// 文本字段
+				// 		xtype : 'textfield',
+				// 		allowBlank : false,
+				// 	}
+				// },
 			],
 			viewConfig : {
 				plugins : {
@@ -142,9 +147,9 @@ Ext.define('project.import_design_list', {
 					dragText : "可用鼠标拖拽进行上下排序"
 				}
 			},
-			plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
-						clicksToEdit : 1
-					})],
+			// plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
+			// 			clicksToEdit : 3
+			// 		})],
 			selType : 'rowmodel'
 		});
 
@@ -239,7 +244,7 @@ Ext.define('project.import_design_list', {
 			id :  'projectName',
 			name : 'projectName',
 			matchFieldWidth: true,
-			emptyText : "--请选择--",
+			emptyText : "--请选择项目名--",
 			displayField: 'projectName',
 			valueField: 'id',
 			editable : false,
@@ -274,7 +279,12 @@ Ext.define('project.import_design_list', {
 								rootProperty: 'building',
 							}
 						},
-						autoLoad : false
+						autoLoad : true,
+						listeners:{
+							load:function () {
+								Ext.getCmp('buildingName').setValue("");
+							}
+						}
 					});
 					//buildingName,下拉框重新加载数据
 					buildingName.setStore(tableListStore2);
@@ -321,13 +331,15 @@ Ext.define('project.import_design_list', {
 			id :  'buildingName',
 			name : 'buildingName',
 			matchFieldWidth: false,
-			emptyText : "--请选择--",
+			emptyText : "--请选择楼栋名--",
 			displayField: 'buildingName',
 			valueField: 'id',//楼栋的id
 			editable : false,
+			autoLoad: true,
 			//store: tableListStore2,
 			listeners: {
-				select:function () {
+				load:function () {
+
 
 					// // projectName:Ext.getCmp('projectName').getValue();
 					// // buildingName:Ext.getCmp('buildingName').getValue();
