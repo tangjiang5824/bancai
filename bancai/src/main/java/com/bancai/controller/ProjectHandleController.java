@@ -325,9 +325,9 @@ public class ProjectHandleController {
     * */
     @RequestMapping(value="/project/findProjectList.do")
     public void findProjectList(HttpServletResponse response) throws IOException, JSONException {
-        System.out.println("???????????");
+       // System.out.println("???????????");
         DataList projectList = projectService.findProjectList();
-        System.out.println(projectList);
+       // System.out.println(projectList);
         //写回前端
         JSONObject object = new JSONObject();
         JSONArray array = new JSONArray(projectList);
