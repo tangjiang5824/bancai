@@ -2,7 +2,7 @@ Ext.define('project.import_design_list', {
 	extend : 'Ext.panel.Panel',
 	region : 'center',
 	layout : "fit",
-	title : '旧板材库数据上传',
+	title : '导入设计清单',
 	initComponent : function() {
 		var me = this;
 		//定义表名
@@ -14,7 +14,7 @@ Ext.define('project.import_design_list', {
 						xtype : 'button',
 						iconAlign : 'center',
 						iconCls : 'rukuicon ',
-						text : '添加表项',
+						text : '添加产品',
 						handler : function() {
 							//fields: ['品号', '品名','规格','库存单位','仓库编号','数量','成本','存放位置']
 							var data = [{										
@@ -235,10 +235,10 @@ Ext.define('project.import_design_list', {
 		var tableList1 = Ext.create('Ext.form.ComboBox',{
 			fieldLabel : '项目名',
 			labelWidth : 60,
-			width : 300,
+			width : '35%',
 			id :  'projectName',
 			name : 'projectName',
-			matchFieldWidth: false,
+			matchFieldWidth: true,
 			emptyText : "--请选择--",
 			displayField: 'projectName',
 			valueField: 'id',

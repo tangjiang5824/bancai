@@ -201,7 +201,7 @@ public class Oldpanel_Data_Controller {
 //            return queryService.queryPage(start, limit, c, tableName);
 //        }
 //        System.out.println(oldpanelType);
-        if (oldpanelType != null) {
+        if (oldpanelType != null&&!oldpanelType.equals("")) {
             NewCondition c = new NewCondition();
             WebResponse re = new WebResponse();
             if (oldpanelType.length() != 0) {

@@ -28,10 +28,10 @@ Ext.define('material.material_Receive',{
         var tableList = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '项目名',
             labelWidth : 45,
-            width : 400,
+            width : '35%',
             id :  'projectName',
             name : '项目名称',
-            matchFieldWidth: false,
+            matchFieldWidth: true,
             emptyText : "--请选择--",
             displayField: 'projectName',
             valueField: 'id',
@@ -111,6 +111,88 @@ Ext.define('material.material_Receive',{
             id: 'store1',
             fields:['原材料名称','长','类型','宽','数量','领取数量'],
             data:sampleData
+        });
+
+        //确认入库按钮，
+        var toolbar3 = Ext.create('Ext.toolbar.Toolbar', {
+            dock : "bottom",
+            id : "toolbar3",
+            //style:{float:'center',},
+            //margin-right: '2px',
+            //padding: '0 0 0 750',
+            style:{
+                //marginLeft: '900px'
+                layout: 'right'
+            },
+            items : [{
+                xtype : 'button',
+                iconAlign : 'center',
+                iconCls : 'rukuicon ',
+                text : '确认领料',
+                region:'center',
+                bodyStyle: 'background:#fff;',
+                handler : function() {
+
+                    // 取出grid的字段名字段类型pickingMaterialGrid
+                    console.log('===========')
+                    console.log(materialList)
+                    var select = Ext.getCmp('PickingListGrid').getStore()
+                        .getData();
+                    var s = new Array();
+                    select.each(function(rec) {
+                        s.push(JSON.stringify(rec.data));
+                    });
+                    //获取数据
+                    Ext.Ajax.request({
+                        url : 'material/updateprojectmateriallist.do', //原材料入库
+                        method:'POST',
+                        //submitEmptyText : false,
+                        params : {
+                            s : "[" + s + "]",//存储选择领料的数量
+                            materialList : "[" + materialList + "]",
+                        },
+                        success : function(response) {
+                            //var message =Ext.decode(response.responseText).showmessage;
+                            Ext.MessageBox.alert("提示","领取成功" );
+                            //刷新页面
+                            MaterialList.reload();
+
+                        },
+                        failure : function(response) {
+                            //var message =Ext.decode(response.responseText).showmessage;
+                            Ext.MessageBox.alert("提示","领取失败" );
+                        }
+                    });
+
+                }
+            }]
+        });
+
+        var toolbar = Ext.create('Ext.toolbar.Toolbar',{
+            dock : "top",
+            id : "toolbar",
+            items: [tableList,
+                {
+                    xtype : 'button',
+                    text: '领料单查询',
+                    width: 80,
+                    margin: '0 0 0 10',
+                    layout: 'right',
+                    handler: function(){
+                        var url='material/materiaPickingWin.jsp';
+                        url=encodeURI(url)
+                        //window.open(url,"_blank");
+                        console.log('sss')
+                        //传入所选项目的id
+                        console.log(Ext.getCmp('projectName').getValue())
+                        MaterialList.load({
+                            params : {
+                                proejctId:Ext.getCmp('projectName').getValue(),
+                                //proejctId:'1',
+                            }
+                        });
+                    }
+                }]
         });
 
         //
@@ -243,6 +325,7 @@ Ext.define('material.material_Receive',{
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 2
             })],
+
             listeners: {
                 //监听修改
                 validateedit: function (editor, e) {
@@ -312,10 +395,22 @@ Ext.define('material.material_Receive',{
             dock: 'bottom',
             columns:clms,
             flex:1,
+            tbar: toolbar,
             selType:'checkboxmodel',
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 1
             })],
+            dockedItems: [
+            //     {
+            //     xtype: 'pagingtoolbar',
+            //     store: MaterialList,   // same store GridPanel is using
+            //     dock: 'bottom',
+            //     displayInfo: true,
+            //     displayMsg:'显示{0}-{1}条，共{2}条',
+            //     emptyMsg:'无数据'
+            // },
+                toolbar3
+            ],
             listeners: {
                 //监听修改
                 validateedit : function(editor, e) {
@@ -385,32 +480,7 @@ Ext.define('material.material_Receive',{
 
 
 
-        var toolbar = Ext.create('Ext.toolbar.Toolbar',{
-            dock : "top",
-            id : "toolbar",
-            items: [tableList,
-                {
-                    xtype : 'button',
-                    text: '领料单查询',
-                    width: 80,
-                    margin: '0 0 0 10',
-                    layout: 'right',
-                    handler: function(){
-                        var url='material/materiaPickingWin.jsp';
-                        url=encodeURI(url)
-                        //window.open(url,"_blank");
-                        console.log('sss')
-                        //传入所选项目的id
-                        console.log(Ext.getCmp('projectName').getValue())
-                        MaterialList.load({
-                            params : {
-                                proejctId:Ext.getCmp('projectName').getValue(),
-                                //proejctId:'1',
-                            }
-                        });
-                    }
-                }]
-        });
+
 
         var panel = Ext.create('Ext.panel.Panel',{
             //dock: 'bottom',
@@ -465,60 +535,7 @@ Ext.define('material.material_Receive',{
             // },grid2
             ],
         });
-        //确认入库按钮，
-        var toolbar3 = Ext.create('Ext.toolbar.Toolbar', {
-            dock : "bottom",
-            id : "toolbar3",
-            //style:{float:'center',},
-            //margin-right: '2px',
-            //padding: '0 0 0 750',
-            style:{
-                //marginLeft: '900px'
-                layout: 'right'
-            },
-            items : [{
-                xtype : 'button',
-                iconAlign : 'center',
-                iconCls : 'rukuicon ',
-                text : '确认领料',
-                region:'center',
-                bodyStyle: 'background:#fff;',
-                handler : function() {
 
-                    // 取出grid的字段名字段类型pickingMaterialGrid
-                    console.log('===========')
-                    console.log(materialList)
-                    var select = Ext.getCmp('PickingListGrid').getStore()
-                        .getData();
-                    var s = new Array();
-                    select.each(function(rec) {
-                        s.push(JSON.stringify(rec.data));
-                    });
-                    //获取数据
-                    Ext.Ajax.request({
-                        url : 'material/updateprojectmateriallist.do', //原材料入库
-                        method:'POST',
-                        //submitEmptyText : false,
-                        params : {
-                            s : "[" + s + "]",//存储选择领料的数量
-                            materialList : "[" + materialList + "]",
-                        },
-                        success : function(response) {
-                            //var message =Ext.decode(response.responseText).showmessage;
-                            Ext.MessageBox.alert("提示","领取成功" );
-                            //刷新页面
-                            MaterialList.reload();
-
-                        },
-                        failure : function(response) {
-                            //var message =Ext.decode(response.responseText).showmessage;
-                            Ext.MessageBox.alert("提示","领取失败" );
-                        }
-                    });
-
-                }
-            }]
-        });
 
 
         var grid = Ext.create('Ext.grid.Panel',{
@@ -532,7 +549,8 @@ Ext.define('material.material_Receive',{
         });
 
 
-        this.dockedItems = [toolbar,panel,toolbar3];
+        // this.dockedItems = [toolbar,panel,toolbar3];
+        this.items = [grid1];
         this.callParent(arguments);
     }
 })

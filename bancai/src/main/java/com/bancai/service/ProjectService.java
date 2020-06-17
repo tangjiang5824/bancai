@@ -193,7 +193,7 @@ public class ProjectService extends BaseService {
 
     @Transactional
     public DataList findProjectList(){
-        String sql = "select * from project";
+        String sql = "select * from project where statusId <>3 order by id DESC";
         DataList namelist = queryService.query(sql);
         return namelist;
 
