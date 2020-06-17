@@ -27,6 +27,10 @@ Ext.define("menu.MenuRole_bc0", {
 					id : 'oldpanel.Old_Query_Data',
 					leaf : true
 				}, {
+					text : '旧板退库',
+					id : 'oldpanel.oldpanel_Back',
+					leaf : true
+				}, {
 					text : '旧板出入库记录查询',
 					id : 'oldpanel.oldpanel_Query_Records',
 					leaf : true
@@ -50,11 +54,14 @@ Ext.define("menu.MenuRole_bc0", {
 					text : '原材料批量入库',
 					id : 'material.material_Upload_Data',
 					leaf : true
-				},
-					{
+				}, {
 					text : '原材料数据查询',
 
 					id : 'material.material_Query_Data',
+					leaf : true
+				}, {
+					text : '原材料退库',
+					id : 'material.material_Back',
 					leaf : true
 				}, {
 					text : '原材料出入库记录查询',
