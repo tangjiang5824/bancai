@@ -254,8 +254,8 @@ public class OldpanelMatchService extends BaseService{
         return new String[]{stra,strb};
     }
 
-    @Test
-    private void test(){
+//    @Test
+//    private void test(){
         //=======================
 //        double a =17.23;
 //        double b =12.888;
@@ -336,7 +336,7 @@ public class OldpanelMatchService extends BaseService{
 //            System.out.println(panelList+"==="+panelList1);
 //            System.out.println(attt);
 //        }
-    }
+//    }
 
 
 }
