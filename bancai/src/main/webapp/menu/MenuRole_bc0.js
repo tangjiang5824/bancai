@@ -98,6 +98,11 @@ Ext.define("menu.MenuRole_bc0", {
 					id : 'project.management.queryproject',
 					leaf : true
 				}, {
+					text : '项目信息修改',
+					id : 'project.management.editProject',
+					leaf : true
+				},
+					{
 					text : '项目楼栋信息查询',
 					id : 'project.management.buildinglist',
 					leaf : true
