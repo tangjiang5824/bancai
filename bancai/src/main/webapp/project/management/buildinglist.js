@@ -76,15 +76,25 @@ Ext.define('project.management.buildinglist', {
             id :  'projectName',
             name : 'projectName',
             matchFieldWidth: true,
-            emptyText : "--请选择--",
+            // emptyText : "--请选择项目--",
             displayField: 'projectName',
             valueField: 'projectName',
-            editable : false,
+            // typeAhead : true,
+            editable : true,
             store: tableListStore,
             listeners:{
                 // select: function(combo, record, index) {
                 //     console.log(record[0].data.projectName);
                 // }
+
+                //下拉框默认返回的第一个值
+                render : function(combo) {//渲染
+                    combo.getStore().on("load", function(s, r, o) {
+                        combo.setValue(r[0].get('projectName'));//第一个值
+                    });
+                },
+
+                //监听选中后响应的事件
                 select:function (combo, record) {
                     projectName:Ext.getCmp('projectName').getValue();//获得选中的项目的id
                     //选中后
