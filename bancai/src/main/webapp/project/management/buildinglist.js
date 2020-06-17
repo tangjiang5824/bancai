@@ -76,7 +76,7 @@ Ext.define('project.management.buildinglist', {
             id :  'projectName',
             name : 'projectName',
             matchFieldWidth: true,
-            emptyText : "--请选择项目--",
+            // emptyText : "--请选择项目--",
             displayField: 'projectName',
             valueField: 'projectName',
             // typeAhead : true,

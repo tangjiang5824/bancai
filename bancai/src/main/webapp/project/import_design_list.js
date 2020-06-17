@@ -239,12 +239,19 @@ Ext.define('project.import_design_list', {
 			id :  'projectName',
 			name : 'projectName',
 			matchFieldWidth: true,
-			emptyText : "--请选择--",
+			// emptyText : "--请选择--",
 			displayField: 'projectName',
 			valueField: 'id',
 			editable : false,
 			store: tableListStore1,
 			listeners: {
+
+				//下拉框默认返回的第一个值
+				render : function(combo) {//渲染
+					combo.getStore().on("load", function(s, r, o) {
+						combo.setValue(r[0].get('projectName'));//第一个值
+					});
+				},
 				select:function (combo, record) {
 					projectName:Ext.getCmp('projectName').getValue();
 					//选中后
