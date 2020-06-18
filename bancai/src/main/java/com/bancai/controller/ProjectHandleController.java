@@ -357,6 +357,11 @@ public class ProjectHandleController {
 
     }
 
+    public boolean addmaterialrecevinglist(String s){
+
+        return false;
+    }
+
     /*根据materialType和productId查询规则*/
 //    public DataRow findRules(int mType,int pId){
 //        DataList rulesList = projectService.findrulesByTypeandId(mType,pId);

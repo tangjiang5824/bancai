@@ -130,12 +130,12 @@ public class InsertProjectService extends BaseService {
 
 
     /**
-     * 查询返回对应projectId的领料单
+     * 查询返回对应projectId的原材料清单
      * @return
      */
     @Transactional
     public DataList findmateriallist(String projectId,String start,String limit){
-        String sql = "select * from projectmateriallist where projectId=? limit "+start+","+limit;
+        String sql = " SELECT * FROM  (select p.id,p.projectId,p.buildingId,m.id as materialId,m.materialName,m.length,m.width,p.materialCount,p.countReceived,p.countNotReceived,p.countTemp from projectmateriallist p  LEFT JOIN material m  ON  p.materialId=m.id ) A WHERE A.projectId=? limit "+start+","+limit;
         DataList materiallist = queryService.query(sql,projectId);
         return materiallist;
     }
