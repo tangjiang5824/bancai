@@ -483,7 +483,7 @@ public class ProjectController {
         return true;
     }
 
-    @RequestMapping("/material/materialreceivelist")
+    @RequestMapping("/material/materialreceivelist.do")
     public boolean addmaterialreceivelist(String s,String pickName,String pickTime,HttpSession session){
         String userid=session.getAttribute("userid")+"";
         JSONArray array=new JSONArray(s);
@@ -491,10 +491,16 @@ public class ProjectController {
             JSONObject jsonObject=array.getJSONObject(i);
             String materialId = jsonObject.get("materialId")+"";
             String count=jsonObject.get("countTemp")+"";
+            String id=jsonObject.get("id")+"";
             String sql="insert into materialreceivelist (pickName,pickTime,materialId,count,uploadId) values (?,?,?,?,?)";
             boolean is_insert_right= insertProjectService.insertIntoTableBySQL(sql,pickName,pickTime,materialId,count,userid);
             if(!is_insert_right){
                 return false;
+            }
+            String sql2="update projectmateriallist set countTemp=countNotReceived-? ,countReceived=countReceived+? ,countNotReceived=countNotReceived-?  where id=?";
+            boolean flag=insertProjectService.insertIntoTableBySQL(sql2,count,count,count,id);
+            if(!flag){
+                return  false;
             }
         }
         return true;
