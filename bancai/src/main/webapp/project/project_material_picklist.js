@@ -49,7 +49,7 @@ Ext.define('project.project_material_picklist',{
                     handler: function(){
                         projectMaterial_Store.load({
                             params : {
-                                tableName:'projectmateriallist',
+                                tableName:'projectreceivelsit_view',
                                 columnName:'projectId',
                                 columnValue:Ext.getCmp('projectName').getValue()//''
                             }
@@ -96,7 +96,7 @@ Ext.define('project.project_material_picklist',{
                 type: 'ajax',
                 reader:{
                     type : 'json',
-                    rootProperty: 'projectmateriallist',
+                    rootProperty: 'projectreceivelsit_view',  //projectmateriallist
                     totalProperty: 'totalCount'
                 },
                 params:{

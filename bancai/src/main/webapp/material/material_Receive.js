@@ -318,7 +318,7 @@ Ext.define('material.material_Receive',{
                         console.log('2===========')
                         //获取数据
                         Ext.Ajax.request({
-                            url : 'material/materialreceivelist.do', //原材料入库
+                            url : 'material/materialreceivelist', //原材料入库
                             method:'POST',
                             //submitEmptyText : false,
                             params : {
@@ -350,6 +350,7 @@ Ext.define('material.material_Receive',{
                     //  右边输入框重置
 
                     //  右边页面重置
+                        Ext.getCmp('pickName').setValue("");
                         MaterialList2.removeAll();
                     }
                 }
@@ -391,19 +392,7 @@ Ext.define('material.material_Receive',{
                         console.log(records)
                         console.log("测试")
                         console.log(records[0])
-                        // console.log(records[0].previousValues==undefined)//代领的数量，未修改前的数量
-                        //console.log(records[0].data['countReceived'])
-                        // console.log(records[0].data['countNotReceived'])//最终的数量
-                        // MaterialList2.add(records);
-                        //若未修改数量，不变.直接remove
-                        // if(records[0].previousValues==undefined){
-                        //     // MaterialList.remove(records);
-                        //     MaterialList2.add(records);
-                        // }
-                        // //若修改领取数量,则不remove
-                        // else{
-                        //     MaterialList2.add(records);
-                        // }
+
                         for (i = 0; i < records.length; i++) {
                             console.log(records[i].data['countTemp'])
                             if(records[i].data['countTemp'] != 0){
