@@ -209,4 +209,38 @@ public class Select_specification_from_materialName_controller {
 		WebResponse wr=queryAllService.queryDataPage(start, limit, c, tableName);
 		return wr;
 	}
+
+	@RequestMapping(value = "/project/project_building_info.do")
+	public WebResponse project_building_info(Integer start, Integer limit, String projectId,
+										   String storeLeader,String financeLeader,
+											 String purchaseLeader,String planLeader,String endTime,
+											 String startTime) throws ParseException {
+		if(null==start||start.equals("")) start=0;
+		if(null==limit||limit.equals("")) limit=50;
+		String tableName = "building_project_view";
+		mysqlcondition c=new mysqlcondition();
+		if (projectId.length() != 0) {
+			c.and(new mysqlcondition("projectId", "=", projectId));
+		}
+		if (storeLeader.length() != 0) {
+			c.and(new mysqlcondition("storeLeader", "=", storeLeader));
+		}
+		if (financeLeader.length() != 0) {
+			c.and(new mysqlcondition("financeLeader", "=", financeLeader));
+		}
+		if (purchaseLeader.length() != 0) {
+			c.and(new mysqlcondition("purchaseLeader", "=", purchaseLeader));
+		}
+		if (planLeader.length() != 0) {
+			c.and(new mysqlcondition("planLeader", "=", planLeader));
+		}
+		if (endTime.length() != 0) {
+			c.and(new mysqlcondition("endTime", "<=", endTime));
+		}
+		if (startTime.length() != 0) {
+			c.and(new mysqlcondition("startTime", ">=", startTime));
+		}
+		WebResponse wr=queryAllService.queryDataPage(start, limit, c, tableName);
+		return wr;
+	}
 }

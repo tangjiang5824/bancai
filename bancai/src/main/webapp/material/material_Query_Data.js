@@ -126,35 +126,36 @@ Ext.define('material.material_Query_Data',{
                             }
                         });
                     }
-                },
-                {
-                    text: '删除',
-                    width: 80,
-                    margin: '0 0 0 15',
-                    handler: function(){
-                        var select = grid.getSelectionModel().getSelection();
-                        if(select.length==0){
-                            Ext.Msg.alert('错误', '请选择要删除的记录')
-                        }
-                        else{
-                            Ext.Ajax.request({
-                                url:"data/deleteItemById.do",  //公共方法，在commonMethod包下
-                                params:{
-                                    tableName:tableName,
-                                    id:select[0].data.id
-                                },
-                                success:function (response) {
-                                    Ext.MessageBox.alert("提示","删除成功！")
-                                    grid.store.remove(grid.getSelectionModel().getSelection());
-                                },
-                                failure:function (reponse) {
-                                    Ext.MessageBox.alert("提示","删除失败！")
-
-                                }
-                            })
-                        }
-                    }
-                }]
+                }
+                ]
+                // {
+                //     text: '删除',
+                //     width: 80,
+                //     margin: '0 0 0 15',
+                //     handler: function(){
+                //         var select = grid.getSelectionModel().getSelection();
+                //         if(select.length==0){
+                //             Ext.Msg.alert('错误', '请选择要删除的记录')
+                //         }
+                //         else{
+                //             Ext.Ajax.request({
+                //                 url:"data/deleteItemById.do",  //公共方法，在commonMethod包下
+                //                 params:{
+                //                     tableName:tableName,
+                //                     id:select[0].data.id
+                //                 },
+                //                 success:function (response) {
+                //                     Ext.MessageBox.alert("提示","删除成功！")
+                //                     grid.store.remove(grid.getSelectionModel().getSelection());
+                //                 },
+                //                 failure:function (reponse) {
+                //                     Ext.MessageBox.alert("提示","删除失败！")
+                //
+                //                 }
+                //             })
+                //         }
+                //     }
+                // }]
         })
         var material_Query_Data_Store = Ext.create('Ext.data.Store',{
             id: 'material_Query_Data_Store',
