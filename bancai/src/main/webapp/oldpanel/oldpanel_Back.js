@@ -18,6 +18,36 @@ Ext.define('oldpanel.oldpanel_Back', {
     initComponent : function() {
         var me = this;
         //var materialtype="1";
+        var projectListStore = Ext.create('Ext.data.Store',{
+            fields : ['id'],
+            proxy : {
+                type : 'ajax',
+                url : 'project/findProjectList.do',
+                reader : {
+                    type : 'json',
+                    rootProperty: 'projectList',
+                }
+            },
+            autoLoad : true
+        });
+        var projectList = Ext.create('Ext.form.ComboBox',{
+            fieldLabel : '项目名称',
+            labelWidth : 70,
+            width : '35%',
+            id :  'id',
+            name : 'id',
+            matchFieldWidth: true,
+            emptyText : "--请选择--",
+            displayField: 'projectName',
+            valueField: 'id',
+            editable : false,
+            store: projectListStore,
+            listeners:{
+                select: function(combo, record, index) {
+                    console.log(record[0].data.projectName);
+                }
+            }
+        });
 
         //仓库编号
         var storeNameList = Ext.create('Ext.data.Store',{
@@ -170,11 +200,17 @@ Ext.define('oldpanel.oldpanel_Back', {
 
         });
 
+        var toolbar0 = Ext.create('Ext.toolbar.Toolbar', {
+            dock : "top",
+            items: [
+                projectList,oldpanelTypeList,
+            ]
+        });
+
 
         var toolbar = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
             items: [
-                oldpanelTypeList,
                 {xtype: 'textfield', fieldLabel: '品号', id: 'oldpanelNo', width: 190, labelWidth: 30, margin: '0 10 0 85', name: 'oldpanelNo', value: ""},
                 {xtype: 'textfield', fieldLabel: '旧板名称', id: 'oldpanelName', width: 220, labelWidth: 60, margin: '0 10 0 85', name: 'oldpanelName', value: ""},
                 {xtype: 'textfield', fieldLabel: '库存单位', id: 'inventoryUnit', width: 220, labelWidth: 60, margin: '0 10 0 40', name: 'inventoryUnit', value: ""},
@@ -216,6 +252,7 @@ Ext.define('oldpanel.oldpanel_Back', {
                     iconCls : 'rukuicon ',
                     text : '添加',
                     handler: function(){
+                        var projectId = Ext.getCmp('id').getValue();
                         var oldpanelTypeName = Ext.getCmp('oldpanelType').rawValue;//getValue();
                         var oldpanelType = Ext.getCmp('oldpanelType').getValue();
                         var length = Ext.getCmp('length').getValue();
@@ -235,6 +272,7 @@ Ext.define('oldpanel.oldpanel_Back', {
                         var row = Ext.getCmp('speificLocation_row').getValue();
                         var col = Ext.getCmp('speificLocation_col').getValue();
                         var data = [{
+                            'projectId' : projectId,
                             'oldpanelTypeName' : oldpanelTypeName,
                             'oldpanelType' : oldpanelType,
                             'length' : length ,
@@ -277,7 +315,7 @@ Ext.define('oldpanel.oldpanel_Back', {
                 xtype : 'button',
                 iconAlign : 'center',
                 iconCls : 'rukuicon ',
-                text : '确认入库',
+                text : '确认退库',
                 region:'center',
                 bodyStyle: 'background:#fff;',
                 handler : function() {
@@ -304,11 +342,11 @@ Ext.define('oldpanel.oldpanel_Back', {
                         },
                         success : function(response) {
                             //var message =Ext.decode(response.responseText).showmessage;
-                            Ext.MessageBox.alert("提示","入库成功" );
+                            Ext.MessageBox.alert("提示","退库成功" );
                         },
                         failure : function(response) {
                             //var message =Ext.decode(response.responseText).showmessage;
-                            Ext.MessageBox.alert("提示","入库失败" );
+                            Ext.MessageBox.alert("提示","退库失败" );
                         }
                     });
 
@@ -323,11 +361,12 @@ Ext.define('oldpanel.oldpanel_Back', {
             //dockedItems : [toolbar2],
             store : {
                 // fields: ['材料名','品号', '长',"；类型","宽",'规格','库存单位','仓库编号','数量','成本','存放位置']
-                fields: ['oldpanelTypeName','length','length2','width','width2','width3','oldpanelNo',
+                fields: ['projectId','oldpanelTypeName','length','length2','width','width2','width3','oldpanelNo',
                     'oldpanelName','inventoryUnit', 'specification', 'number','weight','warehouseNo','location']
             },
 
             columns : [
+                {dataIndex : 'projectId', text : '项目编号', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
                 {dataIndex : 'oldpanelTypeName', text : '旧板类型', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
                 {dataIndex : 'length', text : '长一', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'length2', text : '长二', flex :1, editor : {xtype : 'textfield', allowBlank : true,}},
@@ -355,9 +394,7 @@ Ext.define('oldpanel.oldpanel_Back', {
             })],
             selType : 'rowmodel'
         });
-        this.dockedItems = [toolbar,
-            //toobar,
-            toolbar1, toolbar2, grid, toolbar3];
+        this.dockedItems = [toolbar0, toolbar, toolbar1, toolbar2, grid, toolbar3];
         //this.items = [ me.grid ];
         this.callParent(arguments);
 
