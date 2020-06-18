@@ -170,8 +170,8 @@ Ext.define('material.material_Receive',{
             items: [tableList,
                 {
                     xtype : 'button',
-                    text: '领料单查询',
-                    width: 80,
+                    text: '项目领料单查询',
+                    width: 100,
                     margin: '0 0 0 10',
                     layout: 'right',
                     handler: function(){
@@ -355,6 +355,8 @@ Ext.define('material.material_Receive',{
                                 //proejctId:'1',
                             }
                         });
+                    //  右边输入框重置
+
                     //  右边页面重置
                         MaterialList2.removeAll();
                     }
