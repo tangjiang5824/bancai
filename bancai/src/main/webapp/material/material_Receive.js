@@ -70,6 +70,16 @@ Ext.define('material.material_Receive',{
                 flex :1
             },
             {
+                dataIndex:'width',
+                text:'材料宽',
+                flex :1
+            },
+            {
+                dataIndex:'length',
+                text:'材料长',
+                flex :1
+            },
+            {
                 dataIndex:'materialCount',
                 text:'所需数量',
                 flex :1
@@ -216,32 +226,7 @@ Ext.define('material.material_Receive',{
             //     toolbar3
             // ],
             listeners: {
-                //监听修改
-                // validateedit : function(editor, e) {
-                //     var field=e.field
-                //     var id=e.record.data.id
-                //     // console.log(field)
-                //     // console.log(field)
-                // },
-                validateedit : function(editor, e) {
-                    var field=e.field
-                    var id=e.record.data.id
-                    Ext.Ajax.request({
-                        // url:"data/EditCellById.do",  //EditDataById.do
-                        params:{
-                            tableName:tableName,
-                            field:field,
-                            value:e.value,
-                            id:id
-                        },
-                        success:function (response) {
-                            //console.log(response.responseText);
-                        }
-                    })
-                    // console.log("value is "+e.value);
-                    // console.log(e.record.data["id"]);
 
-                }
 
                 //双击表行响应事件
                 // itemdblclick: function(me, record, item, index,rowModel){
@@ -318,22 +303,29 @@ Ext.define('material.material_Receive',{
                     handler : function() {
 
                         // 取出grid的字段名字段类型pickingMaterialGrid
-                        console.log('===========')
-                        console.log(materialList)
-                        var select = Ext.getCmp('PickingListGrid').getStore()
+                        console.log('1===========')
+                        var select = Ext.getCmp('pickingMaterialGrid').getStore()
                             .getData();
+
+                        // console.log(select)
+
+
                         var s = new Array();
                         select.each(function(rec) {
                             s.push(JSON.stringify(rec.data));
                         });
+                        console.log(s)
+                        console.log('2===========')
                         //获取数据
                         Ext.Ajax.request({
-                            url : 'material/updateprojectmateriallist.do', //原材料入库
+                            url : 'material/materialreceivelist', //原材料入库
                             method:'POST',
                             //submitEmptyText : false,
                             params : {
+                                pickName:Ext.getCmp('pickName').getValue(),
+                                pickTime:Ext.getCmp('pickTime').getValue(),
                                 s : "[" + s + "]",//存储选择领料的数量
-                                materialList : "[" + materialList + "]",
+                                // materialList : "[" + materialList + "]",
                             },
                             success : function(response) {
                                 //var message =Ext.decode(response.responseText).showmessage;
@@ -358,6 +350,7 @@ Ext.define('material.material_Receive',{
                     //  右边输入框重置
 
                     //  右边页面重置
+                        Ext.getCmp('pickName').setValue("");
                         MaterialList2.removeAll();
                     }
                 }
@@ -399,19 +392,7 @@ Ext.define('material.material_Receive',{
                         console.log(records)
                         console.log("测试")
                         console.log(records[0])
-                        // console.log(records[0].previousValues==undefined)//代领的数量，未修改前的数量
-                        //console.log(records[0].data['countReceived'])
-                        // console.log(records[0].data['countNotReceived'])//最终的数量
-                        // MaterialList2.add(records);
-                        //若未修改数量，不变.直接remove
-                        // if(records[0].previousValues==undefined){
-                        //     // MaterialList.remove(records);
-                        //     MaterialList2.add(records);
-                        // }
-                        // //若修改领取数量,则不remove
-                        // else{
-                        //     MaterialList2.add(records);
-                        // }
+
                         for (i = 0; i < records.length; i++) {
                             console.log(records[i].data['countTemp'])
                             if(records[i].data['countTemp'] != 0){
