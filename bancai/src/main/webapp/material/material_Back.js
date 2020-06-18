@@ -505,7 +505,7 @@ Ext.define('material.material_Back', {
             //bbar:,
 
             columns : [
-                {dataIndex : 'projectId', text : '项目编号', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
+                {dataIndex : 'projectId', text : '项目编号', hidden:true, flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
                 {
                     dataIndex : '品号',
                     name : '品号',

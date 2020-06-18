@@ -366,7 +366,7 @@ Ext.define('oldpanel.oldpanel_Back', {
             },
 
             columns : [
-                {dataIndex : 'projectId', text : '项目编号', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
+                {dataIndex : 'projectId', text : '项目编号', hidden:true, flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
                 {dataIndex : 'oldpanelTypeName', text : '旧板类型', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
                 {dataIndex : 'length', text : '长一', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'length2', text : '长二', flex :1, editor : {xtype : 'textfield', allowBlank : true,}},
