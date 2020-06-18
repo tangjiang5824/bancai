@@ -420,6 +420,8 @@ public class ProjectController {
 //    }
 
     //原材料出库以及更新领料单
+    //在原材料和入库之间新增领料
+    //这个方法是领料出库界面
     @RequestMapping(value = "/material/updateprojectmateriallist.do")
     @Transactional
     public boolean updateprojectmateriallist(String s,String materialList,HttpSession session) throws JSONException {
@@ -481,6 +483,22 @@ public class ProjectController {
         return true;
     }
 
+    @RequestMapping("/material/materialreceivelist")
+    public boolean addmaterialreceivelist(String s,String pickName,String pickTime,HttpSession session){
+        String userid=session.getAttribute("userid")+"";
+        JSONArray array=new JSONArray(s);
+        for(int i=0;i<array.length();i++){
+            JSONObject jsonObject=array.getJSONObject(i);
+            String materialId = jsonObject.get("materialId")+"";
+            String count=jsonObject.get("countTemp")+"";
+            String sql="insert into materialreceivelist (pickName,pickTime,materialId,count,uploadId) values (?,?,?,?,?)";
+            boolean is_insert_right= insertProjectService.insertIntoTableBySQL(sql,pickName,pickTime,materialId,count,userid);
+            if(!is_insert_right){
+                return false;
+            }
+        }
+        return true;
+    }
 
     /**
      * 通过projectId查询对应的领料单
