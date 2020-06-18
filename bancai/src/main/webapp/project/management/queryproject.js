@@ -35,6 +35,15 @@ Ext.define('project.management.queryproject',{
             // typeAhead : true,
             editable : true,
             store: tableListStore,
+            // listeners: {
+            //
+            //     //下拉框默认返回的第一个值
+            //     render: function (combo) {//渲染
+            //         combo.getStore().on("load", function (s, r, o) {
+            //             combo.setValue(r[0].get('projectName'));//第一个值
+            //         });
+            //     }
+            // }
 
         });
 

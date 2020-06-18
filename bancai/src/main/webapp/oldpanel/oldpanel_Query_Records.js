@@ -6,6 +6,14 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
     initComponent: function(){
         var itemsPerPage = 50;
         var tableName="oldpanel";
+        //操作类型：枚举类型
+        Ext.define('Soims.model.application.ApplicationState', {
+            statics: { // 关键
+                1: { value: '1', name: '出库' },
+                2: { value: '2', name: '退库' },
+                0: { value: '0', name: '入库' }
+            }
+        });
         var projectListStore = Ext.create('Ext.data.Store',{
             fields : [ "projectName","id"],
             proxy : {
@@ -22,14 +30,14 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
         var projectName = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '项目名',
             labelWidth : 45,
-            width : 180,
+            width : '35%',
             id :  'projectName',
             name : 'projectName',
-            matchFieldWidth: false,
+            matchFieldWidth: true,
             emptyText : "--请选择--",
             displayField: 'projectName',
             valueField: 'id',
-            editable : false,
+            editable : true,
             store: projectListStore,
             listeners:{
                 select: function(combo, record, index) {
@@ -43,8 +51,9 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
         var optionTypeList = Ext.create('Ext.data.Store', {
             fields: ['abbr', 'name'],
             data : [
-                {"abbr":"1", "name":"入库"},
-                {"abbr":"0", "name":"出库"},
+                {"abbr":"0", "name":"入库"},
+                {"abbr":"1", "name":"出库"},
+                {"abbr":"2", "name":"退库"},
                 //...
             ]
         });
@@ -70,10 +79,10 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
                     xtype: 'textfield',
                     margin : '0 20 0 20',
                     fieldLabel: '操作员',
-                    id :'userId',
+                    id :'userName',
                     width: 150,
                     labelWidth: 50,
-                    name: 'userId',
+                    name: 'userName',
                     value:"",
                 },projectName,
                 optionType,
@@ -92,11 +101,6 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
                     xtype:'tbtext',
                     text:'至',
                     itemId:'move_left',
-                    // handler:function(){
-                    //     var records=grid2.getSelectionModel().getSelection();
-                    //     MaterialList2.remove(records);
-                    //     MaterialList.add(records);
-                    // }
                 },
                 {
                     xtype : 'datefield',
@@ -119,7 +123,7 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
                     handler: function(){
                         oldpanel_Query_Records_Store.load({
                             params : {
-                                userId : Ext.getCmp('userId').getValue(),
+                                username : Ext.getCmp('userName').getValue(),
                                 endTime : Ext.getCmp('endTime').getValue(),
                                 startTime:Ext.getCmp('startTime').getValue(),
                                 projectId:Ext.getCmp('projectName').getValue(),
@@ -147,7 +151,7 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
                 params:{
                     start: 0,
                     limit: itemsPerPage,
-                    userId : Ext.getCmp('userId').getValue(),
+                    username : Ext.getCmp('userName').getValue(),
                     endTime : Ext.getCmp('endTime').getValue(),
                     startTime:Ext.getCmp('startTime').getValue(),
                     projectId:Ext.getCmp('projectName').getValue(),
@@ -158,7 +162,7 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
                 beforeload : function(store, operation, eOpts) {
                     store.getProxy().setExtraParams({
 
-                        userId : Ext.getCmp('userId').getValue(),
+                        username : Ext.getCmp('userName').getValue(),
                         endTime : Ext.getCmp('endTime').getValue(),
                         startTime:Ext.getCmp('startTime').getValue(),
                         projectId:Ext.getCmp('projectName').getValue(),
@@ -172,65 +176,37 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
 
         });
 
-        // var sampleData=[{
-        //      oldpanellogId:'1',
-        //      oldpanelName:'Zeng',
-        //      count:'2',
-        //      specification:'ttt',
-        // }];
-        // var oldpanel_Query_Records_store1=Ext.create('Ext.data.Store',{
-        //     id: 'oldpanel_Query_Records_store1',
-        //     fields:['旧板领料记录单编号','旧板名称','领取数量','规格'],
-        //     data:sampleData
-        // });
-
-
-        // var oldpanel_Query_Records_specific_data_grid=Ext.create('Ext.grid.Panel',{
-        //     id : 'oldpanel_Query_Records_specific_data_grid',
-        //     store:oldpanel_Query_Records_store1,//oldpanellogdetailList，store1的数据固定
-        //     dock: 'bottom',
-        //     columns:[
-        //         {
-        //             text: '旧板领料记录单编号',
-        //             dataIndex: 'oldpanellogId',
-        //             width:"80"
-        //         },{
-        //             text: '旧板名称',
-        //             dataIndex: 'oldpanelName'
-        //         },{
-        //             text: '领取数量',
-        //             dataIndex: 'count'
-        //         },{
-        //             text: '规格',
-        //             dataIndex: 'specification'
-        //         },
-        //         //fields:['oldpanelId','oldpanelName','count'],specification
-        //
-        //     ],
-        //     flex:1,
-        //     //selType:'checkboxmodel',
-        //     plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
-        //         clicksToEdit : 2
-        //     })],
-        //     listeners: {
-        //         //监听修改
-        //         validateedit: function (editor, e) {
-        //             var field = e.field
-        //             var id = e.record.data.id
-        //         },
-        //     }
-        // });
-        //
-        // var oldpanel_Query_Records_win_showoldpanelData = Ext.create('Ext.window.Window', {
-        //     id:'oldpanel_Query_Records_win_showoldpanelData',
-        //     title: '旧板领取详细信息',
-        //     height: 500,
-        //     width: 650,
-        //     layout: 'fit',
-        //     closable : true,
-        //     closeAction : 'close',
-        //     items:oldpanel_Query_Records_specific_data_grid,
-        // });
+        //弹出框
+        var oldpanel_Query_Records_specific_data_grid=Ext.create('Ext.grid.Panel',{
+            id : 'oldpanel_Query_Records_specific_data_grid',
+            dock: 'bottom',
+            columns:[
+                {text: '旧板名称', dataIndex: 'oldpanelName', flex :1, width:"80"},
+                {text: '数量', flex :1, dataIndex: 'count'}
+            ],
+            flex:1,
+            plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
+                clicksToEdit : 2
+            })],
+            listeners: {
+                //监听修改
+                validateedit: function (editor, e) {
+                    var field = e.field
+                    var id = e.record.data.id
+                },
+            }
+        });
+        var oldpanel_Query_Records_win_showoldpanelData = Ext.create('Ext.window.Window', {
+            id:'oldpanel_Query_Records_win_showoldpanelData',
+            title: '旧板出入库详细信息',
+            height: 500,
+            width: 650,
+            layout: 'fit',
+            closable : true,
+            draggable:true,
+            closeAction : 'close',
+            items:oldpanel_Query_Records_specific_data_grid,
+        });
 
         var grid = Ext.create('Ext.grid.Panel',{
             id: 'oldpanel_Query_Records_Main',
@@ -240,17 +216,18 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
                 editable:true
             },
             columns : [
-                { text: '旧板领料记录单编号', dataIndex: 'id', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '操作员',  dataIndex: 'userId' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
-                // { text: '上传时间', dataIndex: 'time', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '上传时间',
-                    dataIndex: 'time',
-                    flex :1 ,
-                    editor:{xtype : 'textfield', allowBlank : false},
+                {text: '操作员',  dataIndex: 'username',flex :1, editor:{xtype : 'textfield', allowBlank : false}},
+                {text: '操作类型', dataIndex: 'type', flex :1,
+                    //枚举，1：出库，0：入库
+                    renderer: function (value) {
+                        return Soims.model.application.ApplicationState[value].name; // key-value
+                    },
+                    editor:{xtype : 'textfield', allowBlank : false}
+                },
+                {text: '操作时间', dataIndex: 'time', flex :1 , editor:{xtype : 'textfield', allowBlank : false},
                     renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')
                 },
                 { text: '项目名称', dataIndex: 'projectName', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-
             ],
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 3
@@ -275,11 +252,12 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
                 itemdblclick: function(me, record, item, index){
                     var select = record.data;
                     var id = select.id;
+                    //操作类型opType
+                    var opType = select.type;
                     console.log(id);
+                    console.log(opType)
                     var oldpanellogdetailList = Ext.create('Ext.data.Store',{
-                        //id,materialName,length,width,materialType,number
-                        fields:['oldpanellogId','oldpanelName','count','specification'],
-                        //fields:['materialName','length','materialType','width','number'],//'oldpanelId','oldpanelName','count'
+                        fields:['oldpanelName','length','width','oldpanelType','count'],
                         proxy : {
                             type : 'ajax',
                             url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName=oldpanellogdetail&columnName=oldpanellogId&columnValue='+id,
@@ -290,6 +268,19 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
                         },
                         autoLoad : true
                     });
+                    // 根据出入库0/1，决定弹出框表格列名
+                    var col = oldpanel_Query_Records_specific_data_grid.columns[1];
+                    if(opType == 1){
+                        col.setText("出库数量");
+                    }
+                    if(opType == 2){
+                        col.setText("退库数量");
+                    }
+                    else{
+                        col.setText("入库数量");
+                    }
+
+
                     oldpanel_Query_Records_specific_data_grid.setStore(oldpanellogdetailList);
                     console.log(oldpanellogdetailList);
                     Ext.getCmp('oldpanel_Query_Records_win_showoldpanelData').show();

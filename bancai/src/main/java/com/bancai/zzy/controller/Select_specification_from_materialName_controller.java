@@ -41,7 +41,7 @@ public class Select_specification_from_materialName_controller {
 	 * */
 	@RequestMapping(value = "/oldpanel/oldpanel_query_records.do")
 	public WebResponse materialDataList(Integer start, Integer limit, String projectId,
-										String optionType, String startTime, String endTime, String userId) throws ParseException {
+										String optionType, String startTime, String endTime, String username) throws ParseException {
 		//log.debug(startWidth+" "+endWidth);
 		if(null==start||start.equals("")) start=0;
 		if(null==limit||limit.equals("")) limit=50;
@@ -62,8 +62,8 @@ public class Select_specification_from_materialName_controller {
 		if (endTime.length() != 0) {
 			c.and(new mysqlcondition("time", "<=", endTime));
 		}
-		if (userId.length() != 0) {
-			c.and(new mysqlcondition("userId", "=", userId));
+		if (username.length() != 0) {
+			c.and(new mysqlcondition("username", "=", username));
 		}
 		WebResponse wr=queryAllService.queryDataPage(start, limit, c, tableName);
 		return wr;

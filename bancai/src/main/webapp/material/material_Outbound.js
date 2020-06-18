@@ -35,7 +35,7 @@ Ext.define('material.material_Outbound',{
             emptyText : "--请选择--",
             displayField: 'projectName',
             valueField: 'id',
-            editable : false,
+            editable : true,
             store: tableListStore,
             listeners:{
                 select: function(combo, record, index) {

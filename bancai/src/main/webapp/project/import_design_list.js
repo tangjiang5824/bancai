@@ -220,6 +220,7 @@ Ext.define('project.import_design_list', {
 			} ]
 		});
 
+		//楼栋store
 
 
 		var tableListStore1 = Ext.create('Ext.data.Store',{
@@ -236,6 +237,7 @@ Ext.define('project.import_design_list', {
 			autoLoad : true
 
 		});
+
 
 		var tableList1 = Ext.create('Ext.form.ComboBox',{
 			fieldLabel : '项目名',
@@ -256,7 +258,9 @@ Ext.define('project.import_design_list', {
 					combo.getStore().on("load", function(s, r, o) {
 						combo.setValue(r[0].get('projectName'));//第一个值
 					});
+
 				},
+
 				select:function (combo, record) {
 					projectName:Ext.getCmp('projectName').getValue();
 					//选中后
@@ -276,10 +280,10 @@ Ext.define('project.import_design_list', {
 							type : 'ajax',
 							//通用接口，material/findAllbyTableNameAndOnlyOneCondition.do传入表名，属性及属性值
 							url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName='+tableName+'&columnName='+projectId+'&columnValue='+id,//根据项目id查询对应的楼栋名
-							//url : 'project/findBuildingList.do?projectId='+id,//根据项目id查询对应的楼栋名
 							// params : {
-							// 	projectName:Ext.getCmp('projectName').getValue(),
-							// 	//buildingName:Ext.getCmp('buildingName').getValue(),
+							// 	tableName:tableName,
+							// 	columnName:projectId,
+							// 	columnValue:id,
 							// },
 							reader : {
 								type : 'json',
@@ -293,6 +297,7 @@ Ext.define('project.import_design_list', {
 							}
 						}
 					});
+
 					//buildingName,下拉框重新加载数据
 					buildingName.setStore(tableListStore2);
 
@@ -312,7 +317,6 @@ Ext.define('project.import_design_list', {
 			}
 
 		});
-
 
 		// var tableListStore2 = Ext.create('Ext.data.Store',{
 		// 	fields : [ 'buildingName'],

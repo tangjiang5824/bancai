@@ -55,7 +55,12 @@ public class Oldpanel_Data_Controller {
         String sql_addLog = "insert into oldpanellog (type,userId,time) values(?,?,?)";
         String sql_backLog = "insert into oldpanellog (type,userId,time,projectId) values(?,?,?,?)";
         JSONObject jsonBack = jsonArray.getJSONObject(0);
-        String projectId = jsonBack.get("projectId")+"";
+        String projectId;
+        try{
+            projectId = jsonBack.get("projectId")+"";
+        }catch (JSONException e){
+            projectId="";
+        }
         int oldpanellogId;
         if(projectId.equals("")){
             oldpanellogId= insertProjectService.insertDataToTable(sql_addLog,"0",uploadId,simpleDateFormat.format(date));

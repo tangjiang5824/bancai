@@ -361,13 +361,14 @@ Ext.define('oldpanel.oldpanel_Back', {
             //dockedItems : [toolbar2],
             store : {
                 // fields: ['材料名','品号', '长',"；类型","宽",'规格','库存单位','仓库编号','数量','成本','存放位置']
-                fields: ['projectId','oldpanelTypeName','length','length2','width','width2','width3','oldpanelNo',
+                fields: ['projectId','oldpanelTypeName', 'oldpanelType','length','length2','width','width2','width3','oldpanelNo',
                     'oldpanelName','inventoryUnit', 'specification', 'number','weight','warehouseNo','location']
             },
 
             columns : [
-                {dataIndex : 'projectId', text : '项目编号', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
+                {dataIndex : 'projectId', text : '项目编号', hidden:true, flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
                 {dataIndex : 'oldpanelTypeName', text : '旧板类型', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
+                {dataIndex : 'oldpanelType', text : '旧板类型ID', hidden:true, flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
                 {dataIndex : 'length', text : '长一', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'length2', text : '长二', flex :1, editor : {xtype : 'textfield', allowBlank : true,}},
                 {dataIndex : 'width', text : '宽一', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
