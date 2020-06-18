@@ -51,6 +51,11 @@ Ext.define("menu.MenuRole_bc0", {
 					id : 'material.material_Inbound',
 					leaf : true
 				} ,{
+					text : '原材料出库',
+					id : 'material.material_Outbound',
+					leaf : true
+				},
+					{
 					text : '原材料批量入库',
 					id : 'material.material_Upload_Data',
 					leaf : true

@@ -42,57 +42,47 @@ Ext.define('oldpanel.Old_Query_Data',{
         });
         var toobar = Ext.create('Ext.toolbar.Toolbar',{
             items: [oldpanelTypeList,
-            //     {
-            //     xtype: 'textfield',
-            //     fieldLabel: '长度下限:',
-            //     // labelSeparator: '',
-            //     id :'startLength',
-            //     labelWidth: 60,
-            //     width: 180,
-            //     margin : '0 10 0 0',
-            //     name: 'startLength',
-            //     value:"",
-            // },{
-            //     xtype: 'textfield',
-            //     fieldLabel: '长度上限:',
-            //     // labelSeparator: '',
-            //     id :'endLength',
-            //     labelWidth: 60,
-            //     width: 180,
-            //     margin : '0 10 0 0',
-            //     name: 'endLength',
-            //     value:"",
-            // },{
-            //     xtype: 'textfield',
-            //     fieldLabel: '宽度下限:',
-            //     // labelSeparator: '',
-            //     id :'startWidth',
-            //     labelWidth: 60,
-            //     width: 180,
-            //     margin : '0 10 0 0',
-            //     name: 'startWidth',
-            //     value:"",
-            // },{
-            //     xtype: 'textfield',
-            //     fieldLabel: '宽度上限:',
-            //     // labelSeparator: '',
-            //     id :'endWidth',
-            //     labelWidth: 60,
-            //     width: 180,
-            //     margin : '0 10 0 0',
-            //     name: 'endWidth',
-            //     value:"",
-            // },{
-            //     xtype: 'textfield',
-            //     fieldLabel: '板材类型:',
-            //     // labelSeparator: '',
-            //     id :'mType',
-            //     labelWidth: 60,
-            //     width: 180,
-            //     margin : '0 10 0 0',
-            //     name: 'mType',
-            //     value:"",
-            // },
+                {
+                xtype: 'textfield',
+                fieldLabel: '长度下限:',
+                // labelSeparator: '',
+                id :'startLength',
+                labelWidth: 60,
+                width: 180,
+                margin : '0 10 0 0',
+                name: 'startLength',
+                value:"",
+            },{
+                xtype: 'textfield',
+                fieldLabel: '长度上限:',
+                // labelSeparator: '',
+                id :'endLength',
+                labelWidth: 60,
+                width: 180,
+                margin : '0 10 0 0',
+                name: 'endLength',
+                value:"",
+            },{
+                xtype: 'textfield',
+                fieldLabel: '宽度下限:',
+                // labelSeparator: '',
+                id :'startWidth',
+                labelWidth: 60,
+                width: 180,
+                margin : '0 10 0 0',
+                name: 'startWidth',
+                value:"",
+            },{
+                xtype: 'textfield',
+                fieldLabel: '宽度上限:',
+                // labelSeparator: '',
+                id :'endWidth',
+                labelWidth: 60,
+                width: 180,
+                margin : '0 10 0 0',
+                name: 'endWidth',
+                value:"",
+            },
                 {
                 xtype : 'button',
                 text: '查询',
@@ -102,11 +92,10 @@ Ext.define('oldpanel.Old_Query_Data',{
                 handler: function(){
                     uploadRecordsStore.load({
                         params : {
-                            // startWidth : Ext.getCmp('startWidth').getValue(),
-                            // endTWidth : Ext.getCmp('endWidth').getValue(),
-                            // startLength:Ext.getCmp('startLength').getValue(),
-                            // endLength:Ext.getCmp('endLength').getValue(),
-                            // mType:Ext.getCmp('mType').getValue(),
+                            startWidth : Ext.getCmp('startWidth').getValue(),
+                            endTWidth : Ext.getCmp('endWidth').getValue(),
+                            startLength:Ext.getCmp('startLength').getValue(),
+                            endLength:Ext.getCmp('endLength').getValue(),
                             oldpanelType:Ext.getCmp('oldpanelType').getValue(),
                             tableName:tableName,
 
@@ -153,39 +142,39 @@ Ext.define('oldpanel.Old_Query_Data',{
             //
             //     }
             // },
-                {
-                    xtype : 'button',
-                    text: '删除选中行',
-                    width: 80,
-                    margin: '0 0 0 15',
-                    layout: 'right',
-                    handler: function(){
-                        //删除
-                        //获得当前选择的行对象
-                        var select = grid.getSelectionModel().getSelection();
-                        if(select.length==0){
-                            Ext.Msg.alert('错误', '请选择要删除的记录')
-                        }
-                        else{
-                            Ext.Ajax.request({
-                                url:"data/deleteItemById.do",
-                                params:{
-                                    tableName:tableName,
-                                    id:select[0].data.id
-                                },
-                                success:function (response) {
-                                    Ext.MessageBox.alert("提示","删除成功！")
-                                    grid.store.remove(grid.getSelectionModel().getSelection());//移除删除的记录
-                                },
-                                failure:function (response) {
-                                    Ext.MessageBox.alert("提示","删除失败！")
-
-                                }
-                            })
-                        }
-
-                    }
-                }
+            //     {
+            //         xtype : 'button',
+            //         text: '删除选中行',
+            //         width: 80,
+            //         margin: '0 0 0 15',
+            //         layout: 'right',
+            //         handler: function(){
+            //             //删除
+            //             //获得当前选择的行对象
+            //             var select = grid.getSelectionModel().getSelection();
+            //             if(select.length==0){
+            //                 Ext.Msg.alert('错误', '请选择要删除的记录')
+            //             }
+            //             else{
+            //                 Ext.Ajax.request({
+            //                     url:"data/deleteItemById.do",
+            //                     params:{
+            //                         tableName:tableName,
+            //                         id:select[0].data.id
+            //                     },
+            //                     success:function (response) {
+            //                         Ext.MessageBox.alert("提示","删除成功！")
+            //                         grid.store.remove(grid.getSelectionModel().getSelection());//移除删除的记录
+            //                     },
+            //                     failure:function (response) {
+            //                         Ext.MessageBox.alert("提示","删除失败！")
+            //
+            //                     }
+            //                 })
+            //             }
+            //
+            //         }
+            //     }
             ]
         })
 
