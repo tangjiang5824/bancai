@@ -47,10 +47,11 @@ Ext.define('material.material_Outbound',{
 
         //查询的数据存放位置 左侧界面
         var MaterialList = Ext.create('Ext.data.Store',{
-            fields:['materialName','materialCount','countReceived','countNotReceived','countTemp'],
+            //fields:['materialName','materialCount','countReceived','countNotReceived','countTemp'],
+            fields:['pickName','pickTime','materialName','count'],
             proxy : {
                 type : 'ajax',
-                url : 'material/materiallsitbyproject.do',
+                url : 'material/material_outbound.do',
                 reader : {
                     type : 'json',
                     rootProperty: 'materialList',
@@ -64,35 +65,63 @@ Ext.define('material.material_Outbound',{
         });
 
         var clms=[
+            // {
+            //     dataIndex:'materialName',
+            //     text:'材料名',
+            //     flex :1
+            // },
+            // {
+            //     dataIndex:'materialCount',
+            //     text:'所需数量',
+            //     flex :1
+            // },
+            // {
+            //     dataIndex:'countReceived',
+            //     text:'已领数量',
+            //     flex :1
+            // },
+            // {
+            //     dataIndex:'countNotReceived',
+            //     text:'待领数量',
+            //     //editor:{xtype : 'textfield', allowBlank : false}
+            //     flex :1
+            // },
+            // {
+            //     dataIndex:'countTemp',//countTemp
+            //     text:'选择领取数量',
+            //     id:'temp',
+            //     flex :1,
+            //     editor:{xtype : 'textfield', allowBlank : true},
+            //
+            // },
             {
-                dataIndex:'materialName',
-                text:'材料名',
-                flex :1
-            },
-            {
-                dataIndex:'materialCount',
-                text:'所需数量',
-                flex :1
-            },
-            {
-                dataIndex:'countReceived',
-                text:'已领数量',
-                flex :1
-            },
-            {
-                dataIndex:'countNotReceived',
-                text:'待领数量',
-                //editor:{xtype : 'textfield', allowBlank : false}
-                flex :1
-            },
-            {
-                dataIndex:'countTemp',//countTemp
-                text:'选择领取数量',
-                id:'temp',
+                dataIndex:'pickName',//countTemp
+                text:'领料人',
+                id:'pickName',
                 flex :1,
                 editor:{xtype : 'textfield', allowBlank : true},
-
-            }
+            },
+            {
+                dataIndex:'pickTime',//countTemp
+                text:'领料时间',
+                id:'pickTime',
+                flex :1,
+                editor:{xtype : 'textfield', allowBlank : true},
+            },
+            {
+                dataIndex:'materialName',//countTemp
+                text:'原材料名称',
+                id:'materialName',
+                flex :1,
+                editor:{xtype : 'textfield', allowBlank : true},
+            },
+            {
+                dataIndex:'count',//countTemp
+                text:'数量',
+                id:'count',
+                flex :1,
+                editor:{xtype : 'textfield', allowBlank : true},
+            },
         ];
         var clms1=[ {dataIndex:'materialName', text:'材料名',flex :1 },
                     {
@@ -168,15 +197,39 @@ Ext.define('material.material_Outbound',{
             dock : "top",
             id : "toolbar",
             items: [tableList,
+                // {
+                //     xtype: 'textfield',
+                //     margin : '0 20 0 20',
+                //     fieldLabel: '领料批次',
+                //     id :'receiveId',
+                //     width: 150,
+                //     labelWidth: 60,
+                //     name: 'receiveId',
+                //     value:"",
+                // },
                 {
                     xtype: 'textfield',
-                    margin : '0 20 0 20',
-                    fieldLabel: '领料批次',
-                    id :'receiveId',
-                    width: 150,
-                    labelWidth: 60,
-                    name: 'receiveId',
+                    margin : '0 10 0 0',
+                    fieldLabel: '领料人',
+                    id :'pickName',
+                    width: 200,
+                    labelWidth: 50,
+                    name: 'pickName',
                     value:"",
+                },
+                {
+                    xtype: 'datefield',
+                    margin : '0 10 0 0',
+                    fieldLabel: '领料时间',
+                    id :'pickTime',
+                    width: 200,
+                    labelWidth: 60,
+                    name: 'pickTime',
+                    value:"",
+                    format : 'Y-m-d',
+                    editable : false,
+                    // value:Ext.util.Format.date(Ext.Date.add(new Date(),Ext.Date.MONTH,-1),"Y-m-d")
+                    value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
                 },
                 {
                     xtype : 'button',
@@ -194,6 +247,8 @@ Ext.define('material.material_Outbound',{
                         MaterialList.load({
                             params : {
                                 proejctId:Ext.getCmp('projectName').getValue(),
+                                pickName:pickName,
+                                pickTime:pickTime
                                 //proejctId:'1',
                             }
                         });

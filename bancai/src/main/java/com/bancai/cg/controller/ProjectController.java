@@ -327,9 +327,9 @@ public class ProjectController {
             JSONObject jsonObject = new JSONObject();
             jsonObject=jsonArray.getJSONObject(i);
             String materialTypeName = jsonObject.get("materialTypeName")+"";
-            String name = jsonObject.get("name")+"";
-            String sql ="insert into materialtype (materialTypeName,name) values(?,?)";
-            boolean flag= insertProjectService.insertIntoTableBySQL(sql,materialTypeName,name);
+            String description = jsonObject.get("description")+"";
+            String sql ="insert into materialtype (materialTypeName,description) values(?,?)";
+            boolean flag= insertProjectService.insertIntoTableBySQL(sql,materialTypeName,description);
             if(!flag){
                 return  false;
             }
@@ -345,9 +345,9 @@ public class ProjectController {
             JSONObject jsonObject = new JSONObject();
             jsonObject=jsonArray.getJSONObject(i);
             String oldpanelTypeName = jsonObject.get("oldpanelTypeName")+"";
-            String name = jsonObject.get("name")+"";
-            String sql ="insert into oldpaneltype (oldpanelTypeName,name) values(?,?)";
-            boolean flag= insertProjectService.insertIntoTableBySQL(sql,oldpanelTypeName,name);
+            String description = jsonObject.get("description")+"";
+            String sql ="insert into oldpaneltype (oldpanelTypeName,description) values(?,?)";
+            boolean flag= insertProjectService.insertIntoTableBySQL(sql,oldpanelTypeName,description);
             if(!flag){
                 return  false;
             }
@@ -362,16 +362,16 @@ public class ProjectController {
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = new JSONObject();
             jsonObject=jsonArray.getJSONObject(i);
-            String productName = jsonObject.get("productName")+"";
-            String productType = jsonObject.get("productType")+"";
-            String length = jsonObject.get("length")+"";
-            String length2 = jsonObject.get("length2")+"";
-            String width = jsonObject.get("width")+"";
-            String width2 = jsonObject.get("width2")+"";
-            String weight = jsonObject.get("weight")+"";
-            String cost = "0";//jsonObject.get("cost")+""
-            String sql ="insert into productbasicinfo (productName,productType,length,length2,width,width2,weight,cost) values(?,?,?,?,?,?,?,?)";
-            boolean flag= insertProjectService.insertIntoTableBySQL(sql,productName,productType,length,length2,width,width2,weight,cost);
+            String productTypeName = jsonObject.get("productTypeName")+"";
+            String description = jsonObject.get("description")+"";
+//            String length = jsonObject.get("length")+"";
+//            String length2 = jsonObject.get("length2")+"";
+//            String width = jsonObject.get("width")+"";
+//            String width2 = jsonObject.get("width2")+"";
+//            String weight = jsonObject.get("weight")+"";
+//            String cost = "0";//jsonObject.get("cost")+""
+            String sql ="insert into producttype (productTypeName,description) values(?,?)";
+            boolean flag= insertProjectService.insertIntoTableBySQL(sql,productTypeName,description);
             if(!flag){
                 return  false;
             }

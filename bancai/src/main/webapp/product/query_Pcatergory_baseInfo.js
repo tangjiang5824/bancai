@@ -2,36 +2,36 @@ Ext.define('product.query_Pcatergory_baseInfo',{
     extend:'Ext.panel.Panel',
     region: 'center',
     layout:'fit',
-    title: '产品基础信息查询',
+    title: '查询产品类型',
     initComponent: function(){
         var itemsPerPage = 50;
-        var tableName="productbasicinfo";
-        var toobar = Ext.create('Ext.toolbar.Toolbar',{
-            items: [{
-                xtype: 'textfield',
-                fieldLabel: '产品类型:',
-                // labelSeparator: '',
-                id :'productCatergory',
-                labelWidth: 80,
-                width: 300,
-                margin : '0 10 0 0',
-                name: 'mType',
-                value:"",
-            },{
-                xtype : 'button',
-                text: '查询',
-                width: 80,
-                margin: '0 0 0 15',
-                layout: 'right',
-                handler: function(){
-                    uploadRecordsStore.load({
-                        params : {
-                            productCatergory:Ext.getCmp('productCatergory').getValue(),
-                            tableName:tableName,
-                        }
-                    });
-                }
-            },
+        var tableName="producttype";
+        // var toobar = Ext.create('Ext.toolbar.Toolbar',{
+        //     items: [{
+        //         xtype: 'textfield',
+        //         fieldLabel: '产品类型:',
+        //         // labelSeparator: '',
+        //         id :'productCatergory',
+        //         labelWidth: 80,
+        //         width: 300,
+        //         margin : '0 10 0 0',
+        //         name: 'mType',
+        //         value:"",
+        //     },{
+        //         xtype : 'button',
+        //         text: '查询',
+        //         width: 80,
+        //         margin: '0 0 0 15',
+        //         layout: 'right',
+        //         handler: function(){
+        //             uploadRecordsStore.load({
+        //                 params : {
+        //                     productCatergory:Ext.getCmp('productCatergory').getValue(),
+        //                     tableName:tableName,
+        //                 }
+        //             });
+        //         }
+        //     },
                 //     {
                 //     xtype : 'button',
                 //     text: '修改',
@@ -70,42 +70,42 @@ Ext.define('product.query_Pcatergory_baseInfo',{
                 //
                 //
                 //     }
-                // },
-                {
-                    xtype : 'button',
-                    text: '删除选中行',
-                    width: 80,
-                    margin: '0 0 0 15',
-                    layout: 'right',
-                    handler: function(){
-                        //删除
-                        //获得当前选择的行对象
-                        var select = grid.getSelectionModel().getSelection();
-                        if(select.length==0){
-                            Ext.Msg.alert('错误', '请选择要删除的记录')
-                        }
-                        else{
-                            Ext.Ajax.request({
-                                url:"？？？？",
-                                params:{
-                                    tableName:tableName,
-                                    id:select[0].data.id
-                                },
-                                success:function (response) {
-                                    Ext.MessageBox.alert("提示","删除成功！")
-                                    grid.store.remove(grid.getSelectionModel().getSelection());//移除删除的记录
-                                },
-                                failure:function (response) {
-                                    Ext.MessageBox.alert("提示","删除失败！")
-
-                                }
-                            })
-                        }
-
-                    }
-                }
-            ]
-        })
+        //         // },
+        //         {
+        //             xtype : 'button',
+        //             text: '删除选中行',
+        //             width: 80,
+        //             margin: '0 0 0 15',
+        //             layout: 'right',
+        //             handler: function(){
+        //                 //删除
+        //                 //获得当前选择的行对象
+        //                 var select = grid.getSelectionModel().getSelection();
+        //                 if(select.length==0){
+        //                     Ext.Msg.alert('错误', '请选择要删除的记录')
+        //                 }
+        //                 else{
+        //                     Ext.Ajax.request({
+        //                         url:"？？？？",
+        //                         params:{
+        //                             tableName:tableName,
+        //                             id:select[0].data.id
+        //                         },
+        //                         success:function (response) {
+        //                             Ext.MessageBox.alert("提示","删除成功！")
+        //                             grid.store.remove(grid.getSelectionModel().getSelection());//移除删除的记录
+        //                         },
+        //                         failure:function (response) {
+        //                             Ext.MessageBox.alert("提示","删除失败！")
+        //
+        //                         }
+        //                     })
+        //                 }
+        //
+        //             }
+        //         }
+        //     ]
+        // })
 
         //自动将读取到的数据返回到页面中
         var uploadRecordsStore = Ext.create('Ext.data.Store',{
@@ -120,7 +120,7 @@ Ext.define('product.query_Pcatergory_baseInfo',{
                 method:'POST',
                 reader:{
                     type : 'json',
-                    rootProperty: 'productbasicinfo',
+                    rootProperty: 'producttype',
                     totalProperty: 'totalCount'
                 },
                 params:{
@@ -149,11 +149,11 @@ Ext.define('product.query_Pcatergory_baseInfo',{
                 enableTextSelection : true
             },
             columns : [
-                { text: '产品名称',  dataIndex: 'productName' ,flex :1, editor : {xtype : 'textfield', allowBlank : false}},
-                { text: '类型',  dataIndex: 'productType' ,flex :1,editor : {xtype : 'textfield', allowBlank : false}},
+                { text: '类型',  dataIndex: 'productTypeName' ,flex :1,editor : {xtype : 'textfield', allowBlank : false}},
+                { text: '描述',  dataIndex: 'description' ,flex :1, editor : {xtype : 'textfield', allowBlank : false}}
             ],
 
-            tbar: toobar,
+            //tbar: toobar,
             dockedItems: [{
                 xtype: 'pagingtoolbar',
                 store: uploadRecordsStore,   // same store GridPanel is using
@@ -163,43 +163,43 @@ Ext.define('product.query_Pcatergory_baseInfo',{
                 emptyMsg:'无数据'
             }],
 
-            plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
-                clicksToEdit : 1
-            })],
+            // plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
+            //     clicksToEdit : 1
+            // })],
 
-            listeners: {
-
-                validateedit: function(editor, e){//监听点击表格
-
-                    //获得当前行的id
-                    var cellId = e.record.id;
-                    var cellField = e.field;
-                    var cellValue = e.value//当前值
-
-                    Ext.Ajax.request({
-                        url : 'data/EditCellById.do',
-                        method:'POST',
-                        //submitEmptyText : false,
-                        params : {
-                            tableName:tableName,
-                            id:cellId,
-                            field:cellField,
-                            value:cellValue
-                        },
-                        success : function(response) {
-                            Ext.MessageBox.alert("提示", "修改成功！");
-                            // uploadRecordsStore.load({
-                            //
-                            // });
-                            // me.close();
-
-                        },
-                        failure : function(response) {
-                            Ext.MessageBox.alert("提示", "修改失败！");
-                        }
-                    });
-                },
-            }
+            // listeners: {
+            //
+            //     validateedit: function(editor, e){//监听点击表格
+            //
+            //         //获得当前行的id
+            //         var cellId = e.record.id;
+            //         var cellField = e.field;
+            //         var cellValue = e.value//当前值
+            //
+            //         Ext.Ajax.request({
+            //             url : 'data/EditCellById.do',
+            //             method:'POST',
+            //             //submitEmptyText : false,
+            //             params : {
+            //                 tableName:tableName,
+            //                 id:cellId,
+            //                 field:cellField,
+            //                 value:cellValue
+            //             },
+            //             success : function(response) {
+            //                 Ext.MessageBox.alert("提示", "修改成功！");
+            //                 // uploadRecordsStore.load({
+            //                 //
+            //                 // });
+            //                 // me.close();
+            //
+            //             },
+            //             failure : function(response) {
+            //                 Ext.MessageBox.alert("提示", "修改失败！");
+            //             }
+            //         });
+            //     },
+            // }
             //对表的行双击，响应的事件
 
             // listeners: {

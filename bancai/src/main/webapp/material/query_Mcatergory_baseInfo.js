@@ -2,110 +2,10 @@ Ext.define('material.query_Mcatergory_baseInfo',{
     extend:'Ext.panel.Panel',
     region: 'center',
     layout:'fit',
-    title: '原材料基础信息查询',
+    title: '查看原材料类型',
     initComponent: function(){
         var itemsPerPage = 50;
         var tableName="materialtype";
-        var toobar = Ext.create('Ext.toolbar.Toolbar',{
-            items: [{
-                xtype: 'textfield',
-                fieldLabel: '原材料类型:',
-                // labelSeparator: '',
-                id :'materialCatergory',
-                labelWidth: 80,
-                width: 300,
-                margin : '0 10 0 0',
-                name: 'mType',
-                value:"",
-            },{
-                xtype : 'button',
-                text: '查询',
-                width: 80,
-                margin: '0 0 0 15',
-                layout: 'right',
-                handler: function(){
-                    uploadRecordsStore.load({
-                        params : {
-                            materialCatergory:Ext.getCmp('materialCatergory').getValue(),
-                            tableName:tableName,
-                        }
-                    });
-                }
-            },
-            //     {
-            //     xtype : 'button',
-            //     text: '修改',
-            //     width: 80,
-            //     margin: '0 0 0 15',
-            //     layout: 'right',
-            //     handler: function(){
-            //         //保存修改
-            //         var select = Ext.getCmp('uploadRecordsMain').getStore().getData();
-            //         var s = new Array();
-            //         select.each(function(rec) {
-            //             //delete rec.data.id;
-            //             s.push(JSON.stringify(rec.data));
-            //             //alert(JSON.stringify(rec.data));//获得表格中的数据
-            //         });
-            //         Ext.Ajax.request({
-            //             url : 'old/editData.do',
-            //             method:'POST',
-            //             //submitEmptyText : false,
-            //             params : {
-            //                 s : "[" + s + "]",
-            //             },
-            //             success : function(response) {
-            //                 Ext.MessageBox.alert("提示", "修改成功！");
-            //                 uploadRecordsStore.load({
-            //                     params : {
-            //                     }
-            //                 });
-            //                 me.close();
-            //
-            //             },
-            //             failure : function(response) {
-            //                 Ext.MessageBox.alert("提示", "修改失败！");
-            //             }
-            //         });
-            //
-            //
-            //     }
-            // },
-                {
-                    xtype : 'button',
-                    text: '删除选中行',
-                    width: 80,
-                    margin: '0 0 0 15',
-                    layout: 'right',
-                    handler: function(){
-                        //删除
-                        //获得当前选择的行对象
-                        var select = grid.getSelectionModel().getSelection();
-                        if(select.length==0){
-                            Ext.Msg.alert('错误', '请选择要删除的记录')
-                        }
-                        else{
-                            Ext.Ajax.request({
-                                url:"data/deleteItemById.do",
-                                params:{
-                                    tableName:tableName,
-                                    id:select[0].data.id
-                                },
-                                success:function (response) {
-                                    Ext.MessageBox.alert("提示","删除成功！")
-                                    grid.store.remove(grid.getSelectionModel().getSelection());//移除删除的记录
-                                },
-                                failure:function (response) {
-                                    Ext.MessageBox.alert("提示","删除失败！")
-
-                                }
-                            })
-                        }
-
-                    }
-                }
-            ]
-        })
 
         //自动将读取到的数据返回到页面中
         var uploadRecordsStore = Ext.create('Ext.data.Store',{
@@ -149,11 +49,11 @@ Ext.define('material.query_Mcatergory_baseInfo',{
                 enableTextSelection : true
             },
             columns : [
-                { text: '原材料名称',  dataIndex: 'name' ,flex :1, editor : {xtype : 'textfield', allowBlank : false}},
-                { text: '类型',  dataIndex: 'materialTypeName' ,flex :1,editor : {xtype : 'textfield', allowBlank : false}},
+                { text: '原材料类型',  dataIndex: 'materialTypeName' ,flex :1,editor : {xtype : 'textfield', allowBlank : false}},
+                { text: '描述',  dataIndex: 'description' ,flex :1, editor : {xtype : 'textfield', allowBlank : false}}
                 ],
 
-            tbar: toobar,
+            //tbar: toobar,
             dockedItems: [{
                 xtype: 'pagingtoolbar',
                 store: uploadRecordsStore,   // same store GridPanel is using
@@ -200,21 +100,6 @@ Ext.define('material.query_Mcatergory_baseInfo',{
                     });
                 },
             }
-            //对表的行双击，响应的事件
-
-            // listeners: {
-            // 	itemdblclick: function(me, item, index){
-            // 		//var select = record.data;
-            // 		//var id =select.id;
-            // 		//var tableName=select.tableName;
-            // 		var url='showData.jsp?taxTableName='
-            // 			+ tableName
-            // 			+ "&taxTableId=" + id;
-            // 		url=encodeURI(url)
-            // 		window.open(url,
-            // 			'_blank');
-            // 	}
-            // }
         });
 
         this.items = [grid];

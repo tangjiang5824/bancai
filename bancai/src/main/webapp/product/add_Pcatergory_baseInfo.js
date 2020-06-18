@@ -2,7 +2,7 @@ Ext.define('product.add_Pcatergory_baseInfo', {
     extend : 'Ext.panel.Panel',
     region : 'center',
     layout : "fit",
-    title : '新增产品基础信息',
+    title : '新增产品类型',
     reloadPage : function() {
         var p = Ext.getCmp('functionPanel');
         p.removeAll();
@@ -28,15 +28,9 @@ Ext.define('product.add_Pcatergory_baseInfo', {
                 iconCls : 'rukuicon ',
                 text : '新增产品类型',
                 handler : function() {
-                    //fields: ['品号', '品名','规格','库存单位','仓库编号','数量','成本','存放位置']
                     var data = [{
-                        'productName' : '',
-                        'productType':'',
-                        'length' : '',
-                        'length2' : '',
-                        'width' : '',
-                        'width2' : '',
-                        'weight' : '',
+                        'productTypeName':'',
+                        'description' : ''
                     }];
                     //Ext.getCmp('addDataGrid')返回定义的对象
                     Ext.getCmp('addDataGrid').getStore().loadData(data,
@@ -107,11 +101,10 @@ Ext.define('product.add_Pcatergory_baseInfo', {
             id : 'addDataGrid',
             dockedItems : [toolbar2],
             store : {
-                fields: ['productName', 'productType','length','length2','width','width2','weight']
-
+                fields: ['productTypeName','description']
             },
             columns : [{
-                dataIndex : 'productName',
+                dataIndex : 'productTypeName',
                 name : '产品名称',
                 text : '产品名称',
                 //width : 110,
@@ -121,69 +114,15 @@ Ext.define('product.add_Pcatergory_baseInfo', {
                 }
             },
                 {
-                    dataIndex : 'productType',
-                    name : '类型',
-                    text : '类型',
-                    //width : 110,
-                    editor : {// 文本字段
-                        xtype : 'textfield',
-                        allowBlank : false,
-                    }
-                },
-                {
-                dataIndex : 'length',
-                name : '长',
-                text : '长',
+                dataIndex : 'description',
+                name : '描述',
+                text : '描述',
                 //width : 110,
                 editor : {// 文本字段
                     xtype : 'textfield',
                     allowBlank : false,
                 }
-            },
-                {
-                    dataIndex : 'length2',
-                    name : '长2',
-                    text : '长2',
-                    //width : 110,
-                    editor : {// 文本字段
-                        xtype : 'textfield',
-                        allowBlank : true,
 
-                    }
-
-                },
-                {
-                    dataIndex : 'width',
-                    name : '宽',
-                    text : '宽',
-                    //width : 110,
-                    editor : {// 文本字段
-                        xtype : 'textfield',
-                        allowBlank : false,
-
-                    }
-
-                },
-                {
-                dataIndex : 'width2',
-                name : '宽2',
-                text : '宽2',
-                //width : 110,
-                editor : {// 文本字段
-                    xtype : 'textfield',
-                    allowBlank : true,
-
-                }
-
-            },{
-                dataIndex : 'weight',
-                name : '重量',
-                text : '重量',
-                //width : 192,
-                editor : {
-                    xtype : 'textfield',
-                    allowBlank : false
-                }
             }],
             viewConfig : {
                 plugins : {
