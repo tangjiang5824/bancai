@@ -52,10 +52,19 @@ public class MaterialDataController {
         JSONArray jsonArray =new JSONArray(s);
         String userId = (String)session.getAttribute("userid");
         //入库记录sql
-        String sql_in = "insert into materiallog (type,userId,time) values(?,?,?)";
         Date date=new Date();
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        int main_key= insertProjectService.insertDataToTable(sql_in,"0",userId,simpleDateFormat.format(date));
+        String sql_addLog = "insert into materiallog (type,userId,time) values(?,?,?)";
+        String sql_backLog = "insert into materiallog (type,userId,time,projectId) values(?,?,?,?)";
+        JSONObject jsonBack = jsonArray.getJSONObject(0);
+        String projectId = jsonBack.get("projectId")+"";
+        int main_key;
+        if(projectId.equals("")){
+            main_key= insertProjectService.insertDataToTable(sql_addLog,"0",userId,simpleDateFormat.format(date));
+        } else {
+            main_key= insertProjectService.insertDataToTable(sql_backLog,"2",userId,simpleDateFormat.format(date),projectId);
+        }
+
         for(int i=0;i< jsonArray.length();i++) {
             JSONObject jsonTemp = jsonArray.getJSONObject(i);
             String length2=null;

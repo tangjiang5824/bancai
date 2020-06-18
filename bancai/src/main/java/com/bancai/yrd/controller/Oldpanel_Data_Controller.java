@@ -53,7 +53,15 @@ public class Oldpanel_Data_Controller {
         Date date=new Date();
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String sql_addLog = "insert into oldpanellog (type,userId,time) values(?,?,?)";
-        int oldpanellogId= insertProjectService.insertDataToTable(sql_addLog,"0",uploadId,simpleDateFormat.format(date));
+        String sql_backLog = "insert into oldpanellog (type,userId,time,projectId) values(?,?,?,?)";
+        JSONObject jsonBack = jsonArray.getJSONObject(0);
+        String projectId = jsonBack.get("projectId")+"";
+        int oldpanellogId;
+        if(projectId.equals("")){
+            oldpanellogId= insertProjectService.insertDataToTable(sql_addLog,"0",uploadId,simpleDateFormat.format(date));
+        } else {
+            oldpanellogId= insertProjectService.insertDataToTable(sql_backLog,"2",uploadId,simpleDateFormat.format(date),projectId);
+        }
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonTemp = jsonArray.getJSONObject(i);
             //获得第i条数据的各个属性值

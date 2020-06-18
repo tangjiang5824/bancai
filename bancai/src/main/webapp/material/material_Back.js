@@ -20,6 +20,36 @@ Ext.define('material.material_Back', {
         var tableName="material";
         //var materialtype="1";
 
+        var projectListStore = Ext.create('Ext.data.Store',{
+            fields : ['id'],
+            proxy : {
+                type : 'ajax',
+                url : 'project/findProjectList.do',
+                reader : {
+                    type : 'json',
+                    rootProperty: 'projectList',
+                }
+            },
+            autoLoad : true
+        });
+        var projectList = Ext.create('Ext.form.ComboBox',{
+            fieldLabel : '项目名称',
+            labelWidth : 70,
+            width : '35%',
+            id :  'id',
+            name : 'id',
+            matchFieldWidth: true,
+            emptyText : "--请选择--",
+            displayField: 'projectName',
+            valueField: 'id',
+            editable : false,
+            store: projectListStore,
+            listeners:{
+                select: function(combo, record, index) {
+                    console.log(record[0].data.projectName);
+                }
+            }
+        });
         //原材料类型
         var MaterialNameList = Ext.create('Ext.data.Store',{
             fields : [ 'materialName'],
@@ -214,6 +244,12 @@ Ext.define('material.material_Back', {
             }
         });
 
+        var toolbar0 = Ext.create('Ext.toolbar.Toolbar', {
+            dock : "top",
+            items: [
+                projectList,
+            ]
+        });
         //长1 长2 宽1 宽2 库存单位
         var toolbar = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
@@ -321,6 +357,7 @@ Ext.define('material.material_Back', {
                     iconCls : 'rukuicon ',
                     text : '添加',
                     handler: function(){
+                        var projectId = Ext.getCmp('id').getValue();
                         var materialType = Ext.getCmp('materialName').rawValue;
                         var length1 = Ext.getCmp('length1').getValue();
                         var width1 = Ext.getCmp('width1').getValue();
@@ -342,6 +379,7 @@ Ext.define('material.material_Back', {
                             var length2 = Ext.getCmp('length2').getValue();
                             var width2 = Ext.getCmp('width2').getValue();
                             data = [{
+                                'projectId' : projectId,
                                 '类型' : materialType,
                                 '长1' : length1,
                                 '长2' : length2,
@@ -364,6 +402,7 @@ Ext.define('material.material_Back', {
                         }else{
                             console.log("bbbbbb")
                             data = [{
+                                'projectId' : projectId,
                                 '类型' : materialType,
                                 '长1' : length1,
                                 '宽1' : width1,
@@ -412,7 +451,7 @@ Ext.define('material.material_Back', {
                 xtype : 'button',
                 iconAlign : 'center',
                 iconCls : 'rukuicon ',
-                text : '确认入库',
+                text : '确认退库',
                 region:'center',
                 bodyStyle: 'background:#fff;',
                 handler : function() {
@@ -444,11 +483,11 @@ Ext.define('material.material_Back', {
                         },
                         success : function(response) {
                             //var message =Ext.decode(response.responseText).showmessage;
-                            Ext.MessageBox.alert("提示","入库成功" );
+                            Ext.MessageBox.alert("提示","退库成功" );
                         },
                         failure : function(response) {
                             //var message =Ext.decode(response.responseText).showmessage;
-                            Ext.MessageBox.alert("提示","入库失败" );
+                            Ext.MessageBox.alert("提示","退库失败" );
                         }
                     });
 
@@ -461,11 +500,12 @@ Ext.define('material.material_Back', {
             id : 'addDataGrid',
             //dockedItems : [toolbar2],
             store : {
-                fields :['类型','长1','宽1','数量','成本','行','列','库存单位','仓库编号','规格','原材料名称']
+                fields :['projectId','类型','长1','宽1','数量','成本','行','列','库存单位','仓库编号','规格','原材料名称']
             },
             //bbar:,
 
             columns : [
+                {dataIndex : 'projectId', text : '项目编号', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
                 {
                     dataIndex : '品号',
                     name : '品号',
@@ -621,9 +661,7 @@ Ext.define('material.material_Back', {
             })],
             selType : 'rowmodel'
         });
-        this.dockedItems = [toolbar,
-            //toobar,
-            toolbar1, grid,toolbar3];
+        this.dockedItems = [toolbar0, toolbar, toolbar1, grid, toolbar3];
         //this.items = [ me.grid ];
         this.callParent(arguments);
 
