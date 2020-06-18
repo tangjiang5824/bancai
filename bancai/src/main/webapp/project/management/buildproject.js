@@ -53,8 +53,8 @@ Ext.define('project.management.buildproject', {
                     margin : '0 10 0 0',
                     fieldLabel: '项目名',
                     id :'projectName',
-                    width: 180,
-                    labelWidth: 80,
+                    width: '35%',
+                    labelWidth: 50,
                     name: 'projectName',
                     value:"",
 
@@ -145,7 +145,7 @@ Ext.define('project.management.buildproject', {
                 xtype : 'button',
                 iconAlign : 'center',
                 iconCls : 'rukuicon ',
-                text : '添加表项',
+                text : '添加楼栋',
                 handler : function() {
                     //fields: ['品号', '品名','规格','库存单位','仓库编号','数量','成本','存放位置']
                     var data = [{
@@ -161,26 +161,27 @@ Ext.define('project.management.buildproject', {
 
                 }
 
-            },{
-                xtype : 'button',
-                iconAlign : 'center',
-                iconCls : 'rukuicon ',
-                text : '添加字段名',
-                // handler : function() {
-                // 	//fields: ['品号', '品名','规格','库存单位','仓库编号','数量','成本','存放位置']
-                // 	var data = [{
-                // 		'品号' : '',
-                // 		'长' : '',
-                // 		'类型' : '',
-                // 		'宽' : '',
-                // 	}];
-                // 	//Ext.getCmp('addDataGrid')返回定义的对象
-                // 	Ext.getCmp('addDataGrid').getStore().loadData(data,
-                // 		true);
-                //
-                // }
-
             },
+            //     {
+            //     xtype : 'button',
+            //     iconAlign : 'center',
+            //     iconCls : 'rukuicon ',
+            //     text : '添加字段名',
+            //     // handler : function() {
+            //     // 	//fields: ['品号', '品名','规格','库存单位','仓库编号','数量','成本','存放位置']
+            //     // 	var data = [{
+            //     // 		'品号' : '',
+            //     // 		'长' : '',
+            //     // 		'类型' : '',
+            //     // 		'宽' : '',
+            //     // 	}];
+            //     // 	//Ext.getCmp('addDataGrid')返回定义的对象
+            //     // 	Ext.getCmp('addDataGrid').getStore().loadData(data,
+            //     // 		true);
+            //     //
+            //     // }
+            //
+            // },
                 // 	{
                 // 	xtype : 'button',
                 // 	iconAlign : 'center',

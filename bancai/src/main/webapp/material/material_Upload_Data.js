@@ -54,20 +54,6 @@ Ext.define('material.material_Upload_Data', {
                 editable:true
             },
             columns : [
-                // { text: '材料名', dataIndex: 'materialName', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-                // { text: '品号',  dataIndex: '品号' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
-                // { text: '长1', dataIndex: '长1', flex :0.7 ,editor:{xtype : 'textfield', allowBlank : false}},
-                // { text: '长2', dataIndex: '长2', flex :0.7 ,editor:{xtype : 'textfield', allowBlank : false}},
-                // { text: '类型', dataIndex: '类型',flex :1,editor:{xtype : 'textfield', allowBlank : false} },
-                // { text: '宽1', dataIndex: '宽1', flex :0.7 ,editor:{xtype : 'textfield', allowBlank : false}},
-                // { text: '宽2', dataIndex: '宽2', flex :0.7 ,editor:{xtype : 'textfield', allowBlank : false}},
-                // { text: '数量', dataIndex: '数量', flex :1,editor:{xtype : 'textfield', allowBlank : false} },
-                // { text: '成本', dataIndex: '成本', flex :1,editor:{xtype : 'textfield', allowBlank : false}},
-                // { text: '规格',  dataIndex: '规格' ,flex :1,editor:{xtype : 'textfield', allowBlank : false}},
-                // { text: '库存单位', dataIndex: '库存单位', flex :1,editor:{xtype : 'textfield', allowBlank : false}},
-                // { text: '仓库编号', dataIndex: '仓库编号',flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-                // { text: '位置-行', dataIndex: '行',flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-                // { text: '位置-列', dataIndex: '列',flex :1 ,editor:{xtype : 'textfield', allowBlank : false}}
                 { text: '材料名', dataIndex: 'materialName', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
                 { text: '品号',  dataIndex: 'materialNo' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
                 { text: '长1', dataIndex: 'length', flex :0.7 ,editor:{xtype : 'textfield', allowBlank : false}},
@@ -152,7 +138,6 @@ Ext.define('material.material_Upload_Data', {
                                                 //上传成功
                                                 var response = action.result;
                                                 //回显
-                                                console.log('1100000')
                                                 console.log(action.result['value']);
                                                 Ext.MessageBox.alert("提示", "上传成功!");
                                                 //重新加载数据

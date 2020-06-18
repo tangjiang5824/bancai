@@ -22,16 +22,22 @@ Ext.define('project.oldpanel_material_list',{
         var projectList = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '项目名',
             labelWidth : 45,
-            width : 400,
+            width : '35%',
             id :  'projectName',
             name : '项目名称',
-            matchFieldWidth: false,
-            emptyText : "--请选择--",
+            matchFieldWidth: true,
+            // emptyText : "--请选择--",
             displayField: 'projectName',
             valueField: 'id',
             editable : false,
             store: projectListStore,
             listeners:{
+                //下拉框默认返回的第一个值
+                render : function(combo) {//渲染
+                    combo.getStore().on("load", function(s, r, o) {
+                        combo.setValue(r[0].get('projectName'));//第一个值
+                    });
+                },
                 select: function(combo, record, index) {
                     console.log(record[0].data.projectName);
                 }

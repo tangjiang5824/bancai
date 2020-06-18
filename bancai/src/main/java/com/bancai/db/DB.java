@@ -19,7 +19,7 @@ public class DB {
 	//private final static String driver = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
 	private static String connectionUrl;
 	static {
-		connectionUrl = "jdbc:mysql://116.62.24.156:3306;user=root;password=root;";// 运行数据库地址
+		connectionUrl = "jdbc:mysql://47.105.55.200:3306/bancai?serverTimezone=UTC;user=root;password=123456;";// 运行数据库地址
 		//connectionUrl = "jdbc:sqlserver://116.62.24.156:1433;databaseName=wwnb;user=wwnb;password=CQUa1502;";
 		log.debug("使用默认数据库");
 		log.debug("数据库URL" + connectionUrl);

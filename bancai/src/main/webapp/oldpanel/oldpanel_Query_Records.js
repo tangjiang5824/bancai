@@ -172,65 +172,65 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
 
         });
 
-        var sampleData=[{
-             oldpanellogId:'1',
-             oldpanelName:'Zeng',
-             count:'2',
-             specification:'ttt',
-        }];
-        var oldpanel_Query_Records_store1=Ext.create('Ext.data.Store',{
-            id: 'oldpanel_Query_Records_store1',
-            fields:['旧板领料记录单编号','旧板名称','领取数量','规格'],
-            data:sampleData
-        });
+        // var sampleData=[{
+        //      oldpanellogId:'1',
+        //      oldpanelName:'Zeng',
+        //      count:'2',
+        //      specification:'ttt',
+        // }];
+        // var oldpanel_Query_Records_store1=Ext.create('Ext.data.Store',{
+        //     id: 'oldpanel_Query_Records_store1',
+        //     fields:['旧板领料记录单编号','旧板名称','领取数量','规格'],
+        //     data:sampleData
+        // });
 
 
-        var oldpanel_Query_Records_specific_data_grid=Ext.create('Ext.grid.Panel',{
-            id : 'oldpanel_Query_Records_specific_data_grid',
-            store:oldpanel_Query_Records_store1,//oldpanellogdetailList，store1的数据固定
-            dock: 'bottom',
-            columns:[
-                {
-                    text: '旧板领料记录单编号',
-                    dataIndex: 'oldpanellogId',
-                    width:"80"
-                },{
-                    text: '旧板名称',
-                    dataIndex: 'oldpanelName'
-                },{
-                    text: '领取数量',
-                    dataIndex: 'count'
-                },{
-                    text: '规格',
-                    dataIndex: 'specification'
-                },
-                //fields:['oldpanelId','oldpanelName','count'],specification
-
-            ],
-            flex:1,
-            //selType:'checkboxmodel',
-            plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
-                clicksToEdit : 2
-            })],
-            listeners: {
-                //监听修改
-                validateedit: function (editor, e) {
-                    var field = e.field
-                    var id = e.record.data.id
-                },
-            }
-        });
-
-        var oldpanel_Query_Records_win_showoldpanelData = Ext.create('Ext.window.Window', {
-            id:'oldpanel_Query_Records_win_showoldpanelData',
-            title: '旧板领取详细信息',
-            height: 500,
-            width: 650,
-            layout: 'fit',
-            closable : true,
-            closeAction : 'close',
-            items:oldpanel_Query_Records_specific_data_grid,
-        });
+        // var oldpanel_Query_Records_specific_data_grid=Ext.create('Ext.grid.Panel',{
+        //     id : 'oldpanel_Query_Records_specific_data_grid',
+        //     store:oldpanel_Query_Records_store1,//oldpanellogdetailList，store1的数据固定
+        //     dock: 'bottom',
+        //     columns:[
+        //         {
+        //             text: '旧板领料记录单编号',
+        //             dataIndex: 'oldpanellogId',
+        //             width:"80"
+        //         },{
+        //             text: '旧板名称',
+        //             dataIndex: 'oldpanelName'
+        //         },{
+        //             text: '领取数量',
+        //             dataIndex: 'count'
+        //         },{
+        //             text: '规格',
+        //             dataIndex: 'specification'
+        //         },
+        //         //fields:['oldpanelId','oldpanelName','count'],specification
+        //
+        //     ],
+        //     flex:1,
+        //     //selType:'checkboxmodel',
+        //     plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
+        //         clicksToEdit : 2
+        //     })],
+        //     listeners: {
+        //         //监听修改
+        //         validateedit: function (editor, e) {
+        //             var field = e.field
+        //             var id = e.record.data.id
+        //         },
+        //     }
+        // });
+        //
+        // var oldpanel_Query_Records_win_showoldpanelData = Ext.create('Ext.window.Window', {
+        //     id:'oldpanel_Query_Records_win_showoldpanelData',
+        //     title: '旧板领取详细信息',
+        //     height: 500,
+        //     width: 650,
+        //     layout: 'fit',
+        //     closable : true,
+        //     closeAction : 'close',
+        //     items:oldpanel_Query_Records_specific_data_grid,
+        // });
 
         var grid = Ext.create('Ext.grid.Panel',{
             id: 'oldpanel_Query_Records_Main',
@@ -242,7 +242,13 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
             columns : [
                 { text: '旧板领料记录单编号', dataIndex: 'id', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
                 { text: '操作员',  dataIndex: 'userId' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '上传时间', dataIndex: 'time', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
+                // { text: '上传时间', dataIndex: 'time', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
+                { text: '上传时间',
+                    dataIndex: 'time',
+                    flex :1 ,
+                    editor:{xtype : 'textfield', allowBlank : false},
+                    renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')
+                },
                 { text: '项目名称', dataIndex: 'projectName', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
 
             ],

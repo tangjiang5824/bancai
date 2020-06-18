@@ -3,6 +3,8 @@ package com.bancai.yrd.service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
 
 import com.bancai.cg.service.InsertProjectService;
 import com.bancai.commonMethod.QueryAllService;
@@ -47,10 +49,19 @@ public class OldpanelMatchService extends BaseService{
         System.out.println("===oldpanelUploadMatchData");
         UploadDataResult result = new UploadDataResult();
         Excel excel = new Excel(inputStream);
-        DataList dataList;
-        dataList = excel.readExcelContent(0);
+        DataList dataList = excel.readExcelContent(0);
         boolean upload = HandleDesignList(dataList, projectId, buildingId);
-        result.dataList = dataList;
+        DataList list=new DataList();
+        for(int i=0;i<dataList.size();i++){
+            DataRow row=new DataRow();
+            Iterator it=dataList.get(i).entrySet().iterator();
+            while (it.hasNext()){
+                Map.Entry entry= (Map.Entry) it.next();
+                row.put("productName",entry.getValue());
+            }
+            list.add(row);
+        }
+        result.dataList = list;
         result.success = upload;
         return result;
 
@@ -254,8 +265,8 @@ public class OldpanelMatchService extends BaseService{
         return new String[]{stra,strb};
     }
 
-    @Test
-    private void test(){
+//    @Test
+//    private void test(){
         //=======================
 //        double a =17.23;
 //        double b =12.888;
@@ -336,7 +347,7 @@ public class OldpanelMatchService extends BaseService{
 //            System.out.println(panelList+"==="+panelList1);
 //            System.out.println(attt);
 //        }
-    }
+//    }
 
 
 }

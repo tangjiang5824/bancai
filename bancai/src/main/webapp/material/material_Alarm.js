@@ -25,10 +25,10 @@ Ext.define('material.material_Alarm',{
                     xtype: 'textfield',
                     margin : '0 10 0 0',
                     fieldLabel: '报警阈值',
-                    id :'endLength',
+                    id :'threshold',
                     width: 180,
                     labelWidth: 60,
-                    name: 'endLength',
+                    name: 'threshold',
                     value:"",
                 },
                 {
@@ -40,12 +40,13 @@ Ext.define('material.material_Alarm',{
                     handler: function(){
                         material_Query_Data_Store.load({
                             params : {
+                                threshold : Ext.getCmp('threshold').getValue(),
                                 //proNum : Ext.getCmp('proNum').getValue(),
-                                startWidth : Ext.getCmp('startWidth').getValue(),
-                                endTWidth : Ext.getCmp('endWidth').getValue(),
-                                startLength:Ext.getCmp('startLength').getValue(),
-                                endLength:Ext.getCmp('endLength').getValue(),
-                                materialType:Ext.getCmp('materialType').getValue()
+                                // startWidth : Ext.getCmp('startWidth').getValue(),
+                                // endTWidth : Ext.getCmp('endWidth').getValue(),
+                                // startLength:Ext.getCmp('startLength').getValue(),
+                                // endLength:Ext.getCmp('endLength').getValue(),
+                                // materialType:Ext.getCmp('materialType').getValue()
                             }
                         });
                     }
@@ -58,7 +59,7 @@ Ext.define('material.material_Alarm',{
             fields: [],
             pageSize: itemsPerPage, // items per page
             proxy:{
-                url : "material/historyDataList.do",
+                url : "material/material_alarm.do",
                 type: 'ajax',
                 reader:{
                     type : 'json',
@@ -73,12 +74,12 @@ Ext.define('material.material_Alarm',{
             listeners : {
                 beforeload : function(store, operation, eOpts) {
                     store.getProxy().setExtraParams({
-                        tableName :tableName,
-                        startWidth:Ext.getCmp('startWidth').getValue(),
-                        endWidth:Ext.getCmp('endWidth').getValue(),
-                        startLength:Ext.getCmp('startLength').getValue(),
-                        endLength:Ext.getCmp('endLength').getValue(),
-                        materialType:Ext.getCmp('materialType').getValue(),
+                        // tableName :tableName,
+                        // startWidth:Ext.getCmp('startWidth').getValue(),
+                        // endWidth:Ext.getCmp('endWidth').getValue(),
+                        // startLength:Ext.getCmp('startLength').getValue(),
+                        // endLength:Ext.getCmp('endLength').getValue(),
+                        // materialType:Ext.getCmp('materialType').getValue(),
                         //materialType:materialType
 
                     });
@@ -125,27 +126,27 @@ Ext.define('material.material_Alarm',{
                 displayMsg:'显示{0}-{1}条，共{2}条',
                 emptyMsg:'无数据'
             }],
-            listeners: {
-                validateedit : function(editor, e) {
-                    var field=e.field
-                    var id=e.record.data.id
-                    Ext.Ajax.request({
-                        url:"data/EditCellById.do",  //EditDataById.do
-                        params:{
-                            tableName:tableName,
-                            field:field,
-                            value:e.value,
-                            id:id
-                        },
-                        success:function (response) {
-                            //console.log(response.responseText);
-                        }
-                    })
-                    // console.log("value is "+e.value);
-                    // console.log(e.record.data["id"]);
-
-                }
-            }
+            // listeners: {
+            //     validateedit : function(editor, e) {
+            //         var field=e.field
+            //         var id=e.record.data.id
+            //         Ext.Ajax.request({
+            //             url:"data/EditCellById.do",  //EditDataById.do
+            //             params:{
+            //                 tableName:tableName,
+            //                 field:field,
+            //                 value:e.value,
+            //                 id:id
+            //             },
+            //             success:function (response) {
+            //                 //console.log(response.responseText);
+            //             }
+            //         })
+            //         // console.log("value is "+e.value);
+            //         // console.log(e.record.data["id"]);
+            //
+            //     }
+            // }
         });
 
         this.items = [grid];

@@ -30,8 +30,8 @@ public class OldpanelMatchController {
      * 上传cad导出的excel文件
      * */
 
-    @RequestMapping(value = "/oldpanel/uploadMatchExcel.do",produces = { "text/html;charset=UTF-8" })
-    public String oldpanelUploadMatchData(MultipartFile uploadFile, String projectId, String buildingId, HttpSession session) {
+    @RequestMapping(value = "/oldpanel/uploadMatchExcel.do")
+    public WebResponse oldpanelUploadMatchData(MultipartFile uploadFile, String projectId, String buildingId, HttpSession session) {
         WebResponse response = new WebResponse();
 //        String tableName = "oldpanel";
 //        int userid = Integer.parseInt(session.getAttribute("userid").toString());
@@ -42,7 +42,8 @@ public class OldpanelMatchController {
             UploadDataResult result = OldpanelMatchService.oldpanelUploadMatchData(uploadFile.getInputStream(), projectId, buildingId);
             response.setSuccess(result.success);
             response.setErrorCode(result.errorCode);
-            response.setValue(result.data);
+            response.put("value",result.dataList);
+            response.put("totalCount", result.dataList.size());
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -50,8 +51,8 @@ public class OldpanelMatchController {
             response.setErrorCode(1000); //未知错误
             response.setMsg(e.getMessage());
         }
-        net.sf.json.JSONObject json= net.sf.json.JSONObject.fromObject(response);
-        return json.toString();
+        //net.sf.json.JSONObject json= net.sf.json.JSONObject.fromObject(response);
+        return response;
     }
 
 
