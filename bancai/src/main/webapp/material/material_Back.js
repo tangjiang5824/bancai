@@ -42,7 +42,7 @@ Ext.define('material.material_Back', {
             emptyText : "--请选择--",
             displayField: 'projectName',
             valueField: 'id',
-            editable : false,
+            editable : true,
             store: projectListStore,
             listeners:{
                 select: function(combo, record, index) {

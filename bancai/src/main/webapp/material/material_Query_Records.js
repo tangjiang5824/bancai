@@ -11,6 +11,7 @@ Ext.define('material.material_Query_Records',{
         Ext.define('Soims.model.application.ApplicationState', {
             statics: { // 关键
                 1: { value: '1', name: '出库' },
+                2: { value: '2', name: '退库' },
                 0: { value: '0', name: '入库' }
             }
         });
@@ -38,7 +39,7 @@ Ext.define('material.material_Query_Records',{
             emptyText : "--请选择--",
             displayField: 'projectName',
             valueField: 'id',
-            editable : false,
+            editable : true,
             store: projectListStore,
             listeners:{
                 select: function(combo, record, index) {
@@ -54,6 +55,7 @@ Ext.define('material.material_Query_Records',{
             data : [
                 {"abbr":"0", "name":"入库"},
                 {"abbr":"1", "name":"出库"},
+                {"abbr":"2", "name":"退库"},
                 //...
             ]
         });
@@ -325,6 +327,9 @@ Ext.define('material.material_Query_Records',{
                     var col = material_Query_Records_specific_data_grid.columns[1];
                     if(opType == 1){
                         col.setText("出库数量");
+                    }
+                    if(opType == 2){
+                        col.setText("退库数量");
                     }
                     else{
                         col.setText("入库数量");
