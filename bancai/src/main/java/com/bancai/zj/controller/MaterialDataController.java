@@ -57,7 +57,13 @@ public class MaterialDataController {
         String sql_addLog = "insert into materiallog (type,userId,time) values(?,?,?)";
         String sql_backLog = "insert into materiallog (type,userId,time,projectId) values(?,?,?,?)";
         JSONObject jsonBack = jsonArray.getJSONObject(0);
-        String projectId = jsonBack.get("projectId")+"";
+        String projectId = "";
+        try{
+            projectId = jsonBack.get("projectId")+"";
+        }catch(Exception e){
+            projectId = "";
+        }
+
         int main_key;
         if(projectId.equals("")){
             main_key= insertProjectService.insertDataToTable(sql_addLog,"0",userId,simpleDateFormat.format(date));
@@ -67,37 +73,50 @@ public class MaterialDataController {
 
         for(int i=0;i< jsonArray.length();i++) {
             JSONObject jsonTemp = jsonArray.getJSONObject(i);
-            String length2=null;
-            String width2=null;
+
+            String materialNo="";
+            String materialName="";
+            String length="";
+            String length2="";
+            String Type="";
+            String width="";
+            String width2=jsonTemp.get("宽2")+"";
+            String specification="";
+            String inventoryUnit="";
+            String warehouseNo="";
+            String count="";
+            String cost="";
+            String rowNo="";
+            String columNo="";
+            String warehouseName="";
+            String unitWeight="";
+            String totalWeight="";
+
            try{
-              length2=jsonTemp.get("长2")+"";
-           }catch (JSONException e){
-               length2=null;
+               materialNo=jsonTemp.get("品号").toString()+"";
+               materialName=jsonTemp.get("品名")+"";
+               length=jsonTemp.get("长1")+"";
+               length2=jsonTemp.get("长2")+"";
+               Type=jsonTemp.get("类型")+"";
+               width=jsonTemp.get("宽1")+"";
+               width2=jsonTemp.get("宽2")+"";
+               specification=jsonTemp.get("规格")+"";
+               inventoryUnit=jsonTemp.get("库存单位")+"";
+               warehouseNo=jsonTemp.get("仓库编号")+"";
+               count=jsonTemp.get("库存数量")+"";
+               cost= jsonTemp.get("成本")+"";
+               rowNo=jsonTemp.get("行")+"";
+               columNo=jsonTemp.get("列")+"";
+               warehouseName=jsonTemp.get("仓库名称")+"";
+               unitWeight=jsonTemp.get("单重")+"";
+               totalWeight=jsonTemp.get("总重")+"";
+           }catch (Exception e){
+
            }
-            try{
-                width2=jsonTemp.get("宽2")+"";
-            }catch (JSONException e){
-                width2=null;
-            }
 
-            System.out.println(jsonTemp);
-            String materialNo=jsonTemp.get("品号").toString()+"";
-            String materialName=jsonTemp.get("原材料名称")+"";
-            String length=jsonTemp.get("长1")+"";
-            //String length2=jsonTemp.get("长2")+"";
-            String Type=jsonTemp.get("类型")+"";
-            String width=jsonTemp.get("宽1")+"";
-            //String width2=jsonTemp.get("宽2")+"";
-            String specification=jsonTemp.get("规格")+"";
-            String inventoryUnit=jsonTemp.get("库存单位")+"";
-            String warehouseNo=jsonTemp.get("仓库编号")+"";
-            String count=jsonTemp.get("数量")+"";
-            String cost= jsonTemp.get("成本")+"";
-            String rowNo=jsonTemp.get("行")+"";
-            String columNo=jsonTemp.get("列")+"";
-
-            String sql = "insert into "+ tableName+" (materialName,materialNo,length,length2,materialType,width,width2,specification,inventoryUnit,warehouseNo,number,cost,rowNo,columNo,uploadId) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-            boolean isright= insertProjectService.insertIntoTableBySQL(sql,materialName,materialNo,length,length2,Type,width,width2,specification,inventoryUnit,warehouseNo,count,cost,rowNo,columNo,userId);
+            //System.out.println(jsonTemp);
+            String sql = "insert into "+ tableName+" (materialName,materialNo,length,length2,materialType,width,width2,specification,inventoryUnit,warehouseNo,number,cost,rowNo,columNo,uploadId,warehouseName,unitWeight,totalWeight) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            boolean isright= insertProjectService.insertIntoTableBySQL(sql,materialName,materialNo,length,length2,Type,width,width2,specification,inventoryUnit,warehouseNo,count,cost,rowNo,columNo,userId,warehouseName,unitWeight,totalWeight);
             if(!isright){
                 return false;
             }
