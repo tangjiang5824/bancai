@@ -50,62 +50,42 @@ Ext.define('material.material_Query_Data',{
                 // },
                 MaterialTypeList,
                 {
-                    xtype: 'textfield',
-                    margin : '0 10 0 0',
-                    fieldLabel: '宽度下限',
-                    id :'startWidth',
-                    width: 180,
-                    labelWidth: 60,
-                    name: 'startWidth',
-                    value:"",
-                },{
                     xtype:'tbtext',
-                    text:'至',
-                    // itemId:'move_left',
-                    // handler:function(){
-                    //     var records=grid2.getSelectionModel().getSelection();
-                    //     MaterialList2.remove(records);
-                    //     MaterialList.add(records);
-                    // }
-                },
-                {
-                    xtype: 'textfield',
-                    fieldLabel: '宽度上限',
-                    labelSeparator: '',
-                    id :'endWidth',
-                    labelWidth: 60,
-                    width: 180,
-                    margin : '0 10 0 0',
-                    name: 'endWidth',
-                    value:"",
+                    text:'长度范围:',
+                    margin : '0 10 0 40',
+                    itemId:'move_left',
                 },
                 {
                     xtype: 'textfield',
                     margin : '0 10 0 0',
-                    fieldLabel: '长度下限',
+                    // fieldLabel: '',
                     id :'startLength',
-                    width: 180,
-                    labelWidth: 60,
+                    width: 100,
+                    // labelWidth: 60,
                     name: 'startLength',
                     value:"",
                 },{
                     xtype:'tbtext',
-                    text:'至',
-                    itemId:'move_left',
-                    // handler:function(){
-                    //     var records=grid2.getSelectionModel().getSelection();
-                    //     MaterialList2.remove(records);
-                    //     MaterialList.add(records);
-                    // }
+                    text:'—',
                 },
                 {
                     xtype: 'textfield',
                     margin : '0 10 0 0',
-                    fieldLabel: '长度上限',
+                    // fieldLabel: '规格上限',
                     id :'endLength',
-                    width: 180,
-                    labelWidth: 60,
+                    width: 100,
+                    // labelWidth: 60,
                     name: 'endLength',
+                    value:"",
+                },
+                {
+                    xtype: 'textfield',
+                    margin : '0 10 0 40',
+                    fieldLabel: '仓库名称',
+                    id :'warehouse',
+                    width: 200,
+                    labelWidth: 60,
+                    name: 'warehouse',
                     value:"",
                 },
                 {
@@ -118,10 +98,11 @@ Ext.define('material.material_Query_Data',{
                         material_Query_Data_Store.load({
                             params : {
                                 //proNum : Ext.getCmp('proNum').getValue(),
-                                startWidth : Ext.getCmp('startWidth').getValue(),
-                                endTWidth : Ext.getCmp('endWidth').getValue(),
+                                // startWidth : Ext.getCmp('startWidth').getValue(),
+                                // endTWidth : Ext.getCmp('endWidth').getValue(),
                                 startLength:Ext.getCmp('startLength').getValue(),
                                 endLength:Ext.getCmp('endLength').getValue(),
+                                warehouse:Ext.getCmp('warehouse').getValue(),
                                 materialType:Ext.getCmp('materialType').getValue()
                             }
                         });
@@ -179,10 +160,11 @@ Ext.define('material.material_Query_Data',{
                 beforeload : function(store, operation, eOpts) {
                     store.getProxy().setExtraParams({
                         tableName :tableName,
-                        startWidth:Ext.getCmp('startWidth').getValue(),
-                        endWidth:Ext.getCmp('endWidth').getValue(),
+                        // startWidth:Ext.getCmp('startWidth').getValue(),
+                        // endWidth:Ext.getCmp('endWidth').getValue(),
                         startLength:Ext.getCmp('startLength').getValue(),
                         endLength:Ext.getCmp('endLength').getValue(),
+                        warehouse:Ext.getCmp('warehouse').getValue(),
                         materialType:Ext.getCmp('materialType').getValue(),
                         //materialType:materialType
 
@@ -203,20 +185,120 @@ Ext.define('material.material_Query_Data',{
                 editable:true
             },
             columns : [
-                { text: '材料名', dataIndex: 'materialName', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '品号',  dataIndex: 'materialNo' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '长1', dataIndex: 'length', flex :0.7 ,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '长2', dataIndex: 'length2', flex :0.7 ,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '类型', dataIndex: 'materialType',flex :1,editor:{xtype : 'textfield', allowBlank : false} },
-                { text: '宽1', dataIndex: 'width', flex :0.7 ,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '宽2', dataIndex: 'width2', flex :0.7 ,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '数量', dataIndex: 'number', flex :1,editor:{xtype : 'textfield', allowBlank : false} },
-                { text: '成本', dataIndex: 'cost', flex :1,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '规格',  dataIndex: 'specification' ,flex :1,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '库存单位', dataIndex: 'inventoryUnit', flex :1,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '仓库编号', dataIndex: 'warehouseNo',flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '位置-行', dataIndex: 'rowNo',flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '位置-列', dataIndex: 'columNo',flex :1 ,editor:{xtype : 'textfield', allowBlank : false}}
+                {
+                    dataIndex : 'materialName',
+                    name : '品号',
+                    text : '品号',
+                    //width : 110,
+                    flex :1,
+                    editor : {// 文本字段
+                        xtype : 'textfield',
+                        allowBlank : true   //允许文本框为空
+                    },
+                    //defaultValue:"2333",
+                },
+                {
+                    dataIndex : 'length',
+                    text : '规格',
+                    //width : 110,
+                    flex :1,
+                    editor : {// 文本字段
+                        xtype : 'textfield',
+                        allowBlank : false,
+                    }
+                },
+                {
+                    dataIndex : 'inventoryUnit',
+                    text : '库存单位',
+                    //width : 110,
+                    flex :1,
+                    editor : {// 文本字段
+                        id : 'isNullCmb',
+                        xtype : 'textfield',
+                        allowBlank : true
+
+                    }
+
+                },{
+                    dataIndex : 'unitWeight',
+                    name : '单重',
+                    text : '单重',
+                    //width : 160,
+                    flex :1,
+                    editor : {
+                        xtype : 'textfield',
+                        allowBlank : false
+                    }
+                },{
+                    dataIndex : 'totalWeight',
+                    name : '总重',
+                    text : '总重',
+                    flex :1,
+                    //width : 160,
+                    editor : {
+                        xtype : 'textfield',
+                        allowBlank : false
+                    }
+                },
+                {
+                    dataIndex : 'number',
+                    name : '数量',
+                    text : '数量',
+                    flex :1,
+                    //width : 160,
+                    editor : {
+                        xtype : 'textfield',
+                        allowBlank : false
+                    }
+
+                },
+                {
+                    dataIndex : 'warehouseNo',
+                    name : '仓库编号',
+                    text : '仓库编号',
+                    //width : 130,
+                    flex :1,
+                    editor : {// 文本字段
+                        xtype : 'textfield',
+                        allowBlank : true
+                    }
+                },
+                {
+                    dataIndex : 'rowNo',
+                    name : '行',
+                    text : '位置-行',
+                    //width : 160,
+                    flex :1,
+                    editor : {
+                        xtype : 'textfield',
+                        allowBlank : true
+                    }
+                },
+                {
+                    dataIndex : 'columNo',
+                    name : '列',
+                    text : '位置-列',
+                    //width : 160,
+                    flex :1,
+                    editor : {
+                        xtype : 'textfield',
+                        allowBlank : true
+                    }
+                }
+                // { text: '材料名', dataIndex: 'materialName', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
+                // { text: '品号',  dataIndex: 'materialNo' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
+                // { text: '长1', dataIndex: 'length', flex :0.7 ,editor:{xtype : 'textfield', allowBlank : false}},
+                // { text: '长2', dataIndex: 'length2', flex :0.7 ,editor:{xtype : 'textfield', allowBlank : false}},
+                // { text: '类型', dataIndex: 'materialType',flex :1,editor:{xtype : 'textfield', allowBlank : false} },
+                // { text: '宽1', dataIndex: 'width', flex :0.7 ,editor:{xtype : 'textfield', allowBlank : false}},
+                // { text: '宽2', dataIndex: 'width2', flex :0.7 ,editor:{xtype : 'textfield', allowBlank : false}},
+                // { text: '数量', dataIndex: 'number', flex :1,editor:{xtype : 'textfield', allowBlank : false} },
+                // { text: '成本', dataIndex: 'cost', flex :1,editor:{xtype : 'textfield', allowBlank : false}},
+                // { text: '规格',  dataIndex: 'specification' ,flex :1,editor:{xtype : 'textfield', allowBlank : false}},
+                // { text: '库存单位', dataIndex: 'inventoryUnit', flex :1,editor:{xtype : 'textfield', allowBlank : false}},
+                // { text: '仓库编号', dataIndex: 'warehouseNo',flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
+                // { text: '位置-行', dataIndex: 'rowNo',flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
+                // { text: '位置-列', dataIndex: 'columNo',flex :1 ,editor:{xtype : 'textfield', allowBlank : false}}
             ],
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 3

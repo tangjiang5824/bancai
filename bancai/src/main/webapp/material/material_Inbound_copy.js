@@ -34,7 +34,7 @@ Ext.define('material.material_Inbound', {
             autoLoad : true
         });
         var MaterialTypeList = Ext.create('Ext.form.ComboBox',{
-            fieldLabel : '原材料品名',
+            fieldLabel : '原材料类型',
             labelWidth : 70,
             width : 230,
             id :  'materialName',
@@ -144,6 +144,19 @@ Ext.define('material.material_Inbound', {
             }
         });
 
+        //仓库存放位置--行
+        // var locationNameList_row = Ext.create('Ext.data.Store',{
+        //     fields : [ 'columnNum'],
+        //     proxy : {
+        //         type : 'ajax',
+        //         url : 'material/findStorePosition.do',
+        //         reader : {
+        //             type : 'json',
+        //             rootProperty: 'columnNum',
+        //         }
+        //     },
+        //     autoLoad : true
+        // });
         var speificLocation_row = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '行',
             labelWidth : 20,
@@ -166,7 +179,19 @@ Ext.define('material.material_Inbound', {
                 }
             }
         });
-
+        //仓库存放位置--列
+        // var locationNameList_col = Ext.create('Ext.data.Store',{
+        //     fields : [ 'columnNum'],
+        //     proxy : {
+        //         type : 'ajax',
+        //         url : 'material/findStorePosition.do',
+        //         reader : {
+        //             type : 'json',
+        //             rootProperty: 'columnNum',
+        //         }
+        //     },
+        //     autoLoad : true
+        // });
         var speificLocation_col = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '列',
             labelWidth : 20,
@@ -196,8 +221,8 @@ Ext.define('material.material_Inbound', {
                 MaterialTypeList,
                 {
                     xtype: 'textfield',
-                    margin: '0 10 0 40',
-                    fieldLabel: '规格',
+                    margin: '0 10 0 20',
+                    fieldLabel: '长1',
                     id: 'length1',
                     width: 140,
                     labelWidth: 40,
@@ -206,7 +231,7 @@ Ext.define('material.material_Inbound', {
                 },
                 {
                     xtype: 'textfield',
-                    margin: '0 10 0 40',
+                    margin: '0 10 0 20',
                     fieldLabel: '长2',
                     hidden:true,//隐藏
                     id: 'length2',
@@ -216,35 +241,38 @@ Ext.define('material.material_Inbound', {
                     value: "",
                     allowBlank : true,
                 },
-
                 {
                     xtype: 'textfield',
-                    margin: '0 10 0 40',
+                    fieldLabel: '宽1',
+                    //labelSeparator: '',
+                    id: 'width1',
+                    labelWidth: 40,
+                    width: 140,
+                    margin: '0 10 0 20',
+                    name: 'width1',
+                    value: "",
+                },
+                {
+                    xtype: 'textfield',
+                    fieldLabel: '宽2',
+                    //labelSeparator: '',
+                    hidden:true,//隐藏
+                    id: 'width2',
+                    labelWidth: 40,
+                    width: 140,
+                    margin: '0 10 0 20',
+                    name: 'width2',
+                    value: "",
+                    allowBlank : true
+                },
+                {
+                    xtype: 'textfield',
+                    margin: '0 10 0 50',
                     fieldLabel: '库存单位',
                     id: 'stockUnit',
-                    width: 200,
+                    width: 220,
                     labelWidth: 60,
                     name: 'stockUnit',
-                    value: "",
-                },
-                {
-                    xtype: 'textfield',
-                    margin: '0 10 0 40',
-                    fieldLabel: '单重',
-                    id: 'unitWeight',
-                    width: 187,
-                    labelWidth: 30,
-                    name: 'unitWeight',
-                    value: "",
-                },
-                {
-                    xtype: 'textfield',
-                    margin: '0 10 0 40',
-                    fieldLabel: '总重',
-                    id: 'totalWeight',
-                    width: 187,
-                    labelWidth: 30,
-                    name: 'totalWeight',
                     value: "",
                 },
             ]
@@ -257,6 +285,16 @@ Ext.define('material.material_Inbound', {
                 {
                     xtype: 'textfield',
                     margin: '0 10 0 40',
+                    fieldLabel: '成本',
+                    id: 'cost',
+                    width: 187,
+                    labelWidth: 30,
+                    name: 'cost',
+                    value: "",
+                },
+                {
+                    xtype: 'textfield',
+                    margin: '0 10 0 20',
                     fieldLabel: '数量',
                     id: 'number',
                     width: 140,
@@ -281,13 +319,12 @@ Ext.define('material.material_Inbound', {
                     margin: '0 10 0 70',
                     iconAlign : 'center',
                     iconCls : 'rukuicon ',
-                    text : '添  加',
-                    width:60,
+                    text : '添加',
                     handler: function(){
                         var materialType = Ext.getCmp('materialName').rawValue;
                         var length1 = Ext.getCmp('length1').getValue();
-                        var unitWeight = Ext.getCmp('unitWeight').getValue();
-                        var totalWeight = Ext.getCmp('totalWeight').getValue();
+                        var width1 = Ext.getCmp('width1').getValue();
+                        var cost = Ext.getCmp('cost').getValue();
                         var number = Ext.getCmp('number').getValue();
                         //var location = Ext.getCmp('location').getValue();
                         //存放位置，行列
@@ -305,16 +342,21 @@ Ext.define('material.material_Inbound', {
                             var length2 = Ext.getCmp('length2').getValue();
                             var width2 = Ext.getCmp('width2').getValue();
                             data = [{
-                                '原材料名称' : materialType,
-                                '规格' : length1,
-                                '库存单位' : stockUnit,
-                                '单重' : unitWeight,
-                                '总重' : totalWeight,
+                                '类型' : materialType,
+                                '长1' : length1,
+                                '长2' : length2,
+                                '宽1' : width1,
+                                '宽2' : width2,
                                 '数量' : number,
-                                '仓库编号' : warehouse,
+                                '成本' : cost,
+                                //'存放位置' : location,
                                 '行': row,
                                 '列': col,
-
+                                '品号' : 'a',
+                                '库存单位' : stockUnit,
+                                '仓库编号' : warehouse,
+                                '规格' : '',
+                                '原材料名称' : ''
                             }];
                             console.log("bbbbbb");
                             // Ext.getCmp('addDataGrid').getStore().loadData(data,
@@ -322,15 +364,19 @@ Ext.define('material.material_Inbound', {
                         }else{
                             console.log("bbbbbb")
                             data = [{
-                                '原材料名称' : materialType,
-                                '规格' : length1,
-                                '库存单位' : stockUnit,
-                                '单重' : unitWeight,
-                                '总重' : totalWeight,
+                                '类型' : materialType,
+                                '长1' : length1,
+                                '宽1' : width1,
                                 '数量' : number,
+                                '成本' : cost,
+                                //'存放位置' : location,
+                                '行':row,
+                                '列':col,
+                                '品号' : '',
+                                '库存单位' : stockUnit,
                                 '仓库编号' : warehouse,
-                                '行': row,
-                                '列': col,
+                                '规格' : '',
+                                '原材料名称' : ''
                             }];
                         }
                         //var materialType = Ext.getCmp('materialName').getValue();//获得对应的id值
@@ -415,13 +461,13 @@ Ext.define('material.material_Inbound', {
             id : 'addDataGrid',
             //dockedItems : [toolbar2],
             store : {
-                fields :['原材料名称','规格','库存单位','单重','总重','数量','仓库编号','行','列']
+                fields :['类型','长1','宽1','数量','成本','行','列','库存单位','仓库编号','规格','原材料名称']
             },
             //bbar:,
 
             columns : [
                 {
-                    dataIndex : '原材料名称',
+                    dataIndex : '品号',
                     name : '品号',
                     text : '品号',
                     //width : 110,
@@ -433,8 +479,8 @@ Ext.define('material.material_Inbound', {
                     //defaultValue:"2333",
                 },
                 {
-                    dataIndex : '规格',
-                    text : '规格',
+                    dataIndex : '长1',
+                    text : '长1',
                     //width : 110,
                     editor : {// 文本字段
                         xtype : 'textfield',
@@ -442,6 +488,58 @@ Ext.define('material.material_Inbound', {
                     }
                 },
                 {
+                    dataIndex : '长2',
+                    text : '长2',
+                    //width : 110,
+                    id:'长2',
+                    hidden:true,
+                    editor : {// 文本字段
+                        xtype : 'textfield',
+                        allowBlank : true,
+
+                    },
+                    // defaultValue:"",
+
+                },
+                {
+                    dataIndex : '类型',
+                    text : '类型',
+                    //width : 110,
+                    editor : {// 文本字段
+                        xtype : 'textfield',
+                        allowBlank : false,
+
+                    }
+
+                },{
+                    dataIndex : '宽1',
+                    text : '宽1',
+                    //width : 110,
+                    editor : {// 文本字段
+                        xtype : 'textfield',
+                        allowBlank : false,
+                    }
+                },
+                {
+                    dataIndex : '宽2',
+                    text : '宽2',
+                    //width : 110,
+                    id:'宽2',
+                    hidden:true,
+                    editor : {// 文本字段
+                        xtype : 'textfield',
+                        allowBlank : true,
+                    }
+                },
+                {
+                    dataIndex : '规格',
+                    text : '规格',
+                    //width : 192,
+                    editor : {
+                        xtype : 'textfield',
+                        allowBlank : false
+                    }
+                }, {
                     dataIndex : '库存单位',
                     text : '库存单位',
                     //width : 110,
@@ -452,24 +550,6 @@ Ext.define('material.material_Inbound', {
 
                     }
 
-                },{
-                    dataIndex : '单重',
-                    name : '单重',
-                    text : '单重',
-                    //width : 160,
-                    editor : {
-                        xtype : 'textfield',
-                        allowBlank : false
-                    }
-                },{
-                    dataIndex : '总重',
-                    name : '总重',
-                    text : '总重',
-                    //width : 160,
-                    editor : {
-                        xtype : 'textfield',
-                        allowBlank : false
-                    }
                 },
                 {
                     dataIndex : '数量',
@@ -481,6 +561,15 @@ Ext.define('material.material_Inbound', {
                         allowBlank : false
                     }
 
+                },{
+                    dataIndex : '成本',
+                    name : '成本',
+                    text : '成本',
+                    //width : 160,
+                    editor : {
+                        xtype : 'textfield',
+                        allowBlank : false
+                    }
                 },
                 {
                     dataIndex : '仓库编号',
@@ -510,6 +599,14 @@ Ext.define('material.material_Inbound', {
                     editor : {
                         xtype : 'textfield',
                         allowBlank : true
+                    }
+                } ,{
+                    dataIndex: '原材料名称',
+                    text: '材料名',
+                    //width : 110,
+                    editor: {// 文本字段
+                        xtype: 'textfield',
+                        allowBlank: false,
                     }
                 }
             ],
