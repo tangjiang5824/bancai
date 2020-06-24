@@ -76,11 +76,10 @@ public class MaterialDataController {
             String row_index="";
             String materialName="";
             String materialId="";
+            String width="";
             String specification="";
             String inventoryUnit="";
-            String warehouseNo="";
             String count="";
-            String cost="";
             String rowNo="";
             String columNo="";
             String warehouseName="";
@@ -107,18 +106,12 @@ public class MaterialDataController {
                 inventoryUnit=jsonTemp.get("库存单位")+"";
             }catch (Exception e){
             }
+
             try{
-                warehouseNo=jsonTemp.get("仓库编号")+"";
+                count=jsonTemp.get("数量")+"";
             }catch (Exception e){
             }
-            try{
-                count=jsonTemp.get("库存数量")+"";
-            }catch (Exception e){
-            }
-            try{
-                cost= jsonTemp.get("成本")+"";
-            }catch (Exception e){
-            }
+
             try{
                 rowNo=jsonTemp.get("行")+"";
             }catch (Exception e){
@@ -139,12 +132,16 @@ public class MaterialDataController {
                 totalWeight=jsonTemp.get("总重")+"";
             }catch (Exception e){
             }
+            try{
+                totalWeight=jsonTemp.get("横截面")+"";
+            }catch (Exception e){
+            }
 
 
 
             //System.out.println(jsonTemp);
-            String sql = "insert into "+ tableName+" (materialId,specification,inventoryUnit,warehouseNo,count,cost,rowNo,columNo,uploadId,warehouseName,unitWeight,totalWeight) values(?,?,?,?,?,?,?,?,?,?,?,?)";
-            boolean isright= insertProjectService.insertIntoTableBySQL(sql,materialId,specification,inventoryUnit,warehouseNo,count,cost,rowNo,columNo,userId,warehouseName,unitWeight,totalWeight);
+            String sql = "insert into "+ tableName+" (materialId,specification,inventoryUnit,count,rowNo,columNo,uploadId,warehouseName,unitWeight,totalWeight) values(?,?,?,?,?,?,?,?,?,?)";
+            boolean isright= insertProjectService.insertIntoTableBySQL(sql,materialId,specification,inventoryUnit,count,rowNo,columNo,userId,warehouseName,unitWeight,totalWeight);
             if(!isright){
                 return false;
             }
