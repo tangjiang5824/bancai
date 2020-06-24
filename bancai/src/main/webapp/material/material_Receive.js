@@ -210,7 +210,7 @@ Ext.define('material.material_Receive',{
             flex:1,
             // height:'100%',
             // tbar: toolbar,
-            selType:'checkboxmodel',
+            selType:'checkboxmodel', //选择框
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 2
             })],
