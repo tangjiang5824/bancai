@@ -2,6 +2,7 @@ package com.bancai.commonMethod;
 
 import com.bancai.cg.service.InsertProjectService;
 import com.bancai.domain.DataList;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,16 +54,16 @@ public class AllExcelService extends BaseService {
 		UploadDataResult result = new UploadDataResult();
 		Excel excel = new Excel(inputStream);
 		dataList = excel.readExcelContent();
-		DataList dataList2 = new DataList();
-		dataList2 = excel.readExcelContent();
+		//通过jackson实现深拷贝：序列化
+		ObjectMapper mapper=new ObjectMapper();
+		DataList dataList2 = mapper.readValue(mapper.writeValueAsString(dataList),DataList.class);
 		DataList typeList;
 //		System.out.println(dataList);
-		if (tablename.equals("material")) {
+		if (tablename.equals("material_store")) {
 			for (int i = 0; i < dataList.size(); i++) {
 				String materialTypeName = dataList.get(i).get("materialType") + "";
-				materialTypeName.toUpperCase();
 				String sql_trans = "select materialType from materialtype where materialTypeName = ?";
-				typeList = queryService.query(sql_trans,materialTypeName);
+				typeList = queryService.query(sql_trans,materialTypeName.toUpperCase());
 				if(typeList.isEmpty()) {
 					result.setErrorCode(2);
 					return result;
@@ -79,9 +80,8 @@ public class AllExcelService extends BaseService {
 		} else if (tablename.equals("oldpanel")) {
 			for (int i = 0; i < dataList.size(); i++) {
 				String oldpanelTypeName = dataList.get(i).get("oldpanelType") + "";
-				oldpanelTypeName.toUpperCase();
 				String sql_trans = "select oldpanelType from oldpaneltype where oldpanelTypeName = ?";
-				typeList = queryService.query(sql_trans,oldpanelTypeName);
+				typeList = queryService.query(sql_trans,oldpanelTypeName.toUpperCase());
 				if(typeList.isEmpty())
 				{
 					result.setErrorCode(2);
