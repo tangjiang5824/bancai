@@ -54,10 +54,16 @@ public class MaterialDataController {
         //入库记录sql
         Date date=new Date();
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String sql_addLog = "insert into materiallog (type,userId,time) values(?,?,?)";
-        String sql_backLog = "insert into materiallog (type,userId,time,projectId) values(?,?,?,?)";
+        String sql_addLog = "insert into material_log (type,userId,time) values(?,?,?)";
+        String sql_backLog = "insert into material_log (type,userId,time,projectId) values(?,?,?,?)";
         JSONObject jsonBack = jsonArray.getJSONObject(0);
-        String projectId = jsonBack.get("projectId")+"";
+        String projectId = "";
+        try{
+            projectId = jsonBack.get("projectId")+"";
+        }catch(Exception e){
+            projectId = "";
+        }
+
         int main_key;
         if(projectId.equals("")){
             main_key= insertProjectService.insertDataToTable(sql_addLog,"0",userId,simpleDateFormat.format(date));
@@ -67,42 +73,83 @@ public class MaterialDataController {
 
         for(int i=0;i< jsonArray.length();i++) {
             JSONObject jsonTemp = jsonArray.getJSONObject(i);
-            String length2=null;
-            String width2=null;
-           try{
-              length2=jsonTemp.get("长2")+"";
-           }catch (JSONException e){
-               length2=null;
-           }
+            String row_index="";
+            String materialName="";
+            String materialId="";
+            String specification="";
+            String inventoryUnit="";
+            String warehouseNo="";
+            String count="";
+            String cost="";
+            String rowNo="";
+            String columNo="";
+            String warehouseName="";
+            String unitWeight="";
+            String totalWeight="";
             try{
-                width2=jsonTemp.get("宽2")+"";
-            }catch (JSONException e){
-                width2=null;
+                row_index=jsonTemp.get("序号")+"";
+            }catch (Exception e){
+
+            }
+            try{
+                materialId=jsonTemp.get("品号")+"";
+            }catch (Exception e){
+            }
+            try{
+                materialName=jsonTemp.get("品名")+"";
+            }catch (Exception e){
+            }
+            try{
+                specification=jsonTemp.get("规格")+"";
+            }catch (Exception e){
+            }
+            try{
+                inventoryUnit=jsonTemp.get("库存单位")+"";
+            }catch (Exception e){
+            }
+            try{
+                warehouseNo=jsonTemp.get("仓库编号")+"";
+            }catch (Exception e){
+            }
+            try{
+                count=jsonTemp.get("库存数量")+"";
+            }catch (Exception e){
+            }
+            try{
+                cost= jsonTemp.get("成本")+"";
+            }catch (Exception e){
+            }
+            try{
+                rowNo=jsonTemp.get("行")+"";
+            }catch (Exception e){
+            }
+            try{
+                columNo=jsonTemp.get("列")+"";
+            }catch (Exception e){
+            }
+            try{
+                warehouseName=jsonTemp.get("仓库名称")+"";
+            }catch (Exception e){
+            }
+            try{
+                unitWeight=jsonTemp.get("单重")+"";
+            }catch (Exception e){
+            }
+            try{
+                totalWeight=jsonTemp.get("总重")+"";
+            }catch (Exception e){
             }
 
-            System.out.println(jsonTemp);
-            String materialNo=jsonTemp.get("品号").toString()+"";
-            String materialName=jsonTemp.get("原材料名称")+"";
-            String length=jsonTemp.get("长1")+"";
-            //String length2=jsonTemp.get("长2")+"";
-            String Type=jsonTemp.get("类型")+"";
-            String width=jsonTemp.get("宽1")+"";
-            //String width2=jsonTemp.get("宽2")+"";
-            String specification=jsonTemp.get("规格")+"";
-            String inventoryUnit=jsonTemp.get("库存单位")+"";
-            String warehouseNo=jsonTemp.get("仓库编号")+"";
-            String count=jsonTemp.get("数量")+"";
-            String cost= jsonTemp.get("成本")+"";
-            String rowNo=jsonTemp.get("行")+"";
-            String columNo=jsonTemp.get("列")+"";
 
-            String sql = "insert into "+ tableName+" (materialName,materialNo,length,length2,materialType,width,width2,specification,inventoryUnit,warehouseNo,number,cost,rowNo,columNo,uploadId) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-            boolean isright= insertProjectService.insertIntoTableBySQL(sql,materialName,materialNo,length,length2,Type,width,width2,specification,inventoryUnit,warehouseNo,count,cost,rowNo,columNo,userId);
+
+            //System.out.println(jsonTemp);
+            String sql = "insert into "+ tableName+" (materialId,specification,inventoryUnit,warehouseNo,count,cost,rowNo,columNo,uploadId,warehouseName,unitWeight,totalWeight) values(?,?,?,?,?,?,?,?,?,?,?,?)";
+            boolean isright= insertProjectService.insertIntoTableBySQL(sql,materialId,specification,inventoryUnit,warehouseNo,count,cost,rowNo,columNo,userId,warehouseName,unitWeight,totalWeight);
             if(!isright){
                 return false;
             }
             //插入log详细信息
-            String sql_detail="insert into materiallogdetail (materialName,count,specification,materiallogId) values (?,?,?,?) ";
+            String sql_detail="insert into material_logdetail (materialName,count,specification,materiallogId) values (?,?,?,?) ";
             boolean is_log_right= insertProjectService.insertIntoTableBySQL(sql_detail,materialName,count,specification,String.valueOf(main_key));
             if(!is_log_right){
                 return false;
