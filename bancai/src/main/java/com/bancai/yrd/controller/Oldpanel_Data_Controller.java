@@ -44,21 +44,36 @@ public class Oldpanel_Data_Controller {
     /*
      * 添加旧板基础信息
      * */
-    @RequestMapping(value = "/oldpanel/addInfo.do")
-    public boolean oldpanelAddInfo(String format, String info,HttpSession session) throws JSONException {
-        String[] sFormat = format.split("");
-        String[] sInfo = info.split("%");
-        String tableName = "oldpanel_info";
-        String sql = "insert into "+ tableName +" (oldpanelType,oldpanelFormat,formatInfo) values (?,?,?)";
-        for (int i = 0; i < sFormat.length; i++) {
-            if (sFormat[i].equals("1")){
-                String type = sInfo[i];
-                boolean isright= insertProjectService.insertIntoTableBySQL(sql,type,format,info);
-                return isright;
+    @RequestMapping(value = "/oldpanel/addOldpanelBasicInfo.do")
+    public boolean oldpanelAddInfo(String s,HttpSession session) throws JSONException {
+        try {
+            JSONArray jsonArray = new JSONArray(s);
+            JSONObject jsonTemp = jsonArray.getJSONObject(0);
+            StringBuilder fB = new StringBuilder();
+            StringBuilder iB = new StringBuilder();
+            fB.append(jsonTemp.get("format1")).append(jsonTemp.get("format2")).append(jsonTemp.get("format3"))
+                    .append(jsonTemp.get("format4"));
+            iB.append(jsonTemp.get("format1_info")).append("%").append(jsonTemp.get("format2_info")).append("%")
+                    .append(jsonTemp.get("format3_info")).append("%").append(jsonTemp.get("format4_info"));
+            String format = fB.toString();
+            String info = iB.toString();
+//            System.out.println(format);
+//            System.out.println(info);
+            String[] sFormat = format.split("");
+            String[] sInfo = info.split("%");
+            String tableName = "oldpanel_info";
+            String sql = "insert into "+ tableName +" (oldpanelType,oldpanelFormat,formatInfo) values (?,?,?)";
+            for (int i = 0; i < sFormat.length; i++) {
+                if (sFormat[i].equals("1")){
+                    String typeName = sInfo[i];
+                    String type = y_Upload_Data_Service.getOldpanelType(typeName);
+                    return insertProjectService.insertIntoTableBySQL(sql,type,format,info);
+                }
             }
+        } catch (Exception e){
+            return false;
         }
         return false;
-
     }
 
     /*
