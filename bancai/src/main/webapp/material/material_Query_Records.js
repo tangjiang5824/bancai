@@ -68,7 +68,7 @@ Ext.define('material.material_Query_Records',{
             queryMode: 'local',
             displayField: 'name',
             valueField: 'abbr',
-            margin : '0 20 0 20',
+            margin : '0 20 0 40',
             width: 160,
             labelWidth: 60,
             renderTo: Ext.getBody()
@@ -79,7 +79,7 @@ Ext.define('material.material_Query_Records',{
             items: [
                 {
                     xtype: 'textfield',
-                    margin : '0 20 0 20',
+                    margin : '0 20 0 5',
                     fieldLabel: '操作员',
                     id :'userName',
                     width: 150,
@@ -89,11 +89,16 @@ Ext.define('material.material_Query_Records',{
                 },projectName,
                 optionType,
                 {
+                    xtype:'tbtext',
+                    text:'操作时间:',
+                    margin : '0 0 0 20',
+                },
+                {
                     xtype : 'datefield',
-                    margin : '0 20 0 20',
-                    fieldLabel : '开始时间',
-                    width : 180,
-                    labelWidth : 60,
+                    margin : '0 0 0 0',
+                    // fieldLabel : '开始时间',
+                    width : 120,
+                    // labelWidth : 60,
                     id : "startTime",
                     name : 'startTime',
                     format : 'Y-m-d',
@@ -101,20 +106,14 @@ Ext.define('material.material_Query_Records',{
                     //value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
                 },{
                     xtype:'tbtext',
-                    text:'至',
-                    itemId:'move_left',
-                    // handler:function(){
-                    //     var records=grid2.getSelectionModel().getSelection();
-                    //     MaterialList2.remove(records);
-                    //     MaterialList.add(records);
-                    // }
+                    text:'---',
                 },
                 {
                     xtype : 'datefield',
-                    margin : '0 20 0 20',
-                    fieldLabel : '结束时间',
-                    width : 180,
-                    labelWidth : 60,
+                    margin : '0 0 0 0',
+                    // fieldLabel : '结束时间',
+                    width : 120,
+                    // labelWidth : 60,
                     id : "endTime",
                     name : 'endTime',
                     //align: 'right',

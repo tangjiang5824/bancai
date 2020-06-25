@@ -72,8 +72,8 @@ Ext.define('material.material_Upload_Data', {
 
                 {
                     dataIndex : 'materialName',
-                    name : '品号',
-                    text : '品号',
+                    name : '品名',
+                    text : '品名',
                     //width : 110,
                     flex :1,
                     editor : {// 文本字段
@@ -83,7 +83,7 @@ Ext.define('material.material_Upload_Data', {
                     //defaultValue:"2333",
                 },
                 {
-                    dataIndex : 'length',
+                    dataIndex : 'specification',
                     text : '规格',
                     //width : 110,
                     flex :1,
@@ -126,7 +126,7 @@ Ext.define('material.material_Upload_Data', {
                     }
                 },
                 {
-                    dataIndex : 'number',
+                    dataIndex : 'count',
                     name : '数量',
                     text : '数量',
                     flex :1,
@@ -138,9 +138,9 @@ Ext.define('material.material_Upload_Data', {
 
                 },
                 {
-                    dataIndex : 'warehouseNo',
-                    name : '仓库编号',
-                    text : '仓库编号',
+                    dataIndex : 'warehouseName',
+                    name : '仓库名称',
+                    text : '仓库名称',
                     //width : 130,
                     flex :1,
                     editor : {// 文本字段
@@ -207,7 +207,8 @@ Ext.define('material.material_Upload_Data', {
 
         var form = Ext.create("Ext.form.Panel", {
             border : false,
-            items : [ {
+            items : [
+                {
                 xtype : 'filefield',
                 width : 400,
                 margin: '1 0 0 0',
@@ -216,7 +217,7 @@ Ext.define('material.material_Upload_Data', {
                 //id : 'uploadFile',
                 listeners : {
                     change : function(file, value, eOpts) {
-                        if (value.indexOf('.xls',value.length-4)==-1) {
+                        if (value.indexOf('.xls',value.length-4)==-1 && value.indexOf('.xlsx',value.length-5)==-1) {
                             Ext.Msg.alert('错误', '文件格式错误，请重新选择xls格式的文件！')
                         } else {
                             Ext.Msg.show({
@@ -348,6 +349,16 @@ Ext.define('material.material_Upload_Data', {
             dock : "top",
             id : "toolbar2",
             items : [
+                {
+                    xtype: 'textfield',
+                    margin: '0 40 0 20',
+                    fieldLabel: ' 入库人',
+                    id: 'inBoundName',
+                    width: 150,
+                    labelWidth: 45,
+                    name: 'inBoundName',
+                    value: "",
+                },
                 form
             ]
         });
