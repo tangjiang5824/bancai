@@ -94,7 +94,7 @@ public class MaterialDataController {
 
            try{
                materialNo=jsonTemp.get("品号").toString()+"";
-               materialName=jsonTemp.get("品名")+"";
+               materialName=jsonTemp.get("原材料品名")+"";
                length=jsonTemp.get("长1")+"";
                length2=jsonTemp.get("长2")+"";
                Type=jsonTemp.get("类型")+"";

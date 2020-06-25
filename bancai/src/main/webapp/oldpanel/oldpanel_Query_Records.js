@@ -11,7 +11,8 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
             statics: { // 关键
                 1: { value: '1', name: '出库' },
                 2: { value: '2', name: '退库' },
-                0: { value: '0', name: '入库' }
+                0: { value: '0', name: '入库' },
+                //
             }
         });
         var projectListStore = Ext.create('Ext.data.Store',{
