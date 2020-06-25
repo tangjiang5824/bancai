@@ -40,14 +40,50 @@ public class Oldpanel_Data_Controller {
 
     Logger log = Logger.getLogger(Oldpanel_Data_Controller.class);
 
+
+    /*
+     * 添加旧板基础信息
+     * */
+    @RequestMapping(value = "/oldpanel/addOldpanelBasicInfo.do")
+    public boolean oldpanelAddInfo(String s,HttpSession session) throws JSONException {
+        try {
+            JSONArray jsonArray = new JSONArray(s);
+            JSONObject jsonTemp = jsonArray.getJSONObject(0);
+            StringBuilder fB = new StringBuilder();
+            StringBuilder iB = new StringBuilder();
+            fB.append(jsonTemp.get("format1")).append(jsonTemp.get("format2")).append(jsonTemp.get("format3"))
+                    .append(jsonTemp.get("format4"));
+            iB.append(jsonTemp.get("format1_info")).append("%").append(jsonTemp.get("format2_info")).append("%")
+                    .append(jsonTemp.get("format3_info")).append("%").append(jsonTemp.get("format4_info"));
+            String format = fB.toString();
+            String info = iB.toString();
+//            System.out.println(format);
+//            System.out.println(info);
+            String[] sFormat = format.split("");
+            String[] sInfo = info.split("%");
+            String tableName = "oldpanel_info";
+            String sql = "insert into "+ tableName +" (oldpanelType,oldpanelFormat,formatInfo) values (?,?,?)";
+            for (int i = 0; i < sFormat.length; i++) {
+                if (sFormat[i].equals("1")){
+                    String typeName = sInfo[i];
+                    String type = y_Upload_Data_Service.getOldpanelType(typeName);
+                    return insertProjectService.insertIntoTableBySQL(sql,type,format,info);
+                }
+            }
+        } catch (Exception e){
+            return false;
+        }
+        return false;
+    }
+
     /*
      * 添加单个数据
      * */
+    //produces = {"text/html;charset=UTF-8"}
     @RequestMapping(value = "/oldpanel/addData.do")
-    public boolean oldpanelAddData(String s, HttpSession session) throws JSONException {
-
+    public boolean oldpanelAddData(String s, HttpSession session) {
         JSONArray jsonArray = new JSONArray(s);
-        String tableName = "oldpanel";
+        String tableName = "oldpanel_store";
 //        int uploadId = Integer.parseInt(session.getAttribute("userid").toString());
         String uploadId = (String)session.getAttribute("userid");
         Date date=new Date();
@@ -71,76 +107,40 @@ public class Oldpanel_Data_Controller {
             JSONObject jsonTemp = jsonArray.getJSONObject(i);
             //获得第i条数据的各个属性值
             System.out.println(tableName + "第" + i + "个:userid=" + uploadId + "---" + jsonTemp);
-            String oldpanelType=jsonTemp.get("oldpanelType")+"";
-            String oldpanelNo=jsonTemp.get("oldpanelNo")+"";
             String oldpanelName=jsonTemp.get("oldpanelName")+"";
+            String classificationId=jsonTemp.get("classificationId")+"";
             String inventoryUnit=jsonTemp.get("inventoryUnit")+"";
-            String specification=jsonTemp.get("specification")+"";
-            String length=jsonTemp.get("length")+"";
-            String length2 = null;
-            try{
-                length2=jsonTemp.get("length2")+"";
-            }catch (JSONException e){
-                length2=null;
-            }
-            String width=jsonTemp.get("width")+"";
-            String width2 = null;
-            try{
-                width2=jsonTemp.get("width2")+"";
-            }catch (JSONException e){
-                width2=null;
-            }
-            String width3 = null;
-            try{
-                width3=jsonTemp.get("width3")+"";
-            }catch (JSONException e){
-                width3=null;
-            }
             String number=jsonTemp.get("number")+"";
-            String weight=jsonTemp.get("weight")+"";
             String warehouseNo=jsonTemp.get("warehouseNo")+"";
-            String rowNo=jsonTemp.get("row")+"";
-            String columNo=jsonTemp.get("col")+"";
-
-            String sql_addOldpanel = "insert into "+ tableName +" (oldpanelNo,oldpanelName,length,length2,oldpanelType,width," +
-                    "width2,width3,inventoryUnit,specification,warehouseNo,rowNo,columNo,countUse,countStore,weight,uploadId) " +
-                    "values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-            boolean isright= insertProjectService.insertIntoTableBySQL(sql_addOldpanel,oldpanelNo,oldpanelName,length,length2,oldpanelType,
-                    width,width2,width3,inventoryUnit,specification,warehouseNo,rowNo,columNo,number,number,weight,uploadId);
-            if(!isright){
+            String unitArea=jsonTemp.get("unitArea")+"";
+            String unitWeight=jsonTemp.get("unitWeight")+"";
+            String remark=jsonTemp.get("remark")+"";
+            boolean result = y_Upload_Data_Service.oldpanelUpload(y_Upload_Data_Service.analyzeOldpanelName(oldpanelName),
+                    oldpanelName,classificationId,inventoryUnit, number,warehouseNo,unitArea,unitWeight,remark,uploadId);
+            if(!result){
                 return false;
             }
-            //插入log详细信息
-            String sql_addLogDetail="insert into oldpanellogdetail (oldpanelName,count,specification,oldpanellogId) values (?,?,?,?) ";
-            boolean is_log_right= insertProjectService.insertIntoTableBySQL(sql_addLogDetail,oldpanelName,number,specification,String.valueOf(oldpanellogId));
+            String sql_addLogDetail="insert into oldpanellogdetail (oldpanelName,count,oldpanellogId) values (?,?,?,?)";
+            boolean is_log_right= insertProjectService.insertIntoTableBySQL(sql_addLogDetail,oldpanelName,number,String.valueOf(oldpanellogId));
             if(!is_log_right){
                 return false;
             }
-//            log.debug(tableName + "第" + i + "个:userid=" + uploadId + "---" + jsonTemp);
-//            String oldpanelType = jsonTemp.get("oldpanelType").toString();
-//            int oldpanelType = Integer.parseInt(jsonTemp.get("oldpanelType").toString()+"");
-//            int oldpanelNo = Integer.parseInt(jsonTemp.get("oldpanelNo").toString()+"");
-//            String oldpanelName = (String) jsonTemp.get("oldpanelName");
-//            String inventoryUnit = (String) jsonTemp.get("inventoryUnit");
-//            double length = Double.parseDouble(jsonTemp.get("length").toString()+"");
-//            double length2 = Double.parseDouble(jsonTemp.get("length2").toString()+"");
-//            double width = Double.parseDouble(jsonTemp.get("width").toString()+"");
-//            double width2 = Double.parseDouble(jsonTemp.get("width2").toString()+"");
-//            double width3 = Double.parseDouble(jsonTemp.get("width3").toString()+"");
-//            double number = Double.parseDouble(jsonTemp.get("number").toString()+"");
-//            double weight = Double.parseDouble(jsonTemp.get("weight").toString()+"");
-//            String warehouseNo = (String) jsonTemp.get("warehouseNo");
-//            int rowNo = Integer.parseInt(jsonTemp.get("row").toString()+"");
-//            int columNo = Integer.parseInt(jsonTemp.get("col").toString()+"");
-            //String position = (String) jsonTemp.get("position");
-            //对每条数据处理
-//            y_Upload_Data_Service.oldpanelAddData(tableName, oldpanelNo, oldpanelName, length, length2, oldpanelType, width,
-//                    width2, width3, inventoryUnit, warehouseNo, rowNo, columNo, number, weight, uploadId);
-
         }
 
+//        JSONArray array = new JSONArray();
+//        try {
+//            UploadDataResult result = allExcelService.uploadExcelData(uploadFile.getInputStream(),uploadId,tableName,String.valueOf(oldpanellogId));
+//            response.put("value",result.dataList);
+//            response.put("totalCount", result.dataList.size());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            response.setSuccess(false);
+//            response.setErrorCode(1000); //未知错误
+//            response.setMsg(e.getMessage());
+//        }
+//        System.out.println(response.get("success"));
+//        System.out.println(response.get("value"));
         return true;
-
     }
 
     /*

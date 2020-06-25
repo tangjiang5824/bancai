@@ -89,16 +89,22 @@ public class AllExcelService extends BaseService {
 					materialId=id_List.get(0).get("id")+"";
 				}
 				//修改插入到数据库里面的datalist
+
 				dataList2.get(i).remove("materialName");
 				dataList2.get(i).remove("width");
 				dataList2.get(i).remove("rowindex");
 				dataList2.get(i).put("materialId",materialId);
-
+				String totalWeight="0.0";
+				if(null!=dataList2.get(i).get("unitWeight")&&null!=dataList2.get(i).get("count")){
+					totalWeight=Double.parseDouble(dataList2.get(i).get("unitWeight")+"")*Double.parseDouble(dataList2.get(i).get("count")+"")+"";
+				}
+				dataList2.get(i).put("totalWeight",totalWeight);
+				dataList.get(i).put("totalWeight",totalWeight);
 				//后面为log记录
 				String specification = dataList.get(i).get("specification")+"";
 				String count =dataList.get(i).get("count")+"";
-				String sql_log_detail = "insert into material_logdetail (materialName,count,specification,materiallogId) values (?,?,?,?)";
-				boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_log_detail,materialName,count,specification,String.valueOf(main_key));
+				String sql_log_detail = "insert into material_logdetail (materialName,materialId,count,specification,materiallogId) values (?,?,?,?,?)";
+				boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_log_detail,materialName,materialId,count,specification,String.valueOf(main_key));
 			}
 		} else if (tablename.equals("oldpanel")) {
 			for (int i = 0; i < dataList.size(); i++) {

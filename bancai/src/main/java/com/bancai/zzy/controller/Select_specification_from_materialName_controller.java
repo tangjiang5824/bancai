@@ -78,7 +78,7 @@ public class Select_specification_from_materialName_controller {
 		//log.debug(startWidth+" "+endWidth);
 		if(null==start||start.equals("")) start=0;
 		if(null==limit||limit.equals("")) limit=50;
-		String tableName = "materiallog_projectname";
+		String tableName = "materiallog_projectname_view";
 //		System.out.println(startWidth);
 //		System.out.println(endWidth);
 //
@@ -110,7 +110,7 @@ public class Select_specification_from_materialName_controller {
 		//log.debug(startWidth+" "+endWidth);
 		if(null==start||start.equals("")) start=0;
 		if(null==limit||limit.equals("")) limit=50;
-		String tableName = "materiallog_materiallogdetail_user";
+		String tableName = "materiallog_materiallogdetail_user_view";
 //		System.out.println(startWidth);
 //		System.out.println(endWidth);
 //

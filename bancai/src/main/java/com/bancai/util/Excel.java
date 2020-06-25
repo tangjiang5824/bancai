@@ -26,12 +26,10 @@ import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.CellRangeAddress;
+//import org.apache.poi.hssf.util.CellRangeAddress;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.bancai.domain.DataList;
@@ -69,7 +67,7 @@ public class Excel {
 			sheet.setColumnWidth(i, 5000);
 		// 创建标题行
 		HSSFRow firstRow = sheet.createRow(0);
-		HSSFCellStyle firstRowStyle=createCellStyle(true,CellStyle.ALIGN_CENTER, CellStyle.VERTICAL_CENTER, "黑体", (short) 20, null, false);
+		HSSFCellStyle firstRowStyle=createCellStyle(true, HorizontalAlignment.CENTER.getCode(), VerticalAlignment.CENTER.getCode(), "黑体", (short) 20, null, false);
 		for (int i = 0; i < columnSize; i++)
 			firstRow.createCell(i).setCellStyle(firstRowStyle);;
 		sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, columnSize - 1)); //合并
@@ -77,7 +75,7 @@ public class Excel {
 		firstRow.setHeightInPoints(50);
 		// 创建批次行
 		HSSFRow secondRow = sheet.createRow(1);
-		HSSFCellStyle secondRowStyle=createCellStyle(false,CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, "黑体", (short) 12, HSSFColor.YELLOW.index, true);
+		HSSFCellStyle secondRowStyle=createCellStyle(false,HorizontalAlignment.LEFT.getCode(), VerticalAlignment.CENTER.getCode(), "黑体", (short) 12, HSSFColor.HSSFColorPredefined.YELLOW.getIndex(), true);
 		for (int i = 0; i < columnSize; i++)
 			secondRow.createCell(i).setCellStyle(secondRowStyle);;
 		sheet.addMergedRegion(new CellRangeAddress(1, 1, 1, columnSize - 1));
@@ -85,12 +83,12 @@ public class Excel {
 		secondRow.getCell(1).setCellValue("请在此处填写上传批次");
 		// 设置批次行样式
 		secondRow.setHeightInPoints(50);
-		secondRow.getCell(0).setCellStyle(createCellStyle(true,CellStyle.ALIGN_CENTER, CellStyle.VERTICAL_CENTER, "黑体", (short) 10, null, true));
+		secondRow.getCell(0).setCellStyle(createCellStyle(true,HorizontalAlignment.CENTER.getCode(), VerticalAlignment.CENTER.getCode(), "黑体", (short) 10, null, true));
 		// 创建列名行
 		HSSFRow thirdRow = sheet.createRow(2);
 		thirdRow.setHeightInPoints(50);
-		HSSFCellStyle blankStyle = createCellStyle(true,CellStyle.ALIGN_CENTER, CellStyle.VERTICAL_CENTER, "宋体", (short) 10, null, true);
-		HSSFCellStyle nonBlankStyle = createCellStyle(true,CellStyle.ALIGN_CENTER, CellStyle.VERTICAL_CENTER, "宋体", (short) 10, HSSFColor.YELLOW.index, true);
+		HSSFCellStyle blankStyle = createCellStyle(true,HorizontalAlignment.CENTER.getCode(), VerticalAlignment.CENTER.getCode(), "宋体", (short) 10, null, true);
+		HSSFCellStyle nonBlankStyle = createCellStyle(true,HorizontalAlignment.CENTER.getCode(), VerticalAlignment.CENTER.getCode(), "宋体", (short) 10, HSSFColor.HSSFColorPredefined.YELLOW.getIndex(), true);
 		for (int i = 0; i < columnSize; i++) {
 			DataRow column = columnList.get(i);
 			HSSFCell cell = thirdRow.createCell(i);
@@ -117,19 +115,19 @@ public class Excel {
 			style.setFont(font);
 		}
 		if (align != null)
-			style.setAlignment(align);
+			style.setAlignment(HorizontalAlignment.CENTER);
 		if (valign != null)
-			style.setVerticalAlignment(valign);
+			style.setVerticalAlignment(VerticalAlignment.CENTER);
 		if (FillBackgroundColor != null)
 		{
-			style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+			style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 			style.setFillForegroundColor(FillBackgroundColor);
 		}
 		if (border) {
-			style.setBorderBottom((short) 1);
-			style.setBorderLeft((short) 1);
-			style.setBorderRight((short) 1);
-			style.setBorderTop((short) 1);
+			style.setBorderBottom(BorderStyle.DASH_DOT);
+			style.setBorderLeft(BorderStyle.DASH_DOT);
+			style.setBorderRight(BorderStyle.DASH_DOT);
+			style.setBorderTop(BorderStyle.DASH_DOT);
 		}
 		return style;
 	}
@@ -144,7 +142,7 @@ public class Excel {
 
 		HSSFRow row_fir = sheet.createRow(0);
 
-		HSSFCellStyle secondRowStyle=createCellStyle(false,CellStyle.ALIGN_RIGHT, CellStyle.VERTICAL_CENTER, "黑体", (short) 12, HSSFColor.YELLOW.index, true);
+		HSSFCellStyle secondRowStyle=createCellStyle(false,HorizontalAlignment.RIGHT.getCode(), VerticalAlignment.CENTER.getCode(), "黑体", (short) 12, HSSFColor.HSSFColorPredefined.YELLOW.getIndex(), true);
 		sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, columnsList.size() - 1)); //合并
 		HSSFCell cell_fir = row_fir.createCell(0);
 		cell_fir.setCellStyle(secondRowStyle);
@@ -352,7 +350,7 @@ public class Excel {
 			System.out.println("type:  "+cell.getCellType());
 			switch (cell.getCellType()) {
 			// 如果当前Cell的Type为NUMERIC
-			case HSSFCell.CELL_TYPE_NUMERIC:{
+				case NUMERIC:   {
 				// 判断当前的cell是否为Date
 				if (HSSFDateUtil.isCellDateFormatted(cell)) {
 					// 如果是Date类型则，转化为Data格式
@@ -374,7 +372,7 @@ public class Excel {
 				}
 				break;
 			}
-			case HSSFCell.CELL_TYPE_FORMULA: {
+			case  FORMULA: {
 				cellvalue =cell.getCellFormula();
 				break;
 //				// 判断当前的cell是否为Date
@@ -399,7 +397,7 @@ public class Excel {
 //				break;
 			}
 			// 如果当前Cell的Type为STRIN
-			case HSSFCell.CELL_TYPE_STRING:
+			case STRING:
 				// 取得当前的Cell字符串
 				cellvalue = cell.getStringCellValue();// cell.getRichStringCellValue().getString();
 				System.out.println(cellvalue);
