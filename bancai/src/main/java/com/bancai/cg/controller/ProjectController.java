@@ -3,8 +3,11 @@ package com.bancai.cg.controller;
 
 import com.bancai.cg.service.InsertProjectService;
 import com.bancai.cg.util.newPanelMatch;
+import com.bancai.commonMethod.QueryAllService;
+import com.bancai.db.mysqlcondition;
 import com.bancai.domain.DataList;
 import com.bancai.domain.DataRow;
+import com.bancai.vo.WebResponse;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,6 +39,8 @@ public class ProjectController {
     private QueryService queryService;
     @Autowired
     private InsertProjectService insertProjectService;
+    @Autowired
+    private QueryAllService queryAllService;
 
     /**
      *生成项目计划，添加楼栋信息
@@ -220,6 +225,50 @@ public class ProjectController {
         response.getWriter().close();
 
     }
+    /**
+     * 返回仓库所有的信息（仓库查询）
+     * @param
+     * @throws IOException
+     */
+    @RequestMapping(value="/material/findStoreInfo.do")
+    public WebResponse findStoreInfo(String materialName,String specification,String totalCount_min,String totalCount_max,String warehouseName,String page, String start, String limit)  {
+        int thisPage=1;
+        int thisStart=0;
+        int thisLimit=25;
+        if(null==page||page.equals("")){
+            thisPage=1;
+        }else {
+            thisPage=Integer.parseInt(page);
+        }
+        if(null==start||start.equals("")||null==limit||limit.equals("")){
+            thisStart=0;
+            thisLimit=25;
+        }else {
+            thisLimit=Integer.parseInt(limit);
+            thisStart=(thisPage-1)*thisLimit;
+        }
+        String tableName = "Store_view";
+//		System.out.println(startWidth);
+//		System.out.println(endWidth);
+//
+        mysqlcondition c=new mysqlcondition();
+        if (null!=materialName&&materialName.length() != 0) {
+            c.and(new mysqlcondition("materialName", "=", materialName));
+        }
+        if (null!=specification&&specification.length() != 0) {
+            c.and(new mysqlcondition("specification", "=", specification));
+        }
+        if (null!=totalCount_min&&totalCount_min.length() != 0) {
+            c.and(new mysqlcondition("totalCount", ">=", totalCount_min));
+        }
+        if (null!=totalCount_max&&totalCount_max.length() != 0) {
+            c.and(new mysqlcondition("time", "<=", totalCount_max));
+        }
+        if (null!=warehouseName&&warehouseName.length() != 0) {
+            c.and(new mysqlcondition("warehouseName", "=", warehouseName));
+        }
+        return queryAllService.queryDataPage(thisStart, thisLimit, c, tableName);
+    }
 
     /**
      * 返回所有的仓库名
@@ -227,13 +276,26 @@ public class ProjectController {
      * @throws IOException
      */
     @RequestMapping(value="/material/findStore.do")
-    public void findStore(HttpServletResponse response,String start,String limit) throws IOException, JSONException {
-        if(null==start) start="0";
-        if(null==limit) limit="50";
-        DataList StoreName = insertProjectService.findallbytableName("storeposition",start,limit,"warehouseNo","warehouseName");
+    public void findStore(HttpServletResponse response,String page,String start,String limit) throws IOException, JSONException {
+        int thisPage=1;
+        int thisStart=0;
+        int thisLimit=25;
+        if(null==page||page.equals("")){
+            thisPage=1;
+        }else {
+            thisPage=Integer.parseInt(page);
+        }
+        if(null==start||start.equals("")||null==limit||limit.equals("")){
+            thisStart=0;
+            thisLimit=25;
+        }else {
+            thisLimit=Integer.parseInt(limit);
+            thisStart=(thisPage-1)*thisLimit;
+        }
+        DataList StoreList = insertProjectService.findallbytableName("storeposition",start,limit);
         //写回前端
         JSONObject object = new JSONObject();
-        JSONArray StoreNamearray = new JSONArray(StoreName);
+        JSONArray StoreNamearray = new JSONArray(StoreList);
         object.put("StoreName", StoreNamearray);
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html");
@@ -282,10 +344,23 @@ public class ProjectController {
      * @throws IOException
      */
     @RequestMapping(value="/material/findAllbyTableNameAndOnlyOneCondition.do")
-    public void findAllbyTableNameAndOnlyOneCondition(HttpServletResponse response,String start,String limit,String tableName,String columnName,String columnValue) throws IOException, JSONException {
-        if(null==start) start="0";
-        if(null==limit) limit="50";
-        DataList table = insertProjectService.findallbytableNameAndinfo(tableName,columnName,columnValue,start,limit);
+    public void findAllbyTableNameAndOnlyOneCondition(HttpServletResponse response,String page,String start,String limit,String tableName,String columnName,String columnValue) throws IOException, JSONException {
+        int thisPage=1;
+        int thisStart=0;
+        int thisLimit=25;
+        if(null==page||page.equals("")){
+            thisPage=1;
+        }else {
+            thisPage=Integer.parseInt(page);
+        }
+        if(null==start||start.equals("")||null==limit||limit.equals("")){
+            thisStart=0;
+            thisLimit=25;
+        }else {
+            thisLimit=Integer.parseInt(limit);
+            thisStart=(thisPage-1)*thisLimit;
+        }
+        DataList table = insertProjectService.findallbytableNameAndinfo(tableName,columnName,columnValue,thisStart+"",thisLimit+"");
         //写回前端
         JSONObject object = new JSONObject();
         JSONArray StoreNamearray = new JSONArray(table);
