@@ -247,10 +247,24 @@ public class ProjectController {
      * @throws IOException
      */
     @RequestMapping(value="/material/findAllBytableName.do")
-    public void findAllbyTableName(HttpServletResponse response,String tableName,String start,String limit) throws IOException, JSONException {
-        if(null==start) start="0";
-        if(null==limit) limit="50";
-        DataList table = insertProjectService.findallbytableName(tableName,start,limit);
+    public void findAllbyTableName(HttpServletResponse response,String tableName,String page,String start,String limit) throws IOException, JSONException {
+        //thisPage，thisStart，thislimit用作分页，代码可以复用
+        int thisPage=1;
+        int thisStart=0;
+        int thisLimit=25;
+        if(null==page||page.equals("")){
+            thisPage=1;
+        }else {
+            thisPage=Integer.parseInt(page);
+        }
+        if(null==start||start.equals("")||null==limit||limit.equals("")){
+            thisStart=0;
+            thisLimit=25;
+        }else {
+            thisLimit=Integer.parseInt(limit);
+            thisStart=(thisPage-1)*thisLimit;
+        }
+        DataList table = insertProjectService.findallbytableName(tableName,thisStart+"",thisLimit+"");
         //写回前端
         JSONObject object = new JSONObject();
         JSONArray StoreArray = new JSONArray(table);
