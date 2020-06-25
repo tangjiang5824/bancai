@@ -30,7 +30,7 @@ public class TestUserController {
 		DataList list = queryService.query(
 				"select * from user where username=? and password=? and usertype=?",
 				username, password, usertype);
-		System.out.println(list.size());
+//		System.out.println(list.size());
 		if(list.size()==0)
 			return false;
 		String id = String.valueOf(list.get(0).get("id"));

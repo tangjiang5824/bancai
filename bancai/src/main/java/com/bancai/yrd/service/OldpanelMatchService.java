@@ -18,6 +18,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.json.JSONException;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -240,18 +241,18 @@ public class OldpanelMatchService extends BaseService{
     }
 
     private String[] SetLengthAndWidth(String m, String n){
-        double a = Double.parseDouble(m);
-        double b = Double.parseDouble(n);
-        double max = Math.max(a,b);
-        double min = Math.min(a,b);
+        int a = Integer.parseInt(m);
+        int b = Integer.parseInt(n);
+        int max = Math.max(a,b);
+        int min = Math.min(a,b);
         return new String[]{String.valueOf(max),String.valueOf(min)};
     }
 
     private String[] SetLengthAndWidth(String[] strab){
-        double a = Double.parseDouble(strab[0]);
-        double b = Double.parseDouble(strab[1]);
-        double max = Math.max(a,b);
-        double min = Math.min(a,b);
+        int a = Integer.parseInt(strab[0]);
+        int b = Integer.parseInt(strab[1]);
+        int max = Math.max(a,b);
+        int min = Math.min(a,b);
         return new String[]{String.valueOf(max),String.valueOf(min)};
     }
 
@@ -265,6 +266,160 @@ public class OldpanelMatchService extends BaseService{
         return new String[]{stra,strb};
     }
 
+    private String IgnoreSuffix(String a){
+        return a.split("-")[0];
+    }
+
+    @Transactional
+    boolean ResOldpanelName(String oldpanelName){
+        String[] splited = oldpanelName.split("\\s+");
+        String isPureNumber = "^[0-9]+(.[0-9]+)?$";
+        String isPureWord = "^[A-Za-z]+$";
+        String typeName = "";
+        String m = "";
+        String n = "";
+        String a = "";
+        String b = "";
+        String angle = "";
+        String mAngle = "";
+        String nAngle = "";
+        String mnAngle = "";
+        String res = "";//类型0，m1，n2，a*b3，b*a4，m+n5，后缀6
+        String er = "";
+        try {
+            if (splited[0].matches(isPureWord)) {
+                typeName = splited[0];
+                switch (typeName) {
+                    case "EC":
+                    case "EB":
+                    case "MB":
+                        m = splited[1];
+                        if(!m.matches(isPureNumber)){
+                            er = "m不是纯数字";
+                            break;
+                        }
+                        res = "01";
+                        break;
+                    case "SS":
+                        res = "0";
+                        break;
+                    default:
+                        break;
+                }
+            } else if(splited[1].matches(isPureWord)){
+                typeName = splited[1];
+                switch (typeName) {
+                    case "WP":
+                    case "W":
+                    case "U":
+                    case "SPT":
+                    case "BS":
+                    case "WS":
+                    case "K":
+                    case "BP":
+                    case "BPP":
+                    case "BPPP":
+                        m = SetLengthAndWidth(splited[0],splited[2])[0];
+                        n = SetLengthAndWidth(splited[0],splited[2])[1];
+                        if((!m.matches(isPureNumber))||(!n.matches(isPureNumber))){
+                            er = "m或n不是纯数字";
+                            break;
+                        }
+                        if(n.equals(splited[0])){//n在前
+                            res = "102";
+                        } else {//m在前
+                            res = "201";
+                        }
+                        break;
+                    case "LSR":
+                    case "LSA":
+                    case "IC":
+                    case "ICA"://a<=b
+                        b = SetLengthAndWidth(splited[0].split("\\*")[0],splited[0].split("\\*")[1])[0];
+                        a = SetLengthAndWidth(splited[0].split("\\*")[0],splited[0].split("\\*")[1])[1];
+                        m = splited[2];
+                        if((!a.matches(isPureNumber))||(!b.matches(isPureNumber))||(!m.matches(isPureNumber))){
+                            er = "a或b或m不是纯数字";
+                            break;
+                        }
+                        if(a.equals(splited[0].split("\\*")[0])){//a*b
+                            res = "301";
+                        } else {//b*a
+                            res = "401";
+                        }
+                        break;
+                    case "SN":
+                        b = SetLengthAndWidth(splited[0].split("\\*")[0],splited[0].split("\\*")[1])[0];
+                        a = SetLengthAndWidth(splited[0].split("\\*")[0],splited[0].split("\\*")[1])[1];
+                        m = splited[2];
+                        if((!a.matches(isPureNumber))||(!b.matches(isPureNumber))||(!m.matches(isPureNumber))){
+                            er = "a或b或m不是纯数字";
+                            break;
+                        }
+                        try {
+                            angle = splited[3];
+                            if(!angle.equals("AA")){
+                                er = "SN板后不是AA角";
+                                break;
+                            } else {
+                                if(a.equals(splited[0].split("\\*")[0])){//a*b
+                                    res = "3016";
+                                } else {//b*a
+                                    res = "4016";
+                                }
+                            }
+                        } catch (Exception e){
+                            if(a.equals(splited[0].split("\\*")[0])){//a*b
+                                res = "301";
+                            } else {//b*a
+                                res = "401";
+                            }
+                        }
+                        break;
+                    case "CC":
+                    case "CE":
+                        b = SetLengthAndWidth(splited[0].split("\\*")[0],splited[0].split("\\*")[1])[0];
+                        a = SetLengthAndWidth(splited[0].split("\\*")[0],splited[0].split("\\*")[1])[1];
+                        m = splited[2].split("\\+")[0];
+                        n = splited[2].split("\\+")[1];
+                        if((!a.matches(isPureNumber))||(!b.matches(isPureNumber))){
+                            er = "a或b不是纯数字";
+                            break;
+                        }
+                        if(m.contains("A")){
+
+                        } else if(m.contains("B")){
+
+                        } else if(m.matches(isPureNumber)){
+
+                        } else {
+                            er = "m值异常";
+                        }
+                        if(n.contains("A")){
+
+                        } else if(n.contains("B")){
+
+                        } else if(n.matches(isPureNumber)){
+
+                        } else {
+                            er = "n值异常";
+                        }
+                        break;
+                    default:
+                        er = "无法识别的品名";
+                        break;
+                }
+            } else if(splited[0]=="200"){
+
+            } else {
+                er = "品名错误";
+            }
+        } catch (Exception e){
+            return false;
+        }
+
+        return true;
+    }
 //    @Test
 //    private void test(){
         //=======================

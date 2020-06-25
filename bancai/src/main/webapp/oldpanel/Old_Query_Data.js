@@ -5,7 +5,7 @@ Ext.define('oldpanel.Old_Query_Data',{
     title: '旧板库存查询',
     initComponent: function(){
         var itemsPerPage = 50;
-        var tableName="oldpanel";
+        var tableName="oldpanel_store";
 
         var oldPanelNameList = Ext.create('Ext.data.Store',{
             fields : [ 'oldpanelName'],
