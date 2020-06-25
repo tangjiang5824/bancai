@@ -298,6 +298,16 @@ Ext.define('material.material_Inbound', {
                 speificLocation_row,
                 speificLocation_col,
                 {
+                    xtype: 'textfield',
+                    margin: '0 0 0 40',
+                    fieldLabel: ' 入库人',
+                    id: 'operator',
+                    width: 150,
+                    labelWidth: 45,
+                    name: 'operator',
+                    value: "",
+                },
+                {
                     xtype : 'button',
                     margin: '0 10 0 70',
                     iconAlign : 'center',
@@ -307,6 +317,7 @@ Ext.define('material.material_Inbound', {
                     handler: function(){
                         console.log("原材料名：",Ext.getCmp('materialName').rawValue);
                         console.log("原材料id：",Ext.getCmp('materialName').value)
+                        var operator = Ext.getCmp('operator').value;
                         var materialNo = Ext.getCmp('materialName').value;
                         var materialName = Ext.getCmp('materialName').rawValue;
                         var length1 = Ext.getCmp('length1').getValue();
@@ -341,6 +352,7 @@ Ext.define('material.material_Inbound', {
                                 '仓库名称' : warehouse,
                                 '行': row,
                                 '列': col,
+                                '入库人':operator
 
                             }];
                             console.log("bbbbbb");
@@ -360,6 +372,7 @@ Ext.define('material.material_Inbound', {
                                 '仓库名称' : warehouse,
                                 '行': row,
                                 '列': col,
+                                '入库人':operator
                             }];
                         }
                         //var materialType = Ext.getCmp('materialName').getValue();//获得对应的id值
@@ -588,6 +601,16 @@ Ext.define('material.material_Inbound', {
                     dataIndex : '列',
                     name : '列',
                     text : '位置-列',
+                    //width : 160,
+                    editor : {
+                        xtype : 'textfield',
+                        allowBlank : true
+                    }
+                },
+                {
+                    dataIndex : '入库人',
+                    name : '入库人',
+                    text : '入库人',
                     //width : 160,
                     editor : {
                         xtype : 'textfield',

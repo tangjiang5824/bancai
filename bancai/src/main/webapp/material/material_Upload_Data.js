@@ -20,7 +20,7 @@ Ext.define('material.material_Upload_Data', {
     initComponent : function() {
         var me = this;
         var itemsPerPage = 50;
-        var tableName="material";
+        var tableName="material_store";
         //var materialtype="1";
 
         //新增表项和保存的按钮
@@ -217,7 +217,7 @@ Ext.define('material.material_Upload_Data', {
                 //id : 'uploadFile',
                 listeners : {
                     change : function(file, value, eOpts) {
-                        if (value.indexOf('.xls',value.length-4)==-1 && value.indexOf('.xlsx',value.length-5)==-1) {
+                        if (value.indexOf('.xls',value.length-4)==-1) {
                             Ext.Msg.alert('错误', '文件格式错误，请重新选择xls格式的文件！')
                         } else {
                             Ext.Msg.show({
@@ -228,12 +228,13 @@ Ext.define('material.material_Upload_Data', {
                                 fn : function(btn) {
                                     if (btn === 'yes') {
                                         //var check=Ext.getCmp("check").getValue();
-
+                                        var operator=Ext.getCmp("operator").getValue();
                                         form.submit({
                                             url : 'uploadMaterialExcel.do', //上传excel文件，并回显数据
                                             waitMsg : '正在上传...',
                                             params : {
                                                 tableName:tableName,
+                                                operator:operator,
                                                 //materialtype:materialtype,
                                                 //check:check
                                             },
@@ -351,12 +352,12 @@ Ext.define('material.material_Upload_Data', {
             items : [
                 {
                     xtype: 'textfield',
-                    margin: '0 40 0 20',
+                    margin: '0 40 0 0',
                     fieldLabel: ' 入库人',
-                    id: 'inBoundName',
+                    id: 'operator',
                     width: 150,
                     labelWidth: 45,
-                    name: 'inBoundName',
+                    name: 'operator',
                     value: "",
                 },
                 form
