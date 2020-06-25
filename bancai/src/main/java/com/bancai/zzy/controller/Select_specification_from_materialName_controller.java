@@ -74,7 +74,7 @@ public class Select_specification_from_materialName_controller {
 	 * */
 	@RequestMapping(value = "/material/material_query_records.do")
 	public WebResponse materialDataList1(Integer start, Integer limit, String projectId,
-										String optionType, String startTime, String endTime, String username) throws ParseException {
+										String type, String startTime, String endTime, String operator) throws ParseException {
 		//log.debug(startWidth+" "+endWidth);
 		if(null==start||start.equals("")) start=0;
 		if(null==limit||limit.equals("")) limit=50;
@@ -83,20 +83,20 @@ public class Select_specification_from_materialName_controller {
 //		System.out.println(endWidth);
 //
 		mysqlcondition c=new mysqlcondition();
-		if (projectId.length() != 0) {
+		if (null!=projectId&&projectId.length() != 0) {
 			c.and(new mysqlcondition("projectId", "=", projectId));
 		}
-		if (optionType.length() != 0) {
-			c.and(new mysqlcondition("type", "=", optionType));
+		if (null!=type&&type.length() != 0) {
+			c.and(new mysqlcondition("type", "=", type));
 		}
-		if (startTime.length() != 0) {
+		if (null!=startTime&&startTime.length() != 0) {
 			c.and(new mysqlcondition("time", ">=", startTime));
 		}
-		if (endTime.length() != 0) {
+		if (null!=endTime&&endTime.length() != 0) {
 			c.and(new mysqlcondition("time", "<=", endTime));
 		}
-		if (username.length() != 0) {
-			c.and(new mysqlcondition("username", "=", username));
+		if (null!=operator&&operator.length() != 0) {
+			c.and(new mysqlcondition("operator", "=", operator));
 		}
 		WebResponse wr=queryAllService.queryDataPage(start, limit, c, tableName);
 		return wr;
