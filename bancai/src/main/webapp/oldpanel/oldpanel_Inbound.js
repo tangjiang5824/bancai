@@ -183,7 +183,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
             autoLoad : true
         });
         var classificationList = Ext.create('Ext.form.ComboBox',{
-            fieldLabel : '旧板类型',
+            fieldLabel : '分类',
             labelWidth : 70,
             width : 230,
             id :  'classification',
@@ -207,17 +207,18 @@ Ext.define('oldpanel.oldpanel_Inbound', {
         var toolbar = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
             items: [
-                oldpanelTypeList,
-                classificationList,
+                //oldpanelTypeList,
                 {xtype: 'textfield', fieldLabel: '旧板品名', id: 'oldpanelName', width: 190, labelWidth: 60,
                     //margin: '0 10 0 40',
                     name: 'oldpanelNo', value: ""},
+                classificationList,
+
                 {xtype: 'textfield', fieldLabel: '库存单位', id: 'inventoryUnit', width: 220, labelWidth: 60,
                     //margin: '0 10 0 40',
                     name: 'inventoryUnit', value: ""},
-                {xtype: 'textfield', fieldLabel: '仓库名称', id: 'warehouseName', width: 220, labelWidth: 60,
-                    //margin: '0 10 0 40',
-                    name: 'warehouseName', value: ""},
+                // {xtype: 'textfield', fieldLabel: '仓库名称', id: 'warehouseName', width: 220, labelWidth: 60,
+                //     //margin: '0 10 0 40',
+                //     name: 'warehouseName', value: ""},
 
             ]
         });
@@ -231,31 +232,32 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                 // {xtype: 'textfield', fieldLabel: '宽三', id: 'width3', width: 150, labelWidth: 30, margin: '0 10 0 85', name: 'width3', value: ""},
                 {xtype: 'textfield', fieldLabel: '单面积', id: 'unitArea', width: 220, labelWidth: 50,  name: 'unitArea', value: ""},
                 {xtype: 'textfield', fieldLabel: '单重', id: 'unitWeight', width: 220, labelWidth: 30, /*margin: '0 10 0 40',*/ name: 'unitWeight', value: ""},
-                {xtype: 'textfield', fieldLabel: '总面积', id: 'totalArea', width: 220, labelWidth: 50,  name: 'totalArea', value: ""},
-                {xtype: 'textfield', fieldLabel: '总重', id: 'totalWeight', width: 220, labelWidth: 30, name: 'totalWeight', value: ""},
+                //{xtype: 'textfield', fieldLabel: '总面积', id: 'totalArea', width: 220, labelWidth: 50,  name: 'totalArea', value: ""},
+                //{xtype: 'textfield', fieldLabel: '总重', id: 'totalWeight', width: 220, labelWidth: 30, name: 'totalWeight', value: ""},
                 {xtype: 'textfield', fieldLabel: '备注', id: 'remark', width: 220, labelWidth: 30, name: 'remark', value: ""},
             ]
         });
         var toolbar2 = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
             items: [
-                {xtype: 'textfield', fieldLabel: '数量', id: 'number', width: 190, labelWidth: 30,  name: 'number', value: ""},
+
                 //{xtype: 'textfield', fieldLabel: '重量', id: 'weight', width: 190, labelWidth: 30, margin: '0 10 0 50', name: 'weight', value: ""},
-                //{xtype: 'textfield', fieldLabel: '仓库编号', id: 'warehouseNo', width: 220, labelWidth: 60, margin: '0 10 0 50', name: 'warehouseNo', value: ""},
+                //{xtype: 'textfield', fieldLabel: '仓库名称', id: 'warehouseNo', width: 220, labelWidth: 60, margin: '0 10 0 50', name: 'warehouseNo', value: ""},
                 //{xtype: 'textfield', fieldLabel: '存放位置', id: 'position', width: 220, labelWidth: 60, margin: '0 10 0 50', name: 'position', value: ""},
-                // storePosition,
-                // {
-                //     xtype:'tbtext',
-                //     text:'存放位置:',
-                //     margin: '0 0 0 20',
-                //     //id: 'number',
-                //     width: 60,
-                //     //labelWidth: 30,
-                //     //name: 'number',
-                //     //value: "",
-                // },
-                // speificLocation_row,
-                // speificLocation_col,
+                storePosition,
+                {
+                    xtype:'tbtext',
+                    text:'存放位置:',
+                    margin: '0 0 0 20',
+                    //id: 'number',
+                    width: 60,
+                    //labelWidth: 30,
+                    //name: 'number',
+                    //value: "",
+                },
+                speificLocation_row,
+                speificLocation_col,
+                {xtype: 'textfield', fieldLabel: '入库数量', id: 'number', width: 190, labelWidth: 30,  name: 'number', value: ""},
                 {xtype : 'button',
                     //margin: '0 10 0 70',
                     iconAlign : 'center',
@@ -268,11 +270,11 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                         var inventoryUnit = Ext.getCmp('inventoryUnit').getValue();
                         var number = Ext.getCmp('number').getValue();
                         var unitWeight = Ext.getCmp('unitWeight').getValue();
-                        var totalWeight = Ext.getCmp('totalWeight').getValue();
+                        //var totalWeight = Ext.getCmp('totalWeight').getValue();
                         var unitArea = Ext.getCmp('unitArea').getValue();
-                        var totalArea = Ext.getCmp('totalArea').getValue();
+                        //var totalArea = Ext.getCmp('totalArea').getValue();
                         var remark = Ext.getCmp('remark').getValue();
-                        var warehouseName = Ext.getCmp('storePosition').getValue();
+                        //var warehouseName = Ext.getCmp('storePosition').getValue();
                         //var length = Ext.getCmp('length').getValue();
                         //var length2 = Ext.getCmp('length2').getValue();
                         //var width = Ext.getCmp('width').getValue();
@@ -281,19 +283,19 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                         //var oldpanelNo = Ext.getCmp('oldpanelNo').getValue();
                         //var warehouseNo = Ext.getCmp('storePosition').getValue();
                         //var specification = Ext.getCmp('specification').getValue();
-                        //var warehouseNo = Ext.getCmp('warehouseNo').getValue();
-                        //var position = Ext.getCmp('position').getValue();
-                        //var row = Ext.getCmp('speificLocation_row').getValue();
-                        //var col = Ext.getCmp('speificLocation_col').getValue();
+                        var warehouseNo = Ext.getCmp('warehouseNo').getValue();
+                        var position = Ext.getCmp('position').getValue();
+                        var row = Ext.getCmp('speificLocation_row').getValue();
+                        var col = Ext.getCmp('speificLocation_col').getValue();
                         var data = [{
                             //'oldpanelTypeName' : oldpanelTypeName,
                             'oldpanelType' : oldpanelType,
                             'unitWeight' : unitWeight,
-                            'totalWeight' : totalWeight,
+                            //'totalWeight' : totalWeight,
                             'unitArea' : unitArea,
-                            'totalArea' : totalArea,
+                            //'totalArea' : totalArea,
                             'remark' : remark,
-                            'warehouseName' : warehouseName,
+                            //'warehouseName' : warehouseName,
                             'oldpanelName' : oldpanelName,
                             'inventoryUnit' : inventoryUnit,
                             'number' : number,
@@ -355,7 +357,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                     //获得当前操作时间
                     //var sTime=Ext.Date.format(Ext.getCmp('startTime').getValue(), 'Y-m-d H:i:s');
                     Ext.Ajax.request({
-                        url : 'oldpanel/addData.do', //原材料入库
+                        url : 'oldpanel/addData.do', //旧板入库
                         method:'POST',
                         //submitEmptyText : false,
                         params : {
@@ -382,9 +384,9 @@ Ext.define('oldpanel.oldpanel_Inbound', {
             //dockedItems : [toolbar2],
             store : {
                 // fields: ['材料名','品号', '长',"；类型","宽",'规格','库存单位','仓库编号','数量','成本','存放位置']
-                fields: ['oldpanelName','classificationName','inventoryUnit','countStore','warehouseName','unitArea',
-                    'unitWeight','totalArea',
-                    'totalWeight','inventoryUnit', 'specification', 'number','weight','warehouseNo','location']
+                fields: ['oldpanelName','classificationName','inventoryUnit','unitArea',
+                    'unitWeight',//'totalArea','totalWeight',
+                    'length', 'width', 'number','weight','warehouseNo','row','col','remark','number']
             },
 
             columns : [
@@ -408,15 +410,20 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                 {dataIndex : 'classificationName', text : '分类', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
                 {dataIndex : 'inventoryUnit', text : '库存单位', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 //{dataIndex : 'countUse', text : '可用数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'countStore', text : '增加库存数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'warehouseName', text : '仓库名称', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+
+                //{dataIndex : 'warehouseName', text : '仓库名称', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'unitArea', text : '单面积', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'unitWeight', text : '单重', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'totalArea', text : '总面积', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'totalWeight', text : '总重', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                //{dataIndex : 'totalArea', text : '总面积', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                //{dataIndex : 'totalWeight', text : '总重', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'length', text : '长', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'width', text : '宽', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'warehouseNo', text : '仓库编号', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'row', text : '行', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'col', text : '列', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'remark', text : '备注', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'number', text : '入库数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+
             ],
             viewConfig : {
                 plugins : {
