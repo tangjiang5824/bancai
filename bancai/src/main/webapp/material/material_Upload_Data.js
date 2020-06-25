@@ -217,7 +217,7 @@ Ext.define('material.material_Upload_Data', {
                 //id : 'uploadFile',
                 listeners : {
                     change : function(file, value, eOpts) {
-                        if (value.indexOf('.xls',value.length-4)==-1) {
+                        if (value.indexOf('.xls',value.length-4)==-1 && value.indexOf('.xlsx',value.length-5)==-1) {
                             Ext.Msg.alert('错误', '文件格式错误，请重新选择xls格式的文件！')
                         } else {
                             Ext.Msg.show({
