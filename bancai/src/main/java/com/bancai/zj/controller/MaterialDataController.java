@@ -133,7 +133,6 @@ public class MaterialDataController {
             }catch (Exception e){
             }
 
-
             try{
                 totalWeight=Double.parseDouble(unitWeight)*Double.parseDouble(count)+"";
             }catch (Exception e){
@@ -147,8 +146,8 @@ public class MaterialDataController {
                 return false;
             }
             //插入log详细信息
-            String sql_detail="insert into material_logdetail (materialName,count,specification,materiallogId) values (?,?,?,?) ";
-            boolean is_log_right= insertProjectService.insertIntoTableBySQL(sql_detail,materialName,count,specification,String.valueOf(main_key));
+            String sql_detail="insert into material_logdetail (materialName,materialId,count,specification,materiallogId) values (?,?,?,?,?) ";
+            boolean is_log_right= insertProjectService.insertIntoTableBySQL(sql_detail,materialName,materialId,count,specification,String.valueOf(main_key));
             if(!is_log_right){
                 return false;
             }
@@ -160,14 +159,13 @@ public class MaterialDataController {
      * */
     @RequestMapping(value = "/uploadMaterialExcel.do")
     @Transactional
-    public WebResponse uploadMaterial(MultipartFile uploadFile, String tableName, HttpSession session) {
+    public WebResponse uploadMaterial(MultipartFile uploadFile, String tableName, String operator ,HttpSession session) {
         WebResponse response = new WebResponse();
         String userid = (String) session.getAttribute("userid");
-        tableName="material_store";
-        String sql_log="insert into material_log (type,userId,time) values(?,?,?)";
+        String sql_log="insert into material_log (type,userId,time,operator) values(?,?,?,?)";
         Date date=new Date();
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        int main_key= insertProjectService.insertDataToTable(sql_log,"0",userid,simpleDateFormat.format(date));
+        int main_key= insertProjectService.insertDataToTable(sql_log,"0",userid,simpleDateFormat.format(date),operator);
       //  JSONArray array = new JSONArray();
         try {
             //UploadDataResult result = excelService.uploadExcelData(uploadFile.getInputStream(),userid,tableName);
