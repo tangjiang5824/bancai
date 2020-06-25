@@ -82,44 +82,6 @@ Ext.define('material.material_Outbound',{
 
         });
 
-        var material_inBoundRecords_Store = Ext.create('Ext.data.Store',{
-            id: 'material_inBoundRecords_Store',
-            autoLoad: true,
-            fields: [],
-            pageSize: itemsPerPage, // items per page
-            proxy:{
-                url : "material/material_query_records.do",
-                type: 'ajax',
-                reader:{
-                    type : 'json',
-                    rootProperty: 'value',
-                    totalProperty: 'totalCount'
-                },
-                params:{
-                    start: 0,
-                    limit: 20,
-                    // username : Ext.getCmp('userName').getValue(),//获取用户名
-                    // endTime : Ext.getCmp('endTime').getValue(),
-                    // startTime:Ext.getCmp('startTime').getValue(),
-                    // projectId:Ext.getCmp('projectName').getValue(),
-                    // optionType:Ext.getCmp('material_query_records_optionType').getValue(),
-                }
-            },
-            listeners : {
-                beforeload : function(store, operation, eOpts) {
-                    store.getProxy().setExtraParams({
-
-                        operator : Ext.getCmp('operator').getValue(),
-                        startTime:Ext.getCmp('startTime').getValue(),
-                        // projectId:Ext.getCmp('projectName').getValue(),
-                    });
-                }
-
-            }
-
-
-        });
-
         //长1 长2 宽1 宽2 库存单位
         var toolbar = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
@@ -157,7 +119,8 @@ Ext.define('material.material_Outbound',{
                     handler: function(){
                         material_inBoundRecords_Store.load({
                             params : {
-                                operator : Ext.getCmp('operator').getValue(),
+                                // operator : Ext.getCmp('operator').getValue(),
+                                username : Ext.getCmp('operator').getValue(),//获取操作员名
                                 startTime:Ext.getCmp('startTime').getValue(),
                             }
                         });
@@ -166,6 +129,44 @@ Ext.define('material.material_Outbound',{
 
             ]
         });
+
+        var material_inBoundRecords_Store = Ext.create('Ext.data.Store',{
+            id: 'material_inBoundRecords_Store',
+            autoLoad: true,
+            fields: [],
+            pageSize: itemsPerPage, // items per page
+            proxy:{
+                url : "material/material_query_records.do",
+                type: 'ajax',
+                reader:{
+                    type : 'json',
+                    rootProperty: 'value',
+                    totalProperty: 'totalCount'
+                },
+                params:{
+                    start: 0,
+                    limit: 20,
+                    username : Ext.getCmp('operator').getValue(),//获取操作员名
+                    startTime:Ext.getCmp('startTime').getValue(),
+                }
+            },
+            listeners : {
+                beforeload : function(store, operation, eOpts) {
+                    store.getProxy().setExtraParams({
+
+                        // operator : Ext.getCmp('operator').getValue(),
+                        username : Ext.getCmp('operator').getValue(),//获取操作员名
+                        startTime:Ext.getCmp('startTime').getValue(),
+                        // projectId:Ext.getCmp('projectName').getValue(),
+                    });
+                }
+
+            }
+
+
+        });
+
+
 
         //确认入库按钮，
         var toolbar3 = Ext.create('Ext.toolbar.Toolbar', {
