@@ -162,7 +162,8 @@ public class MaterialDataController {
     public WebResponse uploadMaterial(MultipartFile uploadFile, String tableName, HttpSession session) {
         WebResponse response = new WebResponse();
         String userid = (String) session.getAttribute("userid");
-        String sql_log="insert into materiallog (type,userId,time) values(?,?,?)";
+        tableName="material_store";
+        String sql_log="insert into material_log (type,userId,time) values(?,?,?)";
         Date date=new Date();
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         int main_key= insertProjectService.insertDataToTable(sql_log,"0",userid,simpleDateFormat.format(date));
