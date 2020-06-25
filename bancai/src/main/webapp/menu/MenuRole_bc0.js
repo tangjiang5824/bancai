@@ -183,7 +183,13 @@ Ext.define("menu.MenuRole_bc0", {
 						text : '添加新的类型',
 						id : 'oldpanel.add_Ocatergory_baseInfo',
 						leaf : true
-					},{
+						},
+						{
+							text : '旧板基础信息录入',
+							id : 'oldpanel.oldpanel_Basic_Info_Input',
+							leaf : true
+						},
+						{
 						text : '查看旧版基础信息',
 						id : 'oldpanel.query_Ocatergory_baseInfo',
 						leaf : true

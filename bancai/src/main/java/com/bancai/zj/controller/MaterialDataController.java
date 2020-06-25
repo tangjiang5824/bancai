@@ -137,8 +137,6 @@ public class MaterialDataController {
             }catch (Exception e){
             }
 
-
-
             //System.out.println(jsonTemp);
             String sql = "insert into "+ tableName+" (materialId,specification,inventoryUnit,count,rowNo,columNo,uploadId,warehouseName,unitWeight,totalWeight) values(?,?,?,?,?,?,?,?,?,?)";
             boolean isright= insertProjectService.insertIntoTableBySQL(sql,materialId,specification,inventoryUnit,count,rowNo,columNo,userId,warehouseName,unitWeight,totalWeight);
