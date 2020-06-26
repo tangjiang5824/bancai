@@ -107,7 +107,7 @@ public class MaterialDataController {
             int store_main= insertProjectService.insertDataToTable(sql,materialId,specification,inventoryUnit,count,count,rowNo,columNo,userId,warehouseName,unitWeight,totalWeight);
 
             //插入log详细信息
-            String sql_detail="insert into material_logdetail (materialName,materialId,count,specification,materiallogId,materialstoreId,isrollbcak) values (?,?,?,?,?,?,?) ";
+            String sql_detail="insert into material_logdetail (materialName,materialId,count,specification,materiallogId,materialstoreId,isrollback) values (?,?,?,?,?,?,?) ";
             boolean is_log_right= insertProjectService.insertIntoTableBySQL(sql_detail,materialName,materialId,count,specification,String.valueOf(main_key),store_main+"","0");
             if(!is_log_right){
                 return false;
