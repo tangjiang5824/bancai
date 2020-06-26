@@ -2,6 +2,7 @@ package com.bancai.yrd.service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 import com.bancai.commonMethod.QueryAllService;
 import com.bancai.domain.DataList;
@@ -37,7 +38,6 @@ public class Y_Upload_Data_Service extends BaseService {
         String er = "";
         String[] analyzeOldpanelName = analyzeOldpanelName(oldpanelName);
 //        boolean upload = oldpanelUpload();
-
 //                if(typeList.isEmpty()) {
 //                    result.setErrorCode(2);
 //                    return result;
@@ -63,19 +63,21 @@ public class Y_Upload_Data_Service extends BaseService {
      */
     @Transactional
     public String[] analyzeOldpanelName(String oldpanelName){
+        System.out.println("analyzeOldpanelName==="+oldpanelName);
         String isPureNumber = "^[0-9]+(.[0-9]+)?$";
         String isPureWord = "^[A-Za-z]+$";
         String[] sOName = oldpanelName.split("\\s+");
-        String oldpanelType = "";
+        String oldpanelType = "0";
         StringBuilder formatBuilder = new StringBuilder();
-        String m = "";
-        String n = "";
-        String a = "";
-        String b = "";
+        String m = "0";
+        String n = "0";
+        String a = "0";
+        String b = "0";
         String mnAngle = "";
         StringBuilder suffixBuilder = new StringBuilder();
         String format = "";
         String suffix = "";
+        String oldpanelTypeName = "";
         int conM = 0;
         int conT = 0;
         for (int i = 0; i < 4; i++) {
@@ -96,6 +98,7 @@ public class Y_Upload_Data_Service extends BaseService {
                     }
                 } else if (sOName[i].substring(0,1).matches(isPureWord)){
                     if(conT==0) {
+                        oldpanelTypeName = sOName[i];
                         oldpanelType = getOldpanelType(sOName[i]);
                         formatBuilder.append("1");
                         conT = 1;
@@ -171,7 +174,8 @@ public class Y_Upload_Data_Service extends BaseService {
             }
 
         }
-        return new String[]{format,oldpanelType,m,n,a,b,mnAngle,suffix};
+        System.out.println(Arrays.toString(new String[]{format,oldpanelType,m,n,a,b,mnAngle,suffix,oldpanelTypeName}));
+        return new String[]{format,oldpanelType,m,n,a,b,mnAngle,suffix,oldpanelTypeName};
     }
     private String[] SetLengthAndWidth(String m, String n){
         int a = Integer.parseInt(m);
@@ -197,17 +201,18 @@ public class Y_Upload_Data_Service extends BaseService {
      * 添加数据
      */
     @Transactional
-    public boolean oldpanelUpload(String[] analyzeOldpanelName, String oldpanelName, String classificationId, String inventoryUnit,
-                           String number, String warehouseNo, String unitArea, String unitWeight, String remark, String uploadId) {
-        if(!isOldpanelFormatExist(analyzeOldpanelName[0],analyzeOldpanelName[1],analyzeOldpanelName[7]))
+    public boolean oldpanelUpload(String oldpanelName, String classificationId, String inventoryUnit,
+                           String number, String warehouseName, String unitArea, String unitWeight, String remark, String uploadId) {
+        String[] analyzeOldpanelName = analyzeOldpanelName(oldpanelName);
+        if(!isOldpanelFormatExist(analyzeOldpanelName[0],analyzeOldpanelName[1],analyzeOldpanelName[7],analyzeOldpanelName[8]))
             return false;
         oldpanelSaveData(analyzeOldpanelName,oldpanelName,classificationId,inventoryUnit, number,
-                warehouseNo, unitArea, unitWeight, remark, uploadId);
+                warehouseName, unitArea, unitWeight, remark, uploadId);
         return true;
     }
 
     @Transactional
-    public boolean isOldpanelFormatExist(String format, String oldpanelType, String suffix){
+    public boolean isOldpanelFormatExist(String format, String oldpanelType, String suffix, String oldpanelTypeName){
         StringBuilder formatInfoBuilder = new StringBuilder();
         String[] sSuffix = suffix.split("\\s+");
         int n = 0;
@@ -215,25 +220,33 @@ public class Y_Upload_Data_Service extends BaseService {
             if(format.substring(i,i+1).equals("7")){
                 formatInfoBuilder.append(sSuffix[n]);
                 n++;
+            } else if(format.substring(i,i+1).equals("1")){
+                formatInfoBuilder.append(oldpanelTypeName);
             }
             formatInfoBuilder.append("%");
         }
         String formatInfo = formatInfoBuilder.toString().substring(0,formatInfoBuilder.toString().length()-1);
-        return !queryService.query("select * from oldpanel_info where format=? and oldpanelType=? and formatInfo=?",
+//        System.out.println(formatInfo);
+        return !queryService.query("select * from oldpanel_info where oldpanelFormat=? and oldpanelType=? and formatInfo=?",
                 format, oldpanelType, formatInfo).isEmpty();
     }
 
     private void oldpanelSaveData(String[] analyzeOldpanelName, String oldpanelName, String classificationId, String inventoryUnit,
-                                  String number, String warehouseNo, String unitArea0, String unitWeight0, String remark, String uploadId) {
+                                  String number, String warehouseName, String unitArea0, String unitWeight0, String remark, String uploadId) {
         double unitArea = Double.parseDouble(unitArea0);
         double unitWeight = Double.parseDouble(unitWeight0);
         double num = Double.parseDouble(number);
         String totalArea = String.valueOf(unitArea*num);
         String totalWeight = String.valueOf(unitWeight*num);
-        String sql2 = "insert into oldpanel_store (oldpanelName,classificationId,inventoryUnit,countUse,countStore,warehouseNo," +
+        String sql2 = "insert into oldpanel_store (oldpanelName,classificationId,inventoryUnit,countUse,countStore,warehouseName," +
                 "unitArea,unitWeight,remark,uploadId,totalArea,totalWeight,format,oldpanelType,length,width,aValue,bValue,mnAngle,suffix) " +
                 "values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-        jo.update(sql2,oldpanelName,classificationId,inventoryUnit,String.valueOf(num),String.valueOf(num),warehouseNo,
+//        String[] t = {oldpanelName,classificationId,inventoryUnit,String.valueOf(num),String.valueOf(num),warehouseName,
+//                String.valueOf(unitArea),String.valueOf(unitWeight),remark,uploadId,totalArea,totalWeight,
+//                analyzeOldpanelName[0],analyzeOldpanelName[1], analyzeOldpanelName[2], analyzeOldpanelName[3],
+//                analyzeOldpanelName[4],analyzeOldpanelName[5],analyzeOldpanelName[6],analyzeOldpanelName[7]};
+//        System.out.println(Arrays.toString(t));
+        jo.update(sql2,oldpanelName,classificationId,inventoryUnit,String.valueOf(num),String.valueOf(num),warehouseName,
                 String.valueOf(unitArea),String.valueOf(unitWeight),remark,uploadId,totalArea,totalWeight,
                 analyzeOldpanelName[0],analyzeOldpanelName[1], analyzeOldpanelName[2], analyzeOldpanelName[3],
                 analyzeOldpanelName[4],analyzeOldpanelName[5],analyzeOldpanelName[6],analyzeOldpanelName[7]);
