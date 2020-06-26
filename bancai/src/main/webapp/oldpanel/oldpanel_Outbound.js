@@ -30,57 +30,8 @@ Ext.define('oldpanel.oldpanel_Outbound',{
             }
         });
 
-        //原材料类型
-        var MaterialNameList = Ext.create('Ext.data.Store',{
-            fields : [ 'materialName'],
-            proxy : {
-                type : 'ajax',
-                url : 'material/materialType.do',
-                reader : {
-                    type : 'json',
-                    rootProperty: 'typeList',
-                }
-            },
-            autoLoad : true
-        });
-        var MaterialTypeList = Ext.create('Ext.form.ComboBox',{
-            fieldLabel : '原材料类型',
-            labelWidth : 70,
-            width : 230,
-            id :  'materialName',
-            name : 'materialName',
-            matchFieldWidth: false,
-            emptyText : "--请选择--",
-            displayField: 'materialTypeName',
-            valueField: 'materialType',
-            editable : false,
-            store: MaterialNameList,
-            listeners:{
-                select: function(combo, record, index) {
-                    var type = MaterialTypeList.rawValue;
-                    var L2 = Ext.getCmp('length2');
-                    var W2 = Ext.getCmp('width2');
-                    var chang2 = Ext.getCmp('长2');
-                    var kuan2 = Ext.getCmp('宽2');
-                    if(type=='IC'){
-                        //该类型为1000X200类型
-                        L2.setHidden(false);
-                        W2.setHidden(false);
-                        chang2.setHidden(false);
-                        kuan2.setHidden(false);
-                    }else{
-                        L2.setHidden(true);
-                        W2.setHidden(true);
-                        chang2.setHidden(true);
-                        kuan2.setHidden(true);
-                    }
-                    //console.log(MaterialTypeList.rawValue)//选择的值
-                    console.log(MaterialTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
-                    //console.log(record[0].data.materialName);
-                }
-            }
 
-        });
+
 
         //长1 长2 宽1 宽2 库存单位
         var toolbar = Ext.create('Ext.toolbar.Toolbar', {
@@ -137,7 +88,7 @@ Ext.define('oldpanel.oldpanel_Outbound',{
             fields: [],
             pageSize: itemsPerPage, // items per page
             proxy:{
-                url : "material/material_query_records.do",
+                url : "oldpanel/oldpanel_query_records.do",
                 type: 'ajax',
                 reader:{
                     type : 'json',
@@ -166,69 +117,6 @@ Ext.define('oldpanel.oldpanel_Outbound',{
 
 
         });
-
-
-
-        //确认入库按钮，
-        var toolbar3 = Ext.create('Ext.toolbar.Toolbar', {
-            dock : "bottom",
-            id : "toolbar3",
-            //style:{float:'center',},
-            //margin-right: '2px',
-            //padding: '0 0 0 750',
-            style:{
-                //marginLeft: '900px'
-                layout: 'right'
-            },
-            items : [
-                {
-                xtype : 'button',
-                iconAlign : 'center',
-                iconCls : 'rukuicon ',
-                text : '确认出库',
-                region:'center',
-                bodyStyle: 'background:#fff;',
-                handler : function() {
-
-                    // 取出grid的字段名字段类型
-                    var select = Ext.getCmp('addDataGrid').getStore()
-                        .getData();
-                    var s = new Array();
-                    select.each(function(rec) {
-                        s.push(JSON.stringify(rec.data));
-                        // s.push('品号','');
-                        //alert(JSON.stringify(rec.data));//获得表格中的数据
-                        //s.push();
-                    });
-
-                    console.log(select);
-
-                    //获取数据
-                    //获得当前操作时间
-                    //var sTime=Ext.Date.format(Ext.getCmp('startTime').getValue(), 'Y-m-d H:i:s');
-                    Ext.Ajax.request({
-                        url : 'material/addData.do', //原材料入库
-                        method:'POST',
-                        //submitEmptyText : false,
-                        params : {
-                            tableName:tableName,
-                            //materialType:materialtype,
-                            s : "[" + s + "]",
-                        },
-                        success : function(response) {
-                            //var message =Ext.decode(response.responseText).showmessage;
-                            Ext.MessageBox.alert("提示","退库成功" );
-                        },
-                        failure : function(response) {
-                            //var message =Ext.decode(response.responseText).showmessage;
-                            Ext.MessageBox.alert("提示","退库失败" );
-                        }
-                    });
-
-                }
-            }]
-        });
-
 
         var grid = Ext.create("Ext.grid.Panel", {
             id : 'addDataGrid',
