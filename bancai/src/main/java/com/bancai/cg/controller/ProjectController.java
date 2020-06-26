@@ -475,7 +475,7 @@ public class ProjectController {
     public boolean backMaterialstore(String materiallogId,HttpSession session ,String operator,String type) throws JSONException {
         String sql_find_log_detail="select * from material_logdetail where materiallogId=? and isrollbcak<>1";
         String userid = (String) session.getAttribute("userid");
-        String sql_insert_new_log="insert into material_log (type,userId,time,operator,isrollback) values(?,?,?,?,?)";
+
         Date date=new Date();
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String update_log="update material_log set isrollbcak=1 where id=?";
@@ -483,6 +483,7 @@ public class ProjectController {
         insertProjectService.insertIntoTableBySQL(update_log,materiallogId);
 
         //log主键
+        String sql_insert_new_log="insert into material_log (type,userId,time,operator,isrollback) values(?,?,?,?,?)";
         int main_key=0;
         //插入新的log
         if (type.equals("0")) main_key= insertProjectService.insertDataToTable(sql_insert_new_log,"3",userid,simpleDateFormat.format(date),operator,"1");
