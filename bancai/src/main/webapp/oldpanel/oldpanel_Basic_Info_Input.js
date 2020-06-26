@@ -32,124 +32,7 @@ Ext.define('oldpanel.oldpanel_Basic_Info_Input', {
                 //
             }
         });
-        //仓库编号
-        var storeNameList = Ext.create('Ext.data.Store',{
-            fields : [ 'warehouseName'],
-            proxy : {
-                type : 'ajax',
-                url : 'material/findStore.do', //查询所有的仓库编号
-                reader : {
-                    type : 'json',
-                    rootProperty: 'StoreName',
-                }
-            },
-            autoLoad : true
-        });
-        var storePosition = Ext.create('Ext.form.ComboBox',{
-            fieldLabel : '仓库名',
-            labelWidth : 50,
-            width : 200,
-            margin: '0 10 0 20',
-            id :  'storePosition',
-            name : 'storePosition',
-            matchFieldWidth: false,
-            emptyText : "--请选择--",
-            displayField: 'warehouseName',
-            valueField: 'warehouseNo',
-            editable : false,
-            store: storeNameList,
-            listeners:{
-                select: function(combo, record, index) {
-                    var type = oldpanelTypeList.rawValue;
-                    //console.log(MaterialTypeList.rawValue)//选择的值
-                    console.log(oldpanelTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
-                    //选中后
-                    var select = record[0].data;
-                    var warehouseNo = select.warehouseNo;
-                    console.log(warehouseNo)
-
-                    //重新加载行选项
-                    var locationNameList_row = Ext.create('Ext.data.Store',{
-                        id:'locationNameList_row',
-                        fields : ['rowNum'],
-                        proxy : {
-                            type : 'ajax',
-                            url : 'material/findStorePosition.do?warehouseNo='+warehouseNo,
-                            reader : {
-                                type : 'json',
-                                rootProperty: 'rowNum',
-                            }
-                        },
-                        autoLoad : true
-                    });
-                    speificLocation_row.setStore(locationNameList_row);
-
-                    //重新加载列选项
-                    var locationNameList_col = Ext.create('Ext.data.Store',{
-                        id:'locationNameList_col',
-                        fields : [ 'columnNum'],
-                        proxy : {
-                            type : 'ajax',
-                            url : 'material/findStorePosition.do?warehouseNo='+warehouseNo,
-                            reader : {
-                                type : 'json',
-                                rootProperty: 'columnNum',
-                            }
-                        },
-                        autoLoad : true
-                    });
-                    speificLocation_col.setStore(locationNameList_col);
-
-                }
-            }
-        });
-        //仓库存放位置--行
-        var speificLocation_row = Ext.create('Ext.form.ComboBox',{
-            fieldLabel : '行',
-            labelWidth : 20,
-            width : 80,
-            margin: '0 10 0 10',
-            id :  'speificLocation_row',
-            name : 'speificLocation_row',
-            matchFieldWidth: false,
-            //emptyText : "--请选择--",
-            displayField: 'rowNum',
-            valueField: 'rowNum',
-            editable : false,
-            //store: locationNameList_row,
-            listeners:{
-                select: function(combo, record, index) {
-                    var type = oldpanelTypeList.rawValue;
-                    //console.log(MaterialTypeList.rawValue)//选择的值
-                    console.log(oldpanelTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
-                    //console.log(record[0].data.materialName);
-                }
-            }
-        });
-        //仓库存放位置--列
-        var speificLocation_col = Ext.create('Ext.form.ComboBox',{
-            fieldLabel : '列',
-            labelWidth : 20,
-            width : 80,
-            id :  'speificLocation_col',
-            name : 'speificLocation_col',
-            matchFieldWidth: false,
-            //emptyText : "--请选择--",
-            displayField: 'columnNum',
-            valueField: 'columnNum',
-            editable : false,
-            //store: locationNameList_col,
-            listeners:{
-                select: function(combo, record, index) {
-                    var type = oldpanelTypeList.rawValue;
-                    //console.log(MaterialTypeList.rawValue)//选择的值
-                    console.log(oldpanelTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
-                    //console.log(record[0].data.materialName);
-                }
-            }
-        });
-
-        var oldPanelNameList = Ext.create('Ext.data.Store',{
+        var oldPanelNameList1 = Ext.create('Ext.data.Store',{
             fields : [ 'oldpanelName'],
             proxy : {
                 type : 'ajax',
@@ -161,22 +44,122 @@ Ext.define('oldpanel.oldpanel_Basic_Info_Input', {
             },
             autoLoad : true
         });
-        var oldpanelTypeList = Ext.create('Ext.form.ComboBox',{
+        var oldpanelTypeList1 = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '旧板类型',
             labelWidth : 70,
             width : 230,
-            id :  'oldpanelType',
-            name : 'oldpanelType',
+            id :  'oldpanelType1',
+            name : 'oldpanelType1',
             matchFieldWidth: false,
             emptyText : "--请选择--",
             displayField: 'oldpanelTypeName',
             valueField: 'oldpanelType',
             editable : false,
-            store: oldPanelNameList,
+            //Hidden:true,
+            store: oldPanelNameList1,
             listeners:{
                 select: function(combo, record, index) {
 
-                    console.log(oldpanelTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
+                    console.log(oldpanelTypeList1.getValue());// MaterialTypeList.getValue()获得选择的类型
+                    //console.log(record[0].data.materialName);
+                }
+            }
+
+        });
+        var oldPanelNameList2 = Ext.create('Ext.data.Store',{
+            fields : [ 'oldpanelName'],
+            proxy : {
+                type : 'ajax',
+                url : 'oldpanel/oldpanelType.do',
+                reader : {
+                    type : 'json',
+                    rootProperty: 'typeList',
+                }
+            },
+            autoLoad : true
+        });
+        var oldpanelTypeList2 = Ext.create('Ext.form.ComboBox',{
+            fieldLabel : '旧板类型',
+            labelWidth : 70,
+            width : 230,
+            id :  'oldpanelType2',
+            name : 'oldpanelType2',
+            matchFieldWidth: false,
+            emptyText : "--请选择--",
+            displayField: 'oldpanelTypeName',
+            valueField: 'oldpanelType',
+            editable : false,
+            store: oldPanelNameList2,
+            listeners:{
+                select: function(combo, record, index) {
+
+                    console.log(oldpanelTypeList1.getValue());// MaterialTypeList.getValue()获得选择的类型
+                    //console.log(record[0].data.materialName);
+                }
+            }
+
+        });
+        var oldPanelNameList3 = Ext.create('Ext.data.Store',{
+            fields : [ 'oldpanelName'],
+            proxy : {
+                type : 'ajax',
+                url : 'oldpanel/oldpanelType.do',
+                reader : {
+                    type : 'json',
+                    rootProperty: 'typeList',
+                }
+            },
+            autoLoad : true
+        });
+        var oldpanelTypeList3 = Ext.create('Ext.form.ComboBox',{
+            fieldLabel : '旧板类型',
+            labelWidth : 70,
+            width : 230,
+            id :  'oldpanelType3',
+            name : 'oldpanelType3',
+            matchFieldWidth: false,
+            emptyText : "--请选择--",
+            displayField: 'oldpanelTypeName',
+            valueField: 'oldpanelType',
+            editable : false,
+            store: oldPanelNameList3,
+            listeners:{
+                select: function(combo, record, index) {
+
+                    console.log(oldpanelTypeList1.getValue());// MaterialTypeList.getValue()获得选择的类型
+                    //console.log(record[0].data.materialName);
+                }
+            }
+
+        });
+        var oldPanelNameList4 = Ext.create('Ext.data.Store',{
+            fields : [ 'oldpanelName'],
+            proxy : {
+                type : 'ajax',
+                url : 'oldpanel/oldpanelType.do',
+                reader : {
+                    type : 'json',
+                    rootProperty: 'typeList',
+                }
+            },
+            autoLoad : true
+        });
+        var oldpanelTypeList4 = Ext.create('Ext.form.ComboBox',{
+            fieldLabel : '旧板类型',
+            labelWidth : 70,
+            width : 230,
+            id :  'oldpanelType4',
+            name : 'oldpanelType4',
+            matchFieldWidth: false,
+            emptyText : "--请选择--",
+            displayField: 'oldpanelTypeName',
+            valueField: 'oldpanelType',
+            editable : false,
+            store: oldPanelNameList4,
+            listeners:{
+                select: function(combo, record, index) {
+
+                    console.log(oldpanelTypeList1.getValue());// MaterialTypeList.getValue()获得选择的类型
                     //console.log(record[0].data.materialName);
                 }
             }
@@ -208,8 +191,51 @@ Ext.define('oldpanel.oldpanel_Basic_Info_Input', {
             //margin : '0 20 0 20',
             width: 130,
             labelWidth: 60,
-            renderTo: Ext.getBody()
+            renderTo: Ext.getBody(),
+            listeners:{
+                // render:function() {
+                //     Ext.getCmp('oldpanel_basic_info_format1').setValue("无");
+                //     //oldpanel_basic_info_format1.setValue(0)
+                // },
+
+                select: function(combo, record, index) {
+                    //console.log(Ext.getCmp('oldpanel_basic_info_format1').rawValue)//选择的值
+                    var CMB1 = Ext.getCmp('oldpanelType1');
+                    var CMB2 = Ext.getCmp('oldpanelType2');
+                    var CMB3 = Ext.getCmp('oldpanelType3');
+                    var CMB4 = Ext.getCmp('oldpanelType4');
+                    var F1 = Ext.getCmp('oldpanel_basic_info_format1').rawValue;
+                    var FI1 = Ext.getCmp('format1_info');
+                    var F2 = Ext.getCmp('oldpanel_basic_info_format2').rawValue;
+                    var FI2 = Ext.getCmp('format2_info');
+                    var F3 = Ext.getCmp('oldpanel_basic_info_format3').rawValue;
+                    var FI3 = Ext.getCmp('format3_info');
+                    var F4 = Ext.getCmp('oldpanel_basic_info_format4').rawValue;
+                    var FI4 = Ext.getCmp('format4_info');
+                    if(F1=='无'||F1=='m'||F1=='n'||F1=='a*b'||F1=='b*a'||F1=='m+n'){
+                        //该类型为1000X200类型
+                        FI1.setHidden(false);
+                        FI1.disable(true);
+                        CMB1.setHidden(true);
+                    }
+                    if(F1=='类型')
+                    {
+                        FI1.setHidden(true);
+                        FI1.disable(true);
+                        CMB1.setHidden(false);
+                    }
+                    if(F1=='后缀')
+                    {
+                        FI1.setHidden(false);
+                        FI1.enable(true);
+                        CMB1.setHidden(true);
+                    }
+                }
+            }
         });
+        // format1.on('beforerender',function(){
+        //     this.value='0';
+        // })
         var format2store = Ext.create('Ext.data.Store', {
             fields: ['abbr', 'name'],
             data : [
@@ -236,7 +262,38 @@ Ext.define('oldpanel.oldpanel_Basic_Info_Input', {
             margin : '0 20 0 20',
             width: 130,
             labelWidth: 60,
-            renderTo: Ext.getBody()
+            renderTo: Ext.getBody(),
+            listeners:{
+                select: function(combo, record, index) {
+                    //console.log(Ext.getCmp('oldpanel_basic_info_format1').rawValue)//选择的值
+                    var F1 = Ext.getCmp('oldpanel_basic_info_format1').rawValue;
+                    var FI1 = Ext.getCmp('format1_info');
+                    var F2 = Ext.getCmp('oldpanel_basic_info_format2').rawValue;
+                    var FI2 = Ext.getCmp('format2_info');
+                    var F3 = Ext.getCmp('oldpanel_basic_info_format3').rawValue;
+                    var FI3 = Ext.getCmp('format3_info');
+                    var F4 = Ext.getCmp('oldpanel_basic_info_format4').rawValue;
+                    var FI4 = Ext.getCmp('format4_info');
+                    if(F2=='无'||F2=='m'||F2=='n'||F2=='a*b'||F2=='b*a'||F2=='m+n'){
+                        //该类型为1000X200类型
+                        FI1.setHidden(false);
+                        FI1.disable(true);
+                        CMB1.setHidden(true);
+                    }
+                    if(F2=='类型')
+                    {
+                        FI1.setHidden(true);
+                        FI1.disable(true);
+                        CMB1.setHidden(false);
+                    }
+                    if(F2=='后缀')
+                    {
+                        FI1.setHidden(false);
+                        FI1.enable(true);
+                        CMB1.setHidden(true);
+                    }
+                }
+            }
         });
         var format3store = Ext.create('Ext.data.Store', {
             fields: ['abbr', 'name'],
@@ -261,10 +318,41 @@ Ext.define('oldpanel.oldpanel_Basic_Info_Input', {
             queryMode: 'local',
             displayField: 'name',
             valueField: 'abbr',
-            margin : '0 20 0 20',
+            //margin : '0 20 0 20',
             width: 130,
             labelWidth: 60,
-            renderTo: Ext.getBody()
+            renderTo: Ext.getBody(),
+            listeners:{
+                select: function(combo, record, index) {
+                    //console.log(Ext.getCmp('oldpanel_basic_info_format1').rawValue)//选择的值
+                    var F1 = Ext.getCmp('oldpanel_basic_info_format1').rawValue;
+                    var FI1 = Ext.getCmp('format1_info');
+                    var F2 = Ext.getCmp('oldpanel_basic_info_format2').rawValue;
+                    var FI2 = Ext.getCmp('format2_info');
+                    var F3 = Ext.getCmp('oldpanel_basic_info_format3').rawValue;
+                    var FI3 = Ext.getCmp('format3_info');
+                    var F4 = Ext.getCmp('oldpanel_basic_info_format4').rawValue;
+                    var FI4 = Ext.getCmp('format4_info');
+                    if(F3=='无'||F3=='m'||F3=='n'||F3=='a*b'||F3=='b*a'||F3=='m+n'){
+                        //该类型为1000X200类型
+                        FI1.setHidden(false);
+                        FI1.disable(true);
+                        CMB1.setHidden(true);
+                    }
+                    if(F3=='类型')
+                    {
+                        FI1.setHidden(true);
+                        FI1.disable(true);
+                        CMB1.setHidden(false);
+                    }
+                    if(F3=='后缀')
+                    {
+                        FI1.setHidden(false);
+                        FI1.enable(true);
+                        CMB1.setHidden(true);
+                    }
+                }
+            }
         });
         var format4store = Ext.create('Ext.data.Store', {
             fields: ['abbr', 'name'],
@@ -292,42 +380,39 @@ Ext.define('oldpanel.oldpanel_Basic_Info_Input', {
             margin : '0 20 0 20',
             width: 130,
             labelWidth: 60,
-            renderTo: Ext.getBody()
-        });
-        var classificationListStore = Ext.create('Ext.data.Store',{
-            fields : [ 'classificationName'],
-            proxy : {
-                type : 'ajax',
-                url : '/material/findAllBytableName.do?tableName=classification',
-                reader : {
-                    type : 'json',
-                    rootProperty: 'classification',
-                },
-            },
-            autoLoad : true
-        });
-        var classificationList = Ext.create('Ext.form.ComboBox',{
-            fieldLabel : '旧板类型',
-            labelWidth : 70,
-            width : 230,
-            id :  'classification',
-            name : 'classification',
-            matchFieldWidth: false,
-            emptyText : "--请选择--",
-            displayField: 'classificationName',
-            valueField: 'classificationId',
-            editable : false,
-            store: classificationListStore,
+            renderTo: Ext.getBody(),
             listeners:{
                 select: function(combo, record, index) {
-
-                    console.log(classificationList.getValue());// MaterialTypeList.getValue()获得选择的类型
-                    //console.log(record[0].data.materialName);
+                    //console.log(Ext.getCmp('oldpanel_basic_info_format1').rawValue)//选择的值
+                    var F1 = Ext.getCmp('oldpanel_basic_info_format1').rawValue;
+                    var FI1 = Ext.getCmp('format1_info');
+                    var F2 = Ext.getCmp('oldpanel_basic_info_format2').rawValue;
+                    var FI2 = Ext.getCmp('format2_info');
+                    var F3 = Ext.getCmp('oldpanel_basic_info_format3').rawValue;
+                    var FI3 = Ext.getCmp('format3_info');
+                    var F4 = Ext.getCmp('oldpanel_basic_info_format4').rawValue;
+                    var FI4 = Ext.getCmp('format4_info');
+                    if(F4=='无'||F4=='m'||F4=='n'||F4=='a*b'||F4=='b*a'||F4=='m+n'){
+                        //该类型为1000X200类型
+                        FI1.setHidden(false);
+                        FI1.disable(true);
+                        CMB1.setHidden(true);
+                    }
+                    if(F4=='类型')
+                    {
+                        FI1.setHidden(true);
+                        FI1.disable(true);
+                        CMB1.setHidden(false);
+                    }
+                    if(F4=='后缀')
+                    {
+                        FI1.setHidden(false);
+                        FI1.enable(true);
+                        CMB1.setHidden(true);
+                    }
                 }
             }
-
         });
-
         var toolbar = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
             items: [
@@ -342,6 +427,7 @@ Ext.define('oldpanel.oldpanel_Basic_Info_Input', {
                     name: 'format1_info',
                     value:"",
                 },
+                oldpanelTypeList1,
                 format2,
                 {
                     xtype: 'textfield',
@@ -353,23 +439,10 @@ Ext.define('oldpanel.oldpanel_Basic_Info_Input', {
                     name: 'format2_info',
                     value:"",
                 },
+                oldpanelTypeList2,
             ]
         });
-        var toolbar1 = Ext.create('Ext.toolbar.Toolbar', {
-            dock : "top",
-            items: [
-                // {xtype: 'textfield', fieldLabel: '长一', id: 'length', width: 150, labelWidth: 30, margin: '0 10 0 85', name: 'length', value: ""},
-                // {xtype: 'textfield', fieldLabel: '长二', id: 'length2', width: 150, labelWidth: 30, margin: '0 10 0 85', name: 'length2', value: ""},
-                // {xtype: 'textfield', fieldLabel: '宽一', id: 'width', width: 150, labelWidth: 30, margin: '0 10 0 85', name: 'width', value: ""},
-                // {xtype: 'textfield', fieldLabel: '宽二', id: 'width2', width: 150, labelWidth: 30, margin: '0 10 0 85', name: 'width2', value: ""},
-                // {xtype: 'textfield', fieldLabel: '宽三', id: 'width3', width: 150, labelWidth: 30, margin: '0 10 0 85', name: 'width3', value: ""},
-                {xtype: 'textfield', fieldLabel: '单面积', id: 'unitArea', width: 220, labelWidth: 50,  name: 'unitArea', value: ""},
-                {xtype: 'textfield', fieldLabel: '单重', id: 'unitWeight', width: 220, labelWidth: 30, /*margin: '0 10 0 40',*/ name: 'unitWeight', value: ""},
-                {xtype: 'textfield', fieldLabel: '总面积', id: 'totalArea', width: 220, labelWidth: 50,  name: 'totalArea', value: ""},
-                {xtype: 'textfield', fieldLabel: '总重', id: 'totalWeight', width: 220, labelWidth: 30, name: 'totalWeight', value: ""},
-                {xtype: 'textfield', fieldLabel: '备注', id: 'remark', width: 220, labelWidth: 30, name: 'remark', value: ""},
-            ]
-        });
+        //添加按钮所在toolbar
         var toolbar2 = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
             items: [
@@ -384,6 +457,7 @@ Ext.define('oldpanel.oldpanel_Basic_Info_Input', {
                     name: 'format3_info',
                     value:"",
                 },
+                oldpanelTypeList3,
                 format4,
                 {
                     xtype: 'textfield',
@@ -395,6 +469,7 @@ Ext.define('oldpanel.oldpanel_Basic_Info_Input', {
                     name: 'format4_info',
                     value:"",
                 },
+                oldpanelTypeList4,
                 {xtype : 'button',
                     //margin: '0 10 0 70',
                     iconAlign : 'center',
@@ -585,8 +660,7 @@ Ext.define('oldpanel.oldpanel_Basic_Info_Input', {
             toolbar2, grid, toolbar3];
         //this.items = [ me.grid ];
         this.callParent(arguments);
-
-    }
-
+    },
 })
+
 
