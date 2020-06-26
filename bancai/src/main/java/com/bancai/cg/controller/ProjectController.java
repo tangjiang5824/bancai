@@ -467,6 +467,42 @@ public class ProjectController {
         }
         return true;
     }
+
+    //原材料仓库出库入库回滚
+    //类型：0入库，1出库，2退库
+    @RequestMapping(value = "/material/backMaterialstore.do")
+    @Transactional
+    public boolean backMaterialstore(String materiallogId,String type) throws JSONException {
+        String sql_find="select materialId,count from material_logdetail where materiallogId=?";
+            DataList list=queryService.query(sql_find,materiallogId);
+            for(int i=0;i<list.size();i++){
+            String materialId=list.get(i).get("materialId")+"";
+            String count=list.get(i).get("count")+"";
+            int count_to_op=Integer.valueOf(count);
+            if(type.equals("0")){
+                //进行回滚出库
+               String sql_find_id="select count,id  from material_store where count>0 and materialId=?";
+                DataList id_list=queryService.query(sql_find_id,materialId);
+                //回滚出库并插入log
+                for(int j=0;j<id_list.size();j++){
+                    if(Integer.valueOf(id_list.get(j).get("count")+"")>=count_to_op){
+                        String sql_de="update material_store set count=count-? where id=?";
+                        boolean flag=insertProjectService.insertIntoTableBySQL(sql_de,count_to_op+"",id_list.get(j).get("id")+"");
+                            break;
+                    }else {
+                        String sql_de="update material_store set count=0 where id=?";
+                        boolean flag=insertProjectService.insertIntoTableBySQL(sql_de,id_list.get(j).get("id")+"");
+                        count_to_op=count_to_op-Integer.valueOf(id_list.get(j).get("count")+"");
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+
+
     //原材料仓库出库，直接进行给定数值的仓库扣减
     @RequestMapping(value = "/material/updateMaterialNum.do")
     @Transactional
