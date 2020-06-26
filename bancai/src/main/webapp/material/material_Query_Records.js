@@ -81,10 +81,10 @@ Ext.define('material.material_Query_Records',{
                     xtype: 'textfield',
                     margin : '0 20 0 5',
                     fieldLabel: '操作员',
-                    id :'userName',
+                    id :'operator',
                     width: 150,
                     labelWidth: 50,
-                    name: 'userName',
+                    name: 'operator',
                     value:"",
                 },projectName,
                 optionType,
@@ -129,7 +129,7 @@ Ext.define('material.material_Query_Records',{
                     handler: function(){
                         material_Query_Records_Store.load({
                             params : {
-                                username : Ext.getCmp('userName').getValue(),
+                                operator : Ext.getCmp('operator').getValue(),
                                 endTime : Ext.getCmp('endTime').getValue(),
                                 startTime:Ext.getCmp('startTime').getValue(),
                                 projectId:Ext.getCmp('projectName').getValue(),
@@ -158,7 +158,7 @@ Ext.define('material.material_Query_Records',{
                 params:{
                     start: 0,
                     limit: itemsPerPage,
-                    username : Ext.getCmp('userName').getValue(),//获取用户名
+                    operator : Ext.getCmp('operator').getValue(),//获取用户名
                     endTime : Ext.getCmp('endTime').getValue(),
                     startTime:Ext.getCmp('startTime').getValue(),
                     projectId:Ext.getCmp('projectName').getValue(),
@@ -169,7 +169,7 @@ Ext.define('material.material_Query_Records',{
                 beforeload : function(store, operation, eOpts) {
                     store.getProxy().setExtraParams({
 
-                        username : Ext.getCmp('userName').getValue(),
+                        operator : Ext.getCmp('operator').getValue(),
                         endTime : Ext.getCmp('endTime').getValue(),
                         startTime:Ext.getCmp('startTime').getValue(),
                         projectId:Ext.getCmp('projectName').getValue(),
@@ -262,7 +262,7 @@ Ext.define('material.material_Query_Records',{
             },
             columns : [
                 // { text: '原材料领料记录单编号', dataIndex: 'id', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '操作员',  dataIndex: 'username' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
+                { text: '操作员',  dataIndex: 'operator' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
                 {   text: '操作类型',
                     dataIndex: 'type' ,
                     flex :1,

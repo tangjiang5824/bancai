@@ -1,8 +1,8 @@
-Ext.define('oldpanel.oldpanel_Inbound', {
+Ext.define('preprocess.preprocess_Inbound', {
     extend : 'Ext.panel.Panel',
     region : 'center',
     layout : "fit",
-    title : '旧板入库',
+    title : '预加工半成品入库',
     // reloadPage : function() {
     //     var p = Ext.getCmp('functionPanel');
     //     p.removeAll();
@@ -18,15 +18,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
     initComponent : function() {
         var me = this;
         //var materialtype="1";
-        Ext.define('Soims.model.application.ApplicationState', {
-            statics: { // 关键
-                0: { value: '0', name: '墙板' },
-                1: { value: '1', name: '梁板' },
-                2: { value: '2', name: 'K板' },
-                3: { value: '3', name: '异型' },
-                //
-            }
-        });
+
         //仓库编号
         var storeNameList = Ext.create('Ext.data.Store',{
             fields : [ 'warehouseName'],
@@ -50,7 +42,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
             matchFieldWidth: false,
             emptyText : "--请选择--",
             displayField: 'warehouseName',
-            valueField: 'warehouseName',
+            valueField: 'warehouseNo',
             editable : false,
             store: storeNameList,
             listeners:{
@@ -61,7 +53,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                     //选中后
                     var select = record[0].data;
                     var warehouseNo = select.warehouseNo;
-                    console.log(warehouseNo);
+                    console.log(warehouseNo)
 
                     //重新加载行选项
                     var locationNameList_row = Ext.create('Ext.data.Store',{
@@ -253,28 +245,27 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                 //{xtype: 'textfield', fieldLabel: '仓库名称', id: 'warehouseNo', width: 220, labelWidth: 60, margin: '0 10 0 50', name: 'warehouseNo', value: ""},
                 //{xtype: 'textfield', fieldLabel: '存放位置', id: 'position', width: 220, labelWidth: 60, margin: '0 10 0 50', name: 'position', value: ""},
                 storePosition,
-                // {
-                //     xtype:'tbtext',
-                //     text:'存放位置:',
-                //     margin: '0 0 0 20',
-                //     //id: 'number',
-                //     width: 60,
-                //     //labelWidth: 30,
-                //     //name: 'number',
-                //     //value: "",
-                // },
-                // speificLocation_row,
-                // speificLocation_col,
+                {
+                    xtype:'tbtext',
+                    text:'存放位置:',
+                    margin: '0 0 0 20',
+                    //id: 'number',
+                    width: 60,
+                    //labelWidth: 30,
+                    //name: 'number',
+                    //value: "",
+                },
+                speificLocation_row,
+                speificLocation_col,
                 {xtype: 'textfield', fieldLabel: '入库数量', id: 'number', width: 190, labelWidth: 30,  name: 'number', value: ""},
                 {xtype : 'button',
-                    margin: '0 10 0 70',
+                    //margin: '0 10 0 70',
                     iconAlign : 'center',
                     iconCls : 'rukuicon ',
                     text : '添加',
                     handler: function(){
-                        //var oldpanelTypeName = Ext.getCmp('oldpanelType').rawValue;//getValue();
-                        //var oldpanelType = Ext.getCmp('oldpanelType').getValue();
-                        var classificationName = Ext.getCmp('classification').getValue();
+                        var oldpanelTypeName = Ext.getCmp('oldpanelType').rawValue;//getValue();
+                        var oldpanelType = Ext.getCmp('oldpanelType').getValue();
                         var oldpanelName = Ext.getCmp('oldpanelName').getValue();
                         var inventoryUnit = Ext.getCmp('inventoryUnit').getValue();
                         var number = Ext.getCmp('number').getValue();
@@ -292,19 +283,17 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                         //var oldpanelNo = Ext.getCmp('oldpanelNo').getValue();
                         //var warehouseNo = Ext.getCmp('storePosition').getValue();
                         //var specification = Ext.getCmp('specification').getValue();
-                        var warehouseName = Ext.getCmp('storePosition').getValue();
-                        //var position = Ext.getCmp('position').getValue();
-                        //var row = Ext.getCmp('speificLocation_row').getValue();
-                        //var col = Ext.getCmp('speificLocation_col').getValue();
+                        var warehouseNo = Ext.getCmp('warehouseNo').getValue();
+                        var position = Ext.getCmp('position').getValue();
+                        var row = Ext.getCmp('speificLocation_row').getValue();
+                        var col = Ext.getCmp('speificLocation_col').getValue();
                         var data = [{
                             //'oldpanelTypeName' : oldpanelTypeName,
-                            //'oldpanelType' : oldpanelType,
+                            'oldpanelType' : oldpanelType,
                             'unitWeight' : unitWeight,
-                            'classificationName':classificationName,
                             //'totalWeight' : totalWeight,
                             'unitArea' : unitArea,
                             //'totalArea' : totalArea,
-                            'warehouseName':warehouseName,
                             'remark' : remark,
                             //'warehouseName' : warehouseName,
                             'oldpanelName' : oldpanelName,
@@ -397,7 +386,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                 // fields: ['材料名','品号', '长',"；类型","宽",'规格','库存单位','仓库编号','数量','成本','存放位置']
                 fields: ['oldpanelName','classificationName','inventoryUnit','unitArea',
                     'unitWeight',//'totalArea','totalWeight',
-                    'length', 'width', 'number','weight','warehouseName','remark','number']
+                    'length', 'width', 'number','weight','warehouseNo','row','col','remark','number']
             },
 
             columns : [
@@ -418,14 +407,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                 // {dataIndex : 'row', text : '行', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 // {dataIndex : 'col', text : '列', flex :1, editor : {xtype : 'textfield', allowBlank : false,}}
                 {dataIndex : 'oldpanelName', text : '旧板名称', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
-                //{dataIndex : 'classificationName', text : '分类', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
-                {text: '分类', dataIndex: 'classificationName', flex :1,
-                    //枚举，1：出库，0：入库
-                    renderer: function (value) {
-                        return Soims.model.application.ApplicationState[value].name; // key-value
-                    },
-                    editor:{xtype : 'textfield', allowBlank : false}
-                },
+                {dataIndex : 'classificationName', text : '分类', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
                 {dataIndex : 'inventoryUnit', text : '库存单位', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 //{dataIndex : 'countUse', text : '可用数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
 
@@ -436,9 +418,9 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                 //{dataIndex : 'totalWeight', text : '总重', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'length', text : '长', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'width', text : '宽', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'warehouseName', text : '仓库名称', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                //{dataIndex : 'row', text : '行', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                //{dataIndex : 'col', text : '列', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'warehouseNo', text : '仓库编号', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'row', text : '行', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'col', text : '列', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'remark', text : '备注', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'number', text : '入库数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
 

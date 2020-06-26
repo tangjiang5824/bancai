@@ -67,17 +67,42 @@
 	Ext.onReady(function() {
 		var usertype=<c:out value="${usertype}"/>;
 		Ext.tip.QuickTipManager.init();
-		var title='欢迎:<c:out value="${username}"/>'; //<c:out value="${usertype}"/>:
+		var title='<c:out value="${username}"/>,欢迎您！'; //<c:out value="${usertype}"/>:
 		var usertype='<c:out value="${usertype}"/>';
         //MenuRole_bc:0:admin,1:计划处，2：财务处
-        var menu=Ext.create("menu.MenuRole_bc"+usertype,{title:title,usertype:usertype});
+        // var menu=Ext.create("menu.MenuRole_bc"+usertype,{title:title,usertype:usertype});
+		var menu=Ext.create("menu.MenuRole_bc"+usertype,{title:"功能导航"});
         var welcome = Ext.create("welcome.Welcome0");
 		// var menu=Ext.create("menu.MenuRole_upload",{title:title,usertype:usertype});
 		// var welcome = Ext.create("welcome.Welcome0");
 
 		Ext.create('Ext.container.Viewport', {
 			layout : 'border',
-			items : [ menu, welcome ]
+			items : [
+                {
+                    title: '新久融板材管理系统',
+                    region: 'north',
+                    xtype: 'panel',
+                    margins:'0 0 5 0',
+                    tbar:[
+                        '->',
+						title,  //title+',欢迎您!',
+                        '日期:'+Ext.Date.format(new Date(),'Y-m-d'),
+                        // {
+                        //     text:'修改密码'
+                        // },
+                        {
+                            text:'退出'
+                        },
+                        {
+                            xtype:'displayfield',
+                            width:50
+                        }
+
+                    ]
+                },
+			    menu,
+                welcome ]
 		}).show();
 		sessionTimeOut(usertype);
 	});
