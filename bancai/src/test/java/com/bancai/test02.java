@@ -45,17 +45,39 @@ public class test02 {
 //            }
 //
 //        }
-        String s = "A";
-//        String[] ss = s.split("\\s+");
-//        for (String value : ss) {
-//            System.out.println(value.contains("*"));
-//        }
-//        String format = "203";
-//        format = format.replace("3","l");
-//        format = format.replace("2","3");
-//        format = format.replace("l","2");
-//        System.out.println(format);
-        System.out.println(s.matches(isPureWord));
+        int conM = 0;
+        String m = "0";
+        String n = "0";
+        String oldpanelName = "100 200";
+        StringBuilder formatBuilder = new StringBuilder();
+        String[] sOName = oldpanelName.split("\\s+");
+        for (int i = 0; i < 4; i++) {
+            try {
+                if(conM==0){
+                    m = sOName[i];
+                    formatBuilder.append("2");
+                    conM=1;
+                } else if(conM==1){
+                    n = sOName[i];
+                    formatBuilder.append("3");
+                    conM=2;
+                }
+            } catch (Exception e){
+                formatBuilder.append("0");
+            }
+        }
+        String format = formatBuilder.toString();
+        if((format.contains("3"))&&(n.equals(SetLengthAndWidth(m,n)[0]))){
+            String temp = m + n;
+            n = temp.substring(0, temp.length()-n.length());
+            m = temp.substring(n.length());
+            format = format.replace("3","l");
+            format = format.replace("2","3");
+            format = format.replace("l","2");
+        }
+        System.out.println(format);
+        System.out.println(m);
+        System.out.println(n);
 
     }
 

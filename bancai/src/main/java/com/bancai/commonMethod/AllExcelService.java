@@ -2,6 +2,7 @@ package com.bancai.commonMethod;
 
 import com.bancai.cg.service.InsertProjectService;
 import com.bancai.domain.DataList;
+import com.bancai.yrd.service.Y_Upload_Data_Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,8 @@ public class AllExcelService extends BaseService {
 	private QueryService queryService;
 	@Autowired
 	private InsertProjectService insertProjectService;
+	@Autowired
+	private Y_Upload_Data_Service y_Upload_Data_Service;
 
 	private void saveData(DataList dataList,String userid,String tableName) {
 		int userId = Integer.parseInt(userid);
@@ -41,7 +44,7 @@ public class AllExcelService extends BaseService {
 
 
 	/**
-	 * 原材料上传数据，旧板上传数据
+	 * 原材料上传数据
 	 * 
 	 * @param inputStream
 	 * @param userid
@@ -136,6 +139,69 @@ public class AllExcelService extends BaseService {
 		return result;
 
 	}
+	/**
+	 * 旧板上传数据
+	 *
+	 * @param inputStream
+	 * @param userid
+	 * @return
+	 * @throws IOException
+	 */
+	@Transactional
+	public UploadDataResult uploadOldpanelExcelData(InputStream inputStream,String userid, String tablename,String oldpanellogId) throws IOException {
+		DataList dataList = new DataList();
+		UploadDataResult result = new UploadDataResult();
+		Excel excel = new Excel(inputStream);
+		dataList = excel.readExcelContent();
+		System.out.println(dataList);
+		for (com.bancai.domain.DataRow dataRow : dataList) {
+			String oldpanelName = dataRow.get("品名") + "";
+			if(oldpanelName.equals("合计")||oldpanelName.equals(""))
+				break;
+			String classificationName = dataRow.get("分类") + "";
+			String inventoryUnit = dataRow.get("单位") + "";
+			String number = dataRow.get("入库数量") + "";
+			String warehouseName = dataRow.get("入库仓库") + "";
+			String unitArea = dataRow.get("单面积/m2") + "";
+			String unitWeight = dataRow.get("单重/KG") + "";
+			String remark = dataRow.get("备注") + "";
+			String classificationId = findclassificationIdByName(classificationName);
+			if (classificationId.equals("0")) {
+				result.success = false;
+				result.setErrorCode(2);
+				return result;
+			}
+			boolean upResult = y_Upload_Data_Service.oldpanelUpload(oldpanelName, classificationId, inventoryUnit,
+					number, warehouseName, unitArea, unitWeight, remark, userid);
+			if (!upResult) {
+				result.success = false;
+				result.setErrorCode(2);
+				return result;
+			}
+			String sql_addLogDetail = "insert into oldpanellogdetail (oldpanelName,count,oldpanellogId) values (?,?,?)";
+			boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLogDetail, oldpanelName, number, oldpanellogId);
+			if (!is_log_right) {
+				result.success = false;
+				result.setErrorCode(2);
+				return result;
+			}
+		}
+		result.dataList = dataList;
+		return result;
+	}
+
+	@Transactional
+	public String findclassificationIdByName(String classificationName){
+		DataList dataList;
+		String classificationId = "0";
+		String sql = "select * from classification where classificationName=?";
+		dataList = queryService.query(sql,classificationName);
+		if(!dataList.isEmpty()){
+			classificationId = String.valueOf(dataList.get(0).get("classificationId"));
+		}
+		return classificationId;
+	}
+
 
 	@Transactional
 	boolean uploadData(DataList dataList,String userid,String tablename) {
