@@ -281,8 +281,8 @@ Ext.define('material.material_Outbound',{
 
                 {
                     xtype : 'button',
-                    text: '回滚记录',
-                    width: 80,
+                    text: '回滚所有记录',
+                    width: 100,
                     margin: '0 0 0 40',
                     layout: 'right',
                     handler: function(){

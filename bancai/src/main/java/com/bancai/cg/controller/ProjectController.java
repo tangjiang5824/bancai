@@ -478,7 +478,7 @@ public class ProjectController {
 
         Date date=new Date();
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String update_log="update material_log set isrollbcak=1 where id=?";
+        String update_log="update material_log set isrollback=1 where id=?";
         //把isrollbcak改为1
         insertProjectService.insertIntoTableBySQL(update_log,materiallogId);
 
