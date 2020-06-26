@@ -23,6 +23,10 @@ Ext.define("menu.MenuRole_bc0", {
 					id : 'oldpanel.old_Upload_Data',
 					leaf : true
 				} ,{
+					text : '旧板出库',
+					id : 'oldpanel.oldpanel_Outbound',
+					leaf : true
+				},{
 					text : '旧板库存查询',
 					id : 'oldpanel.Old_Query_Data',
 					leaf : true
