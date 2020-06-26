@@ -243,8 +243,19 @@ Ext.define('material.material_Outbound',{
         //弹出框的表头
         var toolbar_pop = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
+            id:'toolbar_pop',
             items: [
                 // MaterialTypeList,
+                {
+                    xtype: 'tbtext',
+                    id:'log_id',
+                    iconAlign: 'center',
+                    iconCls: 'rukuicon ',
+                    text: ' ',//默认为空
+                    region: 'center',
+                    bodyStyle: 'background:#fff;',
+                    hidden:true
+                },
                 {
                     xtype: 'textfield',
                     margin : '0 40 0 0',
@@ -275,14 +286,21 @@ Ext.define('material.material_Outbound',{
                     margin: '0 0 0 40',
                     layout: 'right',
                     handler: function(){
-                        material_inBoundRecords_Store.load({
-                            params : {
-                                // operator : Ext.getCmp('operator').getValue(),
-                                operator : Ext.getCmp('operator').getValue(),//获取操作员名
-                                startTime:Ext.getCmp('startTime').getValue(),
-                                type:0
+                        var material_logId = Ext.getCmp("log_id").text;
+                        // console.log("id为：----",material_logId)
+                    //    material/backMaterialstore.do
+                        Ext.Ajax.request({
+                            url:"material/backMaterialstore.do",  //入库记录撤销
+                            params:{
+                                // tableName:tableName,
+                                materiallogId:material_logId,
+                                type:1  //撤销出库1
+                            },
+                            success:function (response) {
+                                //console.log(response.responseText);
+                                alert("回滚成功！")
                             }
-                        });
+                    })
                     }
                 }
 
@@ -590,14 +608,17 @@ Ext.define('material.material_Outbound',{
                 return;
             }
             var fieldName = Ext.getCmp('addDataGrid').columns[columnIndex].text;
+            var sm = Ext.getCmp('addDataGrid').getSelectionModel();
+            var materialArr = sm.getSelection();
+            var id = e.data.id  //选中记录的logid
+            // console.log("行号：",e.data.id)
 
-            console.log("列名：",fieldName)
             if (fieldName == "操作") {
                 //设置监听事件getSelectionModel().getSelection()
-                var sm = Ext.getCmp('addDataGrid').getSelectionModel();
-                var materialArr = sm.getSelection();
-                var re = Ext.getCmp('addDataGrid').getSelectionModel()[0];
-                console.log("qqqqqqqqqqqq:",re.data);
+                // var sm = Ext.getCmp('addDataGrid').getSelectionModel();
+                // var materialArr = sm.getSelection();
+                // var re = Ext.getCmp('addDataGrid').getSelectionModel();
+                // console.log("qqqqqqqqqqqq:",re.data);
 
                 var materiallogdetailList = Ext.create('Ext.data.Store', {
                     //id,materialName,length,width,materialType,number
@@ -608,7 +629,7 @@ Ext.define('material.material_Outbound',{
                         url: 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName=material_logdetail&columnName=materiallogId&columnValue=' + id,//获取同一批出入库的原材料
                         reader: {
                             type: 'json',
-                            rootProperty: 'materiallogdetail',
+                            rootProperty: 'material_logdetail',
                         },
                     },
                     autoLoad: true
@@ -624,8 +645,9 @@ Ext.define('material.material_Outbound',{
                 //     col.setText("入库数量");
                 // }
 
+                Ext.getCmp("toolbar_pop").items.items[0].setText(id);
                 material_Query_Records_specific_data_grid.setStore(materiallogdetailList);
-                console.log(materiallogdetailList);
+                // console.log(materiallogdetailList);
                 Ext.getCmp('material_Query_Records_win_showmaterialData').show();
 
                 // if (materialArr.length != 0) {
