@@ -23,6 +23,10 @@ Ext.define("menu.MenuRole_bc0", {
 					id : 'oldpanel.old_Upload_Data',
 					leaf : true
 				} ,{
+					text : '旧板出库',
+					id : 'oldpanel.oldpanel_Outbound',
+					leaf : true
+				},{
 					text : '旧板库存查询',
 					id : 'oldpanel.Old_Query_Data',
 					leaf : true
@@ -85,7 +89,88 @@ Ext.define("menu.MenuRole_bc0", {
 					id : 'material.material_Alarm',
 					leaf : true
 				}]
+			}, {
+				text : '预加工仓库管理',
+				expanded : true,
+				children : [ {
+					text : '半成品预加工',
+					id : '',
+					leaf : true
+				}, {
+					text : '预加工半成品入库',
+					id : 'preprocess.preprocess_Inbound',
+					leaf : true
+				} ,{
+					text : '预加工半成品批量入库',
+					id : '',
+					leaf : true
+				} ,{
+					text : '预加工半成品库存查询',
+					id : '',
+					leaf : true
+				}, {
+					text : '预加工半成品出库',
+					id : '',
+					leaf : true
+				}, {
+					text : '预加工半成品出入库记录查询',
+					id : '',
+					leaf : true
+				}, {
+					text : '预加工半成品出入库记录统计',
+					id : '',
+					leaf : true
+				}]
 			},{
+				text : '退库成品仓库管理',
+				expanded : true,
+				children : [  {
+					text : '退库成品入库',
+					id : '',
+					leaf : true
+				} ,{
+					text : '退库成品库存查询',
+					id : '',
+					leaf : true
+				}, {
+					text : '退库成品出库',
+					id : '',
+					leaf : true
+				}, {
+					text : '退库成品出入库记录查询',
+					id : '',
+					leaf : true
+				}, {
+					text : '退库成品出入库记录统计',
+					id : '',
+					leaf : true
+				}]
+			},{
+				text : '产品成品仓库管理',
+				expanded : true,
+				children : [  {
+					text : '产品成品入库',
+					id : '',
+					leaf : true
+				} ,{
+					text : '产品成品库存查询',
+					id : '',
+					leaf : true
+				}, {
+					text : '产品成品出库',
+					id : '',
+					leaf : true
+				}, {
+					text : '产品成品出入库记录查询',
+					id : '',
+					leaf : true
+				}, {
+					text : '产品成品出入库记录统计',
+					id : '',
+					leaf : true
+				}]
+			},
+				{
 				text : '产品管理',
 				expanded : true,
 				children : [ {

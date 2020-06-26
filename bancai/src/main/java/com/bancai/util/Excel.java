@@ -96,6 +96,7 @@ public class Excel {
 			boolean isNull=(boolean) column.get("isNull");
 			cell.setCellValue(name);
 			// 设置列名格式
+
 			if (!isNull)
 				cell.setCellStyle(nonBlankStyle);
 			else

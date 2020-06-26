@@ -32,7 +32,7 @@ public class test02 {
 //        String bb = "20";
 //        compare = aa.compareTo(bb);
 //        System.out.println(compare);
-        String isPureNumber = "^[0-9]+(.[0-9]+)?$";
+        String isPureNumber = "^-?[0-9]+";
         String isPureWord = "^[A-Za-z]+$";
 //        String s = "2100";
 //        String s2 = "%20%%AA";
@@ -45,7 +45,7 @@ public class test02 {
 //            }
 //
 //        }
-        String s = "2177";
+        String s = "A";
 //        String[] ss = s.split("\\s+");
 //        for (String value : ss) {
 //            System.out.println(value.contains("*"));
@@ -55,9 +55,7 @@ public class test02 {
 //        format = format.replace("2","3");
 //        format = format.replace("l","2");
 //        System.out.println(format);
-        for (int i = 0; i < 4; i++) {
-            System.out.println(s.substring(i,i+1));
-        }
+        System.out.println(s.matches(isPureWord));
 
     }
 

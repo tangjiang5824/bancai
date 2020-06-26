@@ -120,8 +120,9 @@ Ext.define('material.material_Outbound',{
                         material_inBoundRecords_Store.load({
                             params : {
                                 // operator : Ext.getCmp('operator').getValue(),
-                                username : Ext.getCmp('operator').getValue(),//获取操作员名
+                                operator : Ext.getCmp('operator').getValue(),//获取操作员名
                                 startTime:Ext.getCmp('startTime').getValue(),
+                                type:0
                             }
                         });
                     }
@@ -146,7 +147,7 @@ Ext.define('material.material_Outbound',{
                 params:{
                     start: 0,
                     limit: 20,
-                    username : Ext.getCmp('operator').getValue(),//获取操作员名
+                    operator : Ext.getCmp('operator').getValue(),//获取操作员名，type操作类型
                     startTime:Ext.getCmp('startTime').getValue(),
                 }
             },
@@ -155,7 +156,7 @@ Ext.define('material.material_Outbound',{
                     store.getProxy().setExtraParams({
 
                         // operator : Ext.getCmp('operator').getValue(),
-                        username : Ext.getCmp('operator').getValue(),//获取操作员名
+                        operator : Ext.getCmp('operator').getValue(),//获取操作员名
                         startTime:Ext.getCmp('startTime').getValue(),
                         // projectId:Ext.getCmp('projectName').getValue(),
                     });
@@ -260,7 +261,7 @@ Ext.define('material.material_Outbound',{
                     text : '操作',
                     flex :1 ,
                     renderer:function(value, cellmeta){
-                        return "<INPUT type='button' value='删 除' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
+                        return "<INPUT type='button' value='撤销入库' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
                     }
                 }
                 // {
@@ -466,7 +467,7 @@ Ext.define('material.material_Outbound',{
             if (rowIndex < 0) {
                 return;
             }
-            var fieldName = Ext.getCmp('addDataGrid').columns[columnIndex-1].text;
+            var fieldName = Ext.getCmp('addDataGrid').columns[columnIndex].text;
 
             console.log("列名：",fieldName)
             if (fieldName == "操作") {
@@ -475,11 +476,24 @@ Ext.define('material.material_Outbound',{
                 var materialArr = sm.getSelection();
                 var id = materialArr.id;
                 if (materialArr.length != 0) {
-                    Ext.Msg.confirm("提示", "共选中" + materialArr.length + "条数据，是否确认删除？", function (btn) {
+                    Ext.Msg.confirm("提示", "共选中" + materialArr.length + "条数据，是否确认撤消？", function (btn) {
                         if (btn == 'yes') {
                             //对该条记录出库var id = select.id;
                             // Ext.getCmp('addDataGrid').getStore().remove(materialArr);
+                            //撤销入库记录
+                            var materialLog_id = materialArr[0].data.id;  //日志记录id
 
+                            Ext.Ajax.request({
+                                url:"",  //入库记录撤销
+                                params:{
+                                    // tableName:tableName,
+                                    materiallogId:materialLog_id
+
+                                },
+                                success:function (response) {
+                                    //console.log(response.responseText);
+                                }
+                            })
                         } else {
                             return;
                         }
