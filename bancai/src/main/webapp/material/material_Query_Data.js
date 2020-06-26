@@ -5,35 +5,38 @@ Ext.define('material.material_Query_Data',{
     title: '原材料数据查询',
     initComponent: function(){
         var itemsPerPage = 50;
-        var tableName="material";
+        var tableName="material_info";
         //var materialType="1";
         //查询数据库，返回原材料类型
         var MaterialNameList = Ext.create('Ext.data.Store',{
             fields : [ 'materialName'],
             proxy : {
                 type : 'ajax',
-                url : 'material/materialType.do',
+                url : 'material/findAllBytableName.do?tableName='+tableName,
                 reader : {
                     type : 'json',
-                    rootProperty: 'typeList',
-                }
+                    rootProperty: 'material_info',
+                },
+                fields : ['id','materialName']
             },
             autoLoad : true
         });
 
         //原材料类型，下拉框显示
         var MaterialTypeList = Ext.create('Ext.form.ComboBox',{
-            fieldLabel : '原材料类型',
+            fieldLabel : '原材料品名',
             labelWidth : 70,
-            width : 230,
-            id :  'materialType',
-            name : 'materialType',
-            matchFieldWidth: false,
-            emptyText : "------请选择------",
-            displayField: 'materialTypeName',
-            valueField: 'materialType',
-            editable : false,
-            store: MaterialNameList
+            width : 260,
+            id :  'materialName',
+            name : 'materialName',
+            matchFieldWidth: true,
+            allowBlank:false,
+            emptyText : "--请选择--",
+            displayField: 'materialName',
+            valueField: 'id',
+            editable : true,
+            store: MaterialNameList,
+
         });
 
         var toobar = Ext.create('Ext.toolbar.Toolbar',{
@@ -50,47 +53,58 @@ Ext.define('material.material_Query_Data',{
                 // },
                 MaterialTypeList,
                 {
-                    xtype:'tbtext',
-                    text:'长度范围:',
+                    xtype: 'textfield',
                     margin : '0 10 0 40',
+                    fieldLabel: '规格',
+                    id :'specification',
+                    width: 130,
+                    labelWidth: 30,
+                    name: 'specification',
+                    value:"",
+                },
+                {
+                    xtype:'tbtext',
+                    text:'库存数量:',
+                    margin : '0 10 0 20',
                     itemId:'move_left',
                 },
                 {
                     xtype: 'textfield',
                     margin : '0 10 0 0',
                     // fieldLabel: '',
-                    id :'startLength',
+                    id :'minCount',
                     width: 100,
                     // labelWidth: 60,
-                    name: 'startLength',
+                    name: 'minCount',
                     value:"",
                 },{
                     xtype:'tbtext',
-                    text:'—',
+                    text:'---',
                 },
                 {
                     xtype: 'textfield',
                     margin : '0 10 0 0',
-                    // fieldLabel: '规格上限',
-                    id :'endLength',
+                    id :'maxCount',
                     width: 100,
                     // labelWidth: 60,
-                    name: 'endLength',
+                    name: 'maxCount',
                     value:"",
                 },
+
                 {
                     xtype: 'textfield',
                     margin : '0 10 0 40',
                     fieldLabel: '仓库名称',
-                    id :'warehouse',
-                    width: 200,
+                    id :'warehouseName',
+                    width: 160,
                     labelWidth: 60,
-                    name: 'warehouse',
+                    name: 'warehouseName',
                     value:"",
                 },
                 {
                     xtype : 'button',
                     text: '查询',
+                    iconCls:'right-button',
                     width: 80,
                     margin: '0 0 0 15',
                     layout: 'right',
@@ -100,10 +114,12 @@ Ext.define('material.material_Query_Data',{
                                 //proNum : Ext.getCmp('proNum').getValue(),
                                 // startWidth : Ext.getCmp('startWidth').getValue(),
                                 // endTWidth : Ext.getCmp('endWidth').getValue(),
-                                startLength:Ext.getCmp('startLength').getValue(),
-                                endLength:Ext.getCmp('endLength').getValue(),
-                                warehouse:Ext.getCmp('warehouse').getValue(),
-                                materialType:Ext.getCmp('materialType').getValue()
+                                // materialName:Ext.getCmp('materialName').getValue(),//获取id  Ext.getCmp('materialName').rawValue
+                                materialName:Ext.getCmp('materialName').rawValue,//获取显示字段
+                                specification:Ext.getCmp('specification').getValue(),
+                                totalCount_min:Ext.getCmp('minCount').getValue(),
+                                totalCount_max:Ext.getCmp('maxCount').getValue(),
+                                warehouseName:Ext.getCmp('warehouseName').getValue(),
                             }
                         });
                     }
@@ -144,7 +160,7 @@ Ext.define('material.material_Query_Data',{
             fields: [],
             pageSize: itemsPerPage, // items per page
             proxy:{
-                url : "material/historyDataList.do",
+                url : "material/findStoreInfo.do",
                 type: 'ajax',
                 reader:{
                     type : 'json',
@@ -159,13 +175,15 @@ Ext.define('material.material_Query_Data',{
             listeners : {
                 beforeload : function(store, operation, eOpts) {
                     store.getProxy().setExtraParams({
-                        tableName :tableName,
+                        tableName :"material_store_view",
                         // startWidth:Ext.getCmp('startWidth').getValue(),
                         // endWidth:Ext.getCmp('endWidth').getValue(),
-                        startLength:Ext.getCmp('startLength').getValue(),
-                        endLength:Ext.getCmp('endLength').getValue(),
-                        warehouse:Ext.getCmp('warehouse').getValue(),
-                        materialType:Ext.getCmp('materialType').getValue(),
+
+                        materialName:Ext.getCmp('materialName').rawValue,
+                        specification:Ext.getCmp('specification').getValue(),
+                        totalCount_min:Ext.getCmp('minCount').getValue(),
+                        totalCount_max:Ext.getCmp('maxCount').getValue(),
+                        warehouseName:Ext.getCmp('warehouseName').getValue(),
                         //materialType:materialType
 
                     });
@@ -198,7 +216,7 @@ Ext.define('material.material_Query_Data',{
                     //defaultValue:"2333",
                 },
                 {
-                    dataIndex : 'length',
+                    dataIndex : 'specification',
                     text : '规格',
                     //width : 110,
                     flex :1,

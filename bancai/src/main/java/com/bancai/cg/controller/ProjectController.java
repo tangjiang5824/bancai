@@ -231,7 +231,7 @@ public class ProjectController {
      * @throws IOException
      */
     @RequestMapping(value="/material/findStoreInfo.do")
-    public WebResponse findStoreInfo(String materialName,String specification,String totalCount_min,String totalCount_max,String warehouseName,String page, String start, String limit)  {
+    public WebResponse findStoreInfo(String materialName,String specification,String totalCount_min,String totalCount_max,String warehouseName,String page, String start, String limit,String tableName)  {
         int thisPage=1;
         int thisStart=0;
         int thisLimit=25;
@@ -247,7 +247,7 @@ public class ProjectController {
             thisLimit=Integer.parseInt(limit);
             thisStart=(thisPage-1)*thisLimit;
         }
-        String tableName = "Store_view";
+//        String tableName = "Store_view";
 //		System.out.println(startWidth);
 //		System.out.println(endWidth);
 //
