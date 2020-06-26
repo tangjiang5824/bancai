@@ -17,38 +17,177 @@ Ext.define('oldpanel.oldpanel_Back', {
 
     initComponent : function() {
         var me = this;
-        //var materialtype="1";
-        var projectListStore = Ext.create('Ext.data.Store',{
-            fields : ['id'],
+        Ext.define('Soims.model.application.ApplicationState', {
+            statics: { // 关键
+                0: { value: '0', name: '墙板' },
+                1: { value: '1', name: '梁板' },
+                2: { value: '2', name: 'K板' },
+                3: { value: '3', name: '异型' },
+                //
+            }
+        });
+        var projectNameListStore = Ext.create('Ext.data.Store',{
+            fields : [ 'projectName'],
             proxy : {
                 type : 'ajax',
                 url : 'project/findProjectList.do',
+
                 reader : {
                     type : 'json',
                     rootProperty: 'projectList',
                 }
             },
             autoLoad : true
+
         });
-        var projectList = Ext.create('Ext.form.ComboBox',{
-            fieldLabel : '项目名称',
+        var classificationListStore = Ext.create('Ext.data.Store',{
+            fields : [ 'classificationName'],
+            proxy : {
+                type : 'ajax',
+                url : '/material/findAllBytableName.do?tableName=classification',
+                reader : {
+                    type : 'json',
+                    rootProperty: 'classification',
+                },
+            },
+            autoLoad : true
+        });
+        var classificationList = Ext.create('Ext.form.ComboBox',{
+            fieldLabel : '分类',
             labelWidth : 70,
-            width : '35%',
-            id :  'id',
-            name : 'id',
-            matchFieldWidth: true,
+            width : 230,
+            id :  'classification',
+            name : 'classification',
+            matchFieldWidth: false,
             emptyText : "--请选择--",
+            displayField: 'classificationName',
+            valueField: 'classificationId',
+            editable : false,
+            store: classificationListStore,
+            listeners:{
+                select: function(combo, record, index) {
+
+                    console.log(classificationList.getValue());// MaterialTypeList.getValue()获得选择的类型
+                    //console.log(record[0].data.materialName);
+                }
+            }
+
+        });
+        var projectNameList = Ext.create('Ext.form.ComboBox',{
+            fieldLabel : '项目名',
+            labelWidth : 60,
+            width : '35%',
+            id :  'projectName',
+            name : 'projectName',
+            matchFieldWidth: true,
+            emptyText : "--请选择项目名--",
             displayField: 'projectName',
             valueField: 'id',
             editable : false,
-            store: projectListStore,
-            listeners:{
-                select: function(combo, record, index) {
-                    console.log(record[0].data.projectName);
+            store: projectNameListStore,
+            listeners: {
+
+                //下拉框默认返回的第一个值
+                render : function(combo) {//渲染
+                    combo.getStore().on("load", function(s, r, o) {
+                        combo.setValue(r[0].get('projectName'));//第一个值
+                    });
+
+                },
+
+                select:function (combo, record) {
+                    projectName:Ext.getCmp('projectName').getValue();
+                    //选中后
+                    var select = record[0].data;
+                    var id = select.id;//项目名对应的id
+                    console.log(id)
+
+                    //重新加载行选项
+                    //表名
+                    var tableName = 'building';
+                    //属性名
+                    var projectId = 'projectId';
+
+                    var tableListStore2 = Ext.create('Ext.data.Store',{
+                        fields : [ 'buildingName'],
+                        proxy : {
+                            type : 'ajax',
+                            //通用接口，material/findAllbyTableNameAndOnlyOneCondition.do传入表名，属性及属性值
+                            url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName='+tableName+'&columnName='+projectId+'&columnValue='+id,//根据项目id查询对应的楼栋名
+                            // params : {
+                            // 	tableName:tableName,
+                            // 	columnName:projectId,
+                            // 	columnValue:id,
+                            // },
+                            reader : {
+                                type : 'json',
+                                rootProperty: 'building',
+                            }
+                        },
+                        autoLoad : true,
+                        listeners:{
+                            load:function () {
+                                Ext.getCmp('buildingName').setValue("");
+                            }
+                        }
+                    });
+
+                    //buildingName,下拉框重新加载数据
+                    buildingName.setStore(tableListStore2);
+
+                    // Ext.Ajax.request({
+                    // 	url:'project/getSelectedProjectName.do',
+                    // 	params:{
+                    // 		projectName:Ext.getCmp('projectName').getValue()
+                    // 	},
+                    // 	success:function (response,config) {
+                    // 		//alert("combox1把数据传到后台成功");
+                    // 	},
+                    // 	failure:function (form, action) {
+                    // 		//alert("combox1把数据传到后台成功");
+                    // 	}
+                    // })
+                }
+            }
+
+        });
+
+        var buildingName = Ext.create('Ext.form.ComboBox',{
+            fieldLabel : '楼栋名',
+            labelWidth : 60,
+            width : 300,
+            id :  'buildingName',
+            name : 'buildingName',
+            matchFieldWidth: false,
+            emptyText : "--请选择楼栋名--",
+            displayField: 'buildingName',
+            valueField: 'id',//楼栋的id
+            editable : false,
+            autoLoad: true,
+            //store: tableListStore2,
+            listeners: {
+                load:function () {
+
+
+                    // // projectName:Ext.getCmp('projectName').getValue();
+                    // // buildingName:Ext.getCmp('buildingName').getValue();
+                    // Ext.Ajax.request({
+                    // 	url:'project/getSelectedBuildingName.do',
+                    // 	params:{
+                    // 		//projectName:Ext.getCmp('projectName').getValue(),
+                    // 		buildingName:Ext.getCmp('buildingName').getValue(),
+                    // 	},
+                    // 	success:function (response,config) {
+                    // 		//alert("combox1把数据传到后台成功");
+                    // 	},
+                    // 	failure:function (form, action) {
+                    // 		//alert("combox1把数据传到后台成功");
+                    // 	}
+                    // })
+
                 }
             }
         });
-
         //仓库编号
         var storeNameList = Ext.create('Ext.data.Store',{
             fields : [ 'warehouseName'],
@@ -203,7 +342,7 @@ Ext.define('oldpanel.oldpanel_Back', {
         var toolbar0 = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
             items: [
-                projectList,oldpanelTypeList,
+                projectNameList,buildingName,
             ]
         });
 
@@ -211,89 +350,77 @@ Ext.define('oldpanel.oldpanel_Back', {
         var toolbar = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
             items: [
-                {xtype: 'textfield', fieldLabel: '品号', id: 'oldpanelNo', width: 190, labelWidth: 30, margin: '0 10 0 85', name: 'oldpanelNo', value: ""},
-                {xtype: 'textfield', fieldLabel: '旧板名称', id: 'oldpanelName', width: 220, labelWidth: 60, margin: '0 10 0 85', name: 'oldpanelName', value: ""},
-                {xtype: 'textfield', fieldLabel: '库存单位', id: 'inventoryUnit', width: 220, labelWidth: 60, margin: '0 10 0 40', name: 'inventoryUnit', value: ""},
-                {xtype: 'textfield', fieldLabel: '规格', id: 'specification', width: 220, labelWidth: 60, margin: '0 10 0 40', name: 'specification', value: ""},
+                //oldpanelTypeList,
+                {xtype: 'textfield', fieldLabel: '旧板品名', id: 'oldpanelName', width: 190, labelWidth: 60,
+                    //margin: '0 10 0 40',
+                    name: 'oldpanelNo', value: ""},
+                classificationList,
+
+                {xtype: 'textfield', fieldLabel: '库存单位', id: 'inventoryUnit', width: 220, labelWidth: 60,
+                    //margin: '0 10 0 40',
+                    name: 'inventoryUnit', value: ""},
+                // {xtype: 'textfield', fieldLabel: '仓库名称', id: 'warehouseName', width: 220, labelWidth: 60,
+                //     //margin: '0 10 0 40',
+                //     name: 'warehouseName', value: ""},
+
             ]
         });
         var toolbar1 = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
             items: [
-                {xtype: 'textfield', fieldLabel: '长一', id: 'length', width: 150, labelWidth: 30, margin: '0 10 0 85', name: 'length', value: ""},
-                {xtype: 'textfield', fieldLabel: '长二', id: 'length2', width: 150, labelWidth: 30, margin: '0 10 0 85', name: 'length2', value: ""},
-                {xtype: 'textfield', fieldLabel: '宽一', id: 'width', width: 150, labelWidth: 30, margin: '0 10 0 85', name: 'width', value: ""},
-                {xtype: 'textfield', fieldLabel: '宽二', id: 'width2', width: 150, labelWidth: 30, margin: '0 10 0 85', name: 'width2', value: ""},
-                {xtype: 'textfield', fieldLabel: '宽三', id: 'width3', width: 150, labelWidth: 30, margin: '0 10 0 85', name: 'width3', value: ""},
+                // {xtype: 'textfield', fieldLabel: '长一', id: 'length', width: 150, labelWidth: 30, margin: '0 10 0 85', name: 'length', value: ""},
+                // {xtype: 'textfield', fieldLabel: '长二', id: 'length2', width: 150, labelWidth: 30, margin: '0 10 0 85', name: 'length2', value: ""},
+                // {xtype: 'textfield', fieldLabel: '宽一', id: 'width', width: 150, labelWidth: 30, margin: '0 10 0 85', name: 'width', value: ""},
+                // {xtype: 'textfield', fieldLabel: '宽二', id: 'width2', width: 150, labelWidth: 30, margin: '0 10 0 85', name: 'width2', value: ""},
+                // {xtype: 'textfield', fieldLabel: '宽三', id: 'width3', width: 150, labelWidth: 30, margin: '0 10 0 85', name: 'width3', value: ""},
+                {xtype: 'textfield', fieldLabel: '单面积', id: 'unitArea', width: 220, labelWidth: 50,  name: 'unitArea', value: ""},
+                {xtype: 'textfield', fieldLabel: '单重', id: 'unitWeight', width: 220, labelWidth: 30, /*margin: '0 10 0 40',*/ name: 'unitWeight', value: ""},
+                //{xtype: 'textfield', fieldLabel: '总面积', id: 'totalArea', width: 220, labelWidth: 50,  name: 'totalArea', value: ""},
+                //{xtype: 'textfield', fieldLabel: '总重', id: 'totalWeight', width: 220, labelWidth: 30, name: 'totalWeight', value: ""},
+                {xtype: 'textfield', fieldLabel: '备注', id: 'remark', width: 220, labelWidth: 30, name: 'remark', value: ""},
             ]
         });
         var toolbar2 = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
             items: [
-                {xtype: 'textfield', fieldLabel: '数量', id: 'number', width: 190, labelWidth: 30, margin: '0 10 0 70', name: 'number', value: ""},
-                {xtype: 'textfield', fieldLabel: '重量', id: 'weight', width: 190, labelWidth: 30, margin: '0 10 0 50', name: 'weight', value: ""},
-                //{xtype: 'textfield', fieldLabel: '仓库编号', id: 'warehouseNo', width: 220, labelWidth: 60, margin: '0 10 0 50', name: 'warehouseNo', value: ""},
-                //{xtype: 'textfield', fieldLabel: '存放位置', id: 'position', width: 220, labelWidth: 60, margin: '0 10 0 50', name: 'position', value: ""},
-                storePosition,{
-                    xtype:'tbtext',
-                    text:'存放位置:',
-                    margin: '0 0 0 20',
-                    //id: 'number',
-                    width: 60,
-                    //labelWidth: 30,
-                    //name: 'number',
-                    //value: "",
+                storePosition,
+                {xtype: 'textfield', fieldLabel: '入库数量', id: 'number', width: 190, labelWidth: 30,  name: 'number', value: ""},
+                {
+                    xtype: 'textfield',
+                    margin: '0 0 0 40',
+                    fieldLabel: ' 入库人',
+                    id: 'operator',
+                    width: 150,
+                    labelWidth: 45,
+                    name: 'operator',
+                    value: "",
                 },
-                speificLocation_row,
-                speificLocation_col,
                 {xtype : 'button',
                     margin: '0 10 0 70',
                     iconAlign : 'center',
                     iconCls : 'rukuicon ',
                     text : '添加',
                     handler: function(){
-                        var projectId = Ext.getCmp('id').getValue();
-                        var oldpanelTypeName = Ext.getCmp('oldpanelType').rawValue;//getValue();
-                        var oldpanelType = Ext.getCmp('oldpanelType').getValue();
-                        var length = Ext.getCmp('length').getValue();
-                        var length2 = Ext.getCmp('length2').getValue();
-                        var width = Ext.getCmp('width').getValue();
-                        var width2 = Ext.getCmp('width2').getValue();
-                        var width3 = Ext.getCmp('width3').getValue();
-                        var oldpanelNo = Ext.getCmp('oldpanelNo').getValue();
+                        var classificationName = Ext.getCmp('classification').getValue();
                         var oldpanelName = Ext.getCmp('oldpanelName').getValue();
                         var inventoryUnit = Ext.getCmp('inventoryUnit').getValue();
-                        var specification = Ext.getCmp('specification').getValue();
                         var number = Ext.getCmp('number').getValue();
-                        var weight = Ext.getCmp('weight').getValue();
-                        var warehouseNo = Ext.getCmp('storePosition').getValue();
-                        //var warehouseNo = Ext.getCmp('warehouseNo').getValue();
-                        //var position = Ext.getCmp('position').getValue();
-                        var row = Ext.getCmp('speificLocation_row').getValue();
-                        var col = Ext.getCmp('speificLocation_col').getValue();
+                        var unitWeight = Ext.getCmp('unitWeight').getValue();
+                        var unitArea = Ext.getCmp('unitArea').getValue();
+                        var remark = Ext.getCmp('remark').getValue();
+                        var warehouseName = Ext.getCmp('storePosition').getValue();
                         var data = [{
-                            'projectId' : projectId,
-                            'oldpanelTypeName' : oldpanelTypeName,
-                            'oldpanelType' : oldpanelType,
-                            'length' : length ,
-                            'length2' : length2 ,
-                            'width' : width,
-                            'width2' : width2,
-                            'width3' : width3,
-                            'oldpanelNo' : oldpanelNo,
+                            //'projectName':projectName,
+                            //'buildingName':buildingName,
+                            'unitWeight' : unitWeight,
+                            'classificationName':classificationName,
+                            'unitArea' : unitArea,
+                            'warehouseName':warehouseName,
+                            'remark' : remark,
                             'oldpanelName' : oldpanelName,
                             'inventoryUnit' : inventoryUnit,
-                            'specification' : specification,
                             'number' : number,
-                            'weight' : weight,
-                            'warehouseNo' : warehouseNo,
-                            'row':row,
-                            'col':col,
-                            //'position' : position,
                         }];
-                        //点击查询获得输入的数据
-                        // console.log(Ext.getCmp('length').getValue());
-                        // console.log(Ext.getCmp('cost').getValue());
                         Ext.getCmp('addDataGrid').getStore().loadData(data, true);
                     }
                 }
@@ -304,9 +431,6 @@ Ext.define('oldpanel.oldpanel_Back', {
         var toolbar3 = Ext.create('Ext.toolbar.Toolbar', {
             dock : "bottom",
             id : "toolbar3",
-            //style:{float:'center',},
-            //margin-right: '2px',
-            //padding: '0 0 0 750',
             style:{
                 //marginLeft: '900px'
                 layout: 'right'
@@ -339,6 +463,8 @@ Ext.define('oldpanel.oldpanel_Back', {
                         //submitEmptyText : false,
                         params : {
                             s : "[" + s + "]",
+                            projectId : Ext.getCmp("projectName").getValue(),
+                            buildingId : Ext.getCmp("buildingName").getValue(),
                         },
                         success : function(response) {
                             //var message =Ext.decode(response.responseText).showmessage;
@@ -360,29 +486,29 @@ Ext.define('oldpanel.oldpanel_Back', {
             id : 'addDataGrid',
             //dockedItems : [toolbar2],
             store : {
-                // fields: ['材料名','品号', '长',"；类型","宽",'规格','库存单位','仓库编号','数量','成本','存放位置']
-                fields: ['projectId','oldpanelTypeName', 'oldpanelType','length','length2','width','width2','width3','oldpanelNo',
-                    'oldpanelName','inventoryUnit', 'specification', 'number','weight','warehouseNo','location']
+                fields: [//'projectName','buildingName',
+                    'oldpanelName','classificationName','inventoryUnit','unitArea',
+                    'unitWeight',//'totalArea','totalWeight'，'length', 'width',
+                    'number','weight','warehouseName','remark','number']
             },
 
             columns : [
-                {dataIndex : 'projectId', text : '项目编号', hidden:true, flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
-                {dataIndex : 'oldpanelTypeName', text : '旧板类型', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
-                {dataIndex : 'oldpanelType', text : '旧板类型ID', hidden:true, flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
-                {dataIndex : 'length', text : '长一', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'length2', text : '长二', flex :1, editor : {xtype : 'textfield', allowBlank : true,}},
-                {dataIndex : 'width', text : '宽一', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'width2', text : '宽二', flex :1, editor : {xtype : 'textfield', allowBlank : true,}},
-                {dataIndex : 'width3', text : '宽三', flex :1, editor : {xtype : 'textfield', allowBlank : true,}},
-                {dataIndex : 'oldpanelNo', text : '品号', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'oldpanelName', text : '旧板名称', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+
+                {dataIndex : 'oldpanelName', text : '旧板名称', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
+                {text: '分类', dataIndex: 'classificationName', flex :1,
+                    //枚举，1：出库，0：入库
+                    renderer: function (value) {
+                        return Soims.model.application.ApplicationState[value].name; // key-value
+                    },
+                    editor:{xtype : 'textfield', allowBlank : false}
+                },
                 {dataIndex : 'inventoryUnit', text : '库存单位', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'specification', text : '规格', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'number', text : '数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'weight', text : '重量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'warehouseNo', text : '仓库编号', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'row', text : '行', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'col', text : '列', flex :1, editor : {xtype : 'textfield', allowBlank : false,}}
+                {dataIndex : 'unitArea', text : '单面积', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'unitWeight', text : '单重', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'warehouseName', text : '仓库名称', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'remark', text : '备注', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'number', text : '入库数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+
             ],
             viewConfig : {
                 plugins : {

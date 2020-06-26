@@ -81,15 +81,15 @@ public class Oldpanel_Data_Controller {
      * */
     //produces = {"text/html;charset=UTF-8"}
     @RequestMapping(value = "/oldpanel/addData.do")
-    public boolean oldpanelAddData(String s, HttpSession session) {
+    public boolean oldpanelAddData(String s, String operator, HttpSession session) {
         JSONArray jsonArray = new JSONArray(s);
         String tableName = "oldpanel_store";
 //        int uploadId = Integer.parseInt(session.getAttribute("userid").toString());
         String uploadId = (String)session.getAttribute("userid");
         Date date=new Date();
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String sql_addLog = "insert into oldpanellog (type,userId,time) values(?,?,?)";
-        String sql_backLog = "insert into oldpanellog (type,userId,time,projectId) values(?,?,?,?)";
+        String sql_addLog = "insert into oldpanellog (type,userId,time,operator) values(?,?,?,?)";
+        String sql_backLog = "insert into oldpanellog (type,userId,time,projectId,operator) values(?,?,?,?,?)";
         JSONObject jsonBack = jsonArray.getJSONObject(0);
         String projectId;
         try{
@@ -99,28 +99,28 @@ public class Oldpanel_Data_Controller {
         }
         int oldpanellogId;
         if(projectId.equals("")){
-            oldpanellogId= insertProjectService.insertDataToTable(sql_addLog,"0",uploadId,simpleDateFormat.format(date));
+            oldpanellogId= insertProjectService.insertDataToTable(sql_addLog,"0",uploadId,simpleDateFormat.format(date),operator);
         } else {
-            oldpanellogId= insertProjectService.insertDataToTable(sql_backLog,"2",uploadId,simpleDateFormat.format(date),projectId);
+            oldpanellogId= insertProjectService.insertDataToTable(sql_backLog,"2",uploadId,simpleDateFormat.format(date),projectId,operator);
         }
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonTemp = jsonArray.getJSONObject(i);
             //获得第i条数据的各个属性值
             System.out.println(tableName + "第" + i + "个:userid=" + uploadId + "---" + jsonTemp);
-            String oldpanelName=jsonTemp.get("oldpanelName")+"";
-            String classificationId=jsonTemp.get("classificationId")+"";
+            String oldpanelName=(jsonTemp.get("oldpanelName")+"").toUpperCase();
+            String classificationId=jsonTemp.get("classificationName")+"";
             String inventoryUnit=jsonTemp.get("inventoryUnit")+"";
             String number=jsonTemp.get("number")+"";
-            String warehouseNo=jsonTemp.get("warehouseNo")+"";
+            String warehouseName=jsonTemp.get("warehouseName")+"";
             String unitArea=jsonTemp.get("unitArea")+"";
             String unitWeight=jsonTemp.get("unitWeight")+"";
             String remark=jsonTemp.get("remark")+"";
-            boolean result = y_Upload_Data_Service.oldpanelUpload(y_Upload_Data_Service.analyzeOldpanelName(oldpanelName),
-                    oldpanelName,classificationId,inventoryUnit, number,warehouseNo,unitArea,unitWeight,remark,uploadId);
+            boolean result = y_Upload_Data_Service.oldpanelUpload(oldpanelName,classificationId,inventoryUnit,
+                    number,warehouseName,unitArea,unitWeight,remark,uploadId);
             if(!result){
                 return false;
             }
-            String sql_addLogDetail="insert into oldpanellogdetail (oldpanelName,count,oldpanellogId) values (?,?,?,?)";
+            String sql_addLogDetail="insert into oldpanellogdetail (oldpanelName,count,oldpanellogId) values (?,?,?)";
             boolean is_log_right= insertProjectService.insertIntoTableBySQL(sql_addLogDetail,oldpanelName,number,String.valueOf(oldpanellogId));
             if(!is_log_right){
                 return false;
@@ -149,16 +149,17 @@ public class Oldpanel_Data_Controller {
 
     //produces = {"text/html;charset=UTF-8"}
     @RequestMapping(value = "/uploadOldpanelExcel.do")
-    public WebResponse uploadOldpanel(MultipartFile uploadFile, String tableName, HttpSession session) {
+    public WebResponse uploadOldpanel(MultipartFile uploadFile,String operator, HttpSession session) {
         WebResponse response = new WebResponse();
+        String tableName = "oldpanel_store";
         String uploadId = (String) session.getAttribute("userid");
         Date date=new Date();
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String sql_addLog = "insert into oldpanellog (type,userId,time) values(?,?,?)";
-        int oldpanellogId= insertProjectService.insertDataToTable(sql_addLog,"0",uploadId,simpleDateFormat.format(date));
+        String sql_addLog = "insert into oldpanellog (type,userId,time,operator) values(?,?,?,?)";
+        int oldpanellogId= insertProjectService.insertDataToTable(sql_addLog,"0",uploadId,simpleDateFormat.format(date),operator);
         JSONArray array = new JSONArray();
         try {
-            UploadDataResult result = allExcelService.uploadExcelData(uploadFile.getInputStream(),uploadId,tableName,String.valueOf(oldpanellogId));
+            UploadDataResult result = allExcelService.uploadOldpanelExcelData(uploadFile.getInputStream(),uploadId,tableName,String.valueOf(oldpanellogId));
             response.put("value",result.dataList);
             response.put("totalCount", result.dataList.size());
         } catch (IOException e) {

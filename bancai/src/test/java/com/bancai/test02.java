@@ -32,7 +32,7 @@ public class test02 {
 //        String bb = "20";
 //        compare = aa.compareTo(bb);
 //        System.out.println(compare);
-        String isPureNumber = "^[0-9]+(.[0-9]+)?$";
+        String isPureNumber = "^-?[0-9]+";
         String isPureWord = "^[A-Za-z]+$";
 //        String s = "2100";
 //        String s2 = "%20%%AA";
@@ -45,19 +45,39 @@ public class test02 {
 //            }
 //
 //        }
-        String s = "2177";
-//        String[] ss = s.split("\\s+");
-//        for (String value : ss) {
-//            System.out.println(value.contains("*"));
-//        }
-//        String format = "203";
-//        format = format.replace("3","l");
-//        format = format.replace("2","3");
-//        format = format.replace("l","2");
-//        System.out.println(format);
+        int conM = 0;
+        String m = "0";
+        String n = "0";
+        String oldpanelName = "100 200";
+        StringBuilder formatBuilder = new StringBuilder();
+        String[] sOName = oldpanelName.split("\\s+");
         for (int i = 0; i < 4; i++) {
-            System.out.println(s.substring(i,i+1));
+            try {
+                if(conM==0){
+                    m = sOName[i];
+                    formatBuilder.append("2");
+                    conM=1;
+                } else if(conM==1){
+                    n = sOName[i];
+                    formatBuilder.append("3");
+                    conM=2;
+                }
+            } catch (Exception e){
+                formatBuilder.append("0");
+            }
         }
+        String format = formatBuilder.toString();
+        if((format.contains("3"))&&(n.equals(SetLengthAndWidth(m,n)[0]))){
+            String temp = m + n;
+            n = temp.substring(0, temp.length()-n.length());
+            m = temp.substring(n.length());
+            format = format.replace("3","l");
+            format = format.replace("2","3");
+            format = format.replace("l","2");
+        }
+        System.out.println(format);
+        System.out.println(m);
+        System.out.println(n);
 
     }
 
