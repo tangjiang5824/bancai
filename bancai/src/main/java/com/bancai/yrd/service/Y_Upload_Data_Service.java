@@ -75,8 +75,6 @@ public class Y_Upload_Data_Service extends BaseService {
         String b = "0";
         String mnAngle = "";
         StringBuilder suffixBuilder = new StringBuilder();
-        String format = "";
-        String suffix = "";
         String oldpanelTypeName = "";
         int conM = 0;
         int conT = 0;
@@ -162,8 +160,8 @@ public class Y_Upload_Data_Service extends BaseService {
                 formatBuilder.append("0");
             }
         }
-        format = formatBuilder.toString();
-        suffix = suffixBuilder.toString();
+        String format = formatBuilder.toString() + "";
+        String suffix = suffixBuilder.toString() + "";
         if(!suffix.isEmpty())
             suffix = suffix.substring(0,suffix.length()-1);
         if((format.contains("3"))&&(n.equals(SetLengthAndWidth(m,n)[0]))){
