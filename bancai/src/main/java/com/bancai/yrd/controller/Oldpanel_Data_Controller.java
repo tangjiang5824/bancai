@@ -149,8 +149,9 @@ public class Oldpanel_Data_Controller {
 
     //produces = {"text/html;charset=UTF-8"}
     @RequestMapping(value = "/uploadOldpanelExcel.do")
-    public WebResponse uploadOldpanel(MultipartFile uploadFile, String tableName, HttpSession session) {
+    public WebResponse uploadOldpanel(MultipartFile uploadFile, HttpSession session) {
         WebResponse response = new WebResponse();
+        String tableName = "oldpanel";
         String uploadId = (String) session.getAttribute("userid");
         Date date=new Date();
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

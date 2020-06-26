@@ -53,7 +53,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                     //选中后
                     var select = record[0].data;
                     var warehouseNo = select.warehouseNo;
-                    console.log(warehouseNo)
+                    console.log(warehouseNo);
 
                     //重新加载行选项
                     var locationNameList_row = Ext.create('Ext.data.Store',{

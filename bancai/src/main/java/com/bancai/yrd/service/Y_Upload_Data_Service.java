@@ -37,7 +37,6 @@ public class Y_Upload_Data_Service extends BaseService {
         String er = "";
         String[] analyzeOldpanelName = analyzeOldpanelName(oldpanelName);
 //        boolean upload = oldpanelUpload();
-
 //                if(typeList.isEmpty()) {
 //                    result.setErrorCode(2);
 //                    return result;
