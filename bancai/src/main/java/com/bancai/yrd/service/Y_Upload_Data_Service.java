@@ -64,7 +64,7 @@ public class Y_Upload_Data_Service extends BaseService {
     @Transactional
     public String[] analyzeOldpanelName(String oldpanelName){
         System.out.println("analyzeOldpanelName==="+oldpanelName);
-        String isPureNumber = "^[0-9]+(.[0-9]+)?$";
+        String isPureNumber = "^-?[0-9]+";
         String isPureWord = "^[A-Za-z]+$";
         String[] sOName = oldpanelName.split("\\s+");
         String oldpanelType = "0";
@@ -82,6 +82,7 @@ public class Y_Upload_Data_Service extends BaseService {
         int conT = 0;
         for (int i = 0; i < 4; i++) {
             try {
+//                System.out.println("ana====="+sOName[i]);
                 if (sOName[i].matches(isPureNumber)){
                     if(conM==0){
                         m = sOName[i];
