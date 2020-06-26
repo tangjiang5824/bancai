@@ -68,8 +68,31 @@ public class AllExcelService extends BaseService {
 				String materialName = dataList.get(i).get("materialName") + "";
 				String sql_find_id = "select id from material_info where materialName =?";
 				id_List = queryService.query(sql_find_id,materialName);
-				String width="";
-				String materialId="";
+				String width=null;
+				if(null!=dataList2.get(i).get("width")){
+					width=dataList2.get(i).get("width")+"";
+				}
+				String materialId=null;
+				String inventoryUnit=null;
+				if(null!=dataList2.get(i).get("inventoryUnit")){
+					inventoryUnit=dataList2.get(i).get("inventoryUnit")+"";
+				}
+				String count=null;
+				if(null!=dataList2.get(i).get("count")){
+					count=dataList2.get(i).get("count")+"";
+				}
+				String warehouseName=null;
+				if(null!=dataList2.get(i).get("warehouseName")){
+					warehouseName=dataList2.get(i).get("warehouseName")+"";
+				}
+				String unitWeight=null;
+				if(null!=dataList2.get(i).get("unitWeight")){
+					unitWeight=dataList2.get(i).get("unitWeight")+"";
+				}
+				String description=null;
+				if(null!=dataList2.get(i).get("description")){
+					description=dataList2.get(i).get("description")+"";
+				}
 				//查出的materialId大于一个
 				if(id_List.size()>1){
 					result.setErrorCode(2);
@@ -99,15 +122,17 @@ public class AllExcelService extends BaseService {
 				dataList2.get(i).put("materialId",materialId);
 				String totalWeight="0.0";
 				if(null!=dataList2.get(i).get("unitWeight")&&null!=dataList2.get(i).get("count")){
-					totalWeight=Double.parseDouble(dataList2.get(i).get("unitWeight")+"")*Double.parseDouble(dataList2.get(i).get("count")+"")+"";
+					totalWeight=Double.parseDouble(unitWeight)*Double.parseDouble(count)+"";
 				}
 				dataList2.get(i).put("totalWeight",totalWeight);
 				dataList.get(i).put("totalWeight",totalWeight);
-				//后面为log记录
 				String specification = dataList.get(i).get("specification")+"";
-				String count =dataList.get(i).get("count")+"";
-				String sql_log_detail = "insert into material_logdetail (materialName,materialId,count,specification,materiallogId) values (?,?,?,?,?)";
-				boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_log_detail,materialName,materialId,count,specification,String.valueOf(main_key));
+				//原材料入库
+				String sql_insert_material="insert into material_store (materialId,specification,inventoryUnit,count,countUse,warehouseName,unitWeight,totalWeight,description,uploadId) values (?,?,?,?,?,?,?,?,?,?)";
+				int store_id= insertProjectService.insertDataToTable(sql_insert_material,materialId,specification,inventoryUnit,count,count,warehouseName,unitWeight,totalWeight,description,userid);
+				//后面为log记录
+				String sql_log_detail = "insert into material_logdetail (materialName,materialId,count,specification,materiallogId,materialstoreId) values (?,?,?,?,?,?)";
+				boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_log_detail,materialName,materialId,count,specification,String.valueOf(main_key),store_id+"");
 			}
 		} else if (tablename.equals("oldpanel")) {
 			for (int i = 0; i < dataList.size(); i++) {
@@ -133,9 +158,9 @@ public class AllExcelService extends BaseService {
 		}
 		// 插入数据
 		//log.debug("materialtype= "+materialtype);
-		boolean upload = uploadData(dataList2,userid,tablename);
+		//boolean upload = uploadData(dataList2,userid,tablename);
 		result.dataList = dataList;
-		result.success = upload;
+		result.success = true;
 		return result;
 
 	}

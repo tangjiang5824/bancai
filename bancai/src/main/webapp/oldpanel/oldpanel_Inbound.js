@@ -293,7 +293,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                         var unitArea = Ext.getCmp('unitArea').getValue();
                         //var totalArea = Ext.getCmp('totalArea').getValue();
                         var remark = Ext.getCmp('remark').getValue();
-                        var operator = Ext.getCmp('operator').getValue();
+                        //var operator = Ext.getCmp('operator').getValue();
                         //var warehouseName = Ext.getCmp('storePosition').getValue();
                         //var length = Ext.getCmp('length').getValue();
                         //var length2 = Ext.getCmp('length2').getValue();
@@ -321,7 +321,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                             'oldpanelName' : oldpanelName,
                             'inventoryUnit' : inventoryUnit,
                             'number' : number,
-                            'operator':operator,
+                            //'operator':operator,
                             // 'length' : length ,
                             // 'length2' : length2 ,
                             // 'width' : width,
@@ -385,6 +385,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                         //submitEmptyText : false,
                         params : {
                             s : "[" + s + "]",
+                            operator: Ext.getCmp('operator').getValue(),
                         },
                         success : function(response) {
                             //var message =Ext.decode(response.responseText).showmessage;
@@ -409,7 +410,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                 // fields: ['材料名','品号', '长',"；类型","宽",'规格','库存单位','仓库编号','数量','成本','存放位置']
                 fields: ['oldpanelName','classificationName','inventoryUnit','unitArea',
                     'unitWeight',//'totalArea','totalWeight'，'length', 'width',
-                    'number','weight','warehouseName','remark','operator','number']
+                    'number','weight','warehouseName','remark','number']
             },
 
             columns : [
@@ -452,7 +453,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                 //{dataIndex : 'row', text : '行', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 //{dataIndex : 'col', text : '列', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'remark', text : '备注', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'operator', text : '操作人', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                //{dataIndex : 'operator', text : '操作人', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'number', text : '入库数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
 
             ],
