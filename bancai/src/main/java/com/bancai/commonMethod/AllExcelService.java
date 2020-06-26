@@ -103,8 +103,8 @@ public class AllExcelService extends BaseService {
 				//后面为log记录
 				String specification = dataList.get(i).get("specification")+"";
 				String count =dataList.get(i).get("count")+"";
-				String sql_log_detail = "insert into material_logdetail (materialName,count,specification,materiallogId) values (?,?,?,?)";
-				boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_log_detail,materialName,count,specification,String.valueOf(main_key));
+				String sql_log_detail = "insert into material_logdetail (materialName,materialId,count,specification,materiallogId) values (?,?,?,?,?)";
+				boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_log_detail,materialName,materialId,count,specification,String.valueOf(main_key));
 			}
 		} else if (tablename.equals("oldpanel")) {
 			for (int i = 0; i < dataList.size(); i++) {
