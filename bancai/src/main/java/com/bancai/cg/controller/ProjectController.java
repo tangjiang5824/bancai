@@ -469,32 +469,54 @@ public class ProjectController {
     }
 
     //原材料仓库出库入库回滚
-    //类型：0入库，1出库，2退库
+    //类型：0入库，1出库，2退库， 3撤销入库，4撤销出库，5撤销退库
     @RequestMapping(value = "/material/backMaterialstore.do")
     @Transactional
-    public boolean backMaterialstore(String materiallogId,String type) throws JSONException {
-        String sql_find="select materialId,count from material_logdetail where materiallogId=?";
-            DataList list=queryService.query(sql_find,materiallogId);
-            for(int i=0;i<list.size();i++){
-            String materialId=list.get(i).get("materialId")+"";
+    public boolean backMaterialstore(String materiallogId,HttpSession session,String id ,String operator,String type) throws JSONException {
+        String sql_find_log_detail="select * from material_logdetail where materiallogId=? and isrollbcak<>1";
+        String userid = (String) session.getAttribute("userid");
+        String sql_insert_new_log="insert into material_log (type,userId,time,operator,isrollback) values(?,?,?,?,?)";
+        Date date=new Date();
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String update_log="update material_log set isrollbcak=1 where id=?";
+        //把isrollbcak改为1
+        insertProjectService.insertIntoTableBySQL(update_log,id);
+
+        //log主键
+        int main_key=0;
+        //插入新的log
+        if (type.equals("0")) main_key= insertProjectService.insertDataToTable(sql_insert_new_log,"3",userid,simpleDateFormat.format(date),operator,"1");
+
+
+        DataList list=queryService.query(sql_find_log_detail,materiallogId);
+        for(int i=0;i<list.size();i++){
+            String materialstoreId=list.get(i).get("materialstoreId")+"";
+            String materialName="";
+            String specification="";
+            String materialId="";
+
+            if(null!=list.get(i).get("materialName")) materialName=list.get(i).get("materialName")+"";
+            if(null!=list.get(i).get("specification")) specification=list.get(i).get("specification")+"";
+            if(null!=list.get(i).get("materialId")) materialId=list.get(i).get("materialId")+"";
             String count=list.get(i).get("count")+"";
             int count_to_op=Integer.valueOf(count);
             if(type.equals("0")){
+                //撤销入库
+
                 //进行回滚出库
-               String sql_find_id="select count,id  from material_store where count>0 and materialId=?";
-                DataList id_list=queryService.query(sql_find_id,materialId);
-                //回滚出库并插入log
-                for(int j=0;j<id_list.size();j++){
-                    if(Integer.valueOf(id_list.get(j).get("count")+"")>=count_to_op){
-                        String sql_de="update material_store set count=count-? where id=?";
-                        boolean flag=insertProjectService.insertIntoTableBySQL(sql_de,count_to_op+"",id_list.get(j).get("id")+"");
-                            break;
-                    }else {
-                        String sql_de="update material_store set count=0 where id=?";
-                        boolean flag=insertProjectService.insertIntoTableBySQL(sql_de,id_list.get(j).get("id")+"");
-                        count_to_op=count_to_op-Integer.valueOf(id_list.get(j).get("count")+"");
-                    }
-                }
+               String sql_find_list="select * from material_store where id=?";
+               DataList count_list=queryService.query(sql_find_list,materialstoreId);
+               if(count_list.size()!=1||Integer.valueOf(count_list.get(0).get("count")+"")!=count_to_op) return  false;
+               String sql_update_count="update material_store set count=0 where id=?";
+               insertProjectService.insertIntoTableBySQL(sql_update_count,materialstoreId);
+
+                //修改完成撤销的原logdetail
+                String detail_id=list.get(i).get("id")+"";
+                String update_detail_isrollback="update material_logdetail set isrollback=1 where id=?";
+                insertProjectService.insertIntoTableBySQL(update_detail_isrollback,detail_id);
+                //插入新的detail
+                String sql_insert_new_detial="insert into material_logdetial (materialName,count,specification,materiallogId,materialId,materialstoreId,isrollback) values(?,?,?,?,?,?,?)";
+                insertProjectService.insertDataToTable(sql_insert_new_detial,materialName,count,specification,materiallogId,materialId,main_key+"","1");
             }
         }
 

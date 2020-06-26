@@ -54,7 +54,7 @@ public class MaterialDataController {
         //入库记录sql
         Date date=new Date();
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String sql_addLog = "insert into material_log (type,userId,time,operator) values(?,?,?,?)";
+        String sql_addLog = "insert into material_log (type,userId,time,operator,isrollback) values(?,?,?,?,?)";
         String sql_backLog = "insert into material_log (type,userId,time,projectId) values(?,?,?,?)";
         JSONObject jsonBack = jsonArray.getJSONObject(0);
         String projectId = "";
@@ -66,7 +66,7 @@ public class MaterialDataController {
 
         int main_key;
         if(projectId.equals("")){
-            main_key= insertProjectService.insertDataToTable(sql_addLog,"0",userId,simpleDateFormat.format(date),operator);
+            main_key= insertProjectService.insertDataToTable(sql_addLog,"0",userId,simpleDateFormat.format(date),operator,"0");
         } else {
             main_key= insertProjectService.insertDataToTable(sql_backLog,"2",userId,simpleDateFormat.format(date),projectId);
         }
@@ -107,8 +107,8 @@ public class MaterialDataController {
             int store_main= insertProjectService.insertDataToTable(sql,materialId,specification,inventoryUnit,count,count,rowNo,columNo,userId,warehouseName,unitWeight,totalWeight);
 
             //插入log详细信息
-            String sql_detail="insert into material_logdetail (materialName,materialId,count,specification,materiallogId,materialstoreId) values (?,?,?,?,?,?) ";
-            boolean is_log_right= insertProjectService.insertIntoTableBySQL(sql_detail,materialName,materialId,count,specification,String.valueOf(main_key),store_main+"");
+            String sql_detail="insert into material_logdetail (materialName,materialId,count,specification,materiallogId,materialstoreId,isrollbcak) values (?,?,?,?,?,?,?) ";
+            boolean is_log_right= insertProjectService.insertIntoTableBySQL(sql_detail,materialName,materialId,count,specification,String.valueOf(main_key),store_main+"","0");
             if(!is_log_right){
                 return false;
             }
@@ -123,10 +123,10 @@ public class MaterialDataController {
     public WebResponse uploadMaterial(MultipartFile uploadFile, String tableName, String operator ,HttpSession session) {
         WebResponse response = new WebResponse();
         String userid = (String) session.getAttribute("userid");
-        String sql_log="insert into material_log (type,userId,time,operator) values(?,?,?,?)";
+        String sql_log="insert into material_log (type,userId,time,operator,isrollback) values(?,?,?,?,?)";
         Date date=new Date();
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        int main_key= insertProjectService.insertDataToTable(sql_log,"0",userid,simpleDateFormat.format(date),operator);
+        int main_key= insertProjectService.insertDataToTable(sql_log,"0",userid,simpleDateFormat.format(date),operator,"0");
       //  JSONArray array = new JSONArray();
         try {
             //UploadDataResult result = excelService.uploadExcelData(uploadFile.getInputStream(),userid,tableName);
