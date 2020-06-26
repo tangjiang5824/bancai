@@ -161,21 +161,20 @@ public class Y_Upload_Data_Service extends BaseService {
             } catch (Exception e){
                 formatBuilder.append("0");
             }
-            format = formatBuilder.toString();
-            suffix = suffixBuilder.toString();
-            if(!suffix.isEmpty())
-                suffix = suffix.substring(0,suffix.length()-1);
-            if((format.contains("3"))&&(n.equals(SetLengthAndWidth(m,n)[0]))){
-                String temp = m + n;
-                n = temp.substring(0, temp.length()-n.length());
-                m = temp.substring(n.length());
-                format = format.replace("3","l");
-                format = format.replace("2","3");
-                format = format.replace("l","2");
-            }
-
         }
-        System.out.println(Arrays.toString(new String[]{format,oldpanelType,m,n,a,b,mnAngle,suffix,oldpanelTypeName}));
+        format = formatBuilder.toString();
+        suffix = suffixBuilder.toString();
+        if(!suffix.isEmpty())
+            suffix = suffix.substring(0,suffix.length()-1);
+        if((format.contains("3"))&&(n.equals(SetLengthAndWidth(m,n)[0]))){
+            String temp = m + n;
+            n = temp.substring(0, temp.length()-n.length());
+            m = temp.substring(n.length());
+            format = format.replace("3","l");
+            format = format.replace("2","3");
+            format = format.replace("l","2");
+        }
+        System.out.println("AnaResult======="+Arrays.toString(new String[]{oldpanelName,format,oldpanelType,m,n,a,b,mnAngle,suffix,oldpanelTypeName}));
         return new String[]{format,oldpanelType,m,n,a,b,mnAngle,suffix,oldpanelTypeName};
     }
     private String[] SetLengthAndWidth(String m, String n){
@@ -186,18 +185,6 @@ public class Y_Upload_Data_Service extends BaseService {
         return new String[]{String.valueOf(max),String.valueOf(min)};
     }
 
-//    @Transactional
-//    public void oldpanelAddData(String tableName,int oldpanelNo,String oldpanelName,double length,double length2,int oldpanelType,double width,
-//                                double width2,double width3,String inventoryUnit,String warehouseNo,int rowNo,int columNo,double number,double weight,int uploadId){
-//        log.debug("com.bancai.yrd.com.bancai.service.Y_Upload_Data_Service.oldpanelAddData");
-//
-//        jo.update("insert into "+tableName+"(oldpanelNo,oldpanelName,length,length2,oldpanelType,width," +
-//                        "width2,width3,inventoryUnit,warehouseNo,rowNo,columNo,countUse,countStore,weight,uploadId) " +
-//                        "values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-//                oldpanelNo,oldpanelName,length,length2,oldpanelType,width,
-//                width2,width3,inventoryUnit,warehouseNo,rowNo,columNo,number,number,weight,uploadId);
-//        //return true;
-//    }
     /**
      * 添加数据
      */
@@ -227,7 +214,6 @@ public class Y_Upload_Data_Service extends BaseService {
             formatInfoBuilder.append("%");
         }
         String formatInfo = formatInfoBuilder.toString().substring(0,formatInfoBuilder.toString().length()-1);
-//        System.out.println(formatInfo);
         return !queryService.query("select * from oldpanel_info where oldpanelFormat=? and oldpanelType=? and formatInfo=?",
                 format, oldpanelType, formatInfo).isEmpty();
     }
@@ -237,76 +223,21 @@ public class Y_Upload_Data_Service extends BaseService {
         double unitArea = Double.parseDouble(unitArea0);
         double unitWeight = Double.parseDouble(unitWeight0);
         double num = Double.parseDouble(number);
-        String totalArea = String.valueOf(unitArea*num);
-        String totalWeight = String.valueOf(unitWeight*num);
+        double totalArea = unitArea*num;
+        double totalWeight = unitWeight*num;
         String sql2 = "insert into oldpanel_store (oldpanelName,classificationId,inventoryUnit,countUse,countStore,warehouseName," +
                 "unitArea,unitWeight,remark,uploadId,totalArea,totalWeight,format,oldpanelType,length,width,aValue,bValue,mnAngle,suffix) " +
                 "values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-//        String[] t = {oldpanelName,classificationId,inventoryUnit,String.valueOf(num),String.valueOf(num),warehouseName,
-//                String.valueOf(unitArea),String.valueOf(unitWeight),remark,uploadId,totalArea,totalWeight,
-//                analyzeOldpanelName[0],analyzeOldpanelName[1], analyzeOldpanelName[2], analyzeOldpanelName[3],
-//                analyzeOldpanelName[4],analyzeOldpanelName[5],analyzeOldpanelName[6],analyzeOldpanelName[7]};
-//        System.out.println(Arrays.toString(t));
+        String[] t = {oldpanelName,classificationId,inventoryUnit,String.valueOf(num),String.valueOf(num),warehouseName,
+                String.valueOf(unitArea),String.valueOf(unitWeight),remark,uploadId,String.valueOf(totalArea),String.valueOf(totalWeight),
+                analyzeOldpanelName[0],analyzeOldpanelName[1], analyzeOldpanelName[2], analyzeOldpanelName[3],
+                analyzeOldpanelName[4],analyzeOldpanelName[5],analyzeOldpanelName[6],analyzeOldpanelName[7]};
+        System.out.println("Save======="+Arrays.toString(t));
         jo.update(sql2,oldpanelName,classificationId,inventoryUnit,String.valueOf(num),String.valueOf(num),warehouseName,
-                String.valueOf(unitArea),String.valueOf(unitWeight),remark,uploadId,totalArea,totalWeight,
+                String.valueOf(unitArea),String.valueOf(unitWeight),remark,uploadId,String.valueOf(totalArea),String.valueOf(totalWeight),
                 analyzeOldpanelName[0],analyzeOldpanelName[1], analyzeOldpanelName[2], analyzeOldpanelName[3],
                 analyzeOldpanelName[4],analyzeOldpanelName[5],analyzeOldpanelName[6],analyzeOldpanelName[7]);
     }
-    /**
-     * 上传数据
-     *
-     * @param inputStream
-     * @return
-     * @throws IOException
-     */
-    @Transactional
-    public UploadDataResult oldpanelUploadData(InputStream inputStream, String tableName, int userid) throws IOException {
-        DataList dataList;
-        UploadDataResult result = new UploadDataResult();
-        Excel excel = new Excel(inputStream);
-
-        dataList = excel.readExcelContent(1);
-
-        boolean upload = oldpanelUpload0(dataList,tableName,userid);
-        result.dataList = dataList;
-        result.success = upload;
-        return result;
-    }
-
-    @Transactional
-    boolean oldpanelUpload0(DataList dataList, String tableName, int userid) {
-        oldpanelSaveData0(dataList,tableName,userid);
-        //updateEnterpriseInfo(tableName);
-        return true;
-    }
-
-    private void oldpanelSaveData0(DataList dataList, String tableName, int userid) {
-        for (DataRow dataRow : dataList) {
-            String oldpanelNo = (String) dataRow.get("oldpanelNo");
-            String oldpanelName = (String) dataRow.get("oldpanelName");
-            String length = (String) dataRow.get("length");
-            String length2 = (String) dataRow.get("length2");
-            String oldpanelTypeName = (String) dataRow.get("oldpanelType");
-            String width = (String) dataRow.get("width");
-            String width2 = (String) dataRow.get("width2");
-            String width3 = (String) dataRow.get("width3");
-            String inventoryUnit = (String) dataRow.get("inventoryUnit");
-            String warehouseNo = (String) dataRow.get("warehouseNo");
-            String position = (String) dataRow.get("position");
-            String number = (String) dataRow.get("number");
-            String weight = (String) dataRow.get("weight");
-
-            DataList list = queryService.query("select oldpanelType from oldpanelType where oldpanelTypeName=?", oldpanelTypeName);
-            int oldpanelType = Integer.parseInt(String.valueOf(list.get(0).get("oldpanelType")));
-
-            String sql = "insert into " + tableName + "(oldpanelNo,oldpanelName,length,length2,oldpanelType,width," +
-                    "width2,width3,inventoryUnit,warehouseNo,position,countUse,countStore,weight,uploadId) " +
-                    "values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-            jo.update(sql, oldpanelNo, oldpanelName, length, length2, oldpanelType, width,
-                    width2, width3, inventoryUnit, warehouseNo, position, number, number, weight, userid);
-        }
-    }
-
     /**
      * queryPage替换指定属性值为对应另一属性值
      *
