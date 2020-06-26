@@ -108,19 +108,19 @@ public class Oldpanel_Data_Controller {
             //获得第i条数据的各个属性值
             System.out.println(tableName + "第" + i + "个:userid=" + uploadId + "---" + jsonTemp);
             String oldpanelName=jsonTemp.get("oldpanelName")+"";
-            String classificationId=jsonTemp.get("classificationId")+"";
+            String classificationId=jsonTemp.get("classificationName")+"";
             String inventoryUnit=jsonTemp.get("inventoryUnit")+"";
             String number=jsonTemp.get("number")+"";
-            String warehouseNo=jsonTemp.get("warehouseNo")+"";
+            String warehouseName=jsonTemp.get("warehouseName")+"";
             String unitArea=jsonTemp.get("unitArea")+"";
             String unitWeight=jsonTemp.get("unitWeight")+"";
             String remark=jsonTemp.get("remark")+"";
-            boolean result = y_Upload_Data_Service.oldpanelUpload(y_Upload_Data_Service.analyzeOldpanelName(oldpanelName),
-                    oldpanelName,classificationId,inventoryUnit, number,warehouseNo,unitArea,unitWeight,remark,uploadId);
+            boolean result = y_Upload_Data_Service.oldpanelUpload(oldpanelName,classificationId,inventoryUnit,
+                    number,warehouseName,unitArea,unitWeight,remark,uploadId);
             if(!result){
                 return false;
             }
-            String sql_addLogDetail="insert into oldpanellogdetail (oldpanelName,count,oldpanellogId) values (?,?,?,?)";
+            String sql_addLogDetail="insert into oldpanellogdetail (oldpanelName,count,oldpanellogId) values (?,?,?)";
             boolean is_log_right= insertProjectService.insertIntoTableBySQL(sql_addLogDetail,oldpanelName,number,String.valueOf(oldpanellogId));
             if(!is_log_right){
                 return false;
