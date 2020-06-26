@@ -145,7 +145,7 @@ Ext.define('oldpanel.old_Upload_Data', {
                                             waitMsg : '正在上传...',
                                             params : {
                                                 tableName:tableName,
-                                                inBoundName:Ext.getCmp('inBoundName').getValue(),
+                                                operator: Ext.getCmp('operator').getValue(),
                                                 //materialtype:materialtype,
                                                 //check:check
                                             },
@@ -264,12 +264,12 @@ Ext.define('oldpanel.old_Upload_Data', {
             items : [
                 {
                     xtype: 'textfield',
-                    margin: '0 40 0 20',
+                    margin: '0 40 0 0',
                     fieldLabel: ' 入库人',
-                    id: 'inBoundName',
+                    id: 'operator',
                     width: 150,
                     labelWidth: 45,
-                    name: 'inBoundName',
+                    name: 'operator',
                     value: "",
                 },
                 form

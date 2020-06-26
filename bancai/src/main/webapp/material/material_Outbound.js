@@ -81,6 +81,17 @@ Ext.define('material.material_Outbound',{
             }
 
         });
+        var toolbar_ttop = Ext.create('Ext.toolbar.Toolbar', {
+            dock : "top",
+            items: [
+                {
+                    xtype:'tbtext',
+                    text:'查询条件',
+                    margin : '0 40 0 0',
+                }
+
+            ]
+        });
 
         //长1 长2 宽1 宽2 库存单位
         var toolbar = Ext.create('Ext.toolbar.Toolbar', {
@@ -229,6 +240,103 @@ Ext.define('material.material_Outbound',{
             }]
         });
 
+        //弹出框的表头
+        var toolbar_pop = Ext.create('Ext.toolbar.Toolbar', {
+            dock : "top",
+            items: [
+                // MaterialTypeList,
+                {
+                    xtype: 'textfield',
+                    margin : '0 40 0 0',
+                    fieldLabel: '回滚人',
+                    id :'operator_back',
+                    width: 150,
+                    labelWidth: 50,
+                    name: 'operator_back',
+                    value:"",
+                },
+                {
+                    xtype : 'datefield',
+                    margin : '0 40 0 0',
+                    fieldLabel : '回滚时间',
+                    width : 180,
+                    labelWidth : 60,
+                    id : "backTime",
+                    name : 'backTime',
+                    format : 'Y-m-d',
+                    editable : false,
+                    //value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
+                },
+
+                {
+                    xtype : 'button',
+                    text: '回滚记录',
+                    width: 80,
+                    margin: '0 0 0 40',
+                    layout: 'right',
+                    handler: function(){
+                        material_inBoundRecords_Store.load({
+                            params : {
+                                // operator : Ext.getCmp('operator').getValue(),
+                                operator : Ext.getCmp('operator').getValue(),//获取操作员名
+                                startTime:Ext.getCmp('startTime').getValue(),
+                                type:0
+                            }
+                        });
+                    }
+                }
+
+            ]
+        });
+
+        //弹出框，出入库详细记录
+        var material_Query_Records_specific_data_grid=Ext.create('Ext.grid.Panel',{
+            id : 'material_Query_Records_specific_data_grid',
+            tbar: toolbar_pop,
+            // store:material_Query_Records_store1,//oldpanellogdetailList，store1的数据固定
+            dock: 'bottom',
+            columns:[
+                {
+                    text: '原材料品名',
+                    dataIndex: 'materialName',
+                    flex :1,
+                    width:"80"
+                },
+
+                {
+                    // id:'outOrinNum',
+                    text: '入库数量',
+                    flex :1,
+                    dataIndex: 'count'
+                }
+                //fields:['oldpanelId','oldpanelName','count'],specification
+
+            ],
+            flex:1,
+            //selType:'checkboxmodel',
+            plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
+                clicksToEdit : 2
+            })],
+            // listeners: {
+            //     //监听修改
+            //     validateedit: function (editor, e) {
+            //         var field = e.field
+            //         var id = e.record.data.id
+            //     },
+            // }
+        });
+
+        var material_Query_Records_win_showmaterialData = Ext.create('Ext.window.Window', {
+            id:'material_Query_Records_win_showmaterialData',
+            title: '原材料出入库记录回滚',
+            height: 500,
+            width: 650,
+            layout: 'fit',
+            closable : true,
+            draggable:true,
+            closeAction : 'close',
+            items:material_Query_Records_specific_data_grid,
+        });
 
         var grid = Ext.create("Ext.grid.Panel", {
             id : 'addDataGrid',
@@ -236,7 +344,7 @@ Ext.define('material.material_Outbound',{
             // store : {
             //     fields :['projectId','类型','长1','宽1','数量','成本','行','列','库存单位','仓库编号','规格','原材料名称']
             // },
-            //bbar:,
+            // tbar:toolbar,
             store: material_inBoundRecords_Store,
             title: "入库详细记录",
             columns : [
@@ -248,12 +356,12 @@ Ext.define('material.material_Outbound',{
                     renderer: function (value) {
                         return Soims.model.application.ApplicationState[value].name; // key-value
                     },
-                    editor:{xtype : 'textfield', allowBlank : false}
+                    // editor:{xtype : 'textfield', allowBlank : false}
                 },
                 {   text: '操作时间',
                     dataIndex: 'time',
                     flex :1 ,
-                    editor:{xtype : 'textfield', allowBlank : false},
+                    // editor:{xtype : 'textfield', allowBlank : false},
                     renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')
                 },
                 {
@@ -261,7 +369,7 @@ Ext.define('material.material_Outbound',{
                     text : '操作',
                     flex :1 ,
                     renderer:function(value, cellmeta){
-                        return "<INPUT type='button' value='撤销入库' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
+                        return "<INPUT type='button' value='查看' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
                     }
                 }
                 // {
@@ -416,49 +524,63 @@ Ext.define('material.material_Outbound',{
                 }
             },
 
+            // dockedItems:[{
+            //     xtype: 'pagingtoolbar',
+            //     store: material_inBoundRecords_Store,   // same store GridPanel is using
+            //     dock: 'bottom',
+            //     displayInfo: true,
+            //     displayMsg:'显示{0}-{1}条，共{2}条',
+            //     emptyMsg:'无数据'
+            // }],
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 1
             })],
             selType : 'rowmodel',
+            listeners: {
+                //监听修改
+                validateedit: function (editor, e) {
+                    var field = e.field
+                    var id = e.record.data.id
+                },
 
-            //双击表行响应事件
-            // itemdblclick: function(me, record, item, index){
-            //     var select = record.data;
-            //     var id = select.id;
-            //     //操作类型opType
-            //     var opType = select.type;
-            //     console.log(id);
-            //     console.log(opType)
-            //     var materiallogdetailList = Ext.create('Ext.data.Store',{
-            //         //id,materialName,length,width,materialType,number
-            //         fields:['materialName','length','width','materialType','count'],
-            //         //fields:['materialName','length','materialType','width','count'],//'oldpanelId','oldpanelName','count'
-            //         proxy : {
-            //             type : 'ajax',
-            //             url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName=materiallogdetail&columnName=materiallogId&columnValue='+id,//获取同类型的原材料
-            //             reader : {
-            //                 type : 'json',
-            //                 rootProperty: 'materiallogdetail',
-            //             },
-            //         },
-            //         autoLoad : true
-            //     });
-            //     // 根据出入库0/1，决定弹出框表格列名
-            //     var col = material_Query_Records_specific_data_grid.columns[1];
-            //     if(opType == 1){
-            //         col.setText("出库数量");
-            //     }
-            //     if(opType == 2){
-            //         col.setText("退库数量");
-            //     }
-            //     else{
-            //         col.setText("入库数量");
-            //     }
-            //
-            //     material_Query_Records_specific_data_grid.setStore(materiallogdetailList);
-            //     console.log(materiallogdetailList);
-            //     Ext.getCmp('material_Query_Records_win_showmaterialData').show();
-            // }
+                // 双击表行响应事件
+                // itemdblclick: function (me, record, item, index) {
+                //     var select = record.data;
+                //     var id = select.id;
+                //     //操作类型opType
+                //     var opType = select.type;
+                //     console.log(id);
+                //     console.log(opType)
+                //     var materiallogdetailList = Ext.create('Ext.data.Store', {
+                //         //id,materialName,length,width,materialType,number
+                //         fields: ['materialName', 'length', 'width', 'materialType', 'count'],
+                //         //fields:['materialName','length','materialType','width','count'],//'oldpanelId','oldpanelName','count'
+                //         proxy: {
+                //             type: 'ajax',
+                //             url: 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName=material_logdetail&columnName=materiallogId&columnValue=' + id,//获取同一批出入库的原材料
+                //             reader: {
+                //                 type: 'json',
+                //                 rootProperty: 'materiallogdetail',
+                //             },
+                //         },
+                //         autoLoad: true
+                //     });
+                //     // 根据出入库0/1，决定弹出框表格列名
+                //     var col = material_Query_Records_specific_data_grid.columns[1];
+                //     if (opType == 1) {
+                //         col.setText("出库数量");
+                //     }
+                //     if (opType == 2) {
+                //         col.setText("退库数量");
+                //     } else {
+                //         col.setText("入库数量");
+                //     }
+                //
+                //     material_Query_Records_specific_data_grid.setStore(materiallogdetailList);
+                //     console.log(materiallogdetailList);
+                //     Ext.getCmp('material_Query_Records_win_showmaterialData').show();
+                // }
+            }
 
         });
         //添加cell单击事件
@@ -475,50 +597,81 @@ Ext.define('material.material_Outbound',{
                 var sm = Ext.getCmp('addDataGrid').getSelectionModel();
                 var materialArr = sm.getSelection();
                 var id = materialArr.id;
-                if (materialArr.length != 0) {
-                    Ext.Msg.confirm("提示", "共选中" + materialArr.length + "条数据，是否确认撤消？", function (btn) {
-                        if (btn == 'yes') {
-                            //对该条记录出库var id = select.id;
-                            // Ext.getCmp('addDataGrid').getStore().remove(materialArr);
-                            //撤销入库记录
-                            var materialLog_id = materialArr[0].data.id;  //日志记录id
 
-                            Ext.Ajax.request({
-                                url:"",  //入库记录撤销
-                                params:{
-                                    // tableName:tableName,
-                                    materiallogId:materialLog_id
+                var materiallogdetailList = Ext.create('Ext.data.Store', {
+                    //id,materialName,length,width,materialType,number
+                    fields: ['materialName', 'length', 'width', 'materialType', 'count'],
+                    //fields:['materialName','length','materialType','width','count'],//'oldpanelId','oldpanelName','count'
+                    proxy: {
+                        type: 'ajax',
+                        url: 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName=material_logdetail&columnName=materiallogId&columnValue=' + id,//获取同一批出入库的原材料
+                        reader: {
+                            type: 'json',
+                            rootProperty: 'materiallogdetail',
+                        },
+                    },
+                    autoLoad: true
+                });
+                // 根据出入库0/1，决定弹出框表格列名
+                var col = material_Query_Records_specific_data_grid.columns[1];
+                // if (opType == 1) {
+                //     col.setText("出库数量");
+                // }
+                // if (opType == 2) {
+                //     col.setText("退库数量");
+                // } else {
+                //     col.setText("入库数量");
+                // }
 
-                                },
-                                success:function (response) {
-                                    //console.log(response.responseText);
-                                }
-                            })
-                        } else {
-                            return;
-                        }
-                    });
-                } else {
-                    //Ext.Msg.confirm("提示", "无选中数据");
-                    Ext.Msg.alert("提示", "无选中数据");
-                }
+                material_Query_Records_specific_data_grid.setStore(materiallogdetailList);
+                console.log(materiallogdetailList);
+                Ext.getCmp('material_Query_Records_win_showmaterialData').show();
+
+                // if (materialArr.length != 0) {
+                //     Ext.Msg.confirm("提示", "共选中" + materialArr.length + "条数据，是否确认撤消？", function (btn) {
+                //         if (btn == 'yes') {
+                //             //对该条记录出库var id = select.id;
+                //             // Ext.getCmp('addDataGrid').getStore().remove(materialArr);
+                //             //撤销入库记录
+                //             var materialLog_id = materialArr[0].data.id;  //日志记录id
+                //             Ext.Ajax.request({
+                //                 url:"",  //入库记录撤销
+                //                 params:{
+                //                     // tableName:tableName,
+                //                     materiallogId:materialLog_id,
+                //                     type:1  //撤销出库1
+                //                 },
+                //                 success:function (response) {
+                //                     //console.log(response.responseText);
+                //                 }
+                //             })
+                //         } else {
+                //             return;
+                //         }
+                //     });
+                // } else {
+                //     //Ext.Msg.confirm("提示", "无选中数据");
+                //     Ext.Msg.alert("提示", "无选中数据");
+                // }
             }
 
 
             console.log("rowIndex:",rowIndex)
             console.log("columnIndex:",columnIndex)
-            // var record = grid.getStore().getAt(rowIndex);
-            // var id = record.get('id');
-            // var fieldName = grid.getColumnModel().getDataIndex(columnIndex);
-            // if (fieldName == "c_reply") {
-            //     Ext.Msg.alert('c_reply', rowIndex + "  -  " + id);
-            // }else if (fieldName == "c_agree") {
-            //     Ext.Msg.alert('c_agree', rowIndex + "  -  " + id);
-            // }
 
         }
         // this.dockedItems = [toolbar, grid, toolbar3];
-        this.dockedItems = [toolbar, grid];
+        this.dockedItems = [toolbar_ttop,toolbar, grid,
+            {
+                xtype: 'pagingtoolbar',
+                store: material_inBoundRecords_Store,   // same store GridPanel is using
+                dock: 'bottom',
+                displayInfo: true,
+                displayMsg:'显示{0}-{1}条，共{2}条',
+                emptyMsg:'无数据'
+            }
+        ];
+        // this.items = [grid];
         //this.items = [ me.grid ];
         this.callParent(arguments);
 
