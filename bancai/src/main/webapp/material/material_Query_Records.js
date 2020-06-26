@@ -302,6 +302,7 @@ Ext.define('material.material_Query_Records',{
 
                 //双击表行响应事件
                 itemdblclick: function(me, record, item, index){
+                    console.log("records----:",record);
                     var select = record.data;
                     var id = select.id;
                     //操作类型opType

@@ -344,7 +344,7 @@ Ext.define('material.material_Outbound',{
             // store : {
             //     fields :['projectId','类型','长1','宽1','数量','成本','行','列','库存单位','仓库编号','规格','原材料名称']
             // },
-            // tbar:toolbar,
+            tbar:toolbar,
             store: material_inBoundRecords_Store,
             title: "入库详细记录",
             columns : [
@@ -596,7 +596,8 @@ Ext.define('material.material_Outbound',{
                 //设置监听事件getSelectionModel().getSelection()
                 var sm = Ext.getCmp('addDataGrid').getSelectionModel();
                 var materialArr = sm.getSelection();
-                var id = materialArr.id;
+                var re = Ext.getCmp('addDataGrid').getSelectionModel()[0];
+                console.log("qqqqqqqqqqqq:",re.data);
 
                 var materiallogdetailList = Ext.create('Ext.data.Store', {
                     //id,materialName,length,width,materialType,number
@@ -661,17 +662,17 @@ Ext.define('material.material_Outbound',{
 
         }
         // this.dockedItems = [toolbar, grid, toolbar3];
-        this.dockedItems = [toolbar_ttop,toolbar, grid,
-            {
-                xtype: 'pagingtoolbar',
-                store: material_inBoundRecords_Store,   // same store GridPanel is using
-                dock: 'bottom',
-                displayInfo: true,
-                displayMsg:'显示{0}-{1}条，共{2}条',
-                emptyMsg:'无数据'
-            }
-        ];
-        // this.items = [grid];
+        // this.dockedItems = [toolbar_ttop,toolbar, grid,
+        //     {
+        //         xtype: 'pagingtoolbar',
+        //         store: material_inBoundRecords_Store,   // same store GridPanel is using
+        //         dock: 'bottom',
+        //         displayInfo: true,
+        //         displayMsg:'显示{0}-{1}条，共{2}条',
+        //         emptyMsg:'无数据'
+        //     }
+        // ];
+        this.items = [grid];
         //this.items = [ me.grid ];
         this.callParent(arguments);
 
