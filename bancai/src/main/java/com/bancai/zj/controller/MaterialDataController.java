@@ -86,16 +86,16 @@ public class MaterialDataController {
             String unitWeight=null;
             String totalWeight="0.0";
             //if(null!=jsonTemp.get("序号")) row_index=jsonTemp.get("序号")+"";
-            if(JSONObject.NULL!=jsonTemp.get("品号"))   materialId=jsonTemp.get("品号")+"";
-            if(JSONObject.NULL!=jsonTemp.get("品名"))  materialName=jsonTemp.get("品名")+"";
-            if(JSONObject.NULL!=jsonTemp.get("规格"))   specification=jsonTemp.get("规格")+"";
-            if(JSONObject.NULL!=jsonTemp.get("库存单位"))    inventoryUnit=jsonTemp.get("库存单位")+"";
-            if(JSONObject.NULL!=jsonTemp.get("数量"))    count=jsonTemp.get("数量")+"";
-            if((jsonTemp.get("行")!=JSONObject.NULL)) rowNo=jsonTemp.get("行")+"";
-            if(jsonTemp.get("列")!=JSONObject.NULL)   columNo=jsonTemp.get("列")+"";
-            if(JSONObject.NULL!=jsonTemp.get("仓库名称"))    warehouseName=jsonTemp.get("仓库名称")+"";
-            if(JSONObject.NULL!=jsonTemp.get("单重")) unitWeight=jsonTemp.get("单重")+"";
-            if(JSONObject.NULL!=jsonTemp.get("横截面"))  width=jsonTemp.get("横截面")+"";
+            if(JSONObject.NULL!=jsonTemp.get("品号")&&!jsonTemp.get("品号").equals(""))   materialId=jsonTemp.get("品号")+"";
+            if(JSONObject.NULL!=jsonTemp.get("品名")&&!jsonTemp.get("品名").equals(""))  materialName=jsonTemp.get("品名")+"";
+            if(JSONObject.NULL!=jsonTemp.get("规格")&&!jsonTemp.get("规格").equals(""))   specification=jsonTemp.get("规格")+"";
+            if(JSONObject.NULL!=jsonTemp.get("库存单位")&&!jsonTemp.get("库存单位").equals(""))    inventoryUnit=jsonTemp.get("库存单位")+"";
+            if(JSONObject.NULL!=jsonTemp.get("数量")&&!jsonTemp.get("数量").equals(""))    count=jsonTemp.get("数量")+"";
+            if((jsonTemp.get("行")!=JSONObject.NULL&&!jsonTemp.get("行").equals(""))) rowNo=jsonTemp.get("行")+"";
+            if(jsonTemp.get("列")!=JSONObject.NULL&&!jsonTemp.get("列").equals(""))   columNo=jsonTemp.get("列")+"";
+            if(JSONObject.NULL!=jsonTemp.get("仓库名称")&&!jsonTemp.get("仓库名称").equals(""))    warehouseName=jsonTemp.get("仓库名称")+"";
+            if(JSONObject.NULL!=jsonTemp.get("单重")&&!jsonTemp.get("单重").equals("")) unitWeight=jsonTemp.get("单重")+"";
+            if(JSONObject.NULL!=jsonTemp.get("横截面")&&!jsonTemp.get("横截面").equals(""))  width=jsonTemp.get("横截面")+"";
             try{
                 totalWeight=Double.parseDouble(unitWeight)*Double.parseDouble(count)+"";
             }catch (Exception e){
