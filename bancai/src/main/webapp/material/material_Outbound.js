@@ -294,7 +294,7 @@ Ext.define('material.material_Outbound',{
                             params:{
                                 // tableName:tableName,
                                 materiallogId:material_logId,
-                                type:1  //撤销出库1
+                                type:0  //撤销出库1
                             },
                             success:function (response) {
                                 //console.log(response.responseText);

@@ -38,8 +38,19 @@ Ext.define('material.material_Query_Data',{
             store: MaterialNameList,
 
         });
+        var toobar_top = Ext.create('Ext.toolbar.Toolbar',{
+            items: [
+                {
+                    xtype:'tbtext',
+                    text:'查询条件',
+                    margin : '0 10 0 20',
+                },
+            ]
+
+        });
 
         var toobar = Ext.create('Ext.toolbar.Toolbar',{
+
             items: [
                 // {
                 //     xtype: 'textfield',
@@ -153,7 +164,7 @@ Ext.define('material.material_Query_Data',{
                 //         }
                 //     }
                 // }]
-        })
+        });
         var material_Query_Data_Store = Ext.create('Ext.data.Store',{
             id: 'material_Query_Data_Store',
             autoLoad: true,  //初始自动加载
@@ -197,6 +208,7 @@ Ext.define('material.material_Query_Data',{
 
         var grid = Ext.create('Ext.grid.Panel',{
             id: 'material_Query_Data_Main',
+            title: "原材料仓库信息记录",
             store: material_Query_Data_Store,
             viewConfig : {
                 enableTextSelection : true,
@@ -321,7 +333,7 @@ Ext.define('material.material_Query_Data',{
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 3
             })],
-            tbar: toobar,
+            // tbar: toobar,
             dockedItems: [{
                 xtype: 'pagingtoolbar',
                 store: material_Query_Data_Store,   // same store GridPanel is using
@@ -353,6 +365,7 @@ Ext.define('material.material_Query_Data',{
             }
         });
 
+        this.tbar = toobar;
         this.items = [grid];
         this.callParent(arguments);
     }
