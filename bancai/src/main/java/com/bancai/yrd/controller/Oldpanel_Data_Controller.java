@@ -81,7 +81,7 @@ public class Oldpanel_Data_Controller {
      * */
     //produces = {"text/html;charset=UTF-8"}
     @RequestMapping(value = "/oldpanel/addData.do")
-    public boolean oldpanelAddData(String s, String operator, HttpSession session) {
+    public boolean oldpanelAddData(String s, String projectId, String buildingId, String operator, HttpSession session) {
         JSONArray jsonArray = new JSONArray(s);
         String tableName = "oldpanel_store";
 //        int uploadId = Integer.parseInt(session.getAttribute("userid").toString());
@@ -89,19 +89,19 @@ public class Oldpanel_Data_Controller {
         Date date=new Date();
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String sql_addLog = "insert into oldpanellog (type,userId,time,operator) values(?,?,?,?)";
-        String sql_backLog = "insert into oldpanellog (type,userId,time,projectId,operator) values(?,?,?,?,?)";
-        JSONObject jsonBack = jsonArray.getJSONObject(0);
-        String projectId;
-        String buildingId;
-        try{
-            projectId = jsonBack.get("projectId")+"";
-            buildingId = jsonBack.get("buildingId")+"";
-        }catch (JSONException e){
-            projectId="";
-            buildingId="";
-        }
+        String sql_backLog = "insert into oldpanellog (type,userId,time,projectId,buildingId,operator) values(?,?,?,?,?,?)";
+//        JSONObject jsonBack = jsonArray.getJSONObject(0);
+//        String projectId;
+//        String buildingId;
+//        try{
+//            projectId = jsonBack.get("projectId")+"";
+//            buildingId = jsonBack.get("buildingId")+"";
+//        }catch (JSONException e){
+//            projectId="";
+//            buildingId="";
+//        }
         int oldpanellogId;
-        if(projectId.equals("")){
+        if(projectId.equals("-1")&&buildingId.equals("-1")){
             oldpanellogId= insertProjectService.insertDataToTable(sql_addLog,"0",uploadId,simpleDateFormat.format(date),operator);
         } else {
             oldpanellogId= insertProjectService.insertDataToTable(sql_backLog,"2",uploadId,simpleDateFormat.format(date),projectId,buildingId,operator);

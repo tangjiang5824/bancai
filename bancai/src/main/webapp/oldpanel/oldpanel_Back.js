@@ -465,6 +465,7 @@ Ext.define('oldpanel.oldpanel_Back', {
                             s : "[" + s + "]",
                             projectId : Ext.getCmp("projectName").getValue(),
                             buildingId : Ext.getCmp("buildingName").getValue(),
+                            operator: Ext.getCmp('operator').getValue(),
                         },
                         success : function(response) {
                             //var message =Ext.decode(response.responseText).showmessage;

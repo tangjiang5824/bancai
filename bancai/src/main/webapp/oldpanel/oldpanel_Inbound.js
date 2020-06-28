@@ -18,6 +18,8 @@ Ext.define('oldpanel.oldpanel_Inbound', {
     initComponent : function() {
         var me = this;
         //var materialtype="1";
+        var projectId = "-1";
+        var buildingId = "-1";
         Ext.define('Soims.model.application.ApplicationState', {
             statics: { // 关键
                 0: { value: '0', name: '墙板' },
@@ -385,6 +387,8 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                         //submitEmptyText : false,
                         params : {
                             s : "[" + s + "]",
+                            projectId : projectId,
+                            buildingId : buildingId,
                             operator: Ext.getCmp('operator').getValue(),
                         },
                         success : function(response) {
