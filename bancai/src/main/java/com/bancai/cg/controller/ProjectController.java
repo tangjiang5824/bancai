@@ -473,13 +473,13 @@ public class ProjectController {
     @RequestMapping(value = "/material/backMaterialstore.do")
     @Transactional
     public boolean backMaterialstore(String materiallogId,HttpSession session ,String operator,String type) throws JSONException {
-        String sql_find_log_detail="select * from material_logdetail where materiallogId=? and isrollbcak<>1";
+        String sql_find_log_detail="select * from material_logdetail where materiallogId=? and isrollback<>1";
         String userid = (String) session.getAttribute("userid");
 
         Date date=new Date();
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String update_log="update material_log set isrollback=1 where id=?";
-        //把isrollbcak改为1
+        //把isrollback改为1
         insertProjectService.insertIntoTableBySQL(update_log,materiallogId);
 
         //log主键
@@ -516,8 +516,8 @@ public class ProjectController {
                 String update_detail_isrollback="update material_logdetail set isrollback=1 where id=?";
                 insertProjectService.insertIntoTableBySQL(update_detail_isrollback,detail_id);
                 //插入新的detail
-                String sql_insert_new_detial="insert into material_logdetial (materialName,count,specification,materiallogId,materialId,materialstoreId,isrollback) values(?,?,?,?,?,?,?)";
-                insertProjectService.insertDataToTable(sql_insert_new_detial,materialName,count,specification,materiallogId,materialId,main_key+"","1");
+                String sql_insert_new_detial="insert into material_logdetail (materialName,count,specification,materiallogId,materialId,materialstoreId,isrollback) values(?,?,?,?,?,?,?)";
+                insertProjectService.insertIntoTableBySQL(sql_insert_new_detial,materialName,count,specification,main_key+"",materialId,materialstoreId,"1");
             }
         }
 
