@@ -287,12 +287,13 @@ Ext.define('material.material_Outbound',{
                     layout: 'right',
                     handler: function(){
                         var material_logId = Ext.getCmp("log_id").text;
+                        var operator = Ext.getCmp("operator_back").getValue();
                         // console.log("id为：----",material_logId)
                     //    material/backMaterialstore.do
                         Ext.Ajax.request({
                             url:"material/backMaterialstore.do",  //入库记录撤销
                             params:{
-                                // tableName:tableName,
+                                operator:operator,  //回滚操作人
                                 materiallogId:material_logId,
                                 type:0  //撤销出库1
                             },
@@ -362,7 +363,7 @@ Ext.define('material.material_Outbound',{
             // store : {
             //     fields :['projectId','类型','长1','宽1','数量','成本','行','列','库存单位','仓库编号','规格','原材料名称']
             // },
-            tbar:toolbar,
+            // tbar:toolbar,
             store: material_inBoundRecords_Store,
             title: "入库详细记录",
             columns : [
@@ -542,14 +543,14 @@ Ext.define('material.material_Outbound',{
                 }
             },
 
-            // dockedItems:[{
-            //     xtype: 'pagingtoolbar',
-            //     store: material_inBoundRecords_Store,   // same store GridPanel is using
-            //     dock: 'bottom',
-            //     displayInfo: true,
-            //     displayMsg:'显示{0}-{1}条，共{2}条',
-            //     emptyMsg:'无数据'
-            // }],
+            dockedItems:[{
+                xtype: 'pagingtoolbar',
+                store: material_inBoundRecords_Store,   // same store GridPanel is using
+                dock: 'bottom',
+                displayInfo: true,
+                displayMsg:'显示{0}-{1}条，共{2}条',
+                emptyMsg:'无数据'
+            }],
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 1
             })],
@@ -694,6 +695,8 @@ Ext.define('material.material_Outbound',{
         //         emptyMsg:'无数据'
         //     }
         // ];
+        this.tbar = toolbar;
+        // this.lbar = toolbar_ttop;
         this.items = [grid];
         //this.items = [ me.grid ];
         this.callParent(arguments);
