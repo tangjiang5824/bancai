@@ -92,16 +92,19 @@ public class Oldpanel_Data_Controller {
         String sql_backLog = "insert into oldpanellog (type,userId,time,projectId,operator) values(?,?,?,?,?)";
         JSONObject jsonBack = jsonArray.getJSONObject(0);
         String projectId;
+        String buildingId;
         try{
             projectId = jsonBack.get("projectId")+"";
+            buildingId = jsonBack.get("buildingId")+"";
         }catch (JSONException e){
             projectId="";
+            buildingId="";
         }
         int oldpanellogId;
         if(projectId.equals("")){
             oldpanellogId= insertProjectService.insertDataToTable(sql_addLog,"0",uploadId,simpleDateFormat.format(date),operator);
         } else {
-            oldpanellogId= insertProjectService.insertDataToTable(sql_backLog,"2",uploadId,simpleDateFormat.format(date),projectId,operator);
+            oldpanellogId= insertProjectService.insertDataToTable(sql_backLog,"2",uploadId,simpleDateFormat.format(date),projectId,buildingId,operator);
         }
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonTemp = jsonArray.getJSONObject(i);
