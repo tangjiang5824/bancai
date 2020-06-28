@@ -27,6 +27,17 @@ Ext.define('material.material_Outbound',{
                 0: { value: '0', name: '入库' },
                 1: { value: '1', name: '出库' },
                 2: { value: '2', name: '退库' },
+                3: { value: '3', name: '撤销入库' },
+                4: { value: '4', name: '撤销出库' },
+                5: { value: '5', name: '撤销退库' },
+            }
+        });
+        //枚举
+        //操作类型：枚举类型
+        Ext.define('material.oepration.state', {
+            statics: { // 关键
+                0: { value: '0', name: '未回滚' },
+                1: { value: '1', name: '已回滚' },
             }
         });
 
@@ -53,7 +64,7 @@ Ext.define('material.material_Outbound',{
             emptyText : "--请选择--",
             displayField: 'materialTypeName',
             valueField: 'materialType',
-            editable : false,
+            editable : true,
             store: MaterialNameList,
             listeners:{
                 select: function(combo, record, index) {
@@ -117,7 +128,7 @@ Ext.define('material.material_Outbound',{
                     id : "startTime",
                     name : 'startTime',
                     format : 'Y-m-d',
-                    editable : false,
+                    editable : true,
                     //value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
                 },
                 MaterialTypeList,
@@ -247,8 +258,20 @@ Ext.define('material.material_Outbound',{
             items: [
                 // MaterialTypeList,
                 {
+                    //保存logid的值
                     xtype: 'tbtext',
                     id:'log_id',
+                    iconAlign: 'center',
+                    iconCls: 'rukuicon ',
+                    text: ' ',//默认为空
+                    region: 'center',
+                    bodyStyle: 'background:#fff;',
+                    hidden:true
+                },
+                {
+                    //保存是否回滚的值
+                    xtype: 'tbtext',
+                    id:'is_rollback',
                     iconAlign: 'center',
                     iconCls: 'rukuicon ',
                     text: ' ',//默认为空
@@ -287,21 +310,41 @@ Ext.define('material.material_Outbound',{
                     layout: 'right',
                     handler: function(){
                         var material_logId = Ext.getCmp("log_id").text;
+                        var is_rollback = Ext.getCmp("is_rollback").text;
                         var operator = Ext.getCmp("operator_back").getValue();
-                        // console.log("id为：----",material_logId)
+                        // console.log("id为：----",is_rollback)
                     //    material/backMaterialstore.do
-                        Ext.Ajax.request({
-                            url:"material/backMaterialstore.do",  //入库记录撤销
-                            params:{
-                                operator:operator,  //回滚操作人
-                                materiallogId:material_logId,
-                                type:0  //撤销出库1
-                            },
-                            success:function (response) {
-                                //console.log(response.responseText);
-                                alert("回滚成功！")
-                            }
-                    })
+                        if (is_rollback != 1){
+                            Ext.Msg.show({
+                                title: '操作确认',
+                                message: '将回滚数据，选择“是”否确认？',
+                                buttons: Ext.Msg.YESNO,
+                                icon: Ext.Msg.QUESTION,
+                                fn: function (btn) {
+                                    if (btn === 'yes') {
+                                        Ext.Ajax.request({
+                                            url:"material/backMaterialstore.do",  //入库记录撤销
+                                            params:{
+                                                operator:operator,  //回滚操作人
+                                                materiallogId:material_logId,
+                                                type:0  //撤销出库1
+                                            },
+                                            success:function (response) {
+                                                //console.log(response.responseText);
+                                                Ext.MessageBox.alert("提示", "回滚成功!");
+                                            },
+                                            failure : function(response){
+                                                Ext.MessageBox.alert("提示", "回滚失败!");
+                                            }
+                                        })
+                                    }
+                                }
+                            });
+
+                        }
+                        else{
+                            Ext.Msg.alert('错误', '该条记录已回滚！')
+                        }
                     }
                 }
 
@@ -390,7 +433,14 @@ Ext.define('material.material_Outbound',{
                     renderer:function(value, cellmeta){
                         return "<INPUT type='button' value='查看' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
                     }
-                }
+                },
+                {   text: '记录是否回滚',
+                    dataIndex: 'isrollback',
+                    flex :1 ,
+                    renderer: function (value) {
+                        return material.oepration.state[value].name; // key-value
+                    },
+                },
                 // {
                 //     dataIndex : '品号',
                 //     name : '品号',
@@ -610,9 +660,11 @@ Ext.define('material.material_Outbound',{
             }
             var fieldName = Ext.getCmp('addDataGrid').columns[columnIndex].text;
             var sm = Ext.getCmp('addDataGrid').getSelectionModel();
+            // var isrollback = Ext.getCmp('isrollback').getValue();
             var materialArr = sm.getSelection();
             var id = e.data.id  //选中记录的logid
-            // console.log("行号：",e.data.id)
+            var isrollback = e.data.isrollback
+            // console.log("行号：",e.data)
 
             if (fieldName == "操作") {
                 //设置监听事件getSelectionModel().getSelection()
@@ -646,7 +698,8 @@ Ext.define('material.material_Outbound',{
                 //     col.setText("入库数量");
                 // }
 
-                Ext.getCmp("toolbar_pop").items.items[0].setText(id);
+                Ext.getCmp("toolbar_pop").items.items[0].setText(id); //设置log id的值
+                Ext.getCmp("toolbar_pop").items.items[1].setText(isrollback);
                 material_Query_Records_specific_data_grid.setStore(materiallogdetailList);
                 // console.log(materiallogdetailList);
                 Ext.getCmp('material_Query_Records_win_showmaterialData').show();

@@ -1,4 +1,5 @@
-Ext.define('material.material_Upload_Data', {
+Ext.define('material' +
+    '.material_Upload_Data', {
     extend : 'Ext.panel.Panel',
     id:'material_Upload_Data',
     region : 'center',

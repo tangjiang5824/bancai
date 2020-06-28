@@ -10,9 +10,12 @@ Ext.define('material.material_Query_Records',{
         //操作类型：枚举类型
         Ext.define('Soims.model.application.ApplicationState', {
             statics: { // 关键
+                0: { value: '0', name: '入库' },
                 1: { value: '1', name: '出库' },
                 2: { value: '2', name: '退库' },
-                0: { value: '0', name: '入库' }
+                3: { value: '3', name: '撤销入库' },
+                4: { value: '4', name: '撤销出库' },
+                5: { value: '5', name: '撤销退库' },
             }
         });
 
