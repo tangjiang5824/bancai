@@ -55,28 +55,28 @@ Ext.define('material.material_Inbound', {
             editable : false,
             store: MaterialNameList,
             listeners:{
-                select: function(combo, record, index) {
-                    var type = MaterialTypeList.rawValue;
-                    var L2 = Ext.getCmp('length2');
-                    var W2 = Ext.getCmp('width2');
-                    var chang2 = Ext.getCmp('长2');
-                    var kuan2 = Ext.getCmp('宽2');
-                    if(type=='IC'){
-                        //该类型为1000X200类型
-                        L2.setHidden(false);
-                        W2.setHidden(false);
-                        chang2.setHidden(false);
-                        kuan2.setHidden(false);
-                    }else{
-                        L2.setHidden(true);
-                        W2.setHidden(true);
-                        chang2.setHidden(true);
-                        kuan2.setHidden(true);
-                    }
-                    //console.log(MaterialTypeList.rawValue)//选择的值
-                    console.log(MaterialTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
-                    //console.log(record[0].data.materialName);
-                }
+                // select: function(combo, record, index) {
+                //     var type = MaterialTypeList.rawValue;
+                //     var L2 = Ext.getCmp('length2');
+                //     var W2 = Ext.getCmp('width2');
+                //     var chang2 = Ext.getCmp('长2');
+                //     var kuan2 = Ext.getCmp('宽2');
+                //     if(type=='IC'){
+                //         //该类型为1000X200类型
+                //         L2.setHidden(false);
+                //         W2.setHidden(false);
+                //         chang2.setHidden(false);
+                //         kuan2.setHidden(false);
+                //     }else{
+                //         L2.setHidden(true);
+                //         W2.setHidden(true);
+                //         chang2.setHidden(true);
+                //         kuan2.setHidden(true);
+                //     }
+                //     //console.log(MaterialTypeList.rawValue)//选择的值
+                //     console.log(MaterialTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
+                //     //console.log(record[0].data.materialName);
+                // }
             }
 
         });
@@ -297,16 +297,16 @@ Ext.define('material.material_Inbound', {
                 },
                 speificLocation_row,
                 speificLocation_col,
-                {
-                    xtype: 'textfield',
-                    margin: '0 0 0 40',
-                    fieldLabel: ' 入库人',
-                    id: 'operator',
-                    width: 150,
-                    labelWidth: 45,
-                    name: 'operator',
-                    value: "",
-                },
+                // {
+                //     xtype: 'textfield',
+                //     margin: '0 0 0 40',
+                //     fieldLabel: ' 入库人',
+                //     id: 'operator',
+                //     width: 150,
+                //     labelWidth: 45,
+                //     name: 'operator',
+                //     value: "",
+                // },
                 {
                     xtype : 'button',
                     margin: '0 10 0 70',
@@ -317,7 +317,7 @@ Ext.define('material.material_Inbound', {
                     handler: function(){
                         console.log("原材料名：",Ext.getCmp('materialName').rawValue);
                         console.log("原材料id：",Ext.getCmp('materialName').value)
-                        var operator = Ext.getCmp('operator').value;
+                        // var operator = Ext.getCmp('operator').value;
                         var materialNo = Ext.getCmp('materialName').value;
                         var materialName = Ext.getCmp('materialName').rawValue;
                         var length1 = Ext.getCmp('length1').getValue();
@@ -352,7 +352,7 @@ Ext.define('material.material_Inbound', {
                                 '仓库名称' : warehouse,
                                 '行': row,
                                 '列': col,
-                                '入库人':operator
+                                // '入库人':operator
 
                             }];
                             console.log("bbbbbb");
@@ -372,7 +372,7 @@ Ext.define('material.material_Inbound', {
                                 '仓库名称' : warehouse,
                                 '行': row,
                                 '列': col,
-                                '入库人':operator
+                                // '入库人':operator
                             }];
                         }
                         //var materialType = Ext.getCmp('materialName').getValue();//获得对应的id值
@@ -426,7 +426,18 @@ Ext.define('material.material_Inbound', {
                 //marginLeft: '900px'
                 layout: 'right'
             },
-            items : [{
+            items : [
+                {
+                    xtype: 'textfield',
+                    margin: '0 40 0 0',
+                    fieldLabel: ' 入库人',
+                    id: 'operator',
+                    width: 150,
+                    labelWidth: 45,
+                    name: 'operator',
+                    value: "",
+                },
+                {
                 xtype : 'button',
                 iconAlign : 'center',
                 iconCls : 'rukuicon ',
@@ -435,6 +446,7 @@ Ext.define('material.material_Inbound', {
                 bodyStyle: 'background:#fff;',
                 handler : function() {
 
+                    var operator = Ext.getCmp('operator').value;
                     // 取出grid的字段名字段类型
                     var select = Ext.getCmp('addDataGrid').getStore()
                         .getData();
@@ -443,7 +455,6 @@ Ext.define('material.material_Inbound', {
                     var s = new Array();
                     select.each(function(rec) {
                         s.push(JSON.stringify(rec.data));
-                        // s.push('品号','');
                         //alert(JSON.stringify(rec.data));//获得表格中的数据
                         //s.push();
                     });
@@ -461,6 +472,7 @@ Ext.define('material.material_Inbound', {
                             tableName:"material_store",
                             //materialType:materialtype,
                             s : "[" + s + "]",
+                            operator:operator
                         },
                         success : function(response) {
                             //var message =Ext.decode(response.responseText).showmessage;
@@ -607,16 +619,16 @@ Ext.define('material.material_Inbound', {
                         allowBlank : true
                     }
                 },
-                {
-                    dataIndex : '入库人',
-                    name : '入库人',
-                    text : '入库人',
-                    //width : 160,
-                    editor : {
-                        xtype : 'textfield',
-                        allowBlank : true
-                    }
-                },
+                // {
+                //     dataIndex : '入库人',
+                //     name : '入库人',
+                //     text : '入库人',
+                //     //width : 160,
+                //     editor : {
+                //         xtype : 'textfield',
+                //         allowBlank : true
+                //     }
+                // },
                 {
                     // name : '操作',
                     text : '操作',

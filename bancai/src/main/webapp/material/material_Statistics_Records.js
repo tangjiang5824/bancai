@@ -10,8 +10,12 @@ Ext.define('material.material_Statistics_Records',{
         //操作类型：枚举类型
         Ext.define('Soims.model.application.ApplicationState', {
             statics: { // 关键
+                0: { value: '0', name: '入库' },
                 1: { value: '1', name: '出库' },
-                0: { value: '0', name: '入库' }
+                2: { value: '2', name: '退库' },
+                3: { value: '3', name: '撤销入库' },
+                4: { value: '4', name: '撤销出库' },
+                5: { value: '5', name: '撤销退库' },
             }
         });
         var toobar = Ext.create('Ext.toolbar.Toolbar',{
@@ -184,7 +188,7 @@ Ext.define('material.material_Statistics_Records',{
                 },
                 // { text: '操作类型', dataIndex: 'time',flex :1,editor:{xtype : 'textfield', allowBlank : false} },
                 {   text: '操作类型',
-                    dataIndex: 'type' ,
+                    dataIndex: 'type',
                     flex :1,
                     //枚举，1：出库，0：入库
                     renderer: function (value) {
