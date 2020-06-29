@@ -36,6 +36,7 @@ public class AnalyzeNameService extends BaseService {
      */
     @Transactional
     public String[] analyzeOldpanelName(String oldpanelName){
+        oldpanelName = oldpanelName.toUpperCase();
         System.out.println("analyzeOldpanelName==="+oldpanelName);
         String isPureNumber = "^-?[0-9]+";
         String isPureWord = "^[A-Za-z]+$";
@@ -178,6 +179,141 @@ public class AnalyzeNameService extends BaseService {
         String formatInfo = formatInfoBuilder.toString().substring(0,formatInfoBuilder.toString().length()-1);
         return !queryService.query("select * from oldpanel_info where oldpanelFormat=? and oldpanelType=? and formatInfo=?",
                 format, oldpanelType, formatInfo).isEmpty();
+    }
+    /**
+     * 根据产品类型名获取类型ID
+     */
+    @Transactional
+    public String getProductType(String productTypeName){
+        DataList list = queryService.query("select * from producttype where productTypeName=?", productTypeName);
+        if(list.size()==0)
+            return "0";
+        return list.get(0).get("id").toString();
+    }
+
+    /**
+     * 清单产品品名解析。
+     */
+    @Transactional
+    public String[] analyzeProductName(String productName){
+        productName = productName.toUpperCase();
+        System.out.println("analyzeProductName==="+productName);
+        String isPureNumber = "^-?[0-9]+";
+        String isPureWord = "^[A-Za-z]+$";
+        String[] sPName = productName.split("-")[0].split("\\s+");
+        String igSuffix;
+        try{
+            igSuffix =  productName.split("-")[1];
+        } catch (ArrayIndexOutOfBoundsException e){
+            igSuffix = "";
+        }
+        String productType = "0";
+        StringBuilder formatBuilder = new StringBuilder();
+        String m = "0";
+        String n = "0";
+        String a = "0";
+        String b = "0";
+        String mnAngle = "";
+        StringBuilder suffixBuilder = new StringBuilder();
+        String productTypeName = "";
+        int conM = 0;
+        int conT = 0;
+        for (int i = 0; i < 4; i++) {
+            try {
+//                System.out.println("ana====="+sOName[i]);
+                if (sPName[i].matches(isPureNumber)){
+                    if(conM==0){
+                        m = sPName[i];
+                        formatBuilder.append("2");
+                        conM=1;
+                    } else if(conM==1){
+                        n = sPName[i];
+                        formatBuilder.append("3");
+                        conM=2;
+                    } else {
+                        suffixBuilder.append(sPName[i]);
+                        suffixBuilder.append(" ");
+                        formatBuilder.append("7");
+                    }
+                } else if (sPName[i].substring(0,1).matches(isPureWord)){
+                    if(conT==0) {
+                        productTypeName = sPName[i];
+                        productType = getProductType(sPName[i]);
+                        formatBuilder.append("1");
+                        conT = 1;
+                    }
+                    else {
+                        suffixBuilder.append(sPName[i]);
+                        suffixBuilder.append(" ");
+                        formatBuilder.append("7");
+                    }
+                } else if (sPName[i].contains("X")) {
+                    b = SetLengthAndWidth(sPName[i].split("X")[0],sPName[i].split("X")[1])[0];
+                    a = SetLengthAndWidth(sPName[i].split("X")[0],sPName[i].split("X")[1])[1];
+                    if(a.equals(sPName[i].split("X")[0]))
+                        formatBuilder.append("4");
+                    else
+                        formatBuilder.append("5");
+                } else if (sPName[i].contains("+")) {
+                    m = sPName[i].split("\\+")[0];
+                    n = sPName[i].split("\\+")[1];
+                    if(m.contains("A")){
+                        m = m.substring(0,m.length()-1);
+                        if(n.contains("A")){
+                            n = n.substring(0,n.length()-1);
+                            mnAngle = "11";
+                        } else if (n.contains("B")){
+                            n = n.substring(0,n.length()-1);
+                            mnAngle = "12";
+                        } else {
+                            mnAngle = "10";
+                        }
+                    } else if(m.contains("B")){
+                        m = m.substring(0,m.length()-1);
+                        if(n.contains("A")){
+                            n = n.substring(0,n.length()-1);
+                            mnAngle = "21";
+                        } else if (n.contains("B")){
+                            n = n.substring(0,n.length()-1);
+                            mnAngle = "22";
+                        } else {
+                            mnAngle = "20";
+                        }
+                    } else {
+                        if(n.contains("A")){
+                            n = n.substring(0,n.length()-1);
+                            mnAngle = "01";
+                        } else if (n.contains("B")){
+                            n = n.substring(0,n.length()-1);
+                            mnAngle = "02";
+                        } else {
+                            mnAngle = "00";
+                        }
+                    }
+                    formatBuilder.append("6");
+                } else {
+                    suffixBuilder.append(sPName[i]);
+                    suffixBuilder.append(" ");
+                    formatBuilder.append("7");
+                }
+            } catch (Exception e){
+                formatBuilder.append("0");
+            }
+        }
+        String format = formatBuilder.toString() + "";
+        String suffix = suffixBuilder.toString() + "";
+        if(!suffix.isEmpty())
+            suffix = suffix.substring(0,suffix.length()-1);
+        if((format.contains("3"))&&(n.equals(SetLengthAndWidth(m,n)[0]))){
+            String temp = m + n;
+            n = temp.substring(0, temp.length()-n.length());
+            m = temp.substring(n.length());
+            format = format.replace("3","l");
+            format = format.replace("2","3");
+            format = format.replace("l","2");
+        }
+        System.out.println("AnaResult======="+ Arrays.toString(new String[]{productName,format,productType,m,n,a,b,mnAngle,suffix,igSuffix,productTypeName}));
+        return new String[]{format,productType,m,n,a,b,mnAngle,suffix,igSuffix,productTypeName};
     }
 
 }
