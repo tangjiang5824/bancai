@@ -2,6 +2,7 @@ package com.bancai.yrd.controller;
 
 import com.bancai.cg.service.InsertProjectService;
 import com.bancai.commonMethod.AllExcelService;
+import com.bancai.commonMethod.AnalyzeNameService;
 import com.bancai.commonMethod.NewCondition;
 import com.bancai.commonMethod.QueryAllService;
 import com.bancai.domain.DataList;
@@ -37,6 +38,8 @@ public class Oldpanel_Data_Controller {
     private InsertProjectService insertProjectService;
     @Autowired
     private AllExcelService allExcelService;
+    @Autowired
+    private AnalyzeNameService AnalyzeNameService;
 
     Logger log = Logger.getLogger(Oldpanel_Data_Controller.class);
 
@@ -66,7 +69,7 @@ public class Oldpanel_Data_Controller {
             for (int i = 0; i < sFormat.length; i++) {
                 if (sFormat[i].equals("1")){
                     String typeName = sInfo[i];
-                    String type = y_Upload_Data_Service.getOldpanelType(typeName);
+                    String type = AnalyzeNameService.getOldpanelType(typeName);
                     return insertProjectService.insertIntoTableBySQL(sql,type,format,info);
                 }
             }
