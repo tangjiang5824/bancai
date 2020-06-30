@@ -1,10 +1,14 @@
 package com.bancai;
 
+import com.bancai.commonMethod.QueryAllService;
+import com.bancai.domain.DataList;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.Scanner;
 
 public class test02 {
+    private QueryAllService queryService;
     @Test
     public void test() {
 //        String s = "1 2 3 4";
@@ -45,39 +49,23 @@ public class test02 {
 //            }
 //
 //        }
-        int conM = 0;
-        String m = "0";
-        String n = "0";
-        String oldpanelName = "100 200";
-        StringBuilder formatBuilder = new StringBuilder();
-        String[] sOName = oldpanelName.split("\\s+");
-        for (int i = 0; i < 4; i++) {
-            try {
-                if(conM==0){
-                    m = sOName[i];
-                    formatBuilder.append("2");
-                    conM=1;
-                } else if(conM==1){
-                    n = sOName[i];
-                    formatBuilder.append("3");
-                    conM=2;
-                }
-            } catch (Exception e){
-                formatBuilder.append("0");
-            }
-        }
-        String format = formatBuilder.toString();
-        if((format.contains("3"))&&(n.equals(SetLengthAndWidth(m,n)[0]))){
-            String temp = m + n;
-            n = temp.substring(0, temp.length()-n.length());
-            m = temp.substring(n.length());
-            format = format.replace("3","l");
-            format = format.replace("2","3");
-            format = format.replace("l","2");
-        }
-        System.out.println(format);
-        System.out.println(m);
-        System.out.println(n);
+//        String productName = "100X200 SN 150A+250B LA";
+//        String[] a = productName.split("-")[0].split("\\s+");
+//        String igS;
+//        try{
+//            igS = productName.split("-")[1];
+//        } catch (ArrayIndexOutOfBoundsException e){
+//            igS = "";
+//        }
+//        System.out.println(igS);
+//        System.out.println(igS.equals(""));
+//        for (String s : a) {
+//            System.out.println(s);
+//        }
+
+//        String sql = "select * from matchrules where productTypeId=? and productNameFormat=?";
+//        DataList list = queryService.query(sql, "1", "201");
+//        Collections.sort(list);
 
     }
 

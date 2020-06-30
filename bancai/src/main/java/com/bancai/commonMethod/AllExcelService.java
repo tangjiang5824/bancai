@@ -2,6 +2,7 @@ package com.bancai.commonMethod;
 
 import com.bancai.cg.service.InsertProjectService;
 import com.bancai.domain.DataList;
+import com.bancai.domain.DataRow;
 import com.bancai.yrd.service.Y_Upload_Data_Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
 
 @Service
 public class AllExcelService extends BaseService {
@@ -178,11 +180,18 @@ public class AllExcelService extends BaseService {
 		UploadDataResult result = new UploadDataResult();
 		Excel excel = new Excel(inputStream);
 		dataList = excel.readExcelContent();
-		System.out.println(dataList);
-		for (com.bancai.domain.DataRow dataRow : dataList) {
+		System.out.println("Datalist to be upload==="+dataList);
+		Iterator it = dataList.iterator();
+		while (it.hasNext()){
+			com.bancai.domain.DataRow dataRow = (DataRow) it.next();
 			String oldpanelName = dataRow.get("品名") + "";
-			if(oldpanelName.equals("合计")||oldpanelName.equals(""))
+			if(oldpanelName.equals("")){
+				it.remove();
+				continue;
+			} else if (oldpanelName.equals("合计")){
+				it.remove();
 				break;
+			}
 			String classificationName = dataRow.get("分类") + "";
 			String inventoryUnit = dataRow.get("单位") + "";
 			String number = dataRow.get("入库数量") + "";
@@ -196,21 +205,54 @@ public class AllExcelService extends BaseService {
 				result.setErrorCode(2);
 				return result;
 			}
-			boolean upResult = y_Upload_Data_Service.oldpanelUpload(oldpanelName, classificationId, inventoryUnit,
+			String oldpanelId = y_Upload_Data_Service.oldpanelUpload(oldpanelName, classificationId, inventoryUnit,
 					number, warehouseName, unitArea, unitWeight, remark, userid);
-			if (!upResult) {
+			if (oldpanelId.equals("0")) {
 				result.success = false;
 				result.setErrorCode(2);
 				return result;
 			}
-			String sql_addLogDetail = "insert into oldpanellogdetail (oldpanelName,count,oldpanellogId) values (?,?,?)";
-			boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLogDetail, oldpanelName, number, oldpanellogId);
+			String sql_addLogDetail = "insert into oldpanellogdetail (oldpanelName,count,oldpanellogId,oldpanelStoreId) values (?,?,?,?)";
+			boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLogDetail, oldpanelName, number, oldpanellogId,oldpanelId);
 			if (!is_log_right) {
 				result.success = false;
 				result.setErrorCode(2);
 				return result;
 			}
 		}
+//		for (com.bancai.domain.DataRow dataRow : dataList) {
+//			String oldpanelName = dataRow.get("品名") + "";
+//			if(oldpanelName.equals("")||oldpanelName.equals("合计"))
+//				break;
+//
+//			String classificationName = dataRow.get("分类") + "";
+//			String inventoryUnit = dataRow.get("单位") + "";
+//			String number = dataRow.get("入库数量") + "";
+//			String warehouseName = dataRow.get("入库仓库") + "";
+//			String unitArea = dataRow.get("单面积/m2") + "";
+//			String unitWeight = dataRow.get("单重/KG") + "";
+//			String remark = dataRow.get("备注") + "";
+//			String classificationId = findclassificationIdByName(classificationName);
+//			if (classificationId.equals("0")) {
+//				result.success = false;
+//				result.setErrorCode(2);
+//				return result;
+//			}
+//			boolean upResult = y_Upload_Data_Service.oldpanelUpload(oldpanelName, classificationId, inventoryUnit,
+//					number, warehouseName, unitArea, unitWeight, remark, userid);
+//			if (!upResult) {
+//				result.success = false;
+//				result.setErrorCode(2);
+//				return result;
+//			}
+//			String sql_addLogDetail = "insert into oldpanellogdetail (oldpanelName,count,oldpanellogId) values (?,?,?)";
+//			boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLogDetail, oldpanelName, number, oldpanellogId);
+//			if (!is_log_right) {
+//				result.success = false;
+//				result.setErrorCode(2);
+//				return result;
+//			}
+//		}
 		result.dataList = dataList;
 		return result;
 	}
