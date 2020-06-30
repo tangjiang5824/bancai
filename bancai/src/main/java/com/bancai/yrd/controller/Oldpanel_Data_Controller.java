@@ -121,13 +121,14 @@ public class Oldpanel_Data_Controller {
             String unitArea=jsonTemp.get("unitArea")+"";
             String unitWeight=jsonTemp.get("unitWeight")+"";
             String remark=jsonTemp.get("remark")+"";
-            boolean result = y_Upload_Data_Service.oldpanelUpload(oldpanelName,classificationId,inventoryUnit,
+            String oldpanelId = y_Upload_Data_Service.oldpanelUpload(oldpanelName,classificationId,inventoryUnit,
                     number,warehouseName,unitArea,unitWeight,remark,uploadId);
-            if(!result){
+            if(oldpanelId.equals("0")){
                 return false;
             }
-            String sql_addLogDetail="insert into oldpanellogdetail (oldpanelName,count,oldpanellogId) values (?,?,?)";
-            boolean is_log_right= insertProjectService.insertIntoTableBySQL(sql_addLogDetail,oldpanelName,number,String.valueOf(oldpanellogId));
+            String sql_addLogDetail="insert into oldpanellogdetail (oldpanelName,count,oldpanellogId,oldpanelStoreId) values (?,?,?,?)";
+            boolean is_log_right= insertProjectService.insertIntoTableBySQL(sql_addLogDetail,oldpanelName,number,
+                    String.valueOf(oldpanellogId),oldpanelId);
             if(!is_log_right){
                 return false;
             }

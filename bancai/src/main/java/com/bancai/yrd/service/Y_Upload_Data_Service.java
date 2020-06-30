@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
+import com.bancai.cg.service.InsertProjectService;
 import com.bancai.commonMethod.AnalyzeNameService;
 import com.bancai.commonMethod.QueryAllService;
 import com.bancai.domain.DataList;
@@ -32,22 +33,23 @@ public class Y_Upload_Data_Service extends BaseService {
     private QueryAllService queryService;
     @Autowired
     private AnalyzeNameService AnalyzeNameService;
+    @Autowired
+    private InsertProjectService insertProjectService;
 
     /**
      * 添加数据
      */
     @Transactional
-    public boolean oldpanelUpload(String oldpanelName, String classificationId, String inventoryUnit,
+    public String oldpanelUpload(String oldpanelName, String classificationId, String inventoryUnit,
                            String number, String warehouseName, String unitArea, String unitWeight, String remark, String uploadId) {
         String[] analyzeOldpanelName = AnalyzeNameService.analyzeOldpanelName(oldpanelName);
         if(!AnalyzeNameService.isOldpanelFormatExist(analyzeOldpanelName[0],analyzeOldpanelName[1],analyzeOldpanelName[7],analyzeOldpanelName[8]))
-            return false;
-        oldpanelSaveData(analyzeOldpanelName,oldpanelName,classificationId,inventoryUnit, number,
-                warehouseName, unitArea, unitWeight, remark, uploadId);
-        return true;
+            return "0";
+        return String.valueOf(oldpanelSaveData(analyzeOldpanelName,oldpanelName,classificationId,inventoryUnit, number,
+                warehouseName, unitArea, unitWeight, remark, uploadId));
     }
 
-    private void oldpanelSaveData(String[] analyzeOldpanelName, String oldpanelName, String classificationId, String inventoryUnit,
+    private int oldpanelSaveData(String[] analyzeOldpanelName, String oldpanelName, String classificationId, String inventoryUnit,
                                   String number, String warehouseName, String unitArea0, String unitWeight0, String remark, String uploadId) {
         double unitArea = Double.parseDouble(unitArea0);
         double unitWeight = Double.parseDouble(unitWeight0);
@@ -62,10 +64,14 @@ public class Y_Upload_Data_Service extends BaseService {
                 analyzeOldpanelName[0],analyzeOldpanelName[1], analyzeOldpanelName[2], analyzeOldpanelName[3],
                 analyzeOldpanelName[4],analyzeOldpanelName[5],analyzeOldpanelName[6],analyzeOldpanelName[7]};
         System.out.println("Save======="+Arrays.toString(t));
-        jo.update(sql2,oldpanelName,classificationId,inventoryUnit,String.valueOf(num),String.valueOf(num),warehouseName,
+        return insertProjectService.insertDataToTable(sql2,oldpanelName,classificationId,inventoryUnit,String.valueOf(num),String.valueOf(num),warehouseName,
                 String.valueOf(unitArea),String.valueOf(unitWeight),remark,uploadId,String.valueOf(totalArea),String.valueOf(totalWeight),
                 analyzeOldpanelName[0],analyzeOldpanelName[1], analyzeOldpanelName[2], analyzeOldpanelName[3],
                 analyzeOldpanelName[4],analyzeOldpanelName[5],analyzeOldpanelName[6],analyzeOldpanelName[7]);
+//        jo.update(sql2,oldpanelName,classificationId,inventoryUnit,String.valueOf(num),String.valueOf(num),warehouseName,
+//                String.valueOf(unitArea),String.valueOf(unitWeight),remark,uploadId,String.valueOf(totalArea),String.valueOf(totalWeight),
+//                analyzeOldpanelName[0],analyzeOldpanelName[1], analyzeOldpanelName[2], analyzeOldpanelName[3],
+//                analyzeOldpanelName[4],analyzeOldpanelName[5],analyzeOldpanelName[6],analyzeOldpanelName[7]);
     }
     /**
      * queryPage替换指定属性值为对应另一属性值

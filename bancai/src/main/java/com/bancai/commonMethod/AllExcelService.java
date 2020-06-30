@@ -205,15 +205,15 @@ public class AllExcelService extends BaseService {
 				result.setErrorCode(2);
 				return result;
 			}
-			boolean upResult = y_Upload_Data_Service.oldpanelUpload(oldpanelName, classificationId, inventoryUnit,
+			String oldpanelId = y_Upload_Data_Service.oldpanelUpload(oldpanelName, classificationId, inventoryUnit,
 					number, warehouseName, unitArea, unitWeight, remark, userid);
-			if (!upResult) {
+			if (oldpanelId.equals("0")) {
 				result.success = false;
 				result.setErrorCode(2);
 				return result;
 			}
-			String sql_addLogDetail = "insert into oldpanellogdetail (oldpanelName,count,oldpanellogId) values (?,?,?)";
-			boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLogDetail, oldpanelName, number, oldpanellogId);
+			String sql_addLogDetail = "insert into oldpanellogdetail (oldpanelName,count,oldpanellogId,oldpanelStoreId) values (?,?,?,?)";
+			boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLogDetail, oldpanelName, number, oldpanellogId,oldpanelId);
 			if (!is_log_right) {
 				result.success = false;
 				result.setErrorCode(2);
