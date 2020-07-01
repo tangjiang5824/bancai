@@ -4,13 +4,18 @@ package com.bancai.commonMethod;
 import com.bancai.service.BaseService;
 import com.bancai.commonMethod.QueryAllService;
 import com.bancai.domain.DataList;
+import com.bancai.util.Excel;
+import com.bancai.vo.UploadDataResult;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.xml.crypto.Data;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
+import java.util.HashSet;
 
 
 @Service
@@ -20,6 +25,19 @@ public class PanelMatchService extends BaseService{
     private QueryAllService queryService;
     @Autowired
     private AnalyzeNameService AnalyzeNameService;
+
+    /**
+     * 设计清单解析
+     */
+    @Transactional
+    public UploadDataResult uploadDesignlist(InputStream inputStream, String userid, String projectId, String buildingId) throws IOException {
+        UploadDataResult result = new UploadDataResult();
+
+        Excel excel = new Excel(inputStream);
+        DataList dataList = excel.readExcelContent();
+
+        return result;
+    }
     /**
      * 旧板匹配
      */

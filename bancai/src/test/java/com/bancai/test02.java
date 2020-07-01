@@ -66,7 +66,6 @@ public class test02 {
 //        String sql = "select * from matchrules where productTypeId=? and productNameFormat=?";
 //        DataList list = queryService.query(sql, "1", "201");
 //        Collections.sort(list);
-
     }
 
     private String IgnoreSuffix(String a){

@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.Iterator;
 
 @Service
@@ -175,7 +176,7 @@ public class AllExcelService extends BaseService {
 	 * @throws IOException
 	 */
 	@Transactional
-	public UploadDataResult uploadOldpanelExcelData(InputStream inputStream,String userid, String tablename,String oldpanellogId) throws IOException {
+	public UploadDataResult uploadOldpanelExcelData(InputStream inputStream,String userid,String oldpanellogId) throws IOException {
 		DataList dataList = new DataList();
 		UploadDataResult result = new UploadDataResult();
 		Excel excel = new Excel(inputStream);
@@ -194,7 +195,7 @@ public class AllExcelService extends BaseService {
 			}
 			String classificationName = dataRow.get("分类") + "";
 			String inventoryUnit = dataRow.get("单位") + "";
-			String number = dataRow.get("入库数量") + "";
+			String count = dataRow.get("入库数量") + "";
 			String warehouseName = dataRow.get("入库仓库") + "";
 			String unitArea = dataRow.get("单面积/m2") + "";
 			String unitWeight = dataRow.get("单重/KG") + "";
@@ -205,15 +206,15 @@ public class AllExcelService extends BaseService {
 				result.setErrorCode(2);
 				return result;
 			}
-			String oldpanelId = y_Upload_Data_Service.oldpanelUpload(oldpanelName, classificationId, inventoryUnit,
-					number, warehouseName, unitArea, unitWeight, remark, userid);
-			if (oldpanelId.equals("0")) {
+			int oldpanelId = y_Upload_Data_Service.oldpanelUpload(oldpanelName,warehouseName,count);
+			if (oldpanelId==0) {
 				result.success = false;
 				result.setErrorCode(2);
 				return result;
 			}
-			String sql_addLogDetail = "insert into oldpanellogdetail (oldpanelName,count,oldpanellogId,oldpanelStoreId) values (?,?,?,?)";
-			boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLogDetail, oldpanelName, number, oldpanellogId,oldpanelId);
+			String sql_addLogDetail = "insert into oldpanellogdetail (oldpanelId,count,oldpanellogId) values (?,?,?)";
+			boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLogDetail,String.valueOf(oldpanelId),
+					count,String.valueOf(oldpanellogId));
 			if (!is_log_right) {
 				result.success = false;
 				result.setErrorCode(2);
@@ -276,6 +277,69 @@ public class AllExcelService extends BaseService {
 		saveData(dataList,userid,tablename);
 		//updateEnterpriseInfo(tableName);
 		return true;
+	}
+
+	/**
+	 * 设计清单上传数据
+	 *
+	 * @param inputStream
+	 * @param userId
+	 * @return
+	 * @throws IOException
+	 */
+	@Transactional
+	public UploadDataResult uploadDesignlistExcelData(InputStream inputStream,String projectId,String buildingId,String userId,String logId) throws IOException {
+		DataList dataList = new DataList();
+		UploadDataResult result = new UploadDataResult();
+		Excel excel = new Excel(inputStream);
+		dataList = excel.readExcelContent();
+		HashSet<String> positionSet = new HashSet<>();
+		String sql_findPosition = "select position from designlist where projectId=? and buildingId=?";
+		DataList positionList = queryService.query(sql_findPosition,projectId,buildingId);
+		for (com.bancai.domain.DataRow dataRow : positionList) {
+			positionSet.add(dataRow.get("position").toString());
+		}
+		Iterator it = dataList.iterator();
+		while (it.hasNext()){
+			com.bancai.domain.DataRow dataRow = (DataRow) it.next();
+			String oldpanelName = dataRow.get("品名") + "";
+			if(oldpanelName.equals("")){
+				it.remove();
+				continue;
+			} else if (oldpanelName.equals("合计")){
+				it.remove();
+				break;
+			}
+			String classificationName = dataRow.get("分类") + "";
+			String inventoryUnit = dataRow.get("单位") + "";
+			String number = dataRow.get("入库数量") + "";
+			String warehouseName = dataRow.get("入库仓库") + "";
+			String unitArea = dataRow.get("单面积/m2") + "";
+			String unitWeight = dataRow.get("单重/KG") + "";
+			String remark = dataRow.get("备注") + "";
+			String classificationId = findclassificationIdByName(classificationName);
+			if (classificationId.equals("0")) {
+				result.success = false;
+				result.setErrorCode(2);
+				return result;
+			}
+//			int oldpanelId = y_Upload_Data_Service.oldpanelUpload(oldpanelName,warehouseName,count);
+//			if (oldpanelId==0) {
+//				result.success = false;
+//				result.setErrorCode(2);
+//				return result;
+//			}
+//			String sql_addLogDetail = "insert into oldpanellogdetail (oldpanelName,count,oldpanellogId,oldpanelStoreId) values (?,?,?,?)";
+//			boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLogDetail, oldpanelName, number, logId,oldpanelId);
+//			if (!is_log_right) {
+//				result.success = false;
+//				result.setErrorCode(2);
+//				return result;
+//			}
+		}
+
+		result.dataList = dataList;
+		return result;
 	}
 
 }
