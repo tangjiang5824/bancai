@@ -182,15 +182,28 @@ public class AnalyzeNameService extends BaseService {
     }
 
     /**
-     * 判断旧板info是否存在，返回id或0
+     * 根据类型（旧板、产品）和品名判断info是否存在，返回id或0
      */
     @Transactional
-    public int isOldpanelInfoExist(String oldpanelName) {
-        String sql = "select id from oldpanel_info where oldpanelName=?";
+    public int isInfoExist(String name, String oldpanelName) {
+        String sql = "select id from "+name+"_info where "+name+"Name=?";
         DataList dataList = queryService.query(sql,oldpanelName);
         if(dataList.isEmpty())
             return 0;
         return Integer.parseInt(dataList.get(0).get("id").toString());
+    }
+    /**
+     * 根据旧板品名判断info是否存在，返回id,unitWeight,unitArea
+     */
+    @Transactional
+    public String[] isOldpanelInfoExist(String oldpanelName) {
+        String sql = "select * from oldpanel_info where oldpanelName=?";
+        DataList dataList = queryService.query(sql,oldpanelName);
+        if(dataList.isEmpty())
+            return null;
+        return new String[]{dataList.get(0).get("id").toString(),
+                dataList.get(0).get("unitWeight").toString(),
+                dataList.get(0).get("unitArea").toString()};
     }
     /**
      * 根据产品类型名获取类型ID
