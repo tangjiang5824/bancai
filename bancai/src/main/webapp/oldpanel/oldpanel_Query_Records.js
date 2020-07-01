@@ -9,9 +9,13 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
         //操作类型：枚举类型
         Ext.define('Soims.model.application.ApplicationState', {
             statics: { // 关键
+                0: { value: '0', name: '入库' },
                 1: { value: '1', name: '出库' },
                 2: { value: '2', name: '退库' },
-                0: { value: '0', name: '入库' },
+                3: { value: '3', name: '撤销入库' },
+                4: { value: '4', name: '撤销出库' },
+                5: { value: '5', name: '撤销退库' },
+                6: { value: '6', name: '增加基础信息' },
                 //
             }
         });
@@ -261,10 +265,10 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
                         fields:['oldpanelName','length','width','oldpanelType','count'],
                         proxy : {
                             type : 'ajax',
-                            url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName=oldpanellogdetail&columnName=oldpanellogId&columnValue='+id,
+                            url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName=oldpanel_logdetail_oldpanelName&columnName=oldpanellogId&columnValue='+id,
                             reader : {
                                 type : 'json',
-                                rootProperty: 'oldpanellogdetail',
+                                rootProperty: 'oldpanel_logdetail_oldpanelName',
                             },
                         },
                         autoLoad : true

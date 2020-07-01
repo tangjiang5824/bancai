@@ -29,6 +29,7 @@ Ext.define('oldpanel.oldpanel_Outbound',{
                 3: { value: '3', name: '撤销入库' },
                 4: { value: '4', name: '撤销出库' },
                 5: { value: '5', name: '撤销退库' },
+                6: { value: '6', name: '增加基础信息' },
             }
         });
         //枚举
@@ -36,6 +37,7 @@ Ext.define('oldpanel.oldpanel_Outbound',{
         Ext.define('oldpanel.oepration.state', {
             statics: { // 关键
                 0: { value: '0', name: '未回滚' },
+                null: { value: '0', name: '未回滚' },
                 1: { value: '1', name: '已回滚' },
             }
         });
@@ -56,11 +58,23 @@ Ext.define('oldpanel.oldpanel_Outbound',{
                 {
                     xtype : 'datefield',
                     margin : '0 40 0 0',
-                    fieldLabel : '入库时间',
+                    fieldLabel : '开始时间',
                     width : 180,
                     labelWidth : 60,
                     id : "startTime",
                     name : 'startTime',
+                    format : 'Y-m-d',
+                    editable : true,
+                    //value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
+                },
+                {
+                    xtype : 'datefield',
+                    margin : '0 40 0 0',
+                    fieldLabel : '结束时间',
+                    width : 180,
+                    labelWidth : 60,
+                    id : "endTime",
+                    name : 'endTime',
                     format : 'Y-m-d',
                     editable : true,
                     //value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
@@ -77,6 +91,7 @@ Ext.define('oldpanel.oldpanel_Outbound',{
                                 // operator : Ext.getCmp('operator').getValue(),
                                 operator : Ext.getCmp('operator').getValue(),//获取操作员名
                                 startTime:Ext.getCmp('startTime').getValue(),
+                                endTime:Ext.getCmp('endTime').getValue(),
                                 type:0
                             }
                         });
@@ -92,7 +107,7 @@ Ext.define('oldpanel.oldpanel_Outbound',{
             fields: [],
             pageSize: itemsPerPage, // items per page
             proxy:{
-                url : "oldpanel/oldpanel_query_records.do",
+                url : "oldpanel/outbound_query_records.do",
                 type: 'ajax',
                 reader:{
                     type : 'json',
@@ -104,6 +119,8 @@ Ext.define('oldpanel.oldpanel_Outbound',{
                     limit: 20,
                     operator : Ext.getCmp('operator').getValue(),//获取操作员名，type操作类型
                     startTime:Ext.getCmp('startTime').getValue(),
+                    endTime:Ext.getCmp('endTime').getValue(),
+                    type:0
                 }
             },
             listeners : {
@@ -113,6 +130,8 @@ Ext.define('oldpanel.oldpanel_Outbound',{
                         // operator : Ext.getCmp('operator').getValue(),
                         operator : Ext.getCmp('operator').getValue(),//获取操作员名
                         startTime:Ext.getCmp('startTime').getValue(),
+                        endTime:Ext.getCmp('endTime').getValue(),
+                        type:0
                         // projectId:Ext.getCmp('projectName').getValue(),
                     });
                 }
@@ -201,6 +220,9 @@ Ext.define('oldpanel.oldpanel_Outbound',{
                                             success:function (response) {
                                                 //console.log(response.responseText);
                                                 Ext.MessageBox.alert("提示", "回滚成功!");
+                                                //location="javascript:location.reload()";
+                                                oldpanel_inBoundRecords_Store.load();
+                                                //oldpanel_Query_Records_specific_data_grid.close();
                                             },
                                             failure : function(response){
                                                 Ext.MessageBox.alert("提示", "回滚失败!");
@@ -305,6 +327,7 @@ Ext.define('oldpanel.oldpanel_Outbound',{
                 {   text: '记录是否回滚',
                     dataIndex: 'isrollback',
                     flex :1 ,
+                    //defaultValue:0,
                     renderer: function (value) {
                         return oldpanel.oepration.state[value].name; // key-value
                     },
@@ -359,10 +382,10 @@ Ext.define('oldpanel.oldpanel_Outbound',{
                          'count'],
                     proxy: {
                         type: 'ajax',
-                        url: 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName=oldpanellogdetail&columnName=oldpanellogId&columnValue=' + id,//获取同一批出入库的原材料
+                        url: 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName=oldpanel_logdetail_oldpanelName&columnName=oldpanellogId&columnValue=' + id,//获取同一批出入库的原材料
                         reader: {
                             type: 'json',
-                            rootProperty: 'oldpanellogdetail',
+                            rootProperty: 'oldpanel_logdetail_oldpanelName',
                         },
                     },
                     autoLoad: true

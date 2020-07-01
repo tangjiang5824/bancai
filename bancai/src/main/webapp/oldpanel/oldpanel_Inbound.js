@@ -215,36 +215,12 @@ Ext.define('oldpanel.oldpanel_Inbound', {
 
         });
 
-        var toolbar = Ext.create('Ext.toolbar.Toolbar', {
-            dock : "top",
-            items: [
-                //oldpanelTypeList,
-                {xtype: 'textfield', fieldLabel: '旧板品名', id: 'oldpanelName', width: 190, labelWidth: 60,
-                    //margin: '0 10 0 40',
-                    name: 'oldpanelNo', value: ""},
-                classificationList,
-
-                {xtype: 'textfield', fieldLabel: '库存单位', id: 'inventoryUnit', width: 220, labelWidth: 60,
-                    //margin: '0 10 0 40',
-                    name: 'inventoryUnit', value: ""},
-                // {xtype: 'textfield', fieldLabel: '仓库名称', id: 'warehouseName', width: 220, labelWidth: 60,
-                //     //margin: '0 10 0 40',
-                //     name: 'warehouseName', value: ""},
-
-            ]
-        });
-        var toolbar1 = Ext.create('Ext.toolbar.Toolbar', {
-            dock : "top",
-            items: [
-                {xtype: 'textfield', fieldLabel: '单面积', id: 'unitArea', width: 220, labelWidth: 50,  name: 'unitArea', value: ""},
-                {xtype: 'textfield', fieldLabel: '单重', id: 'unitWeight', width: 220, labelWidth: 30, /*margin: '0 10 0 40',*/ name: 'unitWeight', value: ""},
-                {xtype: 'textfield', fieldLabel: '备注', id: 'remark', width: 220, labelWidth: 30, name: 'remark', value: ""},
-            ]
-        });
         var toolbar2 = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
             items: [
-
+                {xtype: 'textfield', fieldLabel: '旧板品名', id: 'oldpanelName', width: 300, labelWidth: 60,
+                    //margin: '0 10 0 40',
+                    name: 'oldpanelNo', value: ""},
                 //{xtype: 'textfield', fieldLabel: '重量', id: 'weight', width: 190, labelWidth: 30, margin: '0 10 0 50', name: 'weight', value: ""},
                 //{xtype: 'textfield', fieldLabel: '仓库名称', id: 'warehouseNo', width: 220, labelWidth: 60, margin: '0 10 0 50', name: 'warehouseNo', value: ""},
                 //{xtype: 'textfield', fieldLabel: '存放位置', id: 'position', width: 220, labelWidth: 60, margin: '0 10 0 50', name: 'position', value: ""},
@@ -261,56 +237,47 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                 // },
                 // speificLocation_row,
                 // speificLocation_col,
-                {xtype: 'textfield', fieldLabel: '入库数量', id: 'number', width: 190, labelWidth: 30,  name: 'number', value: ""},
-                {
-                    xtype: 'textfield',
-                    margin: '0 0 0 40',
-                    fieldLabel: ' 入库人',
-                    id: 'operator',
-                    width: 150,
-                    labelWidth: 45,
-                    name: 'operator',
-                    value: "",
-                },
+                {xtype: 'textfield', fieldLabel: '入库数量', id: 'count', width: 190, labelWidth: 30,  name: 'count', value: ""},
+
                 {xtype : 'button',
                     margin: '0 10 0 70',
                     iconAlign : 'center',
                     iconCls : 'rukuicon ',
                     text : '添加',
                     handler: function(){
-                        var classificationName = Ext.getCmp('classification').getValue();
+                        //var classificationName = Ext.getCmp('classification').getValue();
                         var oldpanelName = Ext.getCmp('oldpanelName').getValue();
-                        var inventoryUnit = Ext.getCmp('inventoryUnit').getValue();
-                        var number = Ext.getCmp('number').getValue();
-                        var unitWeight = Ext.getCmp('unitWeight').getValue();
-                        var unitArea = Ext.getCmp('unitArea').getValue();
-                        var remark = Ext.getCmp('remark').getValue();
+                        //var inventoryUnit = Ext.getCmp('inventoryUnit').getValue();
+                        var count = Ext.getCmp('count').getValue();
+                        //var unitWeight = Ext.getCmp('unitWeight').getValue();
+                        //var unitArea = Ext.getCmp('unitArea').getValue();
+                        //var remark = Ext.getCmp('remark').getValue();
                         var warehouseName = Ext.getCmp('storePosition').getValue();
                         var data = [{
                             'oldpanelName' : oldpanelName,
-                            'classificationName':classificationName,
-                            'inventoryUnit' : inventoryUnit,
-                            'unitArea' : unitArea,
-                            'unitWeight' : unitWeight,
+                            //'classificationName':classificationName,
+                            //'inventoryUnit' : inventoryUnit,
+                            //'unitArea' : unitArea,
+                            //'unitWeight' : unitWeight,
                             'warehouseName':warehouseName,
-                            'remark' : remark,
-                            'number' : number,
+                            //'remark' : remark,
+                            'count' : count,
                         }];
                         //点击查询获得输入的数据
                         // console.log(Ext.getCmp('length').getValue());
                         // console.log(Ext.getCmp('cost').getValue());
                         //若品名未填则添加失败
-                        if (oldpanelName != ''&&number!= '') {
+                        if (oldpanelName != ''&&count!= '') {
                             Ext.getCmp('addDataGrid').getStore().loadData(data, true);
                             //清除框里的数据
                             Ext.getCmp('oldpanelName').setValue('');
-                            Ext.getCmp('classification').setValue('');
-                            Ext.getCmp('inventoryUnit').setValue('');
-                            Ext.getCmp('unitWeight').setValue('');
-                            Ext.getCmp('unitArea').setValue('');
-                            Ext.getCmp('number').setValue('');
+                            //Ext.getCmp('classification').setValue('');
+                            //Ext.getCmp('inventoryUnit').setValue('');
+                            //Ext.getCmp('unitWeight').setValue('');
+                            //Ext.getCmp('unitArea').setValue('');
+                            Ext.getCmp('count').setValue('');
                             Ext.getCmp('storePosition').setValue('');
-                            Ext.getCmp('remark').setValue('');
+                            //Ext.getCmp('remark').setValue('');
                             Ext.getCmp('operator').setValue('');
                         }else{
                             Ext.MessageBox.alert("警告","品名、入库数量不能为空",function(r) {
@@ -333,7 +300,18 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                 //marginLeft: '900px'
                 layout: 'right'
             },
-            items : [{
+            items : [
+                {
+                    xtype: 'textfield',
+                    margin: '0 20 0 0',
+                    fieldLabel: ' 入库人',
+                    id: 'operator',
+                    width: 150,
+                    labelWidth: 45,
+                    name: 'operator',
+                    value: "",
+                },
+                {
                 xtype : 'button',
                 iconAlign : 'center',
                 iconCls : 'rukuicon ',
@@ -366,8 +344,16 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                             operator: Ext.getCmp('operator').getValue(),
                         },
                         success : function(response) {
+                            console.log("12312312312321",response.responseText);
+                            if(response.responseText="false")
+                            {
+                                Ext.MessageBox.alert("提示","入库失败，品名不规范" );
+                            }
                             //var message =Ext.decode(response.responseText).showmessage;
-                            Ext.MessageBox.alert("提示","入库成功" );
+                            else{
+                                Ext.MessageBox.alert("提示","入库成功" );
+                            }
+
                         },
                         failure : function(response) {
                             //var message =Ext.decode(response.responseText).showmessage;
@@ -386,36 +372,23 @@ Ext.define('oldpanel.oldpanel_Inbound', {
             //dockedItems : [toolbar2],
             store : {
                 // fields: ['材料名','品号', '长',"；类型","宽",'规格','库存单位','仓库编号','数量','成本','存放位置']
-                fields: ['oldpanelName','classificationName','inventoryUnit','unitArea',
-                    'unitWeight',//'totalArea','totalWeight'，'length', 'width',
-                    'warehouseName','remark','number']
+                fields: ['oldpanelName','warehouseName','count']
             },
 
             columns : [
-                {
-                    // dataIndex : '序号',
-                    name : '序号',
-                    text : '序号',
-                    width : 60,
-                    value:'99',
-                    renderer:function(value,metadata,record,rowIndex){
-                        return　record_start　+　1　+　rowIndex;
-                    }
-                },
+                // {
+                //     // dataIndex : '序号',
+                //     name : '序号',
+                //     text : '序号',
+                //     width : 60,
+                //     value:'99',
+                //     renderer:function(value,metadata,record,rowIndex){
+                //         return　record_start　+　1　+　rowIndex;
+                //     }
+                // },
                 {dataIndex : 'oldpanelName', text : '旧板名称', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
-                {text: '分类', dataIndex: 'classificationName', flex :1,
-                    //枚举，1：出库，0：入库
-                    renderer: function (value) {
-                        return Soims.model.application.ApplicationState[value].name; // key-value
-                    },
-                    editor:{xtype : 'textfield', allowBlank : false}
-                },
-                {dataIndex : 'inventoryUnit', text : '库存单位', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'unitArea', text : '单面积', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'unitWeight', text : '单重', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'warehouseName', text : '仓库名称', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'remark', text : '备注', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'number', text : '入库数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'count', text : '入库数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {
                     name : '操作',
                     text : '操作',
@@ -456,7 +429,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                             //ajax 删除后台数据 成功则删除前台数据；失败则不删除前台数据
 
                             //Extjs 4.x 删除
-                            Ext.getCmp('addDataGrid').getStore().remove(oldpanelArrArr);
+                            Ext.getCmp('addDataGrid').getStore().remove(oldpanelArr);
                         } else {
                             return;
                         }
@@ -481,9 +454,10 @@ Ext.define('oldpanel.oldpanel_Inbound', {
 
         };
 
-        this.dockedItems = [toolbar,
-            //toobar,
-            toolbar1, toolbar2, grid, toolbar3];
+        this.dockedItems = [
+            //toolbar,
+            //toobar,toolbar1,
+            toolbar2, grid, toolbar3];
         //this.items = [ me.grid ];
         this.callParent(arguments);
 

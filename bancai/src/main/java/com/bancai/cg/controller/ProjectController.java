@@ -529,17 +529,17 @@ public class ProjectController {
     @RequestMapping(value = "/oldpanel/backOldpanelStore.do")
     @Transactional
     public boolean backOldpanelStore(String oldpanellogId,HttpSession session ,String operator,String type) throws JSONException {
-        String sql_find_log_detail="select * from oldpanellogdetail where oldpanellogId=? and isrollback<>1";
+        String sql_find_log_detail="select * from oldpanel_logdetail where oldpanellogId=? and isrollback<>1";
         String userid = (String) session.getAttribute("userid");
 
         Date date=new Date();
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String update_log="update oldpanellog set isrollback=1 where id=?";
+        String update_log="update oldpanel_log set isrollback=1 where id=?";
         //把isrollback改为1
         insertProjectService.insertIntoTableBySQL(update_log,oldpanellogId);
 
         //log主键
-        String sql_insert_new_log="insert into oldpanellog (type,userId,time,operator,isrollback) values(?,?,?,?,?)";
+        String sql_insert_new_log="insert into oldpanel_log (type,userId,time,operator,isrollback) values(?,?,?,?,?)";
         int main_key=0;
         //插入新的log
         if (type.equals("0")) main_key= insertProjectService.insertDataToTable(sql_insert_new_log,"3",userid,simpleDateFormat.format(date),operator,"1");
@@ -569,7 +569,7 @@ public class ProjectController {
 
                 //修改完成撤销的原logdetail
                 String detail_id=list.get(i).get("id")+"";
-                String update_detail_isrollback="update oldpanellogdetail set isrollback=1 where id=?";
+                String update_detail_isrollback="update oldpanel_logdetail set isrollback=1 where id=?";
                 insertProjectService.insertIntoTableBySQL(update_detail_isrollback,detail_id);
                 //插入新的detail
                 String sql_insert_new_detial="insert into oldpanel_logdetail (oldpanelName,count,specification,oldpanellogId,oldpanelId,oldpanelstoreId,isrollback) values(?,?,?,?,?,?,?)";
