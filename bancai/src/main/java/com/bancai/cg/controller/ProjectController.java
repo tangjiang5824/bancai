@@ -547,33 +547,33 @@ public class ProjectController {
 
         DataList list=queryService.query(sql_find_log_detail,oldpanellogId);
         for(int i=0;i<list.size();i++){
-            String materialstoreId=list.get(i).get("materialstoreId")+"";
-            String materialName="";
+            String oldpanelstoreId=list.get(i).get("oldpanelstoreId")+"";
+            String oldpanelName="";
             String specification="";
-            String materialId="";
+            String oldpanelId="";
 
-            if(null!=list.get(i).get("materialName")) materialName=list.get(i).get("materialName")+"";
+            if(null!=list.get(i).get("oldpanelName")) oldpanelName=list.get(i).get("oldpanelName")+"";
             if(null!=list.get(i).get("specification")) specification=list.get(i).get("specification")+"";
-            if(null!=list.get(i).get("materialId")) materialId=list.get(i).get("materialId")+"";
+            if(null!=list.get(i).get("oldpanelId")) oldpanelId=list.get(i).get("oldpanelId")+"";
             String count=list.get(i).get("count")+"";
             int count_to_op=Integer.valueOf(count);
             if(type.equals("0")){
                 //撤销入库
 
                 //进行回滚出库
-                String sql_find_list="select * from material_store where id=?";
-                DataList count_list=queryService.query(sql_find_list,materialstoreId);
+                String sql_find_list="select * from oldpanel_store where id=?";
+                DataList count_list=queryService.query(sql_find_list,oldpanelstoreId);
                 if(count_list.size()!=1||Integer.valueOf(count_list.get(0).get("count")+"")!=count_to_op) return  false;
-                String sql_update_count="update material_store set count=0 where id=?";
-                insertProjectService.insertIntoTableBySQL(sql_update_count,materialstoreId);
+                String sql_update_count="update oldpanel_store set count=0 where id=?";
+                insertProjectService.insertIntoTableBySQL(sql_update_count,oldpanelstoreId);
 
                 //修改完成撤销的原logdetail
                 String detail_id=list.get(i).get("id")+"";
-                String update_detail_isrollback="update material_logdetail set isrollback=1 where id=?";
+                String update_detail_isrollback="update oldpanellogdetail set isrollback=1 where id=?";
                 insertProjectService.insertIntoTableBySQL(update_detail_isrollback,detail_id);
                 //插入新的detail
-                String sql_insert_new_detial="insert into material_logdetail (materialName,count,specification,materiallogId,materialId,materialstoreId,isrollback) values(?,?,?,?,?,?,?)";
-                insertProjectService.insertIntoTableBySQL(sql_insert_new_detial,materialName,count,specification,main_key+"",materialId,materialstoreId,"1");
+                String sql_insert_new_detial="insert into oldpanel_logdetail (oldpanelName,count,specification,oldpanellogId,oldpanelId,oldpanelstoreId,isrollback) values(?,?,?,?,?,?,?)";
+                insertProjectService.insertIntoTableBySQL(sql_insert_new_detial,oldpanelName,count,specification,main_key+"",oldpanelId,oldpanelstoreId,"1");
             }
         }
 
