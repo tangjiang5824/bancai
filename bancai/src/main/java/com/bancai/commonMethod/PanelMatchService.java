@@ -1,6 +1,7 @@
 package com.bancai.commonMethod;
 
 
+import com.bancai.domain.DataRow;
 import com.bancai.service.BaseService;
 import com.bancai.commonMethod.QueryAllService;
 import com.bancai.domain.DataList;
@@ -35,7 +36,22 @@ public class PanelMatchService extends BaseService{
 
         Excel excel = new Excel(inputStream);
         DataList dataList = excel.readExcelContent();
-
+        DataRow designlistMap = new DataRow();
+        for (int i = 0; i < dataList.size(); i++) {
+            String productName = dataList.get(i).get("productName").toString();
+            String position = dataList.get(i).get("position").toString();
+            if(!queryService.query("select * from designlist where projectId=? and buildingId=? and position=?"
+                    ,projectId,buildingId,position).isEmpty()){
+                result.setErrorCode(2);
+                return result;
+            }else if(designlistMap.containsKey(productName)){
+                int countOld = Integer.parseInt(designlistMap.get(productName).toString());
+                String countNew = String.valueOf(countOld+1);
+                designlistMap.put(productName,countNew);
+            }else {
+                designlistMap.put(productName,"1");
+            }
+        }
         return result;
     }
     /**

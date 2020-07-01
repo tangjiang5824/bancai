@@ -2,9 +2,11 @@ package com.bancai;
 
 import com.bancai.commonMethod.QueryAllService;
 import com.bancai.domain.DataList;
+import com.bancai.domain.DataRow;
 import org.junit.Test;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Scanner;
 
 public class test02 {
@@ -66,6 +68,40 @@ public class test02 {
 //        String sql = "select * from matchrules where productTypeId=? and productNameFormat=?";
 //        DataList list = queryService.query(sql, "1", "201");
 //        Collections.sort(list);
+        DataList dataList= new DataList();
+        DataRow dataRow = new DataRow();
+        dataRow.put("100U","10");
+        dataRow.put("200U","21");
+        String key = "100U";
+        String count = "14";
+        if(dataRow.containsKey(key)){
+            int countOld = Integer.parseInt(dataRow.get(key).toString());
+            int countPlus = Integer.parseInt(count);
+            String countNew = String.valueOf(countOld+countPlus);
+            dataRow.put(key,countNew);
+        }
+//        dataRow.put("100U","14");
+        dataRow.put("300U","8");
+//        Object newV = dataRow.get("num");
+//        for(DataRow d : dataList){
+//            Iterator<String> it = d.keySet().iterator();
+//            while (it.hasNext()){
+//                String key = it.next();
+//                if(dataRow.containsKey(key)){
+//                    dataRow
+//                }
+//            }
+//        }
+//        for (int i = 0; i < dataList.size(); i++) {
+//            System.out.println(dataList.get(i).toString());
+//        }
+        System.out.println(dataRow.toString());
+        Iterator iterator=dataRow.entrySet().iterator();
+        String w = "2.5";
+        String c = "7";
+        String t = String.valueOf(Double.parseDouble(w)*Integer.parseInt(c));
+        System.out.println(t);
+
     }
 
     private String IgnoreSuffix(String a){

@@ -10,25 +10,15 @@ import com.bancai.commonMethod.QueryAllService;
 import com.bancai.domain.DataList;
 import com.bancai.domain.DataRow;
 import org.apache.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.bancai.service.BaseService;
-import com.bancai.util.Excel;
-import com.bancai.vo.UploadDataResult;
 import com.bancai.vo.WebResponse;
 
 @Service
 public class Y_Upload_Data_Service extends BaseService {
     private Logger log = Logger.getLogger(Y_Upload_Data_Service.class);
-    private HSSFWorkbook wb;
     @Autowired
     private QueryAllService queryService;
     @Autowired
@@ -41,7 +31,7 @@ public class Y_Upload_Data_Service extends BaseService {
     @Transactional
     public int oldpanelAddNewInfo(String oldpanelName, String classificationId, String inventoryUnit,
                                  String unitWeight, String unitArea, String remark, String userId) {
-        if(AnalyzeNameService.isOldpanelInfoExist(oldpanelName)!=0)
+        if(AnalyzeNameService.isInfoExist("oldpanel",oldpanelName)!=0)
             return 0;
         return oldpanelSaveInfo(oldpanelName, classificationId, inventoryUnit, unitWeight, unitArea, remark, userId);
     }
@@ -50,12 +40,14 @@ public class Y_Upload_Data_Service extends BaseService {
      */
     @Transactional
     public int oldpanelUpload(String oldpanelName, String warehouseName, String count) {
-        int oldpanelId = AnalyzeNameService.isOldpanelInfoExist(oldpanelName);
+        String[] info = AnalyzeNameService.isOldpanelInfoExist(oldpanelName);
+        //id,unitWeight,unitArea
+        int oldpanelId = Integer.parseInt(info[0]);
         System.out.println("oldpanelUpload===oldpanelId="+oldpanelId);
         if(oldpanelId==0){
             return 0;
         }
-        oldpanelSaveData(String.valueOf(oldpanelId),warehouseName,count);
+        oldpanelSaveData(info,warehouseName,count);
         return oldpanelId;
 
 //        String[] analyzeOldpanelName = AnalyzeNameService.analyzeOldpanelName(oldpanelName);
@@ -85,16 +77,21 @@ public class Y_Upload_Data_Service extends BaseService {
                 analyzeOldpanelName[4],analyzeOldpanelName[5],analyzeOldpanelName[6],analyzeOldpanelName[7],userId);
     }
 
-    private void oldpanelSaveData(String oldpanelId, String warehouseName, String count){
+    private void oldpanelSaveData(String[] info, String warehouseName, String count){
+        //id,unitWeight,unitArea
         String sql = "select * from oldpanel_store where oldpanelId=? and warehouseName=?";
-        DataList queryList = queryService.query(sql,oldpanelId,warehouseName);
+        DataList queryList = queryService.query(sql,info[0],warehouseName);
         if(queryList.isEmpty()){
             insertProjectService.insertDataToTable("insert into oldpanel_store " +
-                    "(oldpanelId,countUse,countStore,warehouseName) values (?,?,?,?)",
-                    oldpanelId,count,count,warehouseName);
+                    "(oldpanelId,countUse,countStore,warehouseName,totalArea,totalWeight) values (?,?,?,?,?,?)",
+                    info[0],count,count,warehouseName,String.valueOf(Double.parseDouble(info[2])*Integer.parseInt(count)),
+                    String.valueOf(Double.parseDouble(info[1])*Integer.parseInt(count)));
         } else {
             String sql2 = "update oldpanel_store set countUse=countUse+"+count+
-                    ",countStore=countStore+"+count+" where id="+queryList.get(0).get("id").toString();
+                    ",countStore=countStore+"+count+",totalArea=totalArea+"+
+                    String.valueOf(Double.parseDouble(info[2]) * Integer.parseInt(count)) +
+                    ",totalWeight=totalWeight+"+String.valueOf(Double.parseDouble(info[1])*Integer.parseInt(count))+
+                    " where id="+queryList.get(0).get("id").toString();
             jo.update(sql2);
         }
     }
