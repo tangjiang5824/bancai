@@ -150,40 +150,41 @@ Ext.define("menu.MenuRole_bc0", {
 				expanded : true,
 				children : [  {
 					text : '产品成品入库',
-					id : '',
+					id : 'product.product_Inbound',
 					leaf : true
 				} ,{
 					text : '产品成品库存查询',
-					id : '',
+					id : 'product.product_Query_Data',
 					leaf : true
 				}, {
 					text : '产品成品出库',
-					id : '',
+					id : 'product.product_outBound',
 					leaf : true
 				}, {
 					text : '产品成品出入库记录查询',
-					id : '',
+					id : 'product.product_Query_Records',
 					leaf : true
 				}, {
 					text : '产品成品出入库记录统计',
-					id : '',
+					id : 'product.product_Statistics_Records',
 					leaf : true
 				}]
 			},
+			// 	{
+			// 	text : '产品管理',
+			// 	expanded : true,
+			// 	children : [ {
+			// 		text : '产品信息录入',
+			// 		id : 'product.product_Inbound',
+			// 		leaf : true
+			// 	} , {
+			// 		text : '产品信息查询',
+			// 		id : 'product.product_Query_Data',
+			// 		leaf : true
+			// 	} ,
+			// 	]
+			// },
 				{
-				text : '产品管理',
-				expanded : true,
-				children : [ {
-					text : '产品信息录入',
-					id : 'product.product_Inbound',
-					leaf : true
-				} , {
-					text : '产品信息查询',
-					id : 'product.product_Query_Data',
-					leaf : true
-				} ,
-				]
-			},{
 				text : '项目管理',
 				expanded : true,
 				children : [ {
