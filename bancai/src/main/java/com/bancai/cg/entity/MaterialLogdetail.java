@@ -8,9 +8,29 @@ import java.util.Objects;
 public class MaterialLogdetail {
     private int id;
     private Integer count;
-    private Integer materiallogId;
-    private Integer materialId;
     private Integer isrollback;
+    private MaterialLog materialLog;
+    private MaterialInfo materialInfo;
+
+    @ManyToOne(targetEntity = MaterialInfo.class)
+    @JoinColumn(name = "materialId" ,referencedColumnName = "id")
+    public MaterialInfo getMaterialInfo() {
+        return materialInfo;
+    }
+
+    public void setMaterialInfo(MaterialInfo materialInfo) {
+        this.materialInfo = materialInfo;
+    }
+
+    @ManyToOne(targetEntity = MaterialLog.class)
+    @JoinColumn(name = "materiallogid",referencedColumnName = "id")
+    public MaterialLog getMaterialLog() {
+        return materialLog;
+    }
+
+    public void setMaterialLog(MaterialLog materialLog) {
+        this.materialLog = materialLog;
+    }
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -31,21 +51,8 @@ public class MaterialLogdetail {
         this.count = count;
     }
 
-    public Integer getMateriallogId() {
-        return materiallogId;
-    }
 
-    public void setMateriallogId(Integer materiallogId) {
-        this.materiallogId = materiallogId;
-    }
 
-    public Integer getMaterialId() {
-        return materialId;
-    }
-
-    public void setMaterialId(Integer materialId) {
-        this.materialId = materialId;
-    }
 
     public Integer getIsrollback() {
         return isrollback;
