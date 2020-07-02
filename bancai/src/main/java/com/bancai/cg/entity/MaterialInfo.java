@@ -16,6 +16,16 @@ public class MaterialInfo {
     private Integer width;
     private Double unitWeight;
     private Set<MaterialStore> materialStores =new HashSet<>();
+    private Set<MaterialLogdetail> materialLogdetails=new HashSet<>();
+
+    @OneToMany(mappedBy = "materialInfo")
+    public Set<MaterialLogdetail> getMaterialLogdetails() {
+        return materialLogdetails;
+    }
+
+    public void setMaterialLogdetails(Set<MaterialLogdetail> materialLogdetails) {
+        this.materialLogdetails = materialLogdetails;
+    }
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)

@@ -1,6 +1,8 @@
 package com.bancai.cg.controller;
 
 
+import com.bancai.cg.dao.materialinfodao;
+import com.bancai.cg.entity.MaterialInfo;
 import com.bancai.cg.service.InsertProjectService;
 import com.bancai.cg.util.newPanelMatch;
 import com.bancai.commonMethod.QueryAllService;
@@ -40,6 +42,8 @@ public class ProjectController {
     private InsertProjectService insertProjectService;
     @Autowired
     private QueryAllService queryAllService;
+
+
 
     /**
      *生成项目计划，添加楼栋信息
@@ -406,24 +410,7 @@ public class ProjectController {
         response.getWriter().flush();
         response.getWriter().close();
     }
-    //向materialtype原材料类型表插入
-    @RequestMapping(value = "/material/insertIntoMaterialType.do")
-    @Transactional
-    public boolean insertToMaterialType(String s) throws JSONException {
-        JSONArray jsonArray =new JSONArray(s);
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject=jsonArray.getJSONObject(i);
-            String materialTypeName = jsonObject.get("materialTypeName")+"";
-            String description = jsonObject.get("description")+"";
-            String sql ="insert into materialtype (materialTypeName,description) values(?,?)";
-            boolean flag= insertProjectService.insertIntoTableBySQL(sql,materialTypeName,description);
-            if(!flag){
-                return  false;
-            }
-        }
-        return true;
-    }
+
 
     @RequestMapping(value = "/material/insertIntoOldPanelType.do")
     @Transactional
