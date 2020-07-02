@@ -51,21 +51,21 @@ public class MaterialController {
             @Override
             public Predicate toPredicate(Root<MaterialInfo> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                  List<Predicate> condition=new ArrayList<>();
-                if(materialName!=null||materialName.trim().length()!=0)
+                if(materialName!=null&&materialName.trim().length()!=0)
                     condition.add(criteriaBuilder.equal(root.get("materialName").as(String.class),materialName));
                 if(width!=null)
                     condition.add(criteriaBuilder.equal(root.get("width").as(Integer.class),width));
                 if(unitWeight!=null)
                     condition.add(criteriaBuilder.equal(root.get("unitWeight").as(Double.class),unitWeight));
-                if(specification!=null||specification.trim().length()!=0)
+                if(specification!=null&&specification.trim().length()!=0)
                     condition.add(criteriaBuilder.equal(root.get("specification").as(String.class),specification));
-                if(inventoryUnit!=null||inventoryUnit.trim().length()!=0)
+                if(inventoryUnit!=null&&inventoryUnit.trim().length()!=0)
                     condition.add(criteriaBuilder.equal(root.get("inventoryUnit").as(String.class),inventoryUnit));
                 return criteriaBuilder.and(condition.toArray(new Predicate[condition.size()]));
             }
         };
 
-        Pageable pageable=PageRequest.of(Integer.parseInt(page),Integer.parseInt(limit));
+        Pageable pageable=PageRequest.of(Integer.parseInt(page)-1,Integer.parseInt(limit));
         Page<MaterialInfo> page1=materialinfodao.findAll(spec,pageable);
         List<MaterialInfo> list= page1.getContent();
 
