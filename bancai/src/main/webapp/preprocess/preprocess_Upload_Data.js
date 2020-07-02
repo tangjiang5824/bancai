@@ -1,10 +1,11 @@
-Ext.define('oldpanel.old_Upload_Data', {
+Ext.define('material' +
+    '.material_Upload_Data', {
     extend : 'Ext.panel.Panel',
-    id:'old_Upload_Data',
+    id:'material_Upload_Data',
     region : 'center',
     layout : "fit",
-    title : '旧板批量入库',
-    // requires : [ 'component.TableList', "component.YearList" ],
+    title : '原材料批量入库',
+    //requires : [ 'component.TableList', "component.YearList" ],
     reloadPage : function() {
         var p = Ext.getCmp('functionPanel');
         p.removeAll();
@@ -20,13 +21,13 @@ Ext.define('oldpanel.old_Upload_Data', {
     initComponent : function() {
         var me = this;
         var itemsPerPage = 50;
-        var tableName="oldpanel";
-        //var oldpaneltype="1";
+        var tableName="material_store";
+        //var materialtype="1";
 
         //新增表项和保存的按钮
 
-        var oldpanelStore = Ext.create('Ext.data.Store',{
-            id: 'oldpanelStore',
+        var MaterialStore = Ext.create('Ext.data.Store',{
+            id: 'MaterialStore',
             autoLoad: true,
             fields: [],
             pageSize: itemsPerPage, // items per page
@@ -36,7 +37,7 @@ Ext.define('oldpanel.old_Upload_Data', {
                     store.getProxy().setExtraParams({
                         tableName :tableName,
 
-                        //oldpanelType:oldpanelType
+                        //materialType:materialType
 
                     });
                 }
@@ -48,55 +49,128 @@ Ext.define('oldpanel.old_Upload_Data', {
 
         var grid = Ext.create('Ext.grid.Panel',{
             id: 'uploadRecordsMain',
-            store: oldpanelStore,
+            store: MaterialStore,
             viewConfig : {
                 enableTextSelection : true,
                 editable:true
             },
             columns : [
-                // {dataIndex : 'oldpanelType', text : '旧板类型', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
-                // {dataIndex : 'length', text : '长一', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // {dataIndex : 'length2', text : '长二', flex :1, editor : {xtype : 'textfield', allowBlank : true,}},
-                // {dataIndex : 'width', text : '宽一', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // {dataIndex : 'width2', text : '宽二', flex :1, editor : {xtype : 'textfield', allowBlank : true,}},
-                // {dataIndex : 'width3', text : '宽三', flex :1, editor : {xtype : 'textfield', allowBlank : true,}},
-                // {dataIndex : 'oldpanelNo', text : '品号', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // {dataIndex : 'oldpanelName', text : '旧板名称', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // {dataIndex : 'inventoryUnit', text : '库存单位', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // {dataIndex : 'specification', text : '规格', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // {dataIndex : 'countStore', text : '数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // {dataIndex : 'weight', text : '重量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // {dataIndex : 'warehouseNo', text : '仓库编号', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // {dataIndex : 'rowNo', text : '行', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // {dataIndex : 'columNo', text : '列', flex :1, editor : {xtype : 'textfield', allowBlank : false,}}
-                // {dataIndex : 'oldpanelName', text : '旧板名称', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
-                // {dataIndex : 'classificationName', text : '分类', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
-                // {dataIndex : 'inventoryUnit', text : '库存单位', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // //{dataIndex : 'countUse', text : '可用数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // //{dataIndex : 'countStore', text : '库存数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // {dataIndex : 'number', text : '入库数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // {dataIndex : 'warehouseName', text : '仓库名称', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // {dataIndex : 'unitArea', text : '单面积', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // {dataIndex : 'unitWeight', text : '单重', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // //{dataIndex : 'totalArea', text : '总面积', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // //{dataIndex : 'totalWeight', text : '总重', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // //{dataIndex : 'length', text : '长', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // //{dataIndex : 'width', text : '宽', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // {dataIndex : 'remark', text : '备注', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : '品名', text : '旧板名称', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
-                {dataIndex : '分类', text : '分类', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
-                {dataIndex : '单位', text : '库存单位', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                //{dataIndex : 'countUse', text : '可用数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                //{dataIndex : 'countStore', text : '库存数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : '入库数量', text : '入库数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : '入库仓库', text : '仓库名称', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : '单面积/m2', text : '单面积', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : '单重/KG', text : '单重', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                //{dataIndex : 'totalArea', text : '总面积', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                //{dataIndex : 'totalWeight', text : '总重', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                //{dataIndex : 'length', text : '长', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                //{dataIndex : 'width', text : '宽', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : '备注', text : '备注', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+
+                // { text: '材料名', dataIndex: 'materialName', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
+                // { text: '品号',  dataIndex: 'materialNo' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
+                // { text: '长1', dataIndex: 'length', flex :0.7 ,editor:{xtype : 'textfield', allowBlank : false}},
+                // { text: '长2', dataIndex: 'length2', flex :0.7 ,editor:{xtype : 'textfield', allowBlank : false}},
+                // { text: '类型', dataIndex: 'materialType',flex :1,editor:{xtype : 'textfield', allowBlank : false} },
+                // { text: '宽1', dataIndex: 'width', flex :0.7 ,editor:{xtype : 'textfield', allowBlank : false}},
+                // { text: '宽2', dataIndex: 'width2', flex :0.7 ,editor:{xtype : 'textfield', allowBlank : false}},
+                // { text: '数量', dataIndex: 'number', flex :1,editor:{xtype : 'textfield', allowBlank : false} },
+                // { text: '成本', dataIndex: 'cost', flex :1,editor:{xtype : 'textfield', allowBlank : false}},
+                // { text: '规格',  dataIndex: 'specification' ,flex :1,editor:{xtype : 'textfield', allowBlank : false}},
+                // { text: '库存单位', dataIndex: 'inventoryUnit', flex :1,editor:{xtype : 'textfield', allowBlank : false}},
+                // { text: '仓库编号', dataIndex: 'warehouseNo',flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
+                // { text: '位置-行', dataIndex: 'rowNo',flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
+                // { text: '位置-列', dataIndex: 'columNo',flex :1 ,editor:{xtype : 'textfield', allowBlank : false}}
+
+                {
+                    dataIndex : 'materialName',
+                    name : '品名',
+                    text : '品名',
+                    //width : 110,
+                    flex :1,
+                    editor : {// 文本字段
+                        xtype : 'textfield',
+                        allowBlank : true   //允许文本框为空
+                    },
+                    //defaultValue:"2333",
+                },
+                {
+                    dataIndex : 'specification',
+                    text : '规格',
+                    //width : 110,
+                    flex :1,
+                    editor : {// 文本字段
+                        xtype : 'textfield',
+                        allowBlank : false,
+                    }
+                },
+                {
+                    dataIndex : 'inventoryUnit',
+                    text : '库存单位',
+                    //width : 110,
+                    flex :1,
+                    editor : {// 文本字段
+                        id : 'isNullCmb',
+                        xtype : 'textfield',
+                        allowBlank : true
+
+                    }
+
+                },{
+                    dataIndex : 'unitWeight',
+                    name : '单重',
+                    text : '单重',
+                    //width : 160,
+                    flex :1,
+                    editor : {
+                        xtype : 'textfield',
+                        allowBlank : false
+                    }
+                },{
+                    dataIndex : 'totalWeight',
+                    name : '总重',
+                    text : '总重',
+                    flex :1,
+                    //width : 160,
+                    editor : {
+                        xtype : 'textfield',
+                        allowBlank : false
+                    }
+                },
+                {
+                    dataIndex : 'count',
+                    name : '数量',
+                    text : '数量',
+                    flex :1,
+                    //width : 160,
+                    editor : {
+                        xtype : 'textfield',
+                        allowBlank : false
+                    }
+
+                },
+                {
+                    dataIndex : 'warehouseName',
+                    name : '仓库名称',
+                    text : '仓库名称',
+                    //width : 130,
+                    flex :1,
+                    editor : {// 文本字段
+                        xtype : 'textfield',
+                        allowBlank : true
+                    }
+                },
+                {
+                    dataIndex : 'rowNo',
+                    name : '行',
+                    text : '位置-行',
+                    //width : 160,
+                    flex :1,
+                    editor : {
+                        xtype : 'textfield',
+                        allowBlank : true
+                    }
+                },
+                {
+                    dataIndex : 'columNo',
+                    name : '列',
+                    text : '位置-列',
+                    //width : 160,
+                    flex :1,
+                    editor : {
+                        xtype : 'textfield',
+                        allowBlank : true
+                    }
+                }
             ],
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 3
@@ -131,10 +205,11 @@ Ext.define('oldpanel.old_Upload_Data', {
                 }
             }
         });
-        //上传数据文件按钮
+
         var form = Ext.create("Ext.form.Panel", {
             border : false,
-            items : [ {
+            items : [
+                {
                 xtype : 'filefield',
                 width : 400,
                 margin: '1 0 0 0',
@@ -154,13 +229,13 @@ Ext.define('oldpanel.old_Upload_Data', {
                                 fn : function(btn) {
                                     if (btn === 'yes') {
                                         //var check=Ext.getCmp("check").getValue();
-
+                                        var operator=Ext.getCmp("operator").getValue();
                                         form.submit({
-                                            url : 'oldpanel/uploadExcel.do', //上传excel文件，并回显数据
+                                            url : 'uploadMaterialExcel.do', //上传excel文件，并回显数据
                                             waitMsg : '正在上传...',
                                             params : {
                                                 tableName:tableName,
-                                                operator: Ext.getCmp('operator').getValue(),
+                                                operator:operator,
                                                 //materialtype:materialtype,
                                                 //check:check
                                             },
@@ -168,11 +243,10 @@ Ext.define('oldpanel.old_Upload_Data', {
                                                 //上传成功
                                                 var response = action.result;
                                                 //回显
-                                                console.log('1100000')
                                                 console.log(action.result['value']);
                                                 Ext.MessageBox.alert("提示", "上传成功!");
                                                 //重新加载数据
-                                                oldpanelStore.loadData(action.result['value']);
+                                                MaterialStore.loadData(action.result['value']);
 
                                             },
                                             failure : function(form, action) {
@@ -234,7 +308,7 @@ Ext.define('oldpanel.old_Upload_Data', {
                                                         Ext.MessageBox.alert("错误原因", response.msg);
                                                         break;
                                                     default:
-                                                        Ext.MessageBox.alert("错误", "服务器异常，请检查网络连接，或者联系管理员");
+                                                        Ext.MessageBox.alert("错误", "上传失败");
                                                 }
 
                                             }
@@ -250,13 +324,13 @@ Ext.define('oldpanel.old_Upload_Data', {
             ]
         });
 
-        //模板下载
+
         var tableNameList =  Ext.create('Ext.data.Store', {
             fields: ['tableName'],
             data : [
-                {tableName:"旧板信息表"},
-                //{tableName:"原材料信息表"},
-                //{tableName:"产品信息表"}
+                {tableName:"原材料信息表"},
+                {tableName:"旧版信息表"},
+                {tableName:"产品信息表"}
                 //...
             ]
         });
@@ -298,10 +372,11 @@ Ext.define('oldpanel.old_Upload_Data', {
                 handler : function() {
                     var tableName = tableList.getValue();
                     if (tableName != null) {
-                        if(tableName=='旧板信息表'){
-                            window.location.href = encodeURI('excel/旧板信息表.xls');
+                        if(tableName=='原材料信息表'){
+                            window.location.href = encodeURI('excel/原材料信息表.xls');
                         }else{
-                            Ext.Msg.alert('消息', '下载失败！');
+                            window.location.href = encodeURI('excel/旧版信息表.xls');
+                            //window.location.href = encodeURI('data/downloadExcelTemplate.do?tableName=' + tableName);
                         }
                     } else {
                         Ext.Msg.alert('消息', '请选择数据类型！');
@@ -318,7 +393,7 @@ Ext.define('oldpanel.old_Upload_Data', {
         this.dockedItems = [toolbar1,toolbar,grid,
             {
                 xtype: 'pagingtoolbar',
-                store: oldpanelStore,   // same store GridPanel is using    uploadMaterialRecordsStore
+                store: MaterialStore,   // same store GridPanel is using    uploadMaterialRecordsStore
                 dock: 'bottom',
                 displayInfo: true,
                 displayMsg:'显示{0}-{1}条，共{2}条',
