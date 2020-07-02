@@ -3,11 +3,10 @@ package com.bancai;
 import com.bancai.commonMethod.QueryAllService;
 import com.bancai.domain.DataList;
 import com.bancai.domain.DataRow;
+import com.sun.javaws.IconUtil;
 import org.junit.Test;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Scanner;
+import java.util.*;
 
 public class test02 {
     private QueryAllService queryService;
@@ -68,20 +67,9 @@ public class test02 {
 //        String sql = "select * from matchrules where productTypeId=? and productNameFormat=?";
 //        DataList list = queryService.query(sql, "1", "201");
 //        Collections.sort(list);
-        DataList dataList= new DataList();
-        DataRow dataRow = new DataRow();
-        dataRow.put("100U","10");
-        dataRow.put("200U","21");
-        String key = "100U";
-        String count = "14";
-        if(dataRow.containsKey(key)){
-            int countOld = Integer.parseInt(dataRow.get(key).toString());
-            int countPlus = Integer.parseInt(count);
-            String countNew = String.valueOf(countOld+countPlus);
-            dataRow.put(key,countNew);
-        }
-//        dataRow.put("100U","14");
-        dataRow.put("300U","8");
+// ====================================================
+//        DataList dataList= new DataList();
+//        DataRow dataRow = new DataRow();
 //        Object newV = dataRow.get("num");
 //        for(DataRow d : dataList){
 //            Iterator<String> it = d.keySet().iterator();
@@ -95,12 +83,43 @@ public class test02 {
 //        for (int i = 0; i < dataList.size(); i++) {
 //            System.out.println(dataList.get(i).toString());
 //        }
-        System.out.println(dataRow.toString());
-        Iterator iterator=dataRow.entrySet().iterator();
-        String w = "2.5";
-        String c = "7";
-        String t = String.valueOf(Double.parseDouble(w)*Integer.parseInt(c));
-        System.out.println(t);
+//===========================================================
+//        Map<String,ArrayList<String>> map = new HashMap<>();
+//        ArrayList<String> a = new ArrayList<>();
+//        a.add("1000");
+//        map.put("100U",a);
+//        ArrayList<String> b = new ArrayList<>();
+//        b.add("1001");
+//        map.put("200U",b);
+//        String name = "100U";
+//        String pos = "1002";
+//        if(map.containsKey(name)){
+//            ArrayList<String> c = new ArrayList<>();
+//            c=map.get(name);
+//            c.add(pos);
+//            map.put(name,c);
+//        }
+//        ArrayList<String> d = new ArrayList<>();
+//        d.add("1003");
+//        map.put("300U",d);
+//        System.out.println(map.toString());
+//        Iterator iterator=map.keySet().iterator();
+//        while (iterator.hasNext()) {
+//            String k = iterator.next().toString();
+//            String v = map.get(k).toString();
+//            System.out.println("k="+k+"==and==v="+v);
+//        }
+//        System.out.println(map.get("100U").size());
+//        System.out.println(map.get("100U").get(0));
+//        String productName = "100 BN 3001";
+//        String idd = "15";
+//        productName = idd + "N" + productName;
+//        String id = productName.split("N")[0];
+//        System.out.println(id);
+//        productName = productName.substring(id.length()+1,productName.length()-1);
+//        System.out.println(productName);
+        //=====================================
+
 
     }
 

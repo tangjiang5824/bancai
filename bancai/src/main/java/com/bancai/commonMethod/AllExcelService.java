@@ -212,7 +212,7 @@ public class AllExcelService extends BaseService {
 				result.setErrorCode(2);
 				return result;
 			}
-			String sql_addLogDetail = "insert into oldpanellogdetail (oldpanelId,count,oldpanellogId) values (?,?,?)";
+			String sql_addLogDetail = "insert into oldpanel_logdetail (oldpanelId,count,oldpanellogId) values (?,?,?)";
 			boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLogDetail,String.valueOf(oldpanelId),
 					count,String.valueOf(oldpanellogId));
 			if (!is_log_right) {

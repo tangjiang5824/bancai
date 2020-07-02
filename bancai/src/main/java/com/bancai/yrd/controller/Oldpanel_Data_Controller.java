@@ -121,8 +121,8 @@ public class Oldpanel_Data_Controller {
         String userId = (String)session.getAttribute("userid");
         Date date=new Date();
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String sql_addLog = "insert into oldpanellog (type,userId,time,operator) values(?,?,?,?)";
-        String sql_backLog = "insert into oldpanellog (type,userId,time,projectId,buildingId,operator) values(?,?,?,?,?,?)";
+        String sql_addLog = "insert into oldpanel_log (type,userId,time,operator) values(?,?,?,?)";
+        String sql_backLog = "insert into oldpanel_log (type,userId,time,projectId,buildingId,operator) values(?,?,?,?,?,?)";
 //        JSONObject jsonBack = jsonArray.getJSONObject(0);
 //        String projectId;
 //        String buildingId;
@@ -151,7 +151,7 @@ public class Oldpanel_Data_Controller {
             if(oldpanelId==0){
                 return false;
             }
-            String sql_addLogDetail="insert into oldpanellogdetail (oldpanelId,count,oldpanellogId) values (?,?,?)";
+            String sql_addLogDetail="insert into oldpanel_logdetail (oldpanelId,count,oldpanellogId) values (?,?,?)";
             boolean is_log_right= insertProjectService.insertIntoTableBySQL(sql_addLogDetail,String.valueOf(oldpanelId),
                     count,String.valueOf(oldpanellogId));
             if(!is_log_right){
@@ -186,7 +186,7 @@ public class Oldpanel_Data_Controller {
         String userId = (String) session.getAttribute("userid");
         Date date=new Date();
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String sql_addLog = "insert into oldpanellog (type,userId,time,operator) values(?,?,?,?)";
+        String sql_addLog = "insert into oldpanel_log (type,userId,time,operator) values(?,?,?,?)";
         int oldpanellogId= insertProjectService.insertDataToTable(sql_addLog,"0",userId,simpleDateFormat.format(date),operator);
         JSONArray array = new JSONArray();
         try {
