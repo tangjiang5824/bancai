@@ -73,7 +73,7 @@ public class MaterialController {
         JSONArray array=new JSONArray(Arrays.asList(list));
         JSONObject object=new JSONObject();
         object.put("totalcount",page1.getTotalElements());
-        object.put("material_info",array);
+        object.put("material_info",array.get(0));
         //JSONArray.toJSONString(Arrays.asList(list));
         return object.toJSONString();
     }
