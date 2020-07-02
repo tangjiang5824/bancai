@@ -29,6 +29,7 @@ Ext.define('oldpanel.oldpanel_Outbound',{
                 3: { value: '3', name: '撤销入库' },
                 4: { value: '4', name: '撤销出库' },
                 5: { value: '5', name: '撤销退库' },
+                6: { value: '6', name: '增加基础信息' },
             }
         });
         //枚举
@@ -36,6 +37,7 @@ Ext.define('oldpanel.oldpanel_Outbound',{
         Ext.define('oldpanel.oepration.state', {
             statics: { // 关键
                 0: { value: '0', name: '未回滚' },
+                null: { value: '0', name: '未回滚' },
                 1: { value: '1', name: '已回滚' },
             }
         });
@@ -56,11 +58,23 @@ Ext.define('oldpanel.oldpanel_Outbound',{
                 {
                     xtype : 'datefield',
                     margin : '0 40 0 0',
-                    fieldLabel : '入库时间',
+                    fieldLabel : '开始时间',
                     width : 180,
                     labelWidth : 60,
                     id : "startTime",
                     name : 'startTime',
+                    format : 'Y-m-d',
+                    editable : true,
+                    //value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
+                },
+                {
+                    xtype : 'datefield',
+                    margin : '0 40 0 0',
+                    fieldLabel : '结束时间',
+                    width : 180,
+                    labelWidth : 60,
+                    id : "endTime",
+                    name : 'endTime',
                     format : 'Y-m-d',
                     editable : true,
                     //value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
@@ -77,6 +91,7 @@ Ext.define('oldpanel.oldpanel_Outbound',{
                                 // operator : Ext.getCmp('operator').getValue(),
                                 operator : Ext.getCmp('operator').getValue(),//获取操作员名
                                 startTime:Ext.getCmp('startTime').getValue(),
+                                endTime:Ext.getCmp('endTime').getValue(),
                                 type:0
                             }
                         });
@@ -92,7 +107,7 @@ Ext.define('oldpanel.oldpanel_Outbound',{
             fields: [],
             pageSize: itemsPerPage, // items per page
             proxy:{
-                url : "material/material_query_records.do",
+                url : "oldpanel/outbound_query_records.do",
                 type: 'ajax',
                 reader:{
                     type : 'json',
@@ -104,6 +119,8 @@ Ext.define('oldpanel.oldpanel_Outbound',{
                     limit: 20,
                     operator : Ext.getCmp('operator').getValue(),//获取操作员名，type操作类型
                     startTime:Ext.getCmp('startTime').getValue(),
+                    endTime:Ext.getCmp('endTime').getValue(),
+                    type:0
                 }
             },
             listeners : {
@@ -113,6 +130,8 @@ Ext.define('oldpanel.oldpanel_Outbound',{
                         // operator : Ext.getCmp('operator').getValue(),
                         operator : Ext.getCmp('operator').getValue(),//获取操作员名
                         startTime:Ext.getCmp('startTime').getValue(),
+                        endTime:Ext.getCmp('endTime').getValue(),
+                        type:0
                         // projectId:Ext.getCmp('projectName').getValue(),
                     });
                 }
@@ -192,7 +211,7 @@ Ext.define('oldpanel.oldpanel_Outbound',{
                                 fn: function (btn) {
                                     if (btn === 'yes') {
                                         Ext.Ajax.request({
-                                            //url:"material/backMaterialstore.do",  //入库记录撤销
+                                            url:"oldpanel/backOldpanelStore.do",  //入库记录撤销
                                             params:{
                                                 operator:operator,  //回滚操作人
                                                 oldpanellogId:oldpanel_logId,
@@ -201,6 +220,9 @@ Ext.define('oldpanel.oldpanel_Outbound',{
                                             success:function (response) {
                                                 //console.log(response.responseText);
                                                 Ext.MessageBox.alert("提示", "回滚成功!");
+                                                //location="javascript:location.reload()";
+                                                oldpanel_inBoundRecords_Store.load();
+                                                //oldpanel_Query_Records_specific_data_grid.close();
                                             },
                                             failure : function(response){
                                                 Ext.MessageBox.alert("提示", "回滚失败!");
@@ -305,153 +327,11 @@ Ext.define('oldpanel.oldpanel_Outbound',{
                 {   text: '记录是否回滚',
                     dataIndex: 'isrollback',
                     flex :1 ,
+                    //defaultValue:0,
                     renderer: function (value) {
                         return oldpanel.oepration.state[value].name; // key-value
                     },
                 },
-                // {
-                //     dataIndex : '品号',
-                //     name : '品号',
-                //     text : '品号',
-                //     //width : 110,
-                //     value:'99',
-                //     editor : {// 文本字段
-                //         xtype : 'textfield',
-                //         allowBlank : true
-                //     },
-                //     //defaultValue:"2333",
-                // },
-                // {
-                //     dataIndex : '长1',
-                //     text : '长1',
-                //     //width : 110,
-                //     editor : {// 文本字段
-                //         xtype : 'textfield',
-                //         allowBlank : false,
-                //     }
-                // },
-                // {
-                //     dataIndex : '长2',
-                //     text : '长2',
-                //     //width : 110,
-                //     id:'长2',
-                //     hidden:true,
-                //     editor : {// 文本字段
-                //         xtype : 'textfield',
-                //         allowBlank : true,
-                //
-                //     },
-                //     // defaultValue:"",
-                //
-                // },
-                // {
-                //     dataIndex : '类型',
-                //     text : '类型',
-                //     //width : 110,
-                //     editor : {// 文本字段
-                //         xtype : 'textfield',
-                //         allowBlank : false,
-                //
-                //     }
-                //
-                // },{
-                //     dataIndex : '宽1',
-                //     text : '宽1',
-                //     //width : 110,
-                //     editor : {// 文本字段
-                //         xtype : 'textfield',
-                //         allowBlank : false,
-                //     }
-                // },
-                // {
-                //     dataIndex : '宽2',
-                //     text : '宽2',
-                //     //width : 110,
-                //     id:'宽2',
-                //     hidden:true,
-                //     editor : {// 文本字段
-                //         xtype : 'textfield',
-                //         allowBlank : true,
-                //     }
-                // },
-                // {
-                //     dataIndex : '规格',
-                //     text : '规格',
-                //     //width : 192,
-                //     editor : {
-                //         xtype : 'textfield',
-                //         allowBlank : false
-                //     }
-                // }, {
-                //     dataIndex : '库存单位',
-                //     text : '库存单位',
-                //     //width : 110,
-                //     editor : {// 文本字段
-                //         id : 'isNullCmb',
-                //         xtype : 'textfield',
-                //         allowBlank : true
-                //
-                //     }
-                //
-                // },
-                // {
-                //     dataIndex : '数量',
-                //     name : '数量',
-                //     text : '数量',
-                //     //width : 160,
-                //     editor : {
-                //         xtype : 'textfield',
-                //         allowBlank : false
-                //     }
-                //
-                // },{
-                //     dataIndex : '成本',
-                //     name : '成本',
-                //     text : '成本',
-                //     //width : 160,
-                //     editor : {
-                //         xtype : 'textfield',
-                //         allowBlank : false
-                //     }
-                // },
-                // {
-                //     dataIndex : '仓库编号',
-                //     name : '仓库编号',
-                //     text : '仓库编号',
-                //     //width : 130,
-                //     editor : {// 文本字段
-                //         xtype : 'textfield',
-                //         allowBlank : true
-                //     }
-                // },
-                // {
-                //     dataIndex : '行',
-                //     name : '行',
-                //     text : '位置-行',
-                //     //width : 160,
-                //     editor : {
-                //         xtype : 'textfield',
-                //         allowBlank : true
-                //     }
-                // },
-                // {
-                //     dataIndex : '列',
-                //     name : '列',
-                //     text : '位置-列',
-                //     //width : 160,
-                //     editor : {
-                //         xtype : 'textfield',
-                //         allowBlank : true
-                //     }
-                // } ,{
-                //     dataIndex: '原材料名称',
-                //     text: '材料名',
-                //     //width : 110,
-                //     editor: {// 文本字段
-                //         xtype: 'textfield',
-                //         allowBlank: false,
-                //     }
-                // }
             ],
 
             viewConfig : {
@@ -502,10 +382,10 @@ Ext.define('oldpanel.oldpanel_Outbound',{
                          'count'],
                     proxy: {
                         type: 'ajax',
-                        //url: 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName=material_logdetail&columnName=materiallogId&columnValue=' + id,//获取同一批出入库的原材料
+                        url: 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName=oldpanel_logdetail_oldpanelName&columnName=oldpanellogId&columnValue=' + id,//获取同一批出入库的原材料
                         reader: {
                             type: 'json',
-                            rootProperty: 'oldpanel_logdetail',
+                            rootProperty: 'oldpanel_logdetail_oldpanelName',
                         },
                     },
                     autoLoad: true

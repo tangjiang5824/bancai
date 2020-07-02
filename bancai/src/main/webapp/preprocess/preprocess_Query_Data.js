@@ -38,15 +38,15 @@ Ext.define('material.material_Query_Data',{
             store: MaterialNameList,
 
         });
-        var toolbar_top = Ext.create("Ext.toolbar.Toolbar", {
-            // dock : "top",
-            border:false,
-            items : [
+        var toobar_top = Ext.create('Ext.toolbar.Toolbar',{
+            items: [
                 {
-                    xtype: 'tbtext',
-                    text: '<strong>查询条件:</strong>',
-                }
+                    xtype:'tbtext',
+                    text:'查询条件',
+                    margin : '0 10 0 20',
+                },
             ]
+
         });
 
         var toobar = Ext.create('Ext.toolbar.Toolbar',{
@@ -169,7 +169,7 @@ Ext.define('material.material_Query_Data',{
             id: 'material_Query_Data_Store',
             autoLoad: true,  //初始自动加载
             fields: [],
-            pageSize: itemsPerPage, // items per page,每页显示的记录条数
+            pageSize: itemsPerPage, // items per page
             proxy:{
                 url : "material/findStoreInfo.do",
                 type: 'ajax',
@@ -332,20 +332,8 @@ Ext.define('material.material_Query_Data',{
             }
         });
 
-        // this.tbar = toobar;
+        this.tbar = toobar;
         this.items = [grid];
-        //设置panel多行tbar
-        this.dockedItems=[{
-            xtype : 'toolbar',
-            dock : 'top',
-            items : [toolbar_top]
-        },{
-            xtype : 'toolbar',
-            dock : 'top',
-            style:'border-width:0 0 0 0;',
-            items : [toobar]
-        },
-        ];
         this.callParent(arguments);
     }
 })

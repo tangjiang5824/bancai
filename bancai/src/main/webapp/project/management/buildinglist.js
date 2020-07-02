@@ -418,6 +418,7 @@ Ext.define('project.management.buildinglist', {
                         flag=true;
                         id='0'
                     }
+
                     Ext.Ajax.request({
                         url:"data/BuildingEditCellById.do",  //EditDataById.do
                         params:{
