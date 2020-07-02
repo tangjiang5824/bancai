@@ -1,8 +1,8 @@
-Ext.define('material.material_Inbound', {
+Ext.define('preprocess.preprocess_Inbound', {
     extend : 'Ext.panel.Panel',
     region : 'center',
     layout : "fit",
-    title : '原材料入库',
+    title : '预加工半成品入库',
     reloadPage : function() {
         var p = Ext.getCmp('functionPanel');
         p.removeAll();
@@ -33,18 +33,13 @@ Ext.define('material.material_Inbound', {
                     rootProperty: 'material_info',
                 },
                 fields : ['id','materialName']
-                // params:{
-                //     tableName:tableName,
-                //     start: 0,
-                //     limit: itemsPerPage
-                // }
             },
             autoLoad : true
         });
         var MaterialTypeList = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '原材料品名',
             labelWidth : 70,
-            width : 230,
+            width : 270,
             id :  'materialName',
             name : 'materialName',
             matchFieldWidth: true,
@@ -54,6 +49,7 @@ Ext.define('material.material_Inbound', {
             valueField: 'id',
             editable : false,
             store: MaterialNameList,
+            //原材料品名应该包含基础信息中的其他属性值，作为描述信息
             listeners:{
                 // select: function(combo, record, index) {
                 //     var type = MaterialTypeList.rawValue;
@@ -97,8 +93,8 @@ Ext.define('material.material_Inbound', {
         var storePosition = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '仓库名',
             labelWidth : 50,
-            width : 180,
-            margin: '0 10 0 40',
+            width : 250,
+            margin: '0 0 0 21',
             id :  'storePosition',
             name : 'storePosition',
             matchFieldWidth: true,
@@ -202,51 +198,72 @@ Ext.define('material.material_Inbound', {
         var toolbar = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
             items: [
-                MaterialTypeList,
+                // MaterialTypeList,
+                {
+                    xtype: 'textfield',
+                    // margin: '0 10 0 40',
+                    fieldLabel: '产品名称',
+                    id: 'pre_product',
+                    labelWidth : 60,
+                    width : 270,
+                    name: 'pre_product',
+                    value: "",
+                },
                 {
                     xtype: 'textfield',
                     margin: '0 10 0 40',
-                    fieldLabel: '规格',
-                    id: 'length1',
+                    fieldLabel: '数量',
+                    id: 'number',
                     width: 140,
                     labelWidth: 30,
-                    name: 'length1',
+                    name: 'number',
                     value: "",
-                    allowBlank:false,
-                },
-                {
-                    xtype: 'textfield',
-                    margin: '0 10 0 40',
-                    fieldLabel: '横截面',
-                    id: 'width',
-                    labelWidth : 50,
-                    width : 180,
-                    name: 'width',
-                    value: "",
-                },
-                {
-                    xtype: 'textfield',
-                    margin: '0 10 0 40',
-                    fieldLabel: '长2',
-                    hidden:true,//隐藏
-                    id: 'length2',
-                    width: 140,
-                    labelWidth: 40,
-                    name: 'length2',
-                    value: "",
-                    allowBlank : true,
                 },
 
-                {
-                    xtype: 'textfield',
-                    margin: '0 10 0 40',
-                    fieldLabel: '单重',
-                    id: 'unitWeight',
-                    width: 180,
-                    labelWidth: 30,
-                    name: 'unitWeight',
-                    value: "",
-                },
+                // {
+                //     xtype: 'textfield',
+                //     margin: '0 10 0 40',
+                //     fieldLabel: '规格',
+                //     id: 'length1',
+                //     width: 140,
+                //     labelWidth: 30,
+                //     name: 'length1',
+                //     value: "",
+                //     allowBlank:false,
+                // },
+                // {
+                //     xtype: 'textfield',
+                //     margin: '0 10 0 40',
+                //     fieldLabel: '横截面',
+                //     id: 'width',
+                //     labelWidth : 50,
+                //     width : 180,
+                //     name: 'width',
+                //     value: "",
+                // },
+                // {
+                //     xtype: 'textfield',
+                //     margin: '0 10 0 40',
+                //     fieldLabel: '长2',
+                //     hidden:true,//隐藏
+                //     id: 'length2',
+                //     width: 140,
+                //     labelWidth: 40,
+                //     name: 'length2',
+                //     value: "",
+                //     allowBlank : true,
+                // },
+                //
+                // {
+                //     xtype: 'textfield',
+                //     margin: '0 10 0 40',
+                //     fieldLabel: '单重',
+                //     id: 'unitWeight',
+                //     width: 180,
+                //     labelWidth: 30,
+                //     name: 'unitWeight',
+                //     value: "",
+                // },
                 {
                     xtype: 'textfield',
                     margin: '0 10 0 40',
@@ -263,26 +280,27 @@ Ext.define('material.material_Inbound', {
         var toolbar1 = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
             items: [
-                {
-                    xtype: 'textfield',
-                    // margin: '0 10 0 0',
-                    fieldLabel: ' 库存单位',
-                    id: 'stockUnit',
-                    width: 230,
-                    labelWidth: 70,
-                    name: 'stockUnit',
-                    value: "",
-                },
-                {
-                    xtype: 'textfield',
-                    margin: '0 10 0 40',
-                    fieldLabel: '数量',
-                    id: 'number',
-                    width: 140,
-                    labelWidth: 30,
-                    name: 'number',
-                    value: "",
-                },storePosition,
+                // {
+                //     xtype: 'textfield',
+                //     // margin: '0 10 0 0',
+                //     fieldLabel: ' 库存单位',
+                //     id: 'stockUnit',
+                //     width: 230,
+                //     labelWidth: 70,
+                //     name: 'stockUnit',
+                //     value: "",
+                // },
+                // {
+                //     xtype: 'textfield',
+                //     margin: '0 10 0 40',
+                //     fieldLabel: '数量',
+                //     id: 'number',
+                //     width: 140,
+                //     labelWidth: 30,
+                //     name: 'number',
+                //     value: "",
+                // },
+                storePosition,
                 {
                     xtype:'tbtext',
                     text:'存放位置 ---',
@@ -309,7 +327,7 @@ Ext.define('material.material_Inbound', {
                 // },
                 {
                     xtype : 'button',
-                    margin: '0 10 0 70',
+                    margin: '0 10 0 35',
                     iconAlign : 'center',
                     iconCls : 'rukuicon ',
                     text : '添  加',
@@ -389,7 +407,7 @@ Ext.define('material.material_Inbound', {
                             console.log("-------------------")
                             console.log(materialName)
                             Ext.getCmp('addDataGrid').getStore().loadData(data,
-                            true);
+                                true);
 
                             //清除框里的数据
                             Ext.getCmp('materialName').setValue('');
@@ -404,7 +422,7 @@ Ext.define('material.material_Inbound', {
                             Ext.getCmp('stockUnit').setValue('');
                         }else{
                             Ext.MessageBox.alert("警告","品名不能为空",function(r) {
-                            //    r = cancel||ok
+                                //    r = cancel||ok
                             });
                         }
 
@@ -438,54 +456,54 @@ Ext.define('material.material_Inbound', {
                     value: "",
                 },
                 {
-                xtype : 'button',
-                iconAlign : 'center',
-                iconCls : 'rukuicon ',
-                text : '确认入库',
-                region:'center',
-                bodyStyle: 'background:#fff;',
-                handler : function() {
+                    xtype : 'button',
+                    iconAlign : 'center',
+                    iconCls : 'rukuicon ',
+                    text : '确认入库',
+                    region:'center',
+                    bodyStyle: 'background:#fff;',
+                    handler : function() {
 
-                    var operator = Ext.getCmp('operator').value;
-                    // 取出grid的字段名字段类型
-                    var select = Ext.getCmp('addDataGrid').getStore()
-                        .getData();
-                    console.log("select",select);
+                        var operator = Ext.getCmp('operator').value;
+                        // 取出grid的字段名字段类型
+                        var select = Ext.getCmp('addDataGrid').getStore()
+                            .getData();
+                        console.log("select",select);
 
-                    var s = new Array();
-                    select.each(function(rec) {
-                        s.push(JSON.stringify(rec.data));
-                        //alert(JSON.stringify(rec.data));//获得表格中的数据
-                        //s.push();
-                    });
+                        var s = new Array();
+                        select.each(function(rec) {
+                            s.push(JSON.stringify(rec.data));
+                            //alert(JSON.stringify(rec.data));//获得表格中的数据
+                            //s.push();
+                        });
 
-                    console.log(select);
+                        console.log(select);
 
-                    //获取数据
-                    //获得当前操作时间
-                    //var sTime=Ext.Date.format(Ext.getCmp('startTime').getValue(), 'Y-m-d H:i:s');
-                    Ext.Ajax.request({
-                        url : 'material/addData.do', //原材料入库
-                        method:'POST',
-                        //submitEmptyText : false,
-                        params : {
-                            tableName:"material_store",
-                            //materialType:materialtype,
-                            s : "[" + s + "]",
-                            operator:operator
-                        },
-                        success : function(response) {
-                            //var message =Ext.decode(response.responseText).showmessage;
-                            Ext.MessageBox.alert("提示","入库成功" );
-                        },
-                        failure : function(response) {
-                            //var message =Ext.decode(response.responseText).showmessage;
-                            Ext.MessageBox.alert("提示","入库失败" );
-                        }
-                    });
+                        //获取数据
+                        //获得当前操作时间
+                        //var sTime=Ext.Date.format(Ext.getCmp('startTime').getValue(), 'Y-m-d H:i:s');
+                        Ext.Ajax.request({
+                            url : 'material/addData.do', //原材料入库
+                            method:'POST',
+                            //submitEmptyText : false,
+                            params : {
+                                tableName:"material_store",
+                                //materialType:materialtype,
+                                s : "[" + s + "]",
+                                operator:operator
+                            },
+                            success : function(response) {
+                                //var message =Ext.decode(response.responseText).showmessage;
+                                Ext.MessageBox.alert("提示","入库成功" );
+                            },
+                            failure : function(response) {
+                                //var message =Ext.decode(response.responseText).showmessage;
+                                Ext.MessageBox.alert("提示","入库失败" );
+                            }
+                        });
 
-                }
-            }]
+                    }
+                }]
         });
 
 
