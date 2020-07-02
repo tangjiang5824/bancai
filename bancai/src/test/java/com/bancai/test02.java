@@ -120,6 +120,47 @@ public class test02 {
 //        System.out.println(productName);
         //=====================================
 
+        Map<String,ArrayList<String>> map = new HashMap<>();
+        ArrayList<String> a = new ArrayList<>();
+        a.add("1000");
+        a.add("1001");
+        a.add("1002");
+        map.put("100U",a);
+        ArrayList<String> b = new ArrayList<>();
+        b.add("2000");
+        map.put("200U",b);
+        System.out.println(map);
+        System.out.println(a.get(0));
+        a.remove(a.size()-1);
+        a.remove(a.size()-1);
+        a.remove(a.size()-1);
+        System.out.println(a.size()==0);
+        ArrayList<String> c = new ArrayList<>();
+        c.add("3000");
+        c.add("3001");
+        map.put("300U",c);
+        ArrayList<String> d = new ArrayList<>();
+        d.add("4000");
+        d.add("4001");
+        map.put("400U",d);
+
+        Iterator iterator = map.keySet().iterator();
+        while (iterator.hasNext()) {
+            String key = iterator.next().toString();
+            System.out.println("map="+map);
+            System.out.println("key==="+key);
+            ArrayList<String> value = map.get(key);
+            if(key.equals("300U")){
+                c.remove(c.size()-1);
+                c.remove(c.size()-1);
+            }
+            if (value.size()==0){
+                iterator.remove();
+                System.out.println(map);
+            }
+        }
+
+
 
     }
 

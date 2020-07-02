@@ -3,6 +3,7 @@ package com.bancai.cg.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONException;
 
+import com.alibaba.fastjson.JSONObject;
 import com.bancai.cg.entity.MaterialInfo;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -68,8 +70,12 @@ public class MaterialController {
         Pageable pageable=PageRequest.of(Integer.parseInt(page)-1,Integer.parseInt(limit));
         Page<MaterialInfo> page1=materialinfodao.findAll(spec,pageable);
         List<MaterialInfo> list= page1.getContent();
-
-        return JSONArray.toJSONString(Arrays.asList(list));
+        JSONArray array=new JSONArray(Arrays.asList(list));
+        JSONObject object=new JSONObject();
+        object.put("totalcount",page1.getTotalElements());
+        object.put("material_info",array);
+        //JSONArray.toJSONString(Arrays.asList(list));
+        return object.toJSONString();
     }
 
 

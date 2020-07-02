@@ -193,7 +193,7 @@ public class AnalyzeNameService extends BaseService {
         return Integer.parseInt(dataList.get(0).get("id").toString());
     }
     /**
-     * 根据类型（旧板、产品）和品名判断info是否存在，返回id,unitWeight,unitArea，后两者没有则是null
+     * 根据类型（旧板、产品）和品名判断info是否存在，返回id,unitWeight,unitArea
      */
     @Transactional
     public String[] isInfoExistBackUnit(String tablename, String panelName) {
