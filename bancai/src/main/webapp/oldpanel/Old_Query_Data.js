@@ -5,8 +5,121 @@ Ext.define('oldpanel.Old_Query_Data',{
     title: '旧板库存查询',
     initComponent: function(){
         var itemsPerPage = 50;
-        var tableName="oldpanel_store";
+        var tableName="oldpanel_info_store_type";
+//仓库编号
+        var storeNameList = Ext.create('Ext.data.Store',{
+            fields : [ 'warehouseName'],
+            proxy : {
+                type : 'ajax',
+                url : 'material/findStore.do', //查询所有的仓库编号
+                reader : {
+                    type : 'json',
+                    rootProperty: 'StoreName',
+                }
+            },
+            autoLoad : true
+        });
+        var storePosition = Ext.create('Ext.form.ComboBox',{
+            fieldLabel : '仓库名',
+            labelWidth : 50,
+            width : 200,
+            margin: '0 10 0 20',
+            id :  'storePosition',
+            name : 'storePosition',
+            matchFieldWidth: false,
+            emptyText : "--请选择--",
+            displayField: 'warehouseName',
+            valueField: 'warehouseNo',
+            editable : false,
+            store: storeNameList,
+            listeners:{
+                select: function(combo, record, index) {
+                    var type = MaterialTypeList.rawValue;
+                    //console.log(MaterialTypeList.rawValue)//选择的值
+                    console.log(MaterialTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
+                    //选中后
+                    var select = record[0].data;
+                    var warehouseNo = select.warehouseNo;
+                    console.log(warehouseNo)
 
+                    //重新加载行选项
+                    var locationNameList_row = Ext.create('Ext.data.Store',{
+                        id:'locationNameList_row',
+                        fields : ['rowNum'],
+                        proxy : {
+                            type : 'ajax',
+                            url : 'material/findStorePosition.do?warehouseNo='+warehouseNo,
+                            reader : {
+                                type : 'json',
+                                rootProperty: 'rowNum',
+                            }
+                        },
+                        autoLoad : true
+                    });
+                    speificLocation_row.setStore(locationNameList_row);
+
+                    //重新加载列选项
+                    var locationNameList_col = Ext.create('Ext.data.Store',{
+                        id:'locationNameList_col',
+                        fields : [ 'columnNum'],
+                        proxy : {
+                            type : 'ajax',
+                            url : 'material/findStorePosition.do?warehouseNo='+warehouseNo,
+                            reader : {
+                                type : 'json',
+                                rootProperty: 'columnNum',
+                            }
+                        },
+                        autoLoad : true
+                    });
+                    speificLocation_col.setStore(locationNameList_col);
+
+                }
+            }
+        });
+        var speificLocation_row = Ext.create('Ext.form.ComboBox',{
+            fieldLabel : '行',
+            labelWidth : 20,
+            width : 80,
+            margin: '0 10 0 10',
+            id :  'speificLocation_row',
+            name : 'speificLocation_row',
+            matchFieldWidth: false,
+            //emptyText : "--请选择--",
+            displayField: 'rowNum',
+            valueField: 'rowNum',
+            editable : false,
+            //store: locationNameList_row,
+            listeners:{
+                select: function(combo, record, index) {
+                    var type = MaterialTypeList.rawValue;
+                    //console.log(MaterialTypeList.rawValue)//选择的值
+                    console.log(MaterialTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
+                    //console.log(record[0].data.materialName);
+                }
+            }
+        });
+        var speificLocation_col = Ext.create('Ext.form.ComboBox',{
+            fieldLabel : '列',
+            labelWidth : 20,
+            width : 80,
+            id :  'speificLocation_col',
+            name : 'speificLocation_col',
+            matchFieldWidth: false,
+            //emptyText : "--请选择--",
+            displayField: 'columnNum',
+            valueField: 'columnNum',
+            editable : false,
+            //store: locationNameList_col,
+            listeners:{
+                select: function(combo, record, index) {
+                    var type = MaterialTypeList.rawValue;
+                    //console.log(MaterialTypeList.rawValue)//选择的值
+                    console.log(MaterialTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
+                    //console.log(record[0].data.materialName);
+                }
+            }
+        });
         var oldPanelNameList = Ext.create('Ext.data.Store',{
             fields : [ 'oldpanelName'],
             proxy : {
@@ -42,47 +155,76 @@ Ext.define('oldpanel.Old_Query_Data',{
         });
         var toobar = Ext.create('Ext.toolbar.Toolbar',{
             items: [oldpanelTypeList,
+            //     {
+            //     xtype: 'textfield',
+            //     fieldLabel: '长度下限:',
+            //     // labelSeparator: '',
+            //     id :'startLength',
+            //     labelWidth: 60,
+            //     width: 180,
+            //     margin : '0 10 0 0',
+            //     name: 'startLength',
+            //     value:"",
+            // },{
+            //     xtype: 'textfield',
+            //     fieldLabel: '长度上限:',
+            //     // labelSeparator: '',
+            //     id :'endLength',
+            //     labelWidth: 60,
+            //     width: 180,
+            //     margin : '0 10 0 0',
+            //     name: 'endLength',
+            //     value:"",
+            // },{
+            //     xtype: 'textfield',
+            //     fieldLabel: '宽度下限:',
+            //     // labelSeparator: '',
+            //     id :'startWidth',
+            //     labelWidth: 60,
+            //     width: 180,
+            //     margin : '0 10 0 0',
+            //     name: 'startWidth',
+            //     value:"",
+            // },{
+            //     xtype: 'textfield',
+            //     fieldLabel: '宽度上限:',
+            //     // labelSeparator: '',
+            //     id :'endWidth',
+            //     labelWidth: 60,
+            //     width: 180,
+            //     margin : '0 10 0 0',
+            //     name: 'endWidth',
+            //     value:"",
+            // },
                 {
-                xtype: 'textfield',
-                fieldLabel: '长度下限:',
-                // labelSeparator: '',
-                id :'startLength',
-                labelWidth: 60,
-                width: 180,
-                margin : '0 10 0 0',
-                name: 'startLength',
-                value:"",
-            },{
-                xtype: 'textfield',
-                fieldLabel: '长度上限:',
-                // labelSeparator: '',
-                id :'endLength',
-                labelWidth: 60,
-                width: 180,
-                margin : '0 10 0 0',
-                name: 'endLength',
-                value:"",
-            },{
-                xtype: 'textfield',
-                fieldLabel: '宽度下限:',
-                // labelSeparator: '',
-                id :'startWidth',
-                labelWidth: 60,
-                width: 180,
-                margin : '0 10 0 0',
-                name: 'startWidth',
-                value:"",
-            },{
-                xtype: 'textfield',
-                fieldLabel: '宽度上限:',
-                // labelSeparator: '',
-                id :'endWidth',
-                labelWidth: 60,
-                width: 180,
-                margin : '0 10 0 0',
-                name: 'endWidth',
-                value:"",
-            },
+                    xtype:'tbtext',
+                    text:'库存数量:',
+                    margin : '0 10 0 20',
+                    itemId:'move_left',
+                },
+                {
+                    xtype: 'textfield',
+                    margin : '0 10 0 0',
+                    // fieldLabel: '',
+                    id :'minCount',
+                    width: 100,
+                    // labelWidth: 60,
+                    name: 'minCount',
+                    value:"",
+                },{
+                    xtype:'tbtext',
+                    text:'---',
+                },
+                {
+                    xtype: 'textfield',
+                    margin : '0 10 0 0',
+                    id :'maxCount',
+                    width: 100,
+                    // labelWidth: 60,
+                    name: 'maxCount',
+                    value:"",
+                },
+                storePosition,
                 {
                 xtype : 'button',
                 text: '查询',
@@ -92,11 +234,10 @@ Ext.define('oldpanel.Old_Query_Data',{
                 handler: function(){
                     uploadRecordsStore.load({
                         params : {
-                            startWidth : Ext.getCmp('startWidth').getValue(),
-                            endTWidth : Ext.getCmp('endWidth').getValue(),
-                            startLength:Ext.getCmp('startLength').getValue(),
-                            endLength:Ext.getCmp('endLength').getValue(),
+                            minCount : Ext.getCmp('minCount').getValue(),
+                            maxCount : Ext.getCmp('maxCount').getValue(),
                             oldpanelType:Ext.getCmp('oldpanelType').getValue(),
+                            warehouseName:Ext.getCmp('storePosition').rawValue,
                             tableName:tableName,
 
                         }
@@ -186,7 +327,7 @@ Ext.define('oldpanel.Old_Query_Data',{
             pageSize: itemsPerPage, // items per page
             proxy:{
                 //url:"hisExcelList.do",
-                url : "oldpanel/updateData.do",
+                url : "oldpanel/query_data.do",
                 type: 'ajax',
                 method:'POST',
                 reader:{
@@ -207,7 +348,10 @@ Ext.define('oldpanel.Old_Query_Data',{
                         // startLength:Ext.getCmp('startLength').getValue(),
                         // endLength:Ext.getCmp('endLength').getValue(),
                         // mType:Ext.getCmp('mType').getValue(),
+                        minCount : Ext.getCmp('minCount').getValue(),
+                        maxCount : Ext.getCmp('maxCount').getValue(),
                         oldpanelType:Ext.getCmp('oldpanelType').getValue(),
+                        warehouseName:Ext.getCmp('storePosition').rawValue,
                         tableName:tableName,
 
                     });
@@ -223,20 +367,21 @@ Ext.define('oldpanel.Old_Query_Data',{
             viewConfig : {
                 enableTextSelection : true
             },
+            //readOnly:true,
             columns : [
-                {dataIndex : 'oldpanelName', text : '旧板名称', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
-                {dataIndex : 'classificationName', text : '分类', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
-                {dataIndex : 'inventoryUnit', text : '库存单位', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'countUse', text : '可用数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'countStore', text : '库存数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'warehouseName', text : '仓库名称', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'unitArea', text : '单面积', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'unitWeight', text : '单重', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'totalArea', text : '总面积', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'totalWeight', text : '总重', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'length', text : '长', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'width', text : '宽', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'remark', text : '备注', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'oldpanelName', text : '旧板名称', flex :1, },
+                {dataIndex : 'classificationName', text : '分类', flex :1, },
+                {dataIndex : 'inventoryUnit', text : '库存单位', flex :1, },
+                {dataIndex : 'countUse', text : '可用数量', flex :1, },
+                {dataIndex : 'countStore', text : '库存数量', flex :1, },
+                {dataIndex : 'warehouseName', text : '仓库名称', flex :1, },
+                {dataIndex : 'unitArea', text : '单面积', flex :1,},
+                {dataIndex : 'unitWeight', text : '单重', flex :1,},
+                {dataIndex : 'totalArea', text : '总面积', flex :1,},
+                {dataIndex : 'totalWeight', text : '总重', flex :1,},
+                // {dataIndex : 'length', text : '长', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                // {dataIndex : 'width', text : '宽', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                // {dataIndex : 'remark', text : '备注', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
             ],
 
             tbar: toobar,
@@ -252,40 +397,40 @@ Ext.define('oldpanel.Old_Query_Data',{
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 1
             })],
-
-            listeners: {
-
-                validateedit: function(editor, e){//监听点击表格
-
-                    //获得当前行的id
-                    var cellId = e.record.id;
-                    var cellField = e.field;
-                    var cellValue = e.value//当前值
-
-                    Ext.Ajax.request({
-                        url : 'data/EditCellById.do',
-                        method:'POST',
-                        //submitEmptyText : false,
-                        params : {
-                            tableName:tableName,
-                            id:cellId,
-                            field:cellField,
-                            value:cellValue
-                        },
-                        success : function(response) {
-                            Ext.MessageBox.alert("提示", "修改成功！");
-                            // uploadRecordsStore.load({
-                            //
-                            // });
-                            // me.close();
-
-                        },
-                        failure : function(response) {
-                            Ext.MessageBox.alert("提示", "修改失败！");
-                        }
-                    });
-                },
-            }
+            //点击表项修改
+            // listeners: {
+            //
+            //     validateedit: function(editor, e){//监听点击表格
+            //
+            //         //获得当前行的id
+            //         var cellId = e.record.id;
+            //         var cellField = e.field;
+            //         var cellValue = e.value//当前值
+            //
+            //         Ext.Ajax.request({
+            //             url : 'data/EditCellById.do',
+            //             method:'POST',
+            //             //submitEmptyText : false,
+            //             params : {
+            //                 tableName:tableName,
+            //                 id:cellId,
+            //                 field:cellField,
+            //                 value:cellValue
+            //             },
+            //             success : function(response) {
+            //                 Ext.MessageBox.alert("提示", "修改成功！");
+            //                 // uploadRecordsStore.load({
+            //                 //
+            //                 // });
+            //                 // me.close();
+            //
+            //             },
+            //             failure : function(response) {
+            //                 Ext.MessageBox.alert("提示", "修改失败！");
+            //             }
+            //         });
+            //     },
+            // }
             //对表的行双击，响应的事件
 
             // listeners: {

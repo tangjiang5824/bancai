@@ -12,7 +12,6 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -524,6 +523,61 @@ public class ProjectController {
         return true;
     }
 
+    //旧板仓库出库入库回滚
+    //类型：0入库，1出库，2退库， 3撤销入库，4撤销出库，5撤销退库
+    @RequestMapping(value = "/oldpanel/backOldpanelStore.do")
+    @Transactional
+    public boolean backOldpanelStore(String oldpanellogId,HttpSession session ,String operator,String type) throws JSONException {
+        String sql_find_log_detail="select * from oldpanel_logdetail where oldpanellogId=? and isrollback<>1";
+        String userid = (String) session.getAttribute("userid");
+
+        Date date=new Date();
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String update_log="update oldpanel_log set isrollback=1 where id=?";
+        //把isrollback改为1
+        insertProjectService.insertIntoTableBySQL(update_log,oldpanellogId);
+
+        //log主键
+        String sql_insert_new_log="insert into oldpanel_log (type,userId,time,operator,isrollback) values(?,?,?,?,?)";
+        int main_key=0;
+        //插入新的log
+        if (type.equals("0")) main_key= insertProjectService.insertDataToTable(sql_insert_new_log,"3",userid,simpleDateFormat.format(date),operator,"1");
+
+
+        DataList list=queryService.query(sql_find_log_detail,oldpanellogId);
+        for(int i=0;i<list.size();i++){
+            String oldpanelstoreId=list.get(i).get("oldpanelstoreId")+"";
+            String oldpanelName="";
+            String specification="";
+            String oldpanelId="";
+
+            if(null!=list.get(i).get("oldpanelName")) oldpanelName=list.get(i).get("oldpanelName")+"";
+            if(null!=list.get(i).get("specification")) specification=list.get(i).get("specification")+"";
+            if(null!=list.get(i).get("oldpanelId")) oldpanelId=list.get(i).get("oldpanelId")+"";
+            String count=list.get(i).get("count")+"";
+            int count_to_op=Integer.valueOf(count);
+            if(type.equals("0")){
+                //撤销入库
+
+                //进行回滚出库
+                String sql_find_list="select * from oldpanel_store where id=?";
+                DataList count_list=queryService.query(sql_find_list,oldpanelstoreId);
+                if(count_list.size()!=1||Integer.valueOf(count_list.get(0).get("count")+"")!=count_to_op) return  false;
+                String sql_update_count="update oldpanel_store set count=0 where id=?";
+                insertProjectService.insertIntoTableBySQL(sql_update_count,oldpanelstoreId);
+
+                //修改完成撤销的原logdetail
+                String detail_id=list.get(i).get("id")+"";
+                String update_detail_isrollback="update oldpanel_logdetail set isrollback=1 where id=?";
+                insertProjectService.insertIntoTableBySQL(update_detail_isrollback,detail_id);
+                //插入新的detail
+                String sql_insert_new_detial="insert into oldpanel_logdetail (oldpanelName,count,specification,oldpanellogId,oldpanelId,oldpanelstoreId,isrollback) values(?,?,?,?,?,?,?)";
+                insertProjectService.insertIntoTableBySQL(sql_insert_new_detial,oldpanelName,count,specification,main_key+"",oldpanelId,oldpanelstoreId,"1");
+            }
+        }
+
+        return true;
+    }
 
 
     //原材料仓库出库，直接进行给定数值的仓库扣减

@@ -36,39 +36,126 @@ public class Select_specification_from_materialName_controller {
 		return wr;
 	}
 
+//	/*
+//	 * 查询出入库记录
+//	 * */
+//	@RequestMapping(value = "/oldpanel/oldpanel_query_records.do")
+//	public WebResponse materialDataList(Integer start, Integer limit, String projectId,
+//										String optionType, String startTime, String endTime, String username) throws ParseException {
+//		//log.debug(startWidth+" "+endWidth);
+//		if(null==start||start.equals("")) start=0;
+//		if(null==limit||limit.equals("")) limit=50;
+//		String tableName = "oldpanellog";
+////		System.out.println(startWidth);
+////		System.out.println(endWidth);
+////
+//		mysqlcondition c=new mysqlcondition();
+//		if (projectId.length() != 0) {
+//			c.and(new mysqlcondition("projectId", "=", projectId));
+//		}
+//		if (optionType.length() != 0) {
+//			c.and(new mysqlcondition("type", "=", optionType));
+//		}
+//		if (startTime.length() != 0) {
+//			c.and(new mysqlcondition("time", ">=", startTime));
+//		}
+//		if (endTime.length() != 0) {
+//			c.and(new mysqlcondition("time", "<=", endTime));
+//		}
+//		if (username.length() != 0) {
+//			c.and(new mysqlcondition("username", "=", username));
+//		}
+//		WebResponse wr=queryAllService.queryDataPage(start, limit, c, tableName);
+//		return wr;
+//	}
 	/*
-	 * 查询出入库记录
+	 * 旧板查询出入库记录
 	 * */
 	@RequestMapping(value = "/oldpanel/oldpanel_query_records.do")
-	public WebResponse materialDataList(Integer start, Integer limit, String projectId,
-										String optionType, String startTime, String endTime, String username) throws ParseException {
+	public WebResponse oldpanelDataList1(String start, String limit, String projectId,
+										 String type, String page,String startTime, String endTime, String operator) throws ParseException {
 		//log.debug(startWidth+" "+endWidth);
-		if(null==start||start.equals("")) start=0;
-		if(null==limit||limit.equals("")) limit=50;
-		String tableName = "oldpanellog_projectname";
+		int thisPage=1;
+		int thisStart=0;
+		int thisLimit=25;
+		if(null==page||page.equals("")){
+			thisPage=1;
+		}else {
+			thisPage=Integer.parseInt(page);
+		}
+		if(null==start||start.equals("")||null==limit||limit.equals("")){
+			thisStart=0;
+			thisLimit=25;
+		}else {
+			thisLimit=Integer.parseInt(limit);
+			thisStart=(thisPage-1)*thisLimit;
+		}
+		String tableName = "oldpanellog_projectname_buildingname";
 //		System.out.println(startWidth);
 //		System.out.println(endWidth);
 //
 		mysqlcondition c=new mysqlcondition();
-		if (projectId.length() != 0) {
+		if (null!=projectId&&projectId.length() != 0) {
 			c.and(new mysqlcondition("projectId", "=", projectId));
 		}
-		if (optionType.length() != 0) {
-			c.and(new mysqlcondition("type", "=", optionType));
+		if (null!=type&&type.length() != 0) {
+			c.and(new mysqlcondition("type", "=", type));
 		}
-		if (startTime.length() != 0) {
+		if (null!=startTime&&startTime.length() != 0) {
 			c.and(new mysqlcondition("time", ">=", startTime));
 		}
-		if (endTime.length() != 0) {
+		if (null!=endTime&&endTime.length() != 0) {
 			c.and(new mysqlcondition("time", "<=", endTime));
 		}
-		if (username.length() != 0) {
-			c.and(new mysqlcondition("username", "=", username));
+		if (null!=operator&&operator.length() != 0) {
+			c.and(new mysqlcondition("operator", "=", operator));
 		}
-		WebResponse wr=queryAllService.queryDataPage(start, limit, c, tableName);
+		WebResponse wr=queryAllService.queryDataPage(thisStart, thisLimit, c, tableName);
 		return wr;
 	}
+	/*
+	 * 旧板出库界面查询出入库记录
+	 * */
+	@RequestMapping(value = "/oldpanel/outbound_query_records.do")
+	public WebResponse outboundQueryRecords(String start, String limit,String page, String type,
+											String startTime, String endTime, String operator) throws ParseException {
+		//log.debug(startWidth+" "+endWidth);
+		int thisPage=1;
+		int thisStart=0;
+		int thisLimit=25;
+		if(null==page||page.equals("")){
+			thisPage=1;
+		}else {
+			thisPage=Integer.parseInt(page);
+		}
+		if(null==start||start.equals("")||null==limit||limit.equals("")){
+			thisStart=0;
+			thisLimit=25;
+		}else {
+			thisLimit=Integer.parseInt(limit);
+			thisStart=(thisPage-1)*thisLimit;
+		}
+		String tableName = "oldpanel_log";
+//		System.out.println(startWidth);
+//		System.out.println(endWidth);
+//
+		mysqlcondition c=new mysqlcondition();
 
+		if (null!=type&&type.length() != 0) {
+			c.and(new mysqlcondition("type", "=", type));
+		}
+		if (null!=startTime&&startTime.length() != 0) {
+			c.and(new mysqlcondition("time", ">=", startTime));
+		}
+		if (null!=endTime&&endTime.length() != 0) {
+			c.and(new mysqlcondition("time", "<=", endTime));
+		}
+		if (null!=operator&&operator.length() != 0) {
+			c.and(new mysqlcondition("operator", "=", operator));
+		}
+		WebResponse wr=queryAllService.queryDataPage(thisStart, thisLimit, c, tableName);
+		return wr;
+	}
 	/*
 	 * 原材料查询出入库记录
 	 * */
@@ -100,6 +187,7 @@ public class Select_specification_from_materialName_controller {
 			c.and(new mysqlcondition("projectId", "=", projectId));
 		}
 		if (null!=type&&type.length() != 0) {
+			//type = "0";
 			c.and(new mysqlcondition("type", "=", type));
 		}
 		if (null!=startTime&&startTime.length() != 0) {
@@ -276,4 +364,33 @@ public class Select_specification_from_materialName_controller {
 		WebResponse wr=queryAllService.queryDataPage(start, limit, c, tableName);
 		return wr;
 	}
+
+	@RequestMapping(value = "/oldpanel/query_data.do")
+	public WebResponse query_data(Integer start, Integer limit, String tableName,String oldpanelType,
+										 String maxCount,String minCount,String warehouseName) throws ParseException {
+		if(null==start||start.equals("")) start=0;
+		if(null==limit||limit.equals("")) limit=50;
+		mysqlcondition c=new mysqlcondition();
+		if (oldpanelType.length() != 0) {
+			c.and(new mysqlcondition("oldpanelType", "=", oldpanelType));
+		}
+		if (warehouseName.length() != 0) {
+			c.and(new mysqlcondition("warehouseName", "=", warehouseName));
+		}
+		if (maxCount.length() != 0) {
+			c.and(new mysqlcondition("countUse", "<=", maxCount));
+		}
+		if (minCount.length() != 0) {
+			c.and(new mysqlcondition("countUse", ">=", minCount));
+		}
+		if (maxCount.length() != 0) {
+			c.and(new mysqlcondition("countStore", "<=", maxCount));
+		}
+		if (minCount.length() != 0) {
+			c.and(new mysqlcondition("countStore", ">=", minCount));
+		}
+		WebResponse wr=queryAllService.queryDataPage(start, limit, c, tableName);
+		return wr;
+	}
+
 }
