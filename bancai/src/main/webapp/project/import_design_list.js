@@ -96,8 +96,8 @@ Ext.define('project.import_design_list', {
 		});
 		var grid = Ext.create("Ext.grid.Panel", {
 			id : 'addDataGrid',
-			//dockedItems : [toolbar2],
 			store : 'designlistStore',
+			title:"清单明细",
 			columns : [
 				// {
 				// 	dataIndex : '产品编号',
@@ -113,12 +113,13 @@ Ext.define('project.import_design_list', {
 					dataIndex : 'productName',
 					name : '产品名称',
 					text : '产品名称',
-					//width : 110,
+					width : 200,
 					editor : {// 文本字段
 						xtype : 'textfield',
 						allowBlank : false,
 					},
 					editable:false,
+					// flex:0.2
 				},
 				// {
 				// 	dataIndex : '产品安装位置',
@@ -140,6 +141,20 @@ Ext.define('project.import_design_list', {
 				// 		allowBlank : false,
 				// 	}
 				// },
+				{
+					dataIndex : 'listName',
+					name : '清单名称',
+					text : '清单名称(位置)',
+					width : 200,
+					// flex:0.2
+				},
+				{
+					dataIndex : 'count',
+					name : '生产数量',
+					text : '生产数量',
+					width : 200,
+					// flex:0.2
+				},
 			],
 			viewConfig : {
 				plugins : {
@@ -150,7 +165,17 @@ Ext.define('project.import_design_list', {
 			// plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
 			// 			clicksToEdit : 3
 			// 		})],
-			selType : 'rowmodel'
+			selType : 'rowmodel',
+			dockedItems: [{
+				xtype: 'pagingtoolbar',
+				store: designlistStore,   // same store GridPanel is using
+				dock: 'bottom',
+				displayInfo: true,
+				displayMsg:'显示{0}-{1}条，共{2}条',
+				emptyMsg:'无数据'
+			}],
+
+
 		});
 
 		var exceluploadform = Ext.create("Ext.form.Panel", {
@@ -241,8 +266,8 @@ Ext.define('project.import_design_list', {
 
 		var tableList1 = Ext.create('Ext.form.ComboBox',{
 			fieldLabel : '项目名',
-			labelWidth : 60,
-			width : '35%',
+			labelWidth : 45,
+			width : 550,//'35%'
 			id :  'projectName',
 			name : 'projectName',
 			matchFieldWidth: true,
@@ -337,11 +362,12 @@ Ext.define('project.import_design_list', {
 
 		var buildingName = Ext.create('Ext.form.ComboBox',{
 			fieldLabel : '楼栋名',
-			labelWidth : 60,
+			labelWidth : 45,
 			width : 300,
 			id :  'buildingName',
 			name : 'buildingName',
 			matchFieldWidth: false,
+			margin: '0 10 0 40',
 			emptyText : "--请选择楼栋名--",
 			displayField: 'buildingName',
 			valueField: 'id',//楼栋的id
@@ -350,7 +376,6 @@ Ext.define('project.import_design_list', {
 			//store: tableListStore2,
 			listeners: {
 				load:function () {
-
 
 					// // projectName:Ext.getCmp('projectName').getValue();
 					// // buildingName:Ext.getCmp('buildingName').getValue();
@@ -374,18 +399,52 @@ Ext.define('project.import_design_list', {
 
 
 
+		var toolbar1 = Ext.create('Ext.toolbar.Toolbar', {
+			dock : "top",
+			id : "toolbar1",
+			items : [   tableList1,
+						buildingName,
+
+					]//exceluploadform
+		});
 		var toolbar2 = Ext.create('Ext.toolbar.Toolbar', {
 			dock : "top",
 			id : "toolbar2",
-			items : [tableList1,buildingName,{
-				xtype: 'tbtext',
-				//id: 'uploadFile',
-				text:'选择文件:',
-			},
-				exceluploadform]//exceluploadform
+			items : [
+				{
+					xtype: 'textfield',
+					// margin: '0 10 0 0',
+					fieldLabel: ' 位置分类',
+					id: 'listName',
+					width: 230,
+					labelWidth: 60,
+					name: 'listName',
+					value: "",
+				},{
+					xtype: 'tbtext',
+					//id: 'uploadFile',
+					margin: '0 0 0 40',
+					text:'选择文件:',
+				},
+				exceluploadform
+			]//exceluploadform
 		});
 
-		this.dockedItems = [toolbar2,grid];
+		// this.dockedItems = [toolbar2,grid];
+		//多行toolbar
+		this.dockedItems=[{
+			xtype : 'toolbar',
+			dock : 'top',
+			items : [toolbar1]
+		},{
+			xtype : 'toolbar',
+			dock : 'top',
+			style:'border-width:0 0 0 0;',
+			items : [toolbar2]
+		},
+		];
+
+		this.items = [grid]
 
 		this.callParent(arguments);
 

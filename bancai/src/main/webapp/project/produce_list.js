@@ -3,6 +3,7 @@ Ext.define('project.produce_list',{
     region: 'center',
     layout:'fit',
     title: '生产材料单查询',
+    //未使用
     initComponent: function(){
         var itemsPerPage = 50;
         var tableName="materialstore";
