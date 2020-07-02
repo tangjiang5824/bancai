@@ -8,7 +8,7 @@ import java.util.Set;
 @Entity
 @Table(name = "material_info")
 public class MaterialInfo {
-    private Long materialid;
+    private Integer materialid;
     private String description;
     private String inventoryUnit;
     private String materialName;
@@ -29,11 +29,11 @@ public class MaterialInfo {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "id")
-    public Long getMaterialid() {
+    public Integer getMaterialid() {
         return materialid;
     }
 
-    public void setMaterialid(Long materialid) {
+    public void setMaterialid(Integer materialid) {
         this.materialid = materialid;
     }
 
