@@ -8,12 +8,20 @@ import javax.persistence.*;
 public class MaterialStore {
     private Long id;
     private Integer count;
-    private String warehouseName;
     private String totalWeight;
     private String description;
-    private Integer rowNo;
-    private Integer columNo;
     private Double countUse;
+    private Storeposition storeposition;
+
+    @ManyToOne(targetEntity = Storeposition.class)
+    @JoinColumn(name = "storeposition",referencedColumnName = "id")
+    public Storeposition getStoreposition() {
+        return storeposition;
+    }
+
+    public void setStoreposition(Storeposition storeposition) {
+        this.storeposition = storeposition;
+    }
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -33,13 +41,6 @@ public class MaterialStore {
         this.count = count;
     }
 
-    public String getWarehouseName() {
-        return warehouseName;
-    }
-
-    public void setWarehouseName(String warehouseName) {
-        this.warehouseName = warehouseName;
-    }
 
     public String getTotalWeight() {
         return totalWeight;
@@ -57,27 +58,12 @@ public class MaterialStore {
         this.description = description;
     }
 
-    public Integer getRowNo() {
-        return rowNo;
-    }
-
-    public void setRowNo(Integer rowNo) {
-        this.rowNo = rowNo;
-    }
-
-    public Integer getColumNo() {
-        return columNo;
-    }
-
-    public void setColumNo(Integer columNo) {
-        this.columNo = columNo;
-    }
 
 
     private MaterialInfo materialInfo;
 
     @ManyToOne(targetEntity=MaterialInfo.class)
-    @JoinColumn(name = "materialid",referencedColumnName = "id")
+    @JoinColumn(name = "materialId",referencedColumnName = "id")
     public MaterialInfo getMaterialInfo() {
         return materialInfo;
     }

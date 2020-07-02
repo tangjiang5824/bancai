@@ -2,19 +2,27 @@ package com.bancai.cg.entity;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "material_log")
 public class MaterialLog {
     private int id;
+    //类型：0入库，1出库，2退库， 3撤销入库，4撤销出库，5撤销退库
     private String type;
+    //上传id
     private Integer userId;
     private Timestamp time;
     private Integer projectId;
     private Integer buildingId;
     private String operator;
+    //0可以回滚，1已回滚
     private Integer isrollback;
+
+    @OneToMany(mappedBy = "materialLog")
+    private Set<MaterialLogdetail> materialLogdetails = new HashSet<>();
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
