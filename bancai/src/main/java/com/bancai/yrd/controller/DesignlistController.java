@@ -1,9 +1,8 @@
 package com.bancai.yrd.controller;
 
+import com.bancai.commonMethod.PanelMatchService;
 import com.bancai.commonMethod.QueryAllService;
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,30 +15,26 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 @RestController
-public class OldpanelMatchController {
+public class DesignlistController {
     @Autowired
     private TableService tableService;
     @Autowired
     private QueryAllService queryService;
     @Autowired
-    private com.bancai.yrd.service.OldpanelMatchService OldpanelMatchService;
+    private PanelMatchService panelMatchService;
 
-    Logger log=Logger.getLogger(OldpanelMatchController.class);
+    Logger log=Logger.getLogger(DesignlistController.class);
 
     /*
-     * 上传cad导出的excel文件
+     * 上传excel文件designlist
      * */
 
-    @RequestMapping(value = "/oldpanel/uploadMatchExcel.do")
-    public WebResponse oldpanelUploadMatchData(MultipartFile uploadFile, String projectId, String buildingId, HttpSession session) {
+    @RequestMapping(value = "/designlist/uploadExcel.do")
+    public WebResponse oldpanelUploadMatchData(MultipartFile uploadFile, String projectId, String buildingId, String buildingpositionId, HttpSession session) {
         WebResponse response = new WebResponse();
-//        String tableName = "oldpanel";
-//        int userid = Integer.parseInt(session.getAttribute("userid").toString());
-//        int projectid = Integer.parseInt(projectId);
-//        int buildingid = Integer.parseInt(buildingId);
-        System.out.println(projectId+"==="+buildingId);
+        String userId = (String)session.getAttribute("userid");
         try {
-            UploadDataResult result = OldpanelMatchService.oldpanelUploadMatchData(uploadFile.getInputStream(), projectId, buildingId);
+            UploadDataResult result = panelMatchService.uploadDesignlist(uploadFile.getInputStream(), userId, projectId, buildingId, buildingpositionId);
             response.setSuccess(result.success);
             response.setErrorCode(result.errorCode);
             response.put("value",result.dataList);

@@ -37,23 +37,23 @@ public class PanelMatchService extends BaseService{
      * 设计清单解析
      */
     @Transactional
-    public UploadDataResult uploadDesignlist(InputStream inputStream, String userid, String projectId, String buildingId,
+    public UploadDataResult uploadDesignlist(InputStream inputStream, String userId, String projectId, String buildingId,
                                              String buildingpositionId) throws IOException {
         UploadDataResult result = new UploadDataResult();
 
         Excel excel = new Excel(inputStream);
         DataList dataList = excel.readExcelContent();
         Map<String, ArrayList<String>> map = new HashMap<>();
-        for (int i = 0; i < dataList.size(); i++) {
-            String productName = productNameCorrector(dataList.get(i).get("productName").toString());
-            String position = dataList.get(i).get("position").toString();
-            if(!queryService.query("select * from designlist where projectId=? and buildingId=? and position=?"
-                    ,projectId,buildingId,position).isEmpty()){
+        for (DataRow dataRow : dataList) {
+            String productName = productNameCorrector(dataRow.get("productName").toString());
+            String position = dataRow.get("position").toString();
+            if (!queryService.query("select * from designlist where projectId=? and buildingId=? and position=?"
+                    , projectId, buildingId, position).isEmpty()) {
                 result.setErrorCode(2);
                 return result;
             }
-            int productId = AnalyzeNameService.isInfoExist("product",productName);
-            if(productId==0){
+            int productId = AnalyzeNameService.isInfoExist("product", productName);
+            if (productId == 0) {
                 Date date = new Date();
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 String sql_addLog = "insert into product_log (type,userId,time) values(?,?,?)";
@@ -63,24 +63,24 @@ public class PanelMatchService extends BaseService{
                 insertProjectService.insertIntoTableBySQL("insert into product_logdetail (productlogId,productId) values (?,?)",
                         String.valueOf(productlogId), String.valueOf(productId));
             }
-            productName = String.valueOf(productId)+"N"+productName;
+            productName = String.valueOf(productId) + "N" + productName;
             //productName形如 15N100 B 200  即  idNproductName
-            if(map.containsKey(productName)){
+            if (map.containsKey(productName)) {
                 ArrayList<String> a = new ArrayList<>();
                 a = map.get(productName);
                 a.add(position);
-                map.put(productName,a);
-            }else {
+                map.put(productName, a);
+            } else {
                 ArrayList<String> a = new ArrayList<>();
                 a.add(position);
-                map.put(productName,a);
+                map.put(productName, a);
             }
         }
         map = matchBackProduct(map,projectId,buildingId,buildingpositionId);
 //            map = matchOldpanel(map);
 //            map = matchPreprocess(map);
 //            map = matchMaterial(map);
-
+        result.success = matchError(map,projectId,buildingId,buildingpositionId);
         return result;
     }
     /**
@@ -96,23 +96,52 @@ public class PanelMatchService extends BaseService{
                 ArrayList<String> value = map.get(key);
                 String productId = key.split("N")[0];
                 String productName = key.substring(productId.length()+1,key.length()-1);
-                System.out.println("match="+productName+"==and==position="+value);
-                String sql = "select * from backproduct_store where productId=? and countUse>0";
-                DataList backproductList = queryService.query(sql,productId);
-                if(!backproductList.isEmpty()){
-                    for (int i = 0; i < backproductList.size(); i++) {
-                        int countUse = Integer.parseInt(backproductList.get(i).get("countUse").toString());
-                        while (countUse>0){
-                            String sql_matchBackproduct = "";
-                            countUse--;
+                System.out.println("match="+productName+"===position="+value);
+                //匹配列表
+                DataList backproductList = queryService.query("select * from backproduct_store where productId=? and countUse>0"
+                        ,productId);
+                int num = value.size();
+                if(!backproductList.isEmpty()) {
+                    for (DataRow dataRow : backproductList) {
+                        int backproductId = Integer.parseInt(dataRow.get("id").toString());
+                        int countUse = Integer.parseInt(dataRow.get("countUse").toString());
+                        if (num > countUse) {
+                            while (countUse > 0) {
+                                String position = value.get(num - 1);
+                                int designlistId = insertProjectService.insertDataToTable("insert into designlist " +
+                                        "(projectId,buildingId,buildingpositionId,productId,position,madeBy,processStatus) values " +
+                                        "(?,?,?,?,?,?,?)", projectId, buildingId, buildingpositionId, productId, position, "0", "0");
+                                int resultId = insertProjectService.insertDataToTable("insert into backproduct_match_result " +
+                                        "(designlistId,backproductId) values (?,?)", String.valueOf(designlistId), String.valueOf(backproductId));
+                                num--;
+                                countUse--;
+                                value.remove(num - 1);
+                            }
+                            jo.update("update backproduct_store set countUse=" + countUse + " where id=" + backproductId);
+                        } else {
+                            while (num > 0) {
+                                String position = value.get(num - 1);
+                                int designlistId = insertProjectService.insertDataToTable("insert into designlist " +
+                                        "(projectId,buildingId,buildingpositionId,productId,position,madeBy,processStatus) values " +
+                                        "(?,?,?,?,?,?,?)", projectId, buildingId, buildingpositionId, productId, position, "0", "0");
+                                int resultId = insertProjectService.insertDataToTable("insert into backproduct_match_result " +
+                                        "(designlistId,backproductId) values (?,?)", String.valueOf(designlistId), String.valueOf(backproductId));
+                                num--;
+                                countUse--;
+                                value.remove(num - 1);
+                            }
+                            jo.update("update backproduct_store set countUse=" + countUse + " where id=" + backproductId);
+                            break;
                         }
+
                     }
                 }
+                if(num==0)
+                    iterator.remove();
             }
         } catch (Exception e){
             return map;
         }
-        DataList matchList = new DataList();
 //        String[] analyzeProductName = AnalyzeNameService.analyzeProductName(productName);
         //String[]{format,productType,m,n,a,b,mnAngle,suffix,igSuffix,productTypeName}
         return map;
@@ -152,6 +181,29 @@ public class PanelMatchService extends BaseService{
 //        return map;
 //    }
 
+    @Transactional
+    public boolean matchError(Map<String,ArrayList<String>> map, String projectId, String buildingId, String buildingpositionId){
+        try {
+            Iterator iterator = map.keySet().iterator();
+            while (iterator.hasNext()) {
+                String key = iterator.next().toString();
+                ArrayList<String> value = map.get(key);
+                String productId = key.split("N")[0];
+                String productName = key.substring(productId.length() + 1, key.length() - 1);
+                System.out.println("fell to match=" + productName + "===position=" + value);
+                while (value.size()>0){
+                    String position = value.get(value.size()-1);
+                    int designlistId = insertProjectService.insertDataToTable("insert into designlist " +
+                            "(projectId,buildingId,buildingpositionId,productId,position,madeBy,processStatus) values " +
+                            "(?,?,?,?,?,?,?)", projectId, buildingId, buildingpositionId, productId, position, "9", "0");
+                    value.remove(value.size()-1);
+                }
+            }
+            return true;
+        }catch (Exception e){
+            return false;
+        }
+    }
     @Transactional
     public DataList insertDesignlist(String productTypeId, String productNameFormat) {
         String sql = "select * from matchrules where productTypeId=? and productNameFormat=?";
