@@ -25,13 +25,13 @@ Ext.define('project.management.queryproject',{
         var tableList = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '项目名',
             labelWidth : 60,
-            width : '35%',
+            width : 550,
             id :  'projectName',
             name : 'projectName',
             matchFieldWidth: true,
             // emptyText : "--请选择项目--",
             displayField: 'projectName',
-            valueField: 'projectName',
+            valueField: 'id',
             // typeAhead : true,
             editable : true,
             store: tableListStore,
@@ -47,109 +47,134 @@ Ext.define('project.management.queryproject',{
 
         });
 
+        var toolbar_top = Ext.create("Ext.toolbar.Toolbar", {
+            // dock : "top",
+            border:false,
+            items : [
+                {
+                    xtype: 'tbtext',
+                    text: '<strong>查询条件:</strong>',
+                }
+            ]
+        });
+
         var toobar = Ext.create('Ext.toolbar.Toolbar',{
             items: [
 
                 tableList,
                 {
-                    xtype : 'monthfield',
+                    xtype:'tbtext',
+                    text:'时间:',
+                    margin : '0 10 0 20',
+                },
+                {
+                    xtype: 'monthfield',
                     margin : '0 10 0 0',
-                    fieldLabel : '开始时间',
-                    width : 180,
-                    labelWidth : 80,
-                    id : "startTime",
-                    name : 'startTime',
-                    //align: 'right',
-                    format : 'Y-m',
-                    editable : false,
-                    //value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.MONTH), "Y-m-d")
-                },  {
-                    xtype : 'monthfield',
-                    margin : '0 10 0 0',
-                    fieldLabel : '预计结束时间',
-                    width : 180,
-                    labelWidth : 80,
-                    id : "proEndTime",
-                    name : 'proEndTime',
-                    //align: 'right',
-                    format : 'Y-m',
-                    editable : false,
-                    value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.MONTH), "Y-m-d")
-                },{
-                    xtype: 'textfield',
-                    margin : '0 10 0 0',
-                    fieldLabel: '计划负责人',
-                    id :'planLeader',
-                    width: 180,
-                    labelWidth: 80,
-                    name: 'planLeader',
+                    // fieldLabel: '',
+                    id :'startTime',
+                    width: 100,
+                    // labelWidth: 60,
+                    name: 'startTime',
                     value:"",
-                    //dataIndex:'planLeader'
-
+                },{
+                    xtype:'tbtext',
+                    text:'---',
+                },
+                {
+                    xtype: 'monthfield',
+                    margin : '0 10 0 0',
+                    id :'proEndTime',
+                    width: 100,
+                    // labelWidth: 60,
+                    name: 'proEndTime',
+                    value:"",
                 }]
         });
         var toobar_2 = Ext.create('Ext.toolbar.Toolbar',{
+            dock:'top',
             items: [
                 {
                     xtype: 'textfield',
                     margin : '0 10 0 0',
-                    fieldLabel: '生产负责人',
-                    id :'produceLeader',
+                    fieldLabel: '项目负责人',
+                    id :'projectLeader',
                     width: 180,
                     labelWidth: 80,
-                    name: 'produceLeader',
+                    name: 'projectLeader',
                     value:"",
-
                 },{
-                    xtype: 'textfield',
-                    margin : '0 10 0 0',
-                    fieldLabel: '采购负责人',
-                    id :'purchaseLeader',
-                    width: 180,
-                    labelWidth: 80,
-                    name: 'purchaseLeader',
-                    value:"",
-
-                },{
-                    xtype: 'textfield',
-                    margin : '0 10 0 0',
-                    fieldLabel: '财务负责人',
-                    id :'financeLeader',
-                    width: 180,
-                    labelWidth: 80,
-                    name: 'financeLeader',
-                    value:"",
-
-                },{
-                    xtype: 'textfield',
-                    margin : '0 10 0 0',
-                    fieldLabel: '仓库负责人',
-                    id :'storeLeader',
-                    width: 180,
-                    labelWidth: 80,
-                    name: 'storeLeader',
-                    value:"",
-
-                }]
+                    xtype : 'button',
+                    text: '查询',
+                    iconCls:'right-button',
+                    width: 80,
+                    margin: '0 0 0 15',
+                    layout: 'right',
+                    handler: function(){
+                        console.log("项目id：",Ext.getCmp('projectName').getValue())
+                        console.log("项目名：",Ext.getCmp('projectName').rawValue)
+                        Query_Project_Store.load({
+                            params : {
+                                projectId:Ext.getCmp('projectName').getValue(),
+                                projectName:Ext.getCmp('projectName').rawValue,//获取显示字段
+                                startTime:Ext.getCmp('startTime').getValue(),
+                                endTime:Ext.getCmp('proEndTime').getValue(),
+                                projectLeader:Ext.getCmp('projectLeader').getValue(),
+                            }
+                        });
+                    }
+                }
+                // ,{
+                //     xtype: 'textfield',
+                //     margin : '0 10 0 0',
+                //     fieldLabel: '采购负责人',
+                //     id :'purchaseLeader',
+                //     width: 180,
+                //     labelWidth: 80,
+                //     name: 'purchaseLeader',
+                //     value:"",
+                //
+                // },{
+                //     xtype: 'textfield',
+                //     margin : '0 10 0 0',
+                //     fieldLabel: '财务负责人',
+                //     id :'financeLeader',
+                //     width: 180,
+                //     labelWidth: 80,
+                //     name: 'financeLeader',
+                //     value:"",
+                //
+                // },{
+                //     xtype: 'textfield',
+                //     margin : '0 10 0 0',
+                //     fieldLabel: '仓库负责人',
+                //     id :'storeLeader',
+                //     width: 180,
+                //     labelWidth: 80,
+                //     name: 'storeLeader',
+                //     value:"",
+                // }
+                ]
         });
 
 
+        //项目信息store
         var Query_Project_Store = Ext.create('Ext.data.Store',{
             id: 'Query_Project_Store',
             autoLoad: true,
             fields: [],
             pageSize: itemsPerPage, // items per page
             proxy:{
-                url : "material/findAllBytableName.do?tableName="+tableName,
+                // url : "material/findAllBytableName.do?tableName="+tableName,
+                url:"project/findProjectAndBuilding.do",
                 type: 'ajax',
                 reader:{
                     type : 'json',
-                    rootProperty: tableName,
+                    rootProperty: 'project',
                     //totalProperty: 'totalCount'
                 },
                 params:{
-                    //start: 0,
-                    //limit: itemsPerPage
+                    start: 0,
+                    limit: itemsPerPage
                     //后面需要添加
                     //tableName:tableName,
                 }
@@ -212,40 +237,101 @@ Ext.define('project.management.queryproject',{
             modal:true,//模态窗口，背景窗口不可编辑
         });
 
+        var archive_form = new Ext.form.FormPanel({
+            // title:'新建原材料退库表',
+            autoHeight: true,
+            autoWidth: true,
+            layout: 'form',
+            border: false,
+            bodyStyle:'text-align:center;',
+            // height:700,
+            // baseCls : 'my-panel-no-border',  //去掉边框
+
+            items: [{
+                columnWidth: .3,
+                rowHeight:200,
+                xtype: 'fieldset',
+                title: '基本信息',
+                layout: 'form',
+                defaults: {anchor: '95%'},
+                style: 'margin-left: 5px;padding-left: 5px;',
+                width:500,
+                bodyStyle:'text-align:center;',
+                // 第一列中的表项
+                items:[
+                    {
+                        xtype: 'textfield',
+                        margin: '0 40 0 0',
+                        fieldLabel: '退库人',
+                        id: 'oprator',
+                        width: 140,
+                        height:80,
+                        labelWidth: 50,
+                        name: 'oprator',
+                        value: "",
+                        allowBlank:false,
+                    },
+                    {
+                        xtype: 'datefield',
+                        margin: '0 10 0 0',
+                        fieldLabel: '退库时间',
+                        id: 'backTime',
+                        labelWidth : 60,
+                        width : 180,
+                        height:80,
+                        name: 'backTime',
+                        value: "",
+                        format : 'Y-m-d',
+                        editable : false,
+                        matchFieldWidth: true,
+                    }
+                ]
+            }],
+
+        });
+        // var form = new Ext.form.FieldSet({
+        //     title: '新建原材料退库表',
+        //     layout: 'form',
+        //     border:true,
+        //     defaults: {anchor: '95%'},
+        //     style: 'margin-left: 5px;padding-left: 5px;',
+        //     // height:300,
+        //     // 第二列中的表项
+        //     bodyStyle:'text-align:center;',
+        //     items: [archive_form]
+        // });
+
         //项目信息表
         var grid = Ext.create('Ext.grid.Panel',{
             id: 'Query_Project_Main',
+            title:'项目信息',
             store: Query_Project_Store,
             viewConfig : {
                 enableTextSelection : true,
                 editable:true
             },
+            items:archive_form,
             columns : [
                 { text: '项目名称', dataIndex: 'projectName', flex :1 },
                 { text: '开始时间',  dataIndex: 'startTime' ,flex :1},
                 { text: '结束时间', dataIndex: 'endTime', flex :0.7 },
                 { text: '预计结束时间', dataIndex: 'proEndTime', flex :0.7 },
-                { text: '计划处负责人', dataIndex: 'planLeader',flex :1 },
-                { text: '生产处负责人', dataIndex: 'produceLeader', flex :0.7 },
-                { text: '采购处负责人', dataIndex: 'purchaseLeader', flex :0.7 },
-                { text: '财务部负责人', dataIndex: 'financeLeader', flex :1 },
-                { text: '仓储负责人', dataIndex: 'storeLeader', flex :1},
-                { text: '项目状态',  dataIndex: 'statusName' ,flex :1},
-                { text: '上传人', dataIndex: 'username', flex :1},
+                { text: '项目负责人',  dataIndex: 'planLeader' ,flex :1},
+                { text: '项目计划人', dataIndex: 'username', flex :1},
 
             ],
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 2
             })],
             // tbar: toobar_2,
-            // dockedItems: [{
-            //     xtype: 'pagingtoolbar',
-            //     store: Query_Project_Store,   // same store GridPanel is using
-            //     dock: 'bottom',
-            //     displayInfo: true,
-            //     displayMsg:'显示{0}-{1}条，共{2}条',
-            //     emptyMsg:'无数据'
-            // }],
+            dockedItems: [{
+                xtype: 'pagingtoolbar',
+                store: Query_Project_Store,   // same store GridPanel is using
+                dock: 'bottom',
+                displayInfo: true,
+                displayMsg:'显示{0}-{1}条，共{2}条',
+                emptyMsg:'无数据'
+            }],
             listeners: {
                 //监听修改
                 validateedit : function(editor, e) {
@@ -299,15 +385,23 @@ Ext.define('project.management.queryproject',{
             }
         });
 
-        // this.items = [grid];
-        this.dockedItems = [toobar,toobar_2,grid,{
-            xtype: 'pagingtoolbar',
-            store: Query_Project_Store,   // same store GridPanel is using
-            dock: 'bottom',
-            displayInfo: true,
-            displayMsg:'显示{0}-{1}条，共{2}条',
-            emptyMsg:'无数据'
-        }];
+
+        this.dockedItems=[{
+            xtype : 'toolbar',
+            dock : 'top',
+            items : [toolbar_top]
+        },{
+            xtype : 'toolbar',
+            dock : 'top',
+            items : [toobar]
+        },{
+            xtype : 'toolbar',
+            dock : 'top',
+            style:'border-width:0 0 0 0;',
+            items : [toobar_2]
+        },
+        ];
+        this.items = [grid];
         this.callParent(arguments);
     }
 })
