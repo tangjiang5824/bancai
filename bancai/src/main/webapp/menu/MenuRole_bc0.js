@@ -126,7 +126,7 @@ Ext.define("menu.MenuRole_bc0", {
 				expanded : true,
 				children : [  {
 					text : '退库成品入库',
-					id : '',
+					id : 'backproduct.backproduct_Inbound',
 					leaf : true
 				} ,{
 					text : '退库成品库存查询',
