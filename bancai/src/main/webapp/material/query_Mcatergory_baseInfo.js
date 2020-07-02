@@ -20,8 +20,8 @@ Ext.define('material.query_Mcatergory_baseInfo',{
                 method:'POST',
                 reader:{
                     type : 'json',
-                    // rootProperty: 'materialtype',
-                    // totalProperty: 'totalCount'
+                    rootProperty: 'material_info',
+                    totalProperty: 'totalCount'
                 },
                 params:{
                     start: 0,
