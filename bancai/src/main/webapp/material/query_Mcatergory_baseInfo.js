@@ -15,7 +15,7 @@ Ext.define('material.query_Mcatergory_baseInfo',{
             fields: [],
             pageSize: itemsPerPage, // items per page
             proxy:{
-                url : "material/findAllBytableName.do", //查询接口
+                url : "material/findmaterialinfobycondition.do", //查询接口
                 type: 'ajax',
                 method:'POST',
                 reader:{
