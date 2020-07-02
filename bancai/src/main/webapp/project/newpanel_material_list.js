@@ -344,10 +344,7 @@ Ext.define('project.newpanel_material_list',{
 
         });
 
-
     }
-
-
 
 })
 

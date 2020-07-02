@@ -300,7 +300,7 @@ Ext.define('project.management.buildproject', {
                 xtype : 'button',
                 iconAlign : 'center',
                 iconCls : 'rukuicon ',
-                text : '创建',
+                text : '创建新项目',
                 region:'center',
                 bodyStyle: 'background:#fff;',
                 handler : function() {

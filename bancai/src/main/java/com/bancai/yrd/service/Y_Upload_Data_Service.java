@@ -40,7 +40,7 @@ public class Y_Upload_Data_Service extends BaseService {
      */
     @Transactional
     public int oldpanelUpload(String oldpanelName, String warehouseName, String count) {
-        String[] info = AnalyzeNameService.isOldpanelInfoExist(oldpanelName);
+        String[] info = AnalyzeNameService.isInfoExistBackUnit("oldpanel",oldpanelName);
         //id,unitWeight,unitArea
         int oldpanelId = Integer.parseInt(info[0]);
         System.out.println("oldpanelUpload===oldpanelId="+oldpanelId);

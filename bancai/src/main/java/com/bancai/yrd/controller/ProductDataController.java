@@ -3,6 +3,7 @@ package com.bancai.yrd.controller;
 import com.bancai.cg.service.InsertProjectService;
 import com.bancai.commonMethod.*;
 import com.bancai.domain.DataList;
+import com.bancai.yrd.service.ProductDataService;
 import com.bancai.yrd.service.Y_Upload_Data_Service;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -36,6 +37,8 @@ public class ProductDataController {
     private AnalyzeNameService analyzeNameService;
     @Autowired
     private PanelMatchService panelMatchService;
+    @Autowired
+    private ProductDataService productDataService;
 
     Logger log = Logger.getLogger(ProductDataController.class);
 
@@ -44,37 +47,37 @@ public class ProductDataController {
      * */
     @RequestMapping(value = "/product/addInfo.do")
     public boolean productAddInfo(String s, HttpSession session) throws JSONException {
-//        try {
-//            JSONArray jsonArray = new JSONArray(s);
-//            String userId = (String) session.getAttribute("userid");
-//            Date date = new Date();
-//            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//            String sql_addLog = "insert into oldpanellog (type,userId,time) values(?,?,?)";
-//            int oldpanellogId = insertProjectService.insertDataToTable(sql_addLog, "6", userId, simpleDateFormat.format(date));
-//            for (int i = 0; i < jsonArray.length(); i++) {
-//                JSONObject jsonTemp = jsonArray.getJSONObject(i);
-//                System.out.println("第" + i + "个---" + jsonTemp);
-//                String oldpanelName = (jsonTemp.get("oldpanelName") + "").toUpperCase();
-//                String classificationId = jsonTemp.get("classificationId") + "";
-//                String inventoryUnit = jsonTemp.get("inventoryUnit") + "";
-//                String unitWeight = jsonTemp.get("unitWeight") + "";
-//                String unitArea = jsonTemp.get("unitArea") + "";
-//                String remark = jsonTemp.get("remark") + "";
-//                int oldpanelId = y_Upload_Data_Service.oldpanelAddNewInfo(oldpanelName, classificationId, inventoryUnit,
-//                        unitWeight, unitArea, remark, userId);
-//                if (oldpanelId == 0) {
-//                    return false;//已经存在这种旧板
-//                }
-//                String sql_addLogDetail = "insert into oldpanellogdetail (oldpanellogId,oldpanelId) values (?,?)";
-//                boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLogDetail,
-//                        String.valueOf(oldpanellogId), String.valueOf(oldpanelId));
-//                if (!is_log_right) {
-//                    return false;
-//                }
-//            }
-//        } catch (Exception e) {
-//            return false;
-//        }
+        try {
+            JSONArray jsonArray = new JSONArray(s);
+            String userId = (String) session.getAttribute("userid");
+            Date date = new Date();
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String sql_addLog = "insert into product_log (type,userId,time) values(?,?,?)";
+            int productlogId = insertProjectService.insertDataToTable(sql_addLog, "6", userId, simpleDateFormat.format(date));
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonTemp = jsonArray.getJSONObject(i);
+                System.out.println("第" + i + "个---" + jsonTemp);
+                String productName = (jsonTemp.get("productName") + "").toUpperCase();
+                String classificationId = jsonTemp.get("classificationId") + "";
+                String inventoryUnit = jsonTemp.get("inventoryUnit") + "";
+                String unitWeight = jsonTemp.get("unitWeight") + "";
+                String unitArea = jsonTemp.get("unitArea") + "";
+                String remark = jsonTemp.get("remark") + "";
+                int productId = productDataService.productAddNewInfo(productName, classificationId, inventoryUnit,
+                        unitWeight, unitArea, remark, userId);
+                if (productId == 0) {
+                    return false;//已经存在
+                }
+                String sql_addLogDetail = "insert into product_logdetail (productlogId,productId) values (?,?)";
+                boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLogDetail,
+                        String.valueOf(productlogId), String.valueOf(productId));
+                if (!is_log_right) {
+                    return false;
+                }
+            }
+        } catch (Exception e) {
+            return false;
+        }
         return true;
     }
 

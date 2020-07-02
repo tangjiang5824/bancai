@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
 
 @RestController
 public class MaterialDataController {
@@ -115,6 +116,81 @@ public class MaterialDataController {
         }
         return true;
     }
+
+    /*
+     * 录入单个原材料数据
+     * 入库
+     *
+     * */
+//    @RequestMapping(value="/material/backData.do")
+//    @Transactional
+//    public boolean MaterialDataBack(String tableName,String operator, , HttpSession session) throws JSONException {
+//
+//        JSONArray jsonArray =new JSONArray(s);
+//        String userId = (String)session.getAttribute("userid");
+//        //入库记录sql
+//        Date date=new Date();
+//        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        String sql_addLog = "insert into material_log (type,userId,time,operator,isrollback) values(?,?,?,?,?)";
+//        String sql_backLog = "insert into material_log (type,userId,time,projectId) values(?,?,?,?)";
+//        JSONObject jsonBack = jsonArray.getJSONObject(0);
+//        String projectId = "";
+//        try{
+//            projectId = jsonBack.get("projectId")+"";
+//        }catch(Exception e){
+//            projectId = "";
+//        }
+//
+//        int main_key;
+//
+//        main_key= insertProjectService.insertDataToTable(sql_backLog,"2",userId,simpleDateFormat.format(date),projectId);
+//
+//
+//        for(int i=0;i< jsonArray.length();i++) {
+//            JSONObject jsonTemp = jsonArray.getJSONObject(i);
+//            String row_index=null;
+//            String materialName=null;
+//            String materialId=null;
+//            String width=null;
+//            String specification=null;
+//            String inventoryUnit=null;
+//            String count=null;
+//            String rowNo=null;
+//            String columNo=null;
+//            String warehouseName=null;
+//            String unitWeight=null;
+//            String totalWeight="0.0";
+//            //if(null!=jsonTemp.get("序号")) row_index=jsonTemp.get("序号")+"";
+//            if(JSONObject.NULL!=jsonTemp.get("品号")&&!jsonTemp.get("品号").equals(""))   materialId=jsonTemp.get("品号")+"";
+//            if(JSONObject.NULL!=jsonTemp.get("品名")&&!jsonTemp.get("品名").equals(""))  materialName=jsonTemp.get("品名")+"";
+//            if(JSONObject.NULL!=jsonTemp.get("规格")&&!jsonTemp.get("规格").equals(""))   specification=jsonTemp.get("规格")+"";
+//            if(JSONObject.NULL!=jsonTemp.get("库存单位")&&!jsonTemp.get("库存单位").equals(""))    inventoryUnit=jsonTemp.get("库存单位")+"";
+//            if(JSONObject.NULL!=jsonTemp.get("数量")&&!jsonTemp.get("数量").equals(""))    count=jsonTemp.get("数量")+"";
+//            if((jsonTemp.get("行")!=JSONObject.NULL&&!jsonTemp.get("行").equals(""))) rowNo=jsonTemp.get("行")+"";
+//            if(jsonTemp.get("列")!=JSONObject.NULL&&!jsonTemp.get("列").equals(""))   columNo=jsonTemp.get("列")+"";
+//            if(JSONObject.NULL!=jsonTemp.get("仓库名称")&&!jsonTemp.get("仓库名称").equals(""))    warehouseName=jsonTemp.get("仓库名称")+"";
+//            if(JSONObject.NULL!=jsonTemp.get("单重")&&!jsonTemp.get("单重").equals("")) unitWeight=jsonTemp.get("单重")+"";
+//            if(JSONObject.NULL!=jsonTemp.get("横截面")&&!jsonTemp.get("横截面").equals(""))  width=jsonTemp.get("横截面")+"";
+//            try{
+//                totalWeight=Double.parseDouble(unitWeight)*Double.parseDouble(count)+"";
+//            }catch (Exception e){
+//
+//            }
+//
+//            //System.out.println(jsonTemp);
+//            String sql = "insert into "+ tableName+" (materialId,specification,inventoryUnit,count,countUse,rowNo,columNo,uploadId,warehouseName,unitWeight,totalWeight) values(?,?,?,?,?,?,?,?,?,?,?)";
+//            int store_main= insertProjectService.insertDataToTable(sql,materialId,specification,inventoryUnit,count,count,rowNo,columNo,userId,warehouseName,unitWeight,totalWeight);
+//
+//            //插入log详细信息
+//            String sql_detail="insert into material_logdetail (materialName,materialId,count,specification,materiallogId,materialstoreId,isrollback) values (?,?,?,?,?,?,?) ";
+//            boolean is_log_right= insertProjectService.insertIntoTableBySQL(sql_detail,materialName,materialId,count,specification,String.valueOf(main_key),store_main+"","0");
+//            if(!is_log_right){
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
+
     /*
      * 上传excel文件,produces = { "text/html;charset=UTF-8" }
      * */

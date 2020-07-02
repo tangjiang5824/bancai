@@ -33,18 +33,13 @@ Ext.define('material.material_Inbound', {
                     rootProperty: 'material_info',
                 },
                 fields : ['id','materialName']
-                // params:{
-                //     tableName:tableName,
-                //     start: 0,
-                //     limit: itemsPerPage
-                // }
             },
             autoLoad : true
         });
         var MaterialTypeList = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '原材料品名',
             labelWidth : 70,
-            width : 230,
+            width : 270,
             id :  'materialName',
             name : 'materialName',
             matchFieldWidth: true,
@@ -54,6 +49,7 @@ Ext.define('material.material_Inbound', {
             valueField: 'id',
             editable : false,
             store: MaterialNameList,
+            //原材料品名应该包含基础信息中的其他属性值，作为描述信息
             listeners:{
                 // select: function(combo, record, index) {
                 //     var type = MaterialTypeList.rawValue;
@@ -97,8 +93,8 @@ Ext.define('material.material_Inbound', {
         var storePosition = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '仓库名',
             labelWidth : 50,
-            width : 180,
-            margin: '0 10 0 40',
+            width : 250,
+            margin: '0 0 0 21',
             id :  'storePosition',
             name : 'storePosition',
             matchFieldWidth: true,
@@ -206,47 +202,58 @@ Ext.define('material.material_Inbound', {
                 {
                     xtype: 'textfield',
                     margin: '0 10 0 40',
-                    fieldLabel: '规格',
-                    id: 'length1',
+                    fieldLabel: '数量',
+                    id: 'number',
                     width: 140,
                     labelWidth: 30,
-                    name: 'length1',
+                    name: 'number',
                     value: "",
-                    allowBlank:false,
-                },
-                {
-                    xtype: 'textfield',
-                    margin: '0 10 0 40',
-                    fieldLabel: '横截面',
-                    id: 'width',
-                    labelWidth : 50,
-                    width : 180,
-                    name: 'width',
-                    value: "",
-                },
-                {
-                    xtype: 'textfield',
-                    margin: '0 10 0 40',
-                    fieldLabel: '长2',
-                    hidden:true,//隐藏
-                    id: 'length2',
-                    width: 140,
-                    labelWidth: 40,
-                    name: 'length2',
-                    value: "",
-                    allowBlank : true,
                 },
 
-                {
-                    xtype: 'textfield',
-                    margin: '0 10 0 40',
-                    fieldLabel: '单重',
-                    id: 'unitWeight',
-                    width: 180,
-                    labelWidth: 30,
-                    name: 'unitWeight',
-                    value: "",
-                },
+                // {
+                //     xtype: 'textfield',
+                //     margin: '0 10 0 40',
+                //     fieldLabel: '规格',
+                //     id: 'length1',
+                //     width: 140,
+                //     labelWidth: 30,
+                //     name: 'length1',
+                //     value: "",
+                //     allowBlank:false,
+                // },
+                // {
+                //     xtype: 'textfield',
+                //     margin: '0 10 0 40',
+                //     fieldLabel: '横截面',
+                //     id: 'width',
+                //     labelWidth : 50,
+                //     width : 180,
+                //     name: 'width',
+                //     value: "",
+                // },
+                // {
+                //     xtype: 'textfield',
+                //     margin: '0 10 0 40',
+                //     fieldLabel: '长2',
+                //     hidden:true,//隐藏
+                //     id: 'length2',
+                //     width: 140,
+                //     labelWidth: 40,
+                //     name: 'length2',
+                //     value: "",
+                //     allowBlank : true,
+                // },
+                //
+                // {
+                //     xtype: 'textfield',
+                //     margin: '0 10 0 40',
+                //     fieldLabel: '单重',
+                //     id: 'unitWeight',
+                //     width: 180,
+                //     labelWidth: 30,
+                //     name: 'unitWeight',
+                //     value: "",
+                // },
                 {
                     xtype: 'textfield',
                     margin: '0 10 0 40',
@@ -263,26 +270,27 @@ Ext.define('material.material_Inbound', {
         var toolbar1 = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
             items: [
-                {
-                    xtype: 'textfield',
-                    // margin: '0 10 0 0',
-                    fieldLabel: ' 库存单位',
-                    id: 'stockUnit',
-                    width: 230,
-                    labelWidth: 70,
-                    name: 'stockUnit',
-                    value: "",
-                },
-                {
-                    xtype: 'textfield',
-                    margin: '0 10 0 40',
-                    fieldLabel: '数量',
-                    id: 'number',
-                    width: 140,
-                    labelWidth: 30,
-                    name: 'number',
-                    value: "",
-                },storePosition,
+                // {
+                //     xtype: 'textfield',
+                //     // margin: '0 10 0 0',
+                //     fieldLabel: ' 库存单位',
+                //     id: 'stockUnit',
+                //     width: 230,
+                //     labelWidth: 70,
+                //     name: 'stockUnit',
+                //     value: "",
+                // },
+                // {
+                //     xtype: 'textfield',
+                //     margin: '0 10 0 40',
+                //     fieldLabel: '数量',
+                //     id: 'number',
+                //     width: 140,
+                //     labelWidth: 30,
+                //     name: 'number',
+                //     value: "",
+                // },
+                storePosition,
                 {
                     xtype:'tbtext',
                     text:'存放位置 ---',
@@ -309,7 +317,7 @@ Ext.define('material.material_Inbound', {
                 // },
                 {
                     xtype : 'button',
-                    margin: '0 10 0 70',
+                    margin: '0 10 0 35',
                     iconAlign : 'center',
                     iconCls : 'rukuicon ',
                     text : '添  加',
