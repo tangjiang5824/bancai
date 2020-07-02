@@ -126,7 +126,7 @@ Ext.define("menu.MenuRole_bc0", {
 				expanded : true,
 				children : [  {
 					text : '退库成品入库',
-					id : '',
+					id : 'backproduct.backproduct_Inbound',
 					leaf : true
 				} ,{
 					text : '退库成品库存查询',
@@ -297,6 +297,10 @@ Ext.define("menu.MenuRole_bc0", {
 						text : '查看产品基础信息',
 						id : 'product.query_Pcatergory_baseInfo',//
 						leaf : true
+					},{
+							text : '添加产品基础信息',
+							id : 'product.product_Basic_Info_Input',
+							leaf : true
 					}
 					]
 				}
