@@ -90,7 +90,7 @@ public class AllExcelService extends BaseService {
 			for (int i = 0; i < dataList.size(); i++) {
 				String materialName = dataList.get(i).get("materialName") + "";
 				String specification = dataList.get(i).get("specification") + "";
-				List<MaterialInfo> materialList=materialinfodao.findByMaterialNameaAndAndSpecification(materialName,specification);
+				List<MaterialInfo> materialList=materialinfodao.findByMaterialNameAndSpecification(materialName,specification);
 				if(materialList.size()!=1) {
 					result.setSuccess(false);
 					result.setErrorCode(2);

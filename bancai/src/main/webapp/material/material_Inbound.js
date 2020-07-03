@@ -354,7 +354,7 @@ Ext.define('material.material_Inbound', {
                         console.log("原材料名：",Ext.getCmp('materialName').rawValue);
                         console.log("原材料id：",Ext.getCmp('materialName').value)
                         // var operator = Ext.getCmp('operator').value;
-                        var materialNo = Ext.getCmp('materialName').value;
+                        var materialId = Ext.getCmp('materialName').value;
                         var materialName = Ext.getCmp('materialName').rawValue;
                         var specification = Ext.getCmp('specification').getValue();
                         var width = Ext.getCmp('width').getValue();
@@ -374,7 +374,7 @@ Ext.define('material.material_Inbound', {
                         //console.log(Ext.getCmp('length2').hidden)
                         //console.log("aaaaaa")
                         data = [{
-                            'materialNo' : materialNo,
+                            'materialId' : materialId,
                             'materialName' : materialName,
                             'specification' : specification,
                             'width' : width,
@@ -538,7 +538,7 @@ Ext.define('material.material_Inbound', {
                     }
                 },
                 {
-                    dataIndex : '原材料ID',
+                    dataIndex : 'materialId',
                     name : '原材料ID',
                     text : '原材料ID',
                     hidden:true,  //隐藏
