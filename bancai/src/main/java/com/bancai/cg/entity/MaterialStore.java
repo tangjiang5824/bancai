@@ -1,52 +1,79 @@
 package com.bancai.cg.entity;
 
 import javax.persistence.*;
+import java.util.Set;
 
 
 @Entity
 @Table(name = "material_store")
 public class MaterialStore {
-    private Long id;
-    private Integer count;
-    private String totalWeight;
+    private Integer id;
+    private Double count;
+    private Double totalWeight;
     private String description;
     private Double countUse;
-    private Storeposition storeposition;
+    private String warehouseName;
+    private Integer rowNum;
+    private  Integer columnNum;
+    private Set<MaterialLogdetail> materialLogdetails;
 
-    @ManyToOne(targetEntity = Storeposition.class)
-    @JoinColumn(name = "storeposition",referencedColumnName = "id")
-    public Storeposition getStoreposition() {
-        return storeposition;
+    @OneToMany(mappedBy = "materialStore")
+    public Set<MaterialLogdetail> getMaterialLogdetails() {
+        return materialLogdetails;
     }
 
-    public void setStoreposition(Storeposition storeposition) {
-        this.storeposition = storeposition;
+    public void setMaterialLogdetails(Set<MaterialLogdetail> materialLogdetails) {
+        this.materialLogdetails = materialLogdetails;
+    }
+
+    public String getWarehouseName() {
+        return warehouseName;
+    }
+
+    public void setWarehouseName(String warehouseName) {
+        this.warehouseName = warehouseName;
+    }
+
+    public Integer getRowNum() {
+        return rowNum;
+    }
+
+    public void setRowNum(Integer rowNum) {
+        this.rowNum = rowNum;
+    }
+
+    public Integer getColumnNum() {
+        return columnNum;
+    }
+
+    public void setColumnNum(Integer columnNum) {
+        this.columnNum = columnNum;
     }
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public Integer getCount() {
+    public Double getCount() {
         return count;
     }
 
-    public void setCount(Integer count) {
+    public void setCount(Double count) {
         this.count = count;
     }
 
 
-    public String getTotalWeight() {
+    public Double getTotalWeight() {
         return totalWeight;
     }
 
-    public void setTotalWeight(String totalWeight) {
+    public void setTotalWeight(Double totalWeight) {
         this.totalWeight = totalWeight;
     }
 

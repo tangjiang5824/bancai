@@ -9,7 +9,7 @@ import java.util.Set;
 @Entity
 @Table(name = "material_log")
 public class MaterialLog {
-    private int id;
+    private Integer id;
     //类型：0入库，1出库，2退库， 3撤销入库，4撤销出库，5撤销退库
     private String type;
     //上传id
@@ -26,11 +26,11 @@ public class MaterialLog {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

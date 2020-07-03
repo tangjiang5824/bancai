@@ -6,11 +6,22 @@ import java.util.Objects;
 @Entity
 @Table(name = "material_logdetail")
 public class MaterialLogdetail {
-    private int id;
-    private Integer count;
+    private Integer id;
+    private Double count;
     private Integer isrollback;
     private MaterialLog materialLog;
     private MaterialInfo materialInfo;
+    private MaterialStore materialStore;
+
+    @ManyToOne(targetEntity = MaterialStore.class)
+    @JoinColumn(name = "materialstoreId",referencedColumnName = "id")
+    public MaterialStore getMaterialStore() {
+        return materialStore;
+    }
+
+    public void setMaterialStore(MaterialStore materialStore) {
+        this.materialStore = materialStore;
+    }
 
     @ManyToOne(targetEntity = MaterialInfo.class)
     @JoinColumn(name = "materialId" ,referencedColumnName = "id")
@@ -34,20 +45,20 @@ public class MaterialLogdetail {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
 
-    public Integer getCount() {
+    public Double getCount() {
         return count;
     }
 
-    public void setCount(Integer count) {
+    public void setCount(Double count) {
         this.count = count;
     }
 

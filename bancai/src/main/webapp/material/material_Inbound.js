@@ -22,6 +22,7 @@ Ext.define('material.material_Inbound', {
         //var materialtype="1";
 
         var record_start = 0;
+
         //原材料类型
         var MaterialNameList = Ext.create('Ext.data.Store',{
             fields : [ 'materialName'],
@@ -34,7 +35,18 @@ Ext.define('material.material_Inbound', {
                 },
                 fields : ['id','materialName']
             },
+            //字段拼接
+            listeners:{
+                load:function(store,records){
+                    for(var i=0;i<records.length;i++){
+                        records[i].set('material_name',records[i].get('material_name')+"(规格:"+records[i].get('specification')+")");
+                    }
+                }
+            },
+
+
             autoLoad : true
+
         });
         var MaterialTypeList = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '原材料品名',
@@ -45,9 +57,11 @@ Ext.define('material.material_Inbound', {
             matchFieldWidth: true,
             allowBlank:false,
             emptyText : "--请选择--",
-            displayField: 'materialName',
+            displayField: 'material_name',
             valueField: 'id',
+            triggerAction: 'all',
             editable : false,
+            mode: 'local',
             store: MaterialNameList,
             //原材料品名应该包含基础信息中的其他属性值，作为描述信息
             listeners:{

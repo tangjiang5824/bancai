@@ -20,20 +20,25 @@ Ext.define('material.query_Mcatergory_baseInfo',{
                 method:'POST',
                 reader:{
                     type : 'json',
-                    rootProperty: 'materialtype',
+                    rootProperty: 'material_info',
                     totalProperty: 'totalCount'
                 },
                 params:{
                     start: 0,
                     limit: itemsPerPage,
-                    tableName:tableName,
+                    // tableName:tableName,
                 }
             },
             listeners : {
                 beforeload : function(store, operation, eOpts) {
                     store.getProxy().setExtraParams({
                         //materialCatergory:Ext.getCmp('materialCatergory').getValue(),
-                        tableName:tableName,
+                        // tableName:tableName,
+                        materialName:Ext.getCmp('materialName').getValue(),//获取显示字段
+                        specification:Ext.getCmp('specification').getValue(),
+                        width:Ext.getCmp('width').getValue(),
+                        unitWeight:Ext.getCmp('unitWeight').getValue(),
+                        inventoryUnit:Ext.getCmp('inventoryUnit').getValue(),
                     });
                 }
             }

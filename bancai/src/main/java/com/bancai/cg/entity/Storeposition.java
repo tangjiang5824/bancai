@@ -7,29 +7,20 @@ import java.util.Set;
 
 @Entity
 public class Storeposition {
-    private int id;
+    private Integer id;
     private Integer warehouseNo;
     private String warehouseName;
     private Integer rowNum;
     private Integer columnNum;
-    private Set<MaterialStore> materialStores=new HashSet<>();
 
-    @OneToMany(mappedBy = "storeposition")
-    public Set<MaterialStore> getMaterialStores() {
-        return materialStores;
-    }
-
-    public void setMaterialStores(Set<MaterialStore> materialStores) {
-        this.materialStores = materialStores;
-    }
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
