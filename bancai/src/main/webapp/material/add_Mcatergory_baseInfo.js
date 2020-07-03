@@ -77,7 +77,8 @@ Ext.define('material.add_Mcatergory_baseInfo', {
                         },
                         success : function(response) {
                             Ext.MessageBox.alert("提示", "录入成功！");
-                            me.close();
+
+                            // me.close();
 //									var obj = Ext.decode(response.responseText);
 //									if (obj) {
 //
