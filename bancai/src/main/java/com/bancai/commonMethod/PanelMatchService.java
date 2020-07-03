@@ -59,7 +59,7 @@ public class PanelMatchService extends BaseService{
                 String sql_addLog = "insert into product_log (type,userId,time) values(?,?,?)";
                 int productlogId = insertProjectService.insertDataToTable(sql_addLog, "6", "0", simpleDateFormat.format(date));
                 productId = productDataService.productAddNewInfo(productName, "", "",
-                        "", "", "", "0");
+                        "", "", "", userId);
                 insertProjectService.insertIntoTableBySQL("insert into product_logdetail (productlogId,productId) values (?,?)",
                         String.valueOf(productlogId), String.valueOf(productId));
             }
@@ -113,9 +113,9 @@ public class PanelMatchService extends BaseService{
                                         "(?,?,?,?,?,?,?)", projectId, buildingId, buildingpositionId, productId, position, "0", "0");
                                 int resultId = insertProjectService.insertDataToTable("insert into backproduct_match_result " +
                                         "(designlistId,backproductId) values (?,?)", String.valueOf(designlistId), String.valueOf(backproductId));
+                                value.remove(num - 1);
                                 num--;
                                 countUse--;
-                                value.remove(num - 1);
                             }
                             jo.update("update backproduct_store set countUse=" + countUse + " where id=" + backproductId);
                         } else {
@@ -126,9 +126,9 @@ public class PanelMatchService extends BaseService{
                                         "(?,?,?,?,?,?,?)", projectId, buildingId, buildingpositionId, productId, position, "0", "0");
                                 int resultId = insertProjectService.insertDataToTable("insert into backproduct_match_result " +
                                         "(designlistId,backproductId) values (?,?)", String.valueOf(designlistId), String.valueOf(backproductId));
+                                value.remove(num - 1);
                                 num--;
                                 countUse--;
-                                value.remove(num - 1);
                             }
                             jo.update("update backproduct_store set countUse=" + countUse + " where id=" + backproductId);
                             break;
