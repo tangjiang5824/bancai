@@ -13,18 +13,8 @@ public class MaterialStore {
     private String description;
     private Double countUse;
     private String warehouseName;
-    private Integer rowNum;
-    private  Integer columnNum;
-    private Set<MaterialLogdetail> materialLogdetails;
 
-    @OneToMany(mappedBy = "materialStore")
-    public Set<MaterialLogdetail> getMaterialLogdetails() {
-        return materialLogdetails;
-    }
 
-    public void setMaterialLogdetails(Set<MaterialLogdetail> materialLogdetails) {
-        this.materialLogdetails = materialLogdetails;
-    }
 
     public String getWarehouseName() {
         return warehouseName;
@@ -34,21 +24,7 @@ public class MaterialStore {
         this.warehouseName = warehouseName;
     }
 
-    public Integer getRowNum() {
-        return rowNum;
-    }
 
-    public void setRowNum(Integer rowNum) {
-        this.rowNum = rowNum;
-    }
-
-    public Integer getColumnNum() {
-        return columnNum;
-    }
-
-    public void setColumnNum(Integer columnNum) {
-        this.columnNum = columnNum;
-    }
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)

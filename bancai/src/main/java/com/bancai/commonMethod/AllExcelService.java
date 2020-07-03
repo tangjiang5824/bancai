@@ -1,5 +1,11 @@
 package com.bancai.commonMethod;
 
+import com.bancai.cg.dao.mateialLogdetaildao;
+import com.bancai.cg.dao.materialLogdao;
+import com.bancai.cg.dao.materialinfodao;
+import com.bancai.cg.dao.materialstoredao;
+import com.bancai.cg.entity.MaterialInfo;
+import com.bancai.cg.entity.MaterialLog;
 import com.bancai.cg.service.InsertProjectService;
 import com.bancai.domain.DataList;
 import com.bancai.domain.DataRow;
@@ -20,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 @Service
 public class AllExcelService extends BaseService {
@@ -32,6 +39,16 @@ public class AllExcelService extends BaseService {
 	private InsertProjectService insertProjectService;
 	@Autowired
 	private Y_Upload_Data_Service y_Upload_Data_Service;
+
+	//JPA dao
+	@Autowired
+	private com.bancai.cg.dao.materialinfodao materialinfodao;
+	@Autowired
+	private com.bancai.cg.dao.materialstoredao materialstoredao;
+	@Autowired
+	private com.bancai.cg.dao.materialLogdao materialLogdao;
+	@Autowired
+	private com.bancai.cg.dao.mateialLogdetaildao mateialLogdetaildao;
 
 	private void saveData(DataList dataList,String userid,String tableName) {
 		int userId = Integer.parseInt(userid);
@@ -55,7 +72,7 @@ public class AllExcelService extends BaseService {
 	 * @throws IOException
 	 */
 	@Transactional
-	public UploadDataResult uploadExcelData(InputStream inputStream,String userid, String tablename,String main_key) throws IOException {
+	public UploadDataResult uploadExcelData(InputStream inputStream, String userid, String tablename, MaterialLog log) throws IOException {
 		DataList dataList;
 		UploadDataResult result = new UploadDataResult();
 		Excel excel = new Excel(inputStream);
@@ -65,21 +82,30 @@ public class AllExcelService extends BaseService {
 		DataList dataList2 = mapper.readValue(mapper.writeValueAsString(dataList),DataList.class);
 		DataList id_List;
 		DataList typeList;
+
+		//新增JPA时改动
+		MaterialInfo material=null;
 //		System.out.println(dataList);
 		if (tablename.equals("material_store")) {
 			for (int i = 0; i < dataList.size(); i++) {
 				String materialName = dataList.get(i).get("materialName") + "";
+				String specification = dataList.get(i).get("specification") + "";
+				List<MaterialInfo> materialList=materialinfodao.findByMaterialNameaAndAndSpecification(materialName,specification);
+				if(materialList.size()!=1) {
+					result.setSuccess(false);
+					result.setErrorCode(2);
+					return result;
+				}
+				material=materialList.get(0);
+
+
 				String sql_find_id = "select id from material_info where materialName =?";
 				id_List = queryService.query(sql_find_id,materialName);
 				String width=null;
-				if(null!=dataList2.get(i).get("width")){
-					width=dataList2.get(i).get("width")+"";
-				}
+
 				String materialId=null;
 				String inventoryUnit=null;
-				if(null!=dataList2.get(i).get("inventoryUnit")){
-					inventoryUnit=dataList2.get(i).get("inventoryUnit")+"";
-				}
+
 				String count=null;
 				if(null!=dataList2.get(i).get("count")){
 					count=dataList2.get(i).get("count")+"";
@@ -129,13 +155,13 @@ public class AllExcelService extends BaseService {
 				}
 				dataList2.get(i).put("totalWeight",totalWeight);
 				dataList.get(i).put("totalWeight",totalWeight);
-				String specification = dataList.get(i).get("specification")+"";
+
 				//原材料入库
-				String sql_insert_material="insert into material_store (materialId,specification,inventoryUnit,count,countUse,warehouseName,unitWeight,totalWeight,description,uploadId) values (?,?,?,?,?,?,?,?,?,?)";
-				int store_id= insertProjectService.insertDataToTable(sql_insert_material,materialId,specification,inventoryUnit,count,count,warehouseName,unitWeight,totalWeight,description,userid);
-				//后面为log记录
-				String sql_log_detail = "insert into material_logdetail (materialName,materialId,count,specification,materiallogId,materialstoreId,isrollback) values (?,?,?,?,?,?,?)";
-				boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_log_detail,materialName,materialId,count,specification,String.valueOf(main_key),store_id+"","0");
+//				String sql_insert_material="insert into material_store (materialId,specification,inventoryUnit,count,countUse,warehouseName,unitWeight,totalWeight,description,uploadId) values (?,?,?,?,?,?,?,?,?,?)";
+//				int store_id= insertProjectService.insertDataToTable(sql_insert_material,materialId,specification,inventoryUnit,count,count,warehouseName,unitWeight,totalWeight,description,userid);
+//				//后面为log记录
+//				String sql_log_detail = "insert into material_logdetail (materialName,materialId,count,specification,materiallogId,materialstoreId,isrollback) values (?,?,?,?,?,?,?)";
+//				boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_log_detail,materialName,materialId,count,specification,String.valueOf(main_key),store_id+"","0");
 			}
 		} else if (tablename.equals("oldpanel")) {
 			for (int i = 0; i < dataList.size(); i++) {
@@ -155,7 +181,7 @@ public class AllExcelService extends BaseService {
 					String oldpanelName = dataList.get(i).get("oldpanelName") + "";
 					String specification = dataList.get(i).get("specification")+"";
 					String sql_log_detail = "insert into oldpanellogdetail (oldpanelName,count,specification,oldpanellogId) values (?,?,?,?)";
-					boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_log_detail,oldpanelName,countStore,specification,String.valueOf(main_key));
+//					boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_log_detail,oldpanelName,countStore,specification,String.valueOf(main_key));
 				}
 			}
 		}

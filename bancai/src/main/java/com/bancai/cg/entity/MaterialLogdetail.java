@@ -11,17 +11,7 @@ public class MaterialLogdetail {
     private Integer isrollback;
     private MaterialLog materialLog;
     private MaterialInfo materialInfo;
-    private MaterialStore materialStore;
 
-    @ManyToOne(targetEntity = MaterialStore.class)
-    @JoinColumn(name = "materialstoreId",referencedColumnName = "id")
-    public MaterialStore getMaterialStore() {
-        return materialStore;
-    }
-
-    public void setMaterialStore(MaterialStore materialStore) {
-        this.materialStore = materialStore;
-    }
 
     @ManyToOne(targetEntity = MaterialInfo.class)
     @JoinColumn(name = "materialId" ,referencedColumnName = "id")

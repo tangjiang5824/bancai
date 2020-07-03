@@ -38,8 +38,8 @@ public class MaterialController {
     private materialLogdao materialLogdao;
     @Autowired
     private mateialLogdetaildao mateialLogdetaildao;
-    @Autowired
-    private storepositiondao storepositiondao;
+//    @Autowired
+//    private storepositiondao storepositiondao;
 
 
     //向materialtype原材料类型表插入
@@ -109,34 +109,52 @@ public class MaterialController {
         for(int i=0;i< jsonArray.size();i++) {
             JSONObject jsonTemp=jsonArray.getJSONObject(i);
             MaterialStore store=new MaterialStore();
+            MaterialLogdetail logdetail=new MaterialLogdetail();
             MaterialInfo material=null;
-            //if(null!=jsonTemp.get("序号")) row_index=jsonTemp.get("序号")+"";
-            if(org.json.JSONObject.NULL!=jsonTemp.get("品号")&&!jsonTemp.get("品号").equals(""))
+            String warehousename=null;
+            Double totalweight=0.0;
+            Double count=0.0;
+            boolean flag=true;
+
+            if(null!=jsonTemp.get("品号")&&!jsonTemp.get("品号").equals(""))
             {
                 material=materialinfodao.findById(Integer.valueOf(jsonTemp.get("品号")+"")).orElse(null);
                 store.setMaterialInfo(material);
             }
-          //  if(org.json.JSONObject.NULL!=jsonTemp.get("品名")&&!jsonTemp.get("品名").equals(""))  materialName=jsonTemp.get("品名")+"";
-          //  if(org.json.JSONObject.NULL!=jsonTemp.get("规格")&&!jsonTemp.get("规格").equals(""))   specification=jsonTemp.get("规格")+"";
-          //  if(org.json.JSONObject.NULL!=jsonTemp.get("库存单位")&&!jsonTemp.get("库存单位").equals(""))    inventoryUnit=jsonTemp.get("库存单位")+"";
-            if(org.json.JSONObject.NULL!=jsonTemp.get("数量")&&!jsonTemp.get("数量").equals(""))   {
-                store.setCount(Double.parseDouble(jsonTemp.get("数量")+""));
-                store.setCountUse(Double.parseDouble(jsonTemp.get("数量")+""));
+            if(null!=jsonTemp.get("仓库名称")&&!jsonTemp.get("仓库名称").equals(""))
+            {
+                warehousename=(jsonTemp.get("仓库名称")+"");
+                store.setWarehouseName(warehousename);
             }
-            if((jsonTemp.get("行")!= org.json.JSONObject.NULL&&!jsonTemp.get("行").equals(""))) store.setRowNum(Integer.valueOf(jsonTemp.get("行")+""));
-            if(jsonTemp.get("列")!= org.json.JSONObject.NULL&&!jsonTemp.get("列").equals(""))   store.setColumnNum(Integer.valueOf(jsonTemp.get("列")+""));
-            if(org.json.JSONObject.NULL!=jsonTemp.get("仓库名称")&&!jsonTemp.get("仓库名称").equals(""))    store.setWarehouseName(jsonTemp.get("仓库名称")+"");
-            if(org.json.JSONObject.NULL!=jsonTemp.get("总重")&&!jsonTemp.get("总重").equals("")) store.setTotalWeight(Double.parseDouble(jsonTemp.get("总重")+""));
-           // if(org.json.JSONObject.NULL!=jsonTemp.get("横截面")&&!jsonTemp.get("横截面").equals(""))  width=jsonTemp.get("横截面")+"";
+
+            if(null!=jsonTemp.get("数量")&&!jsonTemp.get("数量").equals(""))   {
+                count=Double.parseDouble(jsonTemp.get("数量")+"");
+                store.setCount(count);
+                store.setCountUse(count);
+            }
+
+            if(null!=jsonTemp.get("总重")&&!jsonTemp.get("总重").equals("")) {
+                totalweight=(Double.parseDouble(jsonTemp.get("总重")+""));
+                store.setTotalWeight(totalweight);
+            }
+
+            Set<MaterialStore> materialStores = material.getMaterialStores();
+            for(MaterialStore store1:materialStores){
+                if(store1.getWarehouseName()==warehousename){
+                    store1.setCount(store1.getCount()+count);
+                    store1.setCountUse(store1.getCountUse()+count);
+                    store1.setTotalWeight(store1.getTotalWeight()+totalweight);
+                    materialstoredao.save(store1);
+                    flag=false;
+                    break;
+                }
+            }
 
 
-            materialstoredao.save(store);
+            if(flag) materialstoredao.save(store);
 
-
-            MaterialLogdetail logdetail=new MaterialLogdetail();
             logdetail.setCount(store.getCount());
             logdetail.setMaterialInfo(material);
-            logdetail.setMaterialStore(store);
             logdetail.setMaterialLog(log);
             logdetail.setIsrollback(0);
             //插入log详细信息
