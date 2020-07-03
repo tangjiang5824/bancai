@@ -132,9 +132,11 @@ public class MaterialDataController {
         WebResponse response = new WebResponse();
         String userid = (String) session.getAttribute("userid");
         MaterialLog log=new MaterialLog();
+        if(userid!=null)
         log.setUserId(Integer.parseInt(userid));
         log.setTime(new Timestamp(new Date().getTime()));
         log.setIsrollback(0);
+        log.setType(0);
         log.setOperator(operator);
         logdao.save(log);
       //  JSONArray array = new JSONArray();
