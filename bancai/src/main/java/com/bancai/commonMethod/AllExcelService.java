@@ -127,6 +127,7 @@ public class AllExcelService extends BaseService {
 				}
 				boolean flag=true;
 				//通过warehouseName和materialId看仓库里面是否存在
+				MaterialLogdetail logdetail=new MaterialLogdetail();
 				Set<MaterialStore> stores=material.getMaterialStores();
 				for(MaterialStore store1:stores){
 					if(store1.getWarehouseName().equals(warehouseName)){
@@ -134,6 +135,7 @@ public class AllExcelService extends BaseService {
 						store1.setCountUse(store1.getCountUse()+count);
 						store1.setTotalWeight(store1.getTotalWeight()+totalWeight);
 						materialstoredao.save(store1);
+						logdetail.setMaterialStore(store1);
 						flag=false;
 						break;
 					}
@@ -147,11 +149,12 @@ public class AllExcelService extends BaseService {
 
 
 
-				MaterialLogdetail logdetail=new MaterialLogdetail();
+
 				logdetail.setIsrollback(0);
 				logdetail.setMaterialLog(log);
 				logdetail.setMaterialInfo(material);
 				logdetail.setCount(store.getCount());
+				if (flag) logdetail.setMaterialStore(store);
 				mateialLogdetaildao.save(logdetail);
 
 				//原材料入库

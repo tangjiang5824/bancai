@@ -1,6 +1,7 @@
 package com.bancai.cg.entity;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 
@@ -13,8 +14,16 @@ public class MaterialStore {
     private String description;
     private Double countUse;
     private String warehouseName;
+    private Set<MaterialLogdetail> materialLogdetails =new HashSet<>();
 
+    @OneToMany(mappedBy = "materialStore")
+    public Set<MaterialLogdetail> getMaterialLogdetails() {
+        return materialLogdetails;
+    }
 
+    public void setMaterialLogdetails(Set<MaterialLogdetail> materialLogdetails) {
+        this.materialLogdetails = materialLogdetails;
+    }
 
     public String getWarehouseName() {
         return warehouseName;

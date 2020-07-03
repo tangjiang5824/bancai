@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.bancai.cg.dao.*;
 import com.bancai.cg.entity.*;
 
+import com.bancai.domain.DataList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,6 +41,10 @@ public class MaterialController {
     private mateialLogdetaildao mateialLogdetaildao;
 //    @Autowired
 //    private storepositiondao storepositiondao;
+    @Autowired
+    private projectdao projectdao;
+    @Autowired
+    private buildingdao buildingdao;
 
 
     //向materialtype原材料类型表插入
@@ -147,6 +152,7 @@ public class MaterialController {
                     store1.setCountUse(store1.getCountUse()+count);
                     store1.setTotalWeight(store1.getTotalWeight()+totalweight);
                     materialstoredao.save(store1);
+                    logdetail.setMaterialStore(store1);
                     flag=false;
                     break;
                 }
@@ -159,10 +165,90 @@ public class MaterialController {
             logdetail.setMaterialInfo(material);
             logdetail.setMaterialLog(log);
             logdetail.setIsrollback(0);
+            if (flag) logdetail.setMaterialStore(store);
             //插入log详细信息
             mateialLogdetaildao.save(logdetail);
 
         }
+        return true;
+    }
+
+    //原材料仓库出库入库回滚
+    //类型：0入库，1出库，2退库， 3撤销入库，4撤销出库，5撤销退库
+    @RequestMapping(value = "/material/backMaterialstore.do")
+    @Transactional
+    public boolean backMaterialstore(Integer materiallogId,HttpSession session ,String operator,String type) throws Exception {
+        MaterialLog log = materialLogdao.findById(materiallogId).orElse(null);
+        MaterialLog log_bk=new MaterialLog();
+        log_bk.setType(3);
+        log_bk.setOperator(operator);
+        log_bk.setIsrollback(1);
+        log_bk.setTime(new Timestamp(new Date().getTime()));
+        String userid = (String) session.getAttribute("userid");
+        if(userid!=null)
+        log_bk.setUserId(Integer.parseInt(userid));
+        materialLogdao.save(log_bk);
+        log.setIsrollback(1);
+        materialLogdao.save(log);
+        List<MaterialLogdetail> materiallogdetails = mateialLogdetaildao.findByMaterialLog(log);
+        for(MaterialLogdetail detail:materiallogdetails){
+            MaterialLogdetail newdetail=new MaterialLogdetail();
+            MaterialStore materialStore = detail.getMaterialStore();
+            materialStore.setCount(materialStore.getCount()-detail.getCount());
+            materialStore.setCountUse(materialStore.getCountUse()-detail.getCount());
+            materialstoredao.save(materialStore);
+            newdetail.setIsrollback(1);
+            newdetail.setMaterialStore(materialStore);
+            newdetail.setCount(detail.getCount());
+            newdetail.setMaterialLog(log_bk);
+            newdetail.setMaterialInfo(detail.getMaterialInfo());
+            mateialLogdetaildao.save(newdetail);
+            detail.setIsrollback(1);
+            mateialLogdetaildao.save(detail);
+        }
+        return true;
+    }
+
+    @RequestMapping("/material/backmaterial.do")
+    @Transactional
+    public boolean backMaterial(Integer materialId,Integer projectId,Integer buildingId,Double count,Double totalWeight,String operator,String warehouseName,HttpSession session){
+            MaterialInfo material=materialinfodao.findById(materialId).orElse(null);
+            Project project=projectdao.findById(projectId).orElse(null);
+            Building building=buildingdao.findById(buildingId).orElse(null);
+            MaterialLog log=new MaterialLog();
+            String userid = (String) session.getAttribute("userid");
+            if(userid!=null)
+            log.setUserId(Integer.parseInt(userid));
+            log.setTime(new Timestamp(new Date().getTime()));
+            log.setIsrollback(1);
+            log.setOperator(operator);
+            //2 退库
+            log.setType(2);
+            log.setProject(project);
+            log.setBuilding(building);
+            materialLogdao.save(log);
+            MaterialStore store=materialstoredao.findByMaterialInfoAndWarehouseName(material,warehouseName);
+            MaterialLogdetail logdetail=new MaterialLogdetail();
+            logdetail.setIsrollback(1);
+            logdetail.setMaterialInfo(material);
+            logdetail.setMaterialLog(log);
+            logdetail.setCount(count);
+            if(null!=store){
+                store.setCount(store.getCount()+count);
+                store.setCountUse(store.getCountUse()+count);
+                store.setTotalWeight(store.getTotalWeight()+totalWeight);
+
+            }else {
+                store.setCountUse(count);
+                store.setCount(count);
+                store.setWarehouseName(warehouseName);
+                store.setTotalWeight(totalWeight);
+                store.setMaterialInfo(material);
+            }
+            materialstoredao.save(store);
+            logdetail.setMaterialStore(store);
+            mateialLogdetaildao.save(logdetail);
+
         return true;
     }
 
