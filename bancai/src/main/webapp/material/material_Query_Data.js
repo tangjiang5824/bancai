@@ -19,6 +19,14 @@ Ext.define('material.material_Query_Data',{
                 },
                 fields : ['id','materialName']
             },
+            //字段拼接
+            listeners:{
+                load:function(store,records){
+                    for(var i=0;i<records.length;i++){
+                        records[i].set('material_name',records[i].get('material_name')+"(规格:"+records[i].get('specification')+")");
+                    }
+                }
+            },
             autoLoad : true
         });
 
@@ -30,9 +38,9 @@ Ext.define('material.material_Query_Data',{
             id :  'materialName',
             name : 'materialName',
             matchFieldWidth: true,
-            allowBlank:false,
+            // allowBlank:false,
             emptyText : "--请选择--",
-            displayField: 'materialName',
+            displayField: 'material_name',
             valueField: 'id',
             editable : true,
             store: MaterialNameList,

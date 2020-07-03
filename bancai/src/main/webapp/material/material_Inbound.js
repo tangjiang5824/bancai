@@ -676,6 +676,7 @@ Ext.define('material.material_Inbound', {
             })],
             selType : 'checkboxmodel'  //rowmodel
         });
+
         //添加cell单击事件
         grid.addListener('cellclick', cellclick);
         function cellclick(grid, rowIndex, columnIndex, e) {
