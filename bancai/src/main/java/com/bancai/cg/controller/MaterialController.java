@@ -116,25 +116,25 @@ public class MaterialController {
             Double count=0.0;
             boolean flag=true;
 
-            if(null!=jsonTemp.get("品号")&&!jsonTemp.get("品号").equals(""))
+            if(null!=jsonTemp.get("materialId")&&!jsonTemp.get("materialId").equals(""))
             {
-                material=materialinfodao.findById(Integer.valueOf(jsonTemp.get("品号")+"")).orElse(null);
+                material=materialinfodao.findById(Integer.valueOf(jsonTemp.get("materialId")+"")).orElse(null);
                 store.setMaterialInfo(material);
             }
-            if(null!=jsonTemp.get("仓库名称")&&!jsonTemp.get("仓库名称").equals(""))
+            if(null!=jsonTemp.get("warehouseName")&&!jsonTemp.get("warehouseName").equals(""))
             {
-                warehousename=(jsonTemp.get("仓库名称")+"");
+                warehousename=(jsonTemp.get("warehouseName")+"");
                 store.setWarehouseName(warehousename);
             }
 
-            if(null!=jsonTemp.get("数量")&&!jsonTemp.get("数量").equals(""))   {
-                count=Double.parseDouble(jsonTemp.get("数量")+"");
+            if(null!=jsonTemp.get("count")&&!jsonTemp.get("count").equals(""))   {
+                count=Double.parseDouble(jsonTemp.get("count")+"");
                 store.setCount(count);
                 store.setCountUse(count);
             }
 
-            if(null!=jsonTemp.get("总重")&&!jsonTemp.get("总重").equals("")) {
-                totalweight=(Double.parseDouble(jsonTemp.get("总重")+""));
+            if(null!=jsonTemp.get("totalWeight")&&!jsonTemp.get("totalWeight").equals("")) {
+                totalweight=(Double.parseDouble(jsonTemp.get("totalWeight")+""));
                 store.setTotalWeight(totalweight);
             }
 
