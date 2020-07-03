@@ -205,17 +205,19 @@ Ext.define('project.import_design_list', {
 										//var check=Ext.getCmp("check").getValue();
 										var projectId = Ext.getCmp("projectName").getValue();
 										var buildingId = Ext.getCmp("buildingName").getValue();
+										var positionId = Ext.getCmp("positionName").getValue();
 										console.log(projectId)
 
 										exceluploadform.submit({
 											//excel上传的接口
 											//url : 'project/Upload_Design_List_Excel.do？projectId='+projectId+'&buildingId='+buildingId,//上传excel文件，同时传入项目的id和楼栋的id
-											url : 'oldpanel/uploadMatchExcel.do?projectId=' + projectId +'&buildingId=' + buildingId,//',//?projectId=\'+projectId+\'&buildingId=\'+buildingId上传excel文件，同时传入项目的id和楼栋的id
+											url : 'designlist/uploadExcel.do?',//projectId=' + projectId +'&buildingId=' + buildingId+'&positionId=' + positionId,//',//?projectId=\'+projectId+\'&buildingId=\'+buildingId上传excel文件，同时传入项目的id和楼栋的id
 											waitMsg : '正在上传...',
-											// params : {
-											// 	projectId:projectId,
-											// 	buildingId:buildingId
-											// },
+											params : {
+												projectId:projectId,
+												buildingId:buildingId,
+												buildingpositionId:positionId,
+											},
 											success : function(exceluploadform, action) {
 												var response = action.result;
 												Ext.MessageBox.alert("提示", "上传成功!");
@@ -397,13 +399,52 @@ Ext.define('project.import_design_list', {
 			}
 		});
 
+		var buildingPositionStore = Ext.create('Ext.data.Store',{
+			fields : [ 'buildingPosition'],
+			proxy : {
+				type : 'ajax',
+				url : 'material/findAllBytableName.do?tableName=building_position',
 
+				reader : {
+					type : 'json',
+					rootProperty: 'building_position',
+				}
+			},
+			autoLoad : true
+		});
+
+
+		var buildingPositionList = Ext.create('Ext.form.ComboBox',{
+			fieldLabel : '位置',
+			labelWidth : 60,
+			width : 200,
+			id :  'positionName',
+			name : 'positionName',
+			matchFieldWidth: true,
+			// emptyText : "--请选择项目--",
+			displayField: 'positionName',
+			valueField: 'id',
+			// typeAhead : true,
+			editable : true,
+			store: buildingPositionStore,
+			// listeners: {
+			//
+			//     //下拉框默认返回的第一个值
+			//     render: function (combo) {//渲染
+			//         combo.getStore().on("load", function (s, r, o) {
+			//             combo.setValue(r[0].get('projectName'));//第一个值
+			//         });
+			//     }
+			// }
+
+		});
 
 		var toolbar1 = Ext.create('Ext.toolbar.Toolbar', {
 			dock : "top",
 			id : "toolbar1",
 			items : [   tableList1,
 						buildingName,
+						buildingPositionList,
 
 					]//exceluploadform
 		});
@@ -411,16 +452,17 @@ Ext.define('project.import_design_list', {
 			dock : "top",
 			id : "toolbar2",
 			items : [
+				// {
+				// 	xtype: 'textfield',
+				// 	// margin: '0 10 0 0',
+				// 	fieldLabel: ' 位置分类',
+				// 	id: 'listName',
+				// 	width: 230,
+				// 	labelWidth: 60,
+				// 	name: 'listName',
+				// 	value: "",
+				// },
 				{
-					xtype: 'textfield',
-					// margin: '0 10 0 0',
-					fieldLabel: ' 位置分类',
-					id: 'listName',
-					width: 230,
-					labelWidth: 60,
-					name: 'listName',
-					value: "",
-				},{
 					xtype: 'tbtext',
 					//id: 'uploadFile',
 					margin: '0 0 0 40',

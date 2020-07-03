@@ -188,7 +188,6 @@ public class Oldpanel_Data_Controller {
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String sql_addLog = "insert into oldpanel_log (type,userId,time,operator) values(?,?,?,?)";
         int oldpanellogId= insertProjectService.insertDataToTable(sql_addLog,"0",userId,simpleDateFormat.format(date),operator);
-        JSONArray array = new JSONArray();
         try {
             UploadDataResult result = allExcelService.uploadOldpanelExcelData(uploadFile.getInputStream(),userId,String.valueOf(oldpanellogId));
             response.put("value",result.dataList);
