@@ -11,7 +11,7 @@ import java.util.Set;
 public class MaterialLog {
     private Integer id;
     //类型：0入库，1出库，2退库， 3撤销入库，4撤销出库，5撤销退库
-    private String type;
+    private Integer type;
     //上传id
     private Integer userId;
     private Timestamp time;
@@ -35,11 +35,11 @@ public class MaterialLog {
     }
 
 
-    public String getType() {
+    public Integer getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(Integer type) {
         this.type = type;
     }
 
