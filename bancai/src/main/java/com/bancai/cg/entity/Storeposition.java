@@ -6,9 +6,9 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
+@Table(name = "storeposition")
 public class Storeposition {
     private Integer id;
-    private Integer warehouseNo;
     private String warehouseName;
 
 
@@ -20,14 +20,6 @@ public class Storeposition {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Integer getWarehouseNo() {
-        return warehouseNo;
-    }
-
-    public void setWarehouseNo(Integer warehouseNo) {
-        this.warehouseNo = warehouseNo;
     }
 
     public String getWarehouseName() {

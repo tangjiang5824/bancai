@@ -8,4 +8,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 
 public interface materialstoredao extends JpaRepository<MaterialStore,Integer>, JpaSpecificationExecutor<MaterialStore> {
+    public MaterialStore findByMaterialInfoAndWarehouseName(MaterialInfo materialInfo,String warehouseName);
 }
