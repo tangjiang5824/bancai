@@ -147,7 +147,7 @@ public class MaterialController {
 
             Set<MaterialStore> materialStores = material.getMaterialStores();
             for(MaterialStore store1:materialStores){
-                if(store1.getWarehouseName().equals(warehousename)){
+                if(null!=store1.getWarehouseName()&&store1.getWarehouseName().equals(warehousename)){
                     store1.setCount(store1.getCount()+count);
                     store1.setCountUse(store1.getCountUse()+count);
                     store1.setTotalWeight(store1.getTotalWeight()+totalweight);

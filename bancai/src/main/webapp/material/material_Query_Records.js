@@ -16,6 +16,7 @@ Ext.define('material.material_Query_Records',{
                 3: { value: '3', name: '撤销入库' },
                 4: { value: '4', name: '撤销出库' },
                 5: { value: '5', name: '撤销退库' },
+                null: { value: 'null', name: '无' },
             }
         });
 
