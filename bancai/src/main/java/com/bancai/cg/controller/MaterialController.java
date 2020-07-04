@@ -253,4 +253,18 @@ public class MaterialController {
     }
 
 
+    @RequestMapping("/material/findMaterialLogdetials")
+    @Transactional
+    public  String findMaterialLogdetials(Integer materiallogId){
+        List<MaterialLogdetail> logdetails= mateialLogdetaildao.findByMaterialLog(materialLogdao.findById(materiallogId).orElse(null));
+        JSONArray array=new JSONArray(Arrays.asList(logdetails));
+        JSONObject object=new JSONObject();
+        object.put("totalcount",logdetails.size());
+        object.put("material_logdetail",array.get(0));
+
+
+        return object.toJSONString();
+    }
+
+
 }
