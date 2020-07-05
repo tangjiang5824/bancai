@@ -1,4 +1,4 @@
-Ext.define('oldpanel.Old_Query_Data',{
+Ext.define('backproduct.backproduct_Query_Data',{
     extend:'Ext.panel.Panel',
     region: 'center',
     layout:'fit',

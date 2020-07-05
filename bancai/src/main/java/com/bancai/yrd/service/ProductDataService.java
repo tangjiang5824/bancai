@@ -63,4 +63,38 @@ public class ProductDataService extends BaseService{
                 analyzeOldpanelName[2],analyzeOldpanelName[3], analyzeOldpanelName[4],analyzeOldpanelName[5],
                 analyzeOldpanelName[6],analyzeOldpanelName[7],analyzeOldpanelName[8],userId);
     }
+    /**
+     * 添加数据,返回添加的产品id
+     */
+    @Transactional
+    public int addProduct(String productName, String warehouseName, String count) {
+        String[] info = AnalyzeNameService.isInfoExistBackUnit("product", productName);
+        //id,unitWeight,unitArea
+        int productId = Integer.parseInt(info[0]);
+        System.out.println("productUpload===productId=" + productId);
+        if (productId == 0) {
+            return 0;
+        }
+        productSaveData(info, warehouseName, count);
+        return productId;
+    }
+
+    private void productSaveData(String[] info, String warehouseName, String count){
+        //id,unitWeight,unitArea
+        info[1] = String.valueOf(Double.parseDouble(info[1])*Integer.parseInt(count));
+        info[2] = String.valueOf(Double.parseDouble(info[2])*Integer.parseInt(count));
+        String sql = "select * from product_store where productId=? and warehouseName=?";
+        DataList queryList = queryService.query(sql,info[0],warehouseName);
+        if(queryList.isEmpty()){
+            insertProjectService.insertDataToTable("insert into product_store " +
+                            "(productId,countUse,countStore,warehouseName,totalArea,totalWeight) values (?,?,?,?,?,?)",
+                    info[0],count,count,warehouseName,info[2], info[1]);
+        } else {
+            String sql2 = "update product_store set countUse=countUse+"+count+
+                    ",countStore=countStore+"+count+",totalArea=totalArea+"+ info[2] +
+                    ",totalWeight=totalWeight+"+info[1]+
+                    " where id="+queryList.get(0).get("id").toString();
+            jo.update(sql2);
+        }
+    }
 }

@@ -10,11 +10,13 @@ Ext.define("menu.MenuRole_bc0", {
 			children : [ {
 				text : '旧板管理',
 				expanded : true,
-				children : [ {
+				children : [
+					{
 					text : '旧板领料',
 					id : 'oldpanel.oldpanel_Receive',
 					leaf : true
-				}, {
+				},
+					{
 					text : '旧板入库',
 					id : 'oldpanel.oldpanel_Inbound',
 					leaf : true
@@ -46,11 +48,13 @@ Ext.define("menu.MenuRole_bc0", {
 			} ,{
 				text : '原材料管理',
 				expanded : true,
-				children : [ {
+				children : [
+					{
 					text : '原材料领料',
 					id : 'material.material_Receive',
 					leaf : true
-				} , {
+				}
+				, {
 					text : '原材料入库',
 					id : 'material.material_Inbound',
 					leaf : true
@@ -130,25 +134,29 @@ Ext.define("menu.MenuRole_bc0", {
 					leaf : true
 				} ,{
 					text : '退库成品库存查询',
-					id : '',
+					id : 'backproduct.backproduct_Query_Data',
 					leaf : true
 				}, {
 					text : '退库成品出库',
-					id : '',
+					id : 'backproduct.backproduct_Outbound',
 					leaf : true
 				}, {
 					text : '退库成品出入库记录查询',
-					id : '',
+					id : 'backproduct.backproduct_Query_Records',
 					leaf : true
 				}, {
 					text : '退库成品出入库记录统计',
-					id : '',
+					id : 'backproduct.backproduct_Statistics_Records',
 					leaf : true
 				}]
 			},{
 				text : '产品成品仓库管理',
 				expanded : true,
 				children : [  {
+					text : '单件产品成品入库',
+					id : 'product.product_Inbound_One',
+					leaf : true
+				} ,{
 					text : '产品成品入库',
 					id : 'product.product_Inbound',
 					leaf : true
@@ -209,7 +217,28 @@ Ext.define("menu.MenuRole_bc0", {
 					text : '导入设计清单',
 					id : 'project.import_design_list',//project.import_planList
 					leaf : true
-				} ,{
+				} ,
+					{
+						text : '成品退库匹配结果查询',
+						id : 'project.Query_Backproduct_Match_Result',//project.import_planList
+						leaf : true
+					} ,
+					{
+						text : '预加工半成品匹配结果查询',
+						id : 'project.Query_Preprocess_Match_Result',//project.import_planList
+						leaf : true
+					} ,
+					{
+						text : '旧板匹配结果查询',
+						id : 'project.Query_Oldpanel_Match_Result',//project.import_planList
+						leaf : true
+					} ,
+					{
+						text : '原材料匹配结果查询',
+						id : 'project.Query_Material_Match_Result',//project.import_planList
+						leaf : true
+					} ,
+					{
 						text : '生产材料单查询',
 						id : 'project.product_produce_list',//project.import_planList
 						leaf : true

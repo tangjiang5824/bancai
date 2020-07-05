@@ -364,6 +364,25 @@ public class Select_specification_from_materialName_controller {
 		WebResponse wr=queryAllService.queryDataPage(start, limit, c, tableName);
 		return wr;
 	}
+	@RequestMapping(value = "/project/queryBackproductMatchResult.do")
+	public WebResponse queryBackproductMatchResult(Integer start, Integer limit, String projectId,
+										 String buildingId,String positionId) throws ParseException {
+		if(null==start||start.equals("")) start=0;
+		if(null==limit||limit.equals("")) limit=50;
+		String tableName = "query_backproduct_match_result";
+		mysqlcondition c=new mysqlcondition();
+		if (projectId.length() != 0) {
+			c.and(new mysqlcondition("projectId", "=", projectId));
+		}
+		if (buildingId.length() != 0) {
+			c.and(new mysqlcondition("buildingId", "=", buildingId));
+		}
+		if (positionId.length() != 0) {
+			c.and(new mysqlcondition("positionId", "=", positionId));
+		}
+		WebResponse wr=queryAllService.queryDataPage(start, limit, c, tableName);
+		return wr;
+	}
 
 	@RequestMapping(value = "/oldpanel/query_data.do")
 	public WebResponse query_data(Integer start, Integer limit, String tableName,String oldpanelType,

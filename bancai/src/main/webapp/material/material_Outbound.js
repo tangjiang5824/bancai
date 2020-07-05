@@ -688,7 +688,6 @@ Ext.define('material.material_Outbound',{
                     proxy: {
                         type: 'ajax',
                         url: 'material/findMaterialLogdetails.do?materiallogId=' + id,//获取同一批出入库的原材料
-
                         reader: {
                             type: 'json',
                             rootProperty: 'material_logdetail',
