@@ -80,7 +80,39 @@ public class ProductDataController {
         }
         return true;
     }
-
+    /*
+     * 添加单个数据
+     * */
+    //produces = {"text/html;charset=UTF-8"}
+    @RequestMapping(value = "/product/addData.do")
+    public boolean productAddData(String s, String projectId, String buildingId, String operator, HttpSession session) {
+        JSONArray jsonArray = new JSONArray(s);
+        String userId = (String) session.getAttribute("userid");
+//        String userId ="1";
+        Date date = new Date();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String sql_backLog = "insert into product_log (type,userId,time,projectId,buildingId,operator) values(?,?,?,?,?,?)";
+        int productlogId = insertProjectService.insertDataToTable(sql_backLog, "2", userId, simpleDateFormat.format(date), projectId, buildingId, operator);
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonTemp = jsonArray.getJSONObject(i);
+            //获得第i条数据的各个属性值
+            System.out.println("第" + i + "个:userid=" + userId + "---" + jsonTemp);
+            String productName = (jsonTemp.get("productName") + "").toUpperCase();
+            String warehouseName = jsonTemp.get("warehouseName") + "";
+            String count = jsonTemp.get("count") + "";
+            int productId = productDataService.addProduct(productName, warehouseName, count);
+            if (productId == 0) {
+                return false;
+            }
+            String sql_addLogDetail = "insert into product_logdetail (productId,count,productlogId) values (?,?,?)";
+            boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLogDetail, String.valueOf(productId),
+                    count, String.valueOf(productlogId));
+            if (!is_log_right) {
+                return false;
+            }
+        }
+        return true;
+    }
 
 
 
