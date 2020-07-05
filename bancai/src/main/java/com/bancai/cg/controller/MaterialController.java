@@ -79,10 +79,15 @@ public class MaterialController {
         Pageable pageable=PageRequest.of(Integer.parseInt(page)-1,Integer.parseInt(limit));
         Page<MaterialInfo> page1=materialinfodao.findAll(spec,pageable);
         List<MaterialInfo> list= page1.getContent();
-        JSONArray array=new JSONArray(Arrays.asList(list));
+    //    JSONArray array=new JSONArray(Arrays.asList(list));
+        List<Map> list1=new ArrayList<>();
+        for (int i=0;i<list.size();i++){
+            Map<String,Object> map=JSONObject.parseObject(JSONObject.toJSONString(list.get(i)),HashMap.class);
+            list1.add(map);
+        }
         JSONObject object=new JSONObject();
         object.put("totalcount",page1.getTotalElements());
-        object.put("material_info",array.get(0));
+        object.put("material_info",list1);
         //JSONArray.toJSONString(Arrays.asList(list));
         return object.toJSONString();
     }
