@@ -178,7 +178,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                         // console.log(Ext.getCmp('length').getValue());
                         // console.log(Ext.getCmp('cost').getValue());
                         //若品名未填则添加失败
-                        if (oldpanelName != ''&&count!= '') {
+                        if (oldpanelName != ''&&count!= ''&&warehouseName!= '') {
                             Ext.getCmp('addDataGrid').getStore().loadData(data, true);
                             //清除框里的数据
                             Ext.getCmp('oldpanelName').setValue('');
@@ -256,7 +256,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                         },
                         success : function(response) {
                             console.log("12312312312321",response.responseText);
-                            if(response.responseText="false")
+                            if(response.responseText.includes("false"))
                             {
                                 Ext.MessageBox.alert("提示","入库失败，品名不规范" );
                             }

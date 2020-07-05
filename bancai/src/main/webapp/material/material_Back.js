@@ -49,8 +49,8 @@ Ext.define('material.material_Back', {
             labelWidth : 70,
             // width : '35%',
             width : 500,
-            id :  'projectName',
-            name : 'projectName',
+            id :  'projectId',
+            name : 'projectId',
             matchFieldWidth: true,
             emptyText : "--请选择--",
             displayField: 'projectName',
@@ -102,7 +102,7 @@ Ext.define('material.material_Back', {
                         autoLoad: true,
                         listeners: {
                             load: function () {
-                                Ext.getCmp('buildingName').setValue("");
+                                Ext.getCmp('buildingId').setValue("");
                             }
                         }
                     });
@@ -117,8 +117,8 @@ Ext.define('material.material_Back', {
             labelWidth : 45,
             width : 300,
             margin: '0 10 0 40',
-            id :  'buildingName',
-            name : 'buildingName',
+            id :  'buildingId',
+            name : 'buildingId',
             matchFieldWidth: false,
             emptyText : "--请选择楼栋名--",
             displayField: 'buildingName',
@@ -154,8 +154,8 @@ Ext.define('material.material_Back', {
             fieldLabel : '原材料品名',
             labelWidth : 70,
             width : 230,
-            id :  'materialName',
-            name : 'materialName',
+            id :  'materialId',
+            name : 'materialId',
             matchFieldWidth: true,
             allowBlank:false,
             emptyText : "--请选择--",
@@ -164,6 +164,22 @@ Ext.define('material.material_Back', {
             editable : false,
             store: MaterialNameList,
             listeners:{
+                //
+                select: function(combo, record, index) {
+                    var type = MaterialTypeList.rawValue;
+                    //选中后
+                    var select = record[0].data;
+                    console.log("select=========",select)
+                    var specification = select.specification;
+                    var width = select.width;
+                    var inventoryUnit = select.inventoryUnit;
+                    var description = select.description;
+
+                    //设置其他的值
+                    Ext.getCmp("specification").setValue(specification);//开始时间
+                    Ext.getCmp("width").setValue(width);//开始时间
+                    Ext.getCmp("stockUnit").setValue(inventoryUnit);//开始时间
+                }
             }
 
         });
@@ -186,12 +202,14 @@ Ext.define('material.material_Back', {
             labelWidth : 50,
             width : 180,
             margin: '0 10 0 40',
-            id :  'storePosition',
-            name : 'storePosition',
+            id :  'warehouseName',
+            // name : 'warehouseName',
+            hiddenName:'warehouseName',
             matchFieldWidth: false,
             emptyText : "--请选择--",
-            displayField: 'warehouseName',
-            valueField: 'warehouseNo',
+            displayField: 'warehousename',
+            valueField: 'id',
+            // value:'101',
             editable : false,
             store: storeNameList,
             listeners:{
@@ -457,7 +475,7 @@ Ext.define('material.material_Back', {
                     {
                         xtype: 'textfield',
                         margin: '0 10 0 40',
-                        fieldLabel: '横截面',
+                        fieldLabel: '宽',
                         id: 'width',
                         labelWidth : 50,
                         width : 180,
@@ -466,14 +484,24 @@ Ext.define('material.material_Back', {
                     },
                     {
                         xtype: 'textfield',
-                        margin: '0 10 0 40',
-                        fieldLabel: '单重',
-                        id: 'unitWeight',
-                        width: 180,
-                        labelWidth: 30,
-                        name: 'unitWeight',
+                        // margin: '0 10 0 0',
+                        fieldLabel: ' 库存单位',
+                        id: 'stockUnit',
+                        width: 230,
+                        labelWidth: 70,
+                        name: 'stockUnit',
                         value: "",
                     },
+                    // {
+                    //     xtype: 'textfield',
+                    //     margin: '0 10 0 40',
+                    //     fieldLabel: '单重',
+                    //     id: 'unitWeight',
+                    //     width: 180,
+                    //     labelWidth: 30,
+                    //     name: 'unitWeight',
+                    //     value: "",
+                    // },
                     {
                         xtype: 'textfield',
                         margin: '0 10 0 40',
@@ -494,16 +522,9 @@ Ext.define('material.material_Back', {
                         name: 'count',
                         value: "",
                         allowBlank:false,
-                    },{
-                        xtype: 'textfield',
-                        // margin: '0 10 0 0',
-                        fieldLabel: ' 库存单位',
-                        id: 'stockUnit',
-                        width: 230,
-                        labelWidth: 70,
-                        name: 'stockUnit',
-                        value: "",
-                    },storePosition,
+                    },
+
+                    storePosition,
                     // {xtype: 'textfield',fieldLabel: '职工类别',name: 'personType'}
                 ]
             }],
@@ -519,24 +540,28 @@ Ext.define('material.material_Back', {
                             icon: Ext.Msg.QUESTION,
                             fn: function (btn) {
                                 console.log("btn:----",btn)
-                                console.log("operator:----",Ext.getCmp('formMain').getForm().findField('operator').getValue())
-                                console.log("projectName:----",Ext.getCmp('formMain').getForm().findField('projectName').getValue())
+                                // console.log("operatorName:----",Ext.getCmp('formMain').getForm().findField('projectName').getValue())
+                                // console.log("projectid:----",Ext.getCmp('formMain').getForm().findField('projectName').value)
                                 if (btn === 'yes') {
                                     Ext.getCmp('formMain').getForm().submit({
-                                        url: 'material/addData.do', //原材料入库
+                                        url: 'material/backmaterial.do', //原材料退库
                                         method: 'POST',
                                         //submitEmptyText : false,
                                         params: {
                                             //怎么获取form字段的值
-                                            operator: Ext.getCmp('formMain').getForm().findField('operator').getValue(),
-                                            backTime: Ext.getCmp('formMain').getForm().findField('backTime').getValue(),
-                                            projectName: Ext.getCmp('formMain').getForm().findField('projectName').getValue(),
-                                            buildingName: Ext.getCmp('formMain').getForm().findField('buildingName').getValue(),
-                                            materialName: Ext.getCmp('formMain').getForm().findField('materialName').getValue(),
-                                            specification: Ext.getCmp('formMain').getForm().findField('specification').getValue(),
-                                            width: Ext.getCmp('formMain').getForm().findField('width').getValue(),
-                                            totalWeight: Ext.getCmp('formMain').getForm().findField('totalWeight').getValue(),
-                                            count: Ext.getCmp('formMain').getForm().findField('count').getValue(),
+                                            // operator: Ext.getCmp('formMain').getForm().findField('operator').getValue(),
+                                            // backTime: Ext.getCmp('formMain').getForm().findField('backTime').getValue(),
+                                            // // projectName: Ext.getCmp('formMain').getForm().findField('projectName').rawValue,//名称
+                                            // // buildingName: Ext.getCmp('formMain').getForm().findField('buildingName').rawValue,
+                                            // // materialName: Ext.getCmp('formMain').getForm().findField('materialName').rawValue,
+                                            // // projectId: Ext.getCmp('formMain').getForm().findField('projectName').value,//id
+                                            // // buildingId: Ext.getCmp('formMain').getForm().findField('buildingName').value,
+                                            // // materialId: Ext.getCmp('formMain').getForm().findField('materialName').value,
+                                            // // // specification: Ext.getCmp('formMain').getForm().findField('specification').getValue(),
+                                            // // width: Ext.getCmp('formMain').getForm().findField('width').getValue(),
+                                            // totalWeight: Ext.getCmp('formMain').getForm().findField('totalWeight').getValue(),
+                                            // count: Ext.getCmp('formMain').getForm().findField('count').getValue(),
+                                            warehouseName: Ext.getCmp('formMain').getForm().findField('warehouseName').rawValue
 
                                         },
                                         waitMsg: '请稍等,正在退库',

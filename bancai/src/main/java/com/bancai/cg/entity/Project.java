@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
+@Table(name = "project")
 public class Project {
     private Integer id;
     private Date startTime;

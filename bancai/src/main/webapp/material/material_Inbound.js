@@ -39,7 +39,7 @@ Ext.define('material.material_Inbound', {
             listeners:{
                 load:function(store,records){
                     for(var i=0;i<records.length;i++){
-                        records[i].set('material_name',records[i].get('material_name')+"(规格:"+records[i].get('specification')+")");
+                        records[i].set('material_name',records[i].get('materialName')+"(规格:"+records[i].get('specification')+")");
                     }
                 }
             },
@@ -123,8 +123,8 @@ Ext.define('material.material_Inbound', {
             name : 'storePosition',
             matchFieldWidth: true,
             emptyText : "--请选择--",
-            displayField: 'warehouseName',
-            valueField: 'warehouseNo',
+            displayField: 'warehousename',
+            valueField: 'id',
             editable : false,
             store: storeNameList,
             listeners:{

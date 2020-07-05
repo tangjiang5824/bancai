@@ -2,17 +2,13 @@ package com.bancai.cg.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONException;
-
 import com.alibaba.fastjson.JSONObject;
 import com.bancai.cg.dao.*;
 import com.bancai.cg.entity.*;
-
-import com.bancai.domain.DataList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +20,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpSession;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @RestController
@@ -147,7 +142,7 @@ public class MaterialController {
 
             Set<MaterialStore> materialStores = material.getMaterialStores();
             for(MaterialStore store1:materialStores){
-                if(store1.getWarehouseName().equals(warehousename)){
+                if(null!=store1.getWarehouseName()&&store1.getWarehouseName().equals(warehousename)){
                     store1.setCount(store1.getCount()+count);
                     store1.setCountUse(store1.getCountUse()+count);
                     store1.setTotalWeight(store1.getTotalWeight()+totalweight);
@@ -239,6 +234,7 @@ public class MaterialController {
                 store.setTotalWeight(store.getTotalWeight()+totalWeight);
 
             }else {
+                store=new MaterialStore();
                 store.setCountUse(count);
                 store.setCount(count);
                 store.setWarehouseName(warehouseName);
@@ -250,6 +246,24 @@ public class MaterialController {
             mateialLogdetaildao.save(logdetail);
 
         return true;
+    }
+
+
+    @RequestMapping("/material/findMaterialLogdetails.do")
+    @Transactional
+    public  String findMaterialLogdetials(Integer materiallogId){
+        List<MaterialLogdetail> logdetails= mateialLogdetaildao.findByMaterialLog(materialLogdao.findById(materiallogId).orElse(null));
+        List<Map> list=new ArrayList<>();
+        for (int i=0;i<logdetails.size();i++){
+            String materialName = logdetails.get(i).getMaterialInfo().getMaterialName();
+            Map<String,Object> map=JSONObject.parseObject(JSONObject.toJSONString(logdetails.get(i)),HashMap.class);
+            map.put("materialName",materialName);
+            list.add(map);
+        }
+        JSONObject object=new JSONObject();
+        object.put("totalcount",logdetails.size());
+        object.put("material_logdetail",list);
+        return object.toJSONString();
     }
 
 
