@@ -483,7 +483,7 @@ Ext.define('preprocess.preprocess_Inbound', {
                         //获得当前操作时间
                         //var sTime=Ext.Date.format(Ext.getCmp('startTime').getValue(), 'Y-m-d H:i:s');
                         Ext.Ajax.request({
-                            url : 'material/addData.do', //原材料入库
+                            url : 'preprocess/addData.do', //原材料入库
                             method:'POST',
                             //submitEmptyText : false,
                             params : {
