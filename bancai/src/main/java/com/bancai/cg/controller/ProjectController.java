@@ -171,11 +171,24 @@ public class ProjectController {
 
     //返回对应projectId的所有项目信息和对应的楼栋信息
     @RequestMapping(value="/project/findProjectAndBuilding.do")
-    public void findProjectAndBuilding(String projectId,String start,String limit,HttpServletResponse response) throws IOException, JSONException {
-            if(null==start) start="0";
-            if(null==limit) limit="50";
-            DataList projectList= insertProjectService.findallbytableNameAndinfo("project","id",projectId,start,limit);
-            DataList buildingList=insertProjectService.findallbytableNameAndinfo("building","projectId",projectId,start,limit);
+    public void findProjectAndBuilding(String projectId,String page,String start,String limit,HttpServletResponse response) throws IOException, JSONException {
+        int thisPage=1;
+        int thisStart=0;
+        int thisLimit=25;
+        if(null==page||page.equals("")){
+            thisPage=1;
+        }else {
+            thisPage=Integer.parseInt(page);
+        }
+        if(null==start||start.equals("")||null==limit||limit.equals("")){
+            thisStart=0;
+            thisLimit=25;
+        }else {
+            thisLimit=Integer.parseInt(limit);
+            thisStart=(thisPage-1)*thisLimit;
+        }
+            DataList projectList= insertProjectService.findallbytableNameAndinfo("project","id",projectId,thisStart+"",thisLimit+"");
+            DataList buildingList=insertProjectService.findallbytableNameAndinfo("building","projectId",projectId,thisStart+"",thisLimit+"");
             JSONObject object=new JSONObject();
             JSONArray parray =new JSONArray(projectList);
             JSONArray barray=new JSONArray(buildingList);
@@ -189,11 +202,24 @@ public class ProjectController {
     }
     //返回对应projectId的楼栋信息
     @RequestMapping(value="/project/findBuilding.do")
-    public void findProjectBuilding(String projectId,String start,String limit,HttpServletResponse response) throws IOException, JSONException {
+    public void findProjectBuilding(String projectId,String page,String start,String limit,HttpServletResponse response) throws IOException, JSONException {
         //DataList projectList= insertProjectService.findallbytableNameAndinfo("project","id",projectId);
-        if(null==start) start="0";
-        if(null==limit) limit="50";
-        DataList buildingList=insertProjectService.findallbytableNameAndinfo("building","projectId",projectId,start,limit);
+        int thisPage=1;
+        int thisStart=0;
+        int thisLimit=25;
+        if(null==page||page.equals("")){
+            thisPage=1;
+        }else {
+            thisPage=Integer.parseInt(page);
+        }
+        if(null==start||start.equals("")||null==limit||limit.equals("")){
+            thisStart=0;
+            thisLimit=25;
+        }else {
+            thisLimit=Integer.parseInt(limit);
+            thisStart=(thisPage-1)*thisLimit;
+        }
+        DataList buildingList=insertProjectService.findallbytableNameAndinfo("building","projectId",projectId,thisStart+"",thisLimit+"");
         JSONObject object=new JSONObject();
         //JSONArray parray =new JSONArray(projectList);
         JSONArray barray=new JSONArray(buildingList);
@@ -212,10 +238,23 @@ public class ProjectController {
      * @throws IOException
      */
     @RequestMapping(value="/material/materialType.do")
-    public void findmaterialtype(HttpServletResponse response,String start,String limit) throws IOException, JSONException {
-        if(null==start) start="0";
-        if(null==limit) limit="50";
-        DataList projectList = insertProjectService.findmaterialtype(start,limit);
+    public void findmaterialtype(HttpServletResponse response,String start,String page,String limit) throws IOException, JSONException {
+        int thisPage=1;
+        int thisStart=0;
+        int thisLimit=25;
+        if(null==page||page.equals("")){
+            thisPage=1;
+        }else {
+            thisPage=Integer.parseInt(page);
+        }
+        if(null==start||start.equals("")||null==limit||limit.equals("")){
+            thisStart=0;
+            thisLimit=25;
+        }else {
+            thisLimit=Integer.parseInt(limit);
+            thisStart=(thisPage-1)*thisLimit;
+        }
+        DataList projectList = insertProjectService.findmaterialtype(thisStart+"",thisLimit+"");
         //写回前端
         JSONObject object = new JSONObject();
         JSONArray array = new JSONArray(projectList);
@@ -521,7 +560,7 @@ public class ProjectController {
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String update_log="update oldpanel_log set isrollback=1 where id=?";
         //把isrollback改为1
-        insertProjectService.insertIntoTableBySQL(update_log,oldpanellogId);
+        insertProjectService.insertIntoTableBySQL(update_log,oldpanellogId);//更新log表
 
         //log主键
         String sql_insert_new_log="insert into oldpanel_log (type,userId,time,operator,isrollback) values(?,?,?,?,?)";
@@ -530,35 +569,35 @@ public class ProjectController {
         if (type.equals("0")) main_key= insertProjectService.insertDataToTable(sql_insert_new_log,"3",userid,simpleDateFormat.format(date),operator,"1");
 
 
-        DataList list=queryService.query(sql_find_log_detail,oldpanellogId);
+        DataList list=queryService.query(sql_find_log_detail,oldpanellogId);//通过oldpanellogId找对应的oldpanellogdetail
         for(int i=0;i<list.size();i++){
             String oldpanelstoreId=list.get(i).get("oldpanelstoreId")+"";
             String oldpanelName="";
             String specification="";
-            String oldpanelId="";
+            String oldpanelId=list.get(i).get("oldpanelId")+"";
 
-            if(null!=list.get(i).get("oldpanelName")) oldpanelName=list.get(i).get("oldpanelName")+"";
-            if(null!=list.get(i).get("specification")) specification=list.get(i).get("specification")+"";
-            if(null!=list.get(i).get("oldpanelId")) oldpanelId=list.get(i).get("oldpanelId")+"";
+            //if(null!=list.get(i).get("oldpanelName")) oldpanelName=list.get(i).get("oldpanelName")+"";
+            //if(null!=list.get(i).get("specification")) specification=list.get(i).get("specification")+"";
+            //if(null!=list.get(i).get("oldpanelId")) oldpanelId=list.get(i).get("oldpanelId")+"";
             String count=list.get(i).get("count")+"";
-            int count_to_op=Integer.valueOf(count);
+            //int count_to_op=Integer.valueOf(count);
             if(type.equals("0")){
                 //撤销入库
 
                 //进行回滚出库
                 String sql_find_list="select * from oldpanel_store where id=?";
                 DataList count_list=queryService.query(sql_find_list,oldpanelstoreId);
-                if(count_list.size()!=1||Integer.valueOf(count_list.get(0).get("count")+"")!=count_to_op) return  false;
-                String sql_update_count="update oldpanel_store set count=0 where id=?";
-                insertProjectService.insertIntoTableBySQL(sql_update_count,oldpanelstoreId);
+                //if(count_list.size()!=1||Integer.valueOf(count_list.get(0).get("count")+"")!=count_to_op) return  false;
+                String sql_update_count="update oldpanel_store set countUse=countUse-?,countStore=countStore-? where id=?";
+                insertProjectService.insertIntoTableBySQL(sql_update_count,count,count,oldpanelstoreId);
 
                 //修改完成撤销的原logdetail
                 String detail_id=list.get(i).get("id")+"";
                 String update_detail_isrollback="update oldpanel_logdetail set isrollback=1 where id=?";
                 insertProjectService.insertIntoTableBySQL(update_detail_isrollback,detail_id);
                 //插入新的detail
-                String sql_insert_new_detial="insert into oldpanel_logdetail (oldpanelName,count,specification,oldpanellogId,oldpanelId,oldpanelstoreId,isrollback) values(?,?,?,?,?,?,?)";
-                insertProjectService.insertIntoTableBySQL(sql_insert_new_detial,oldpanelName,count,specification,main_key+"",oldpanelId,oldpanelstoreId,"1");
+                String sql_insert_new_detial="insert into oldpanel_logdetail (count,oldpanellogId,oldpanelId,oldpanelstoreId,isrollback) values(?,?,?,?,?)";
+                insertProjectService.insertIntoTableBySQL(sql_insert_new_detial,count,main_key+"",oldpanelId,oldpanelstoreId,"1");
             }
         }
 

@@ -394,31 +394,31 @@ Ext.define('material.material_Back', {
                                     blankText  : "退库人姓名不能为空"
                                 }
                         ]}]},
-                    // {
-                    //     xtype: 'container',
-                    //     layout:'column',
-                    //     items:[{
-                    //         xtype: 'container',
-                    //         columnWidth:.6,
-                    //         layout: 'form',
-                    //         height:40,
-                    //         border:true,
-                    //         items:[{
-                    //             xtype: 'datefield',
-                    //             margin: '0 10 0 0',
-                    //             fieldLabel: '退库时间',
-                    //             id: 'backTime',
-                    //             labelWidth : 60,
-                    //             width : 180,
-                    //             height:80,
-                    //             name: 'backTime',
-                    //             value: "",
-                    //             format : 'Y-m-d',
-                    //             editable : false,
-                    //             matchFieldWidth: true,
-                    //             style:"margin-top:50px;",
-                    //         }
-                    //         ]}]},
+                    {
+                        xtype: 'container',
+                        layout:'column',
+                        items:[{
+                            xtype: 'container',
+                            columnWidth:.6,
+                            layout: 'form',
+                            height:40,
+                            border:true,
+                            items:[{
+                                xtype: 'datefield',
+                                margin: '0 10 0 0',
+                                fieldLabel: '退库时间',
+                                id: 'backTime',
+                                labelWidth : 60,
+                                width : 180,
+                                height:80,
+                                name: 'backTime',
+                                value: "",
+                                format : 'Y-m-d',
+                                editable : false,
+                                matchFieldWidth: true,
+                                style:"margin-top:50px;",
+                            }
+                            ]}]},
 
                     ]
             }, {
