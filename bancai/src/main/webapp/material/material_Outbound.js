@@ -145,7 +145,9 @@ Ext.define('material.material_Outbound',{
                                 // operator : Ext.getCmp('operator').getValue(),
                                 operator : Ext.getCmp('operator').getValue(),//获取操作员名
                                 startTime:Ext.getCmp('startTime').getValue(),
-                                type:0
+                                type:0,
+                                projectId:'',
+                                endTime : '',
                             }
                         });
                     }
@@ -170,19 +172,23 @@ Ext.define('material.material_Outbound',{
                 params:{
                     start: 0,
                     limit: 20,
-                    type:0
+                    type:0,
                     // operator : Ext.getCmp('operator').getValue(),//获取操作员名，type操作类型
                     // startTime:Ext.getCmp('startTime').getValue(),
+                    operator : Ext.getCmp('operator').getValue(),//获取用户名
+                    endTime : '',
+                    startTime:Ext.getCmp('startTime').getValue(),
+                    projectId:'',
                 }
             },
             listeners : {
                 beforeload : function(store, operation, eOpts) {
                     store.getProxy().setExtraParams({
-
-                        // operator : Ext.getCmp('operator').getValue(),
                         operator : Ext.getCmp('operator').getValue(),//获取操作员名
                         startTime:Ext.getCmp('startTime').getValue(),
-                        // projectId:Ext.getCmp('projectName').getValue(),
+                        type:0,
+                        projectId:'',
+                        endTime : '',
                     });
                 }
 

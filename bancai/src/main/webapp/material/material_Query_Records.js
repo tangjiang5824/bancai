@@ -137,7 +137,7 @@ Ext.define('material.material_Query_Records',{
                                 endTime : Ext.getCmp('endTime').getValue(),
                                 startTime:Ext.getCmp('startTime').getValue(),
                                 projectId:Ext.getCmp('projectName').getValue(),
-                                optionType:Ext.getCmp('material_query_records_optionType').getValue(),
+                                type:Ext.getCmp('material_query_records_optionType').getValue(),
                             }
                         });
                     }
@@ -166,7 +166,7 @@ Ext.define('material.material_Query_Records',{
                     endTime : Ext.getCmp('endTime').getValue(),
                     startTime:Ext.getCmp('startTime').getValue(),
                     projectId:Ext.getCmp('projectName').getValue(),
-                    optionType:Ext.getCmp('material_query_records_optionType').getValue(),
+                    type:Ext.getCmp('material_query_records_optionType').getValue(),
                 }
             },
             listeners : {
@@ -177,7 +177,7 @@ Ext.define('material.material_Query_Records',{
                         endTime : Ext.getCmp('endTime').getValue(),
                         startTime:Ext.getCmp('startTime').getValue(),
                         projectId:Ext.getCmp('projectName').getValue(),
-                        optionType:Ext.getCmp('material_query_records_optionType').getValue(),
+                        type:Ext.getCmp('material_query_records_optionType').getValue(),
 
                     });
                 }
@@ -319,10 +319,10 @@ Ext.define('material.material_Query_Records',{
                         //fields:['materialName','length','materialType','width','count'],//'oldpanelId','oldpanelName','count'
                         proxy : {
                             type : 'ajax',
-                            url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName=materiallogdetail&columnName=materiallogId&columnValue='+id,//获取同类型的原材料
+                            url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName=material_logdetail&columnName=materiallogId&columnValue='+id,//获取同类型的原材料
                             reader : {
                                 type : 'json',
-                                rootProperty: 'materiallogdetail',
+                                rootProperty: 'material_logdetail',
                             },
                         },
                         autoLoad : true
