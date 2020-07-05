@@ -2,60 +2,326 @@ Ext.define('product.product_Inbound', {
     extend : 'Ext.panel.Panel',
     region : 'center',
     layout : "fit",
-    title : '产品信息录入',
-    requires : [ 'component.TableList', "component.YearList" ],
-    reloadPage : function() {
-        var p = Ext.getCmp('functionPanel');
-        p.removeAll();
-        cmp = Ext.create("oldpanel.Old_Upload_Data");
-        p.add(cmp);
-    },
-    clearGrid : function() {
-        var msgGrid = Ext.getCmp("msgGrid");
-        if (msgGrid != null || msgGrid != undefined)
-            this.remove(msgGrid);
-    },
+    title : '产品成品入库',
+    // reloadPage : function() {
+    //     var p = Ext.getCmp('functionPanel');
+    //     p.removeAll();
+    //     cmp = Ext.create("data.UploadDataTest");
+    //     p.add(cmp);
+    // },
+    // clearGrid : function() {
+    //     var msgGrid = Ext.getCmp("msgGrid");
+    //     if (msgGrid != null || msgGrid != undefined)
+    //         this.remove(msgGrid);
+    // },
 
     initComponent : function() {
         var me = this;
-        //定义表名
-        // var tableName="materialstore";
-        // var materialtype="0";
-        var toolbar2 = Ext.create("Ext.toolbar.Toolbar", {
-            dock : "top",
-            items : [{
-                xtype : 'button',
-                iconAlign : 'center',
-                iconCls : 'rukuicon ',
-                text : '添加表项',
-                handler : function() {
-                    //fields: ['品号', '品名','规格','库存单位','仓库编号','数量','成本','存放位置']
-                    var data = [{
-                        '产品名称' : '',
-                        '长' : '',
-                        '类型' : '',
-                        '宽' : '',
-                        '重量' : '',
-                        '成本' : '',
-                        '操作用户' : '',
-                        '上传时间' : '',
-                    }];
-                    //Ext.getCmp('product_Inbound_addDataGrid')返回定义的对象
-                    Ext.getCmp('product_Inbound_addDataGrid').getStore().loadData(data,
-                        true);
+        //var materialtype="1";
+        var record_start = 0;
+        var projectId = "-1";
+        var buildingId = "-1";
+        Ext.define('Soims.model.application.ApplicationState', {
+            statics: { // 关键
+                0: { value: '0', name: '墙板' },
+                1: { value: '1', name: '梁板' },
+                2: { value: '2', name: 'K板' },
+                3: { value: '3', name: '异型' },
+                //
+            }
+        });
+        //仓库编号
+        var storeNameList = Ext.create('Ext.data.Store',{
+            fields : [ 'warehouseName'],
+            proxy : {
+                type : 'ajax',
+                url : 'material/findStore.do', //查询所有的仓库编号
+                reader : {
+                    type : 'json',
+                    rootProperty: 'StoreName',
+                }
+            },
+            autoLoad : true
+        });
+        var storePosition = Ext.create('Ext.form.ComboBox',{
+            fieldLabel : '仓库名',
+            labelWidth : 50,
+            width : 200,
+            margin: '0 10 0 20',
+            id :  'storePosition',
+            name : 'storePosition',
+            matchFieldWidth: false,
+            emptyText : "--请选择--",
+            displayField: 'warehouseName',
+            valueField: 'warehouseName',
+            editable : false,
+            store: storeNameList,
+            listeners:{
+                select: function(combo, record, index) {
+                    var type = oldpanelTypeList.rawValue;
+                    //console.log(MaterialTypeList.rawValue)//选择的值
+                    console.log(oldpanelTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
+                    //选中后
+                    var select = record[0].data;
+                    var warehouseNo = select.warehouseNo;
+                    console.log(warehouseNo);
+
+                    //重新加载行选项
+                    var locationNameList_row = Ext.create('Ext.data.Store',{
+                        id:'locationNameList_row',
+                        fields : ['rowNum'],
+                        proxy : {
+                            type : 'ajax',
+                            url : 'material/findStorePosition.do?warehouseNo='+warehouseNo,
+                            reader : {
+                                type : 'json',
+                                rootProperty: 'rowNum',
+                            }
+                        },
+                        autoLoad : true
+                    });
+                    speificLocation_row.setStore(locationNameList_row);
+
+                    //重新加载列选项
+                    var locationNameList_col = Ext.create('Ext.data.Store',{
+                        id:'locationNameList_col',
+                        fields : [ 'columnNum'],
+                        proxy : {
+                            type : 'ajax',
+                            url : 'material/findStorePosition.do?warehouseNo='+warehouseNo,
+                            reader : {
+                                type : 'json',
+                                rootProperty: 'columnNum',
+                            }
+                        },
+                        autoLoad : true
+                    });
+                    speificLocation_col.setStore(locationNameList_col);
 
                 }
+            }
+        });
+        //仓库存放位置--行
+        var speificLocation_row = Ext.create('Ext.form.ComboBox',{
+            fieldLabel : '行',
+            labelWidth : 20,
+            width : 80,
+            margin: '0 10 0 10',
+            id :  'speificLocation_row',
+            name : 'speificLocation_row',
+            matchFieldWidth: false,
+            //emptyText : "--请选择--",
+            displayField: 'rowNum',
+            valueField: 'rowNum',
+            editable : false,
+            //store: locationNameList_row,
+            listeners:{
+                select: function(combo, record, index) {
+                    var type = oldpanelTypeList.rawValue;
+                    //console.log(MaterialTypeList.rawValue)//选择的值
+                    console.log(oldpanelTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
+                    //console.log(record[0].data.materialName);
+                }
+            }
+        });
+        //仓库存放位置--列
+        var speificLocation_col = Ext.create('Ext.form.ComboBox',{
+            fieldLabel : '列',
+            labelWidth : 20,
+            width : 80,
+            id :  'speificLocation_col',
+            name : 'speificLocation_col',
+            matchFieldWidth: false,
+            //emptyText : "--请选择--",
+            displayField: 'columnNum',
+            valueField: 'columnNum',
+            editable : false,
+            //store: locationNameList_col,
+            listeners:{
+                select: function(combo, record, index) {
+                    var type = oldpanelTypeList.rawValue;
+                    //console.log(MaterialTypeList.rawValue)//选择的值
+                    console.log(oldpanelTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
+                    //console.log(record[0].data.materialName);
+                }
+            }
+        });
 
-            }, {
+        var oldPanelNameList = Ext.create('Ext.data.Store',{
+            fields : [ 'oldpanelName'],
+            proxy : {
+                type : 'ajax',
+                url : 'oldpanel/oldpanelType.do',
+                reader : {
+                    type : 'json',
+                    rootProperty: 'typeList',
+                }
+            },
+            autoLoad : true
+        });
+        var oldpanelTypeList = Ext.create('Ext.form.ComboBox',{
+            fieldLabel : '旧板类型',
+            labelWidth : 70,
+            width : 230,
+            id :  'oldpanelType',
+            name : 'oldpanelType',
+            matchFieldWidth: false,
+            emptyText : "--请选择--",
+            displayField: 'oldpanelTypeName',
+            valueField: 'oldpanelType',
+            editable : false,
+            store: oldPanelNameList,
+            listeners:{
+                select: function(combo, record, index) {
+
+                    console.log(oldpanelTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
+                    //console.log(record[0].data.materialName);
+                }
+            }
+
+        });
+
+        var classificationListStore = Ext.create('Ext.data.Store',{
+            fields : [ 'classificationName'],
+            proxy : {
+                type : 'ajax',
+                url : '/material/findAllBytableName.do?tableName=classification',
+                reader : {
+                    type : 'json',
+                    rootProperty: 'classification',
+                },
+            },
+            autoLoad : true
+        });
+        var classificationList = Ext.create('Ext.form.ComboBox',{
+            fieldLabel : '分类',
+            labelWidth : 70,
+            width : 230,
+            id :  'classification',
+            name : 'classification',
+            matchFieldWidth: false,
+            emptyText : "--请选择--",
+            displayField: 'classificationName',
+            valueField: 'classificationId',
+            editable : false,
+            store: classificationListStore,
+            listeners:{
+                select: function(combo, record, index) {
+
+                    console.log(classificationList.getValue());// MaterialTypeList.getValue()获得选择的类型
+                    //console.log(record[0].data.materialName);
+                }
+            }
+
+        });
+
+        var toolbar2 = Ext.create('Ext.toolbar.Toolbar', {
+            dock : "top",
+            items: [
+                {xtype: 'textfield', fieldLabel: '产品品名', id: 'productName', width: 300, labelWidth: 60,
+                    //margin: '0 10 0 40',
+                    name: 'productName', value: ""},
+                //{xtype: 'textfield', fieldLabel: '重量', id: 'weight', width: 190, labelWidth: 30, margin: '0 10 0 50', name: 'weight', value: ""},
+                //{xtype: 'textfield', fieldLabel: '仓库名称', id: 'warehouseNo', width: 220, labelWidth: 60, margin: '0 10 0 50', name: 'warehouseNo', value: ""},
+                //{xtype: 'textfield', fieldLabel: '存放位置', id: 'position', width: 220, labelWidth: 60, margin: '0 10 0 50', name: 'position', value: ""},
+                storePosition,
+                // {
+                //     xtype:'tbtext',
+                //     text:'存放位置:',
+                //     margin: '0 0 0 20',
+                //     //id: 'number',
+                //     width: 60,
+                //     //labelWidth: 30,
+                //     //name: 'number',
+                //     //value: "",
+                // },
+                // speificLocation_row,
+                // speificLocation_col,
+                {xtype: 'textfield', fieldLabel: '入库数量', id: 'count', width: 190, labelWidth: 30,  name: 'count', value: ""},
+
+                {xtype : 'button',
+                    margin: '0 10 0 70',
+                    iconAlign : 'center',
+                    iconCls : 'rukuicon ',
+                    text : '添加',
+                    handler: function(){
+                        //var classificationName = Ext.getCmp('classification').getValue();
+                        var productName = Ext.getCmp('productName').getValue();
+                        //var inventoryUnit = Ext.getCmp('inventoryUnit').getValue();
+                        var count = Ext.getCmp('count').getValue();
+                        //var unitWeight = Ext.getCmp('unitWeight').getValue();
+                        //var unitArea = Ext.getCmp('unitArea').getValue();
+                        //var remark = Ext.getCmp('remark').getValue();
+                        var warehouseName = Ext.getCmp('storePosition').getValue();
+                        var data = [{
+                            'productName' : productName,
+                            //'classificationName':classificationName,
+                            //'inventoryUnit' : inventoryUnit,
+                            //'unitArea' : unitArea,
+                            //'unitWeight' : unitWeight,
+                            'warehouseName':warehouseName,
+                            //'remark' : remark,
+                            'count' : count,
+                        }];
+                        //点击查询获得输入的数据
+                        // console.log(Ext.getCmp('length').getValue());
+                        // console.log(Ext.getCmp('cost').getValue());
+                        //若品名未填则添加失败
+                        if (productName != ''&&count!= '') {
+                            Ext.getCmp('addDataGrid').getStore().loadData(data, true);
+                            //清除框里的数据
+                            Ext.getCmp('productName').setValue('');
+                            //Ext.getCmp('classification').setValue('');
+                            //Ext.getCmp('inventoryUnit').setValue('');
+                            //Ext.getCmp('unitWeight').setValue('');
+                            //Ext.getCmp('unitArea').setValue('');
+                            Ext.getCmp('count').setValue('');
+                            Ext.getCmp('storePosition').setValue('');
+                            //Ext.getCmp('remark').setValue('');
+                            Ext.getCmp('operator').setValue('');
+                        }else{
+                            Ext.MessageBox.alert("警告","品名、入库数量不能为空",function(r) {
+                                //    r = cancel||ok
+                            });
+                        }
+                    }
+                }
+            ]
+        });
+
+        //确认入库按钮，
+        var toolbar3 = Ext.create('Ext.toolbar.Toolbar', {
+            dock : "bottom",
+            id : "toolbar3",
+            //style:{float:'center',},
+            //margin-right: '2px',
+            //padding: '0 0 0 750',
+            style:{
+                //marginLeft: '900px'
+                layout: 'right'
+            },
+            items : [
+                {
+                    xtype: 'textfield',
+                    margin: '0 20 0 0',
+                    fieldLabel: ' 入库人',
+                    id: 'operator',
+                    width: 150,
+                    labelWidth: 45,
+                    name: 'operator',
+                    value: "",
+                },
+                {
                 xtype : 'button',
                 iconAlign : 'center',
                 iconCls : 'rukuicon ',
-                text : '保存',
-
+                text : '确认入库',
+                region:'center',
+                bodyStyle: 'background:#fff;',
                 handler : function() {
+
                     // 取出grid的字段名字段类型
-                    //var userid="<%=session.getAttribute('userid')%>";
-                    var select = Ext.getCmp('product_Inbound_addDataGrid').getStore()
+                    var select = Ext.getCmp('addDataGrid').getStore()
                         .getData();
                     var s = new Array();
                     select.each(function(rec) {
@@ -63,135 +329,74 @@ Ext.define('product.product_Inbound', {
                         s.push(JSON.stringify(rec.data));
                         //alert(JSON.stringify(rec.data));//获得表格中的数据
                     });
-                    //alert(s);//数组s存放表格中的数据，每条数据以json格式存放
-
+                    console.log(s);
+                    //获取数据
+                    //获得当前操作时间
+                    //var sTime=Ext.Date.format(Ext.getCmp('startTime').getValue(), 'Y-m-d H:i:s');
                     Ext.Ajax.request({
-                        url : 'oldpanel/addData.do', //HandleDataController
+                        url : 'product/addData.do', //入库
                         method:'POST',
                         //submitEmptyText : false,
                         params : {
-                            // tableName:tableName,
-                            // materialType:materialtype,
                             s : "[" + s + "]",
-                            //userid: userid + ""
-//									tableName : tabName,
-//									organizationId : organizationId,
-//									tableType : tableType,
-//									uploadCycle : uploadCycle,
-//									cycleStart : cycleStart
-
+                            projectId : projectId,
+                            buildingId : buildingId,
+                            operator: Ext.getCmp('operator').getValue(),
                         },
                         success : function(response) {
-                            Ext.MessageBox.alert("提示", "保存成功！");
-                            me.close();
-//									var obj = Ext.decode(response.responseText);
-//									if (obj) {
-//
-//										Ext.MessageBox.alert("提示", "保存成功！");
-//										me.close();
-//
-//									} else {
-//										// 数据库约束，返回值有问题
-//										Ext.MessageBox.alert("提示", "保存失败！");
-//
-//									}
+                            console.log("12312312312321",response.responseText);
+                            if(response.responseText="false")
+                            {
+                                Ext.MessageBox.alert("提示","入库失败，品名不规范" );
+                            }
+                            //var message =Ext.decode(response.responseText).showmessage;
+                            else{
+                                Ext.MessageBox.alert("提示","入库成功" );
+                            }
 
                         },
                         failure : function(response) {
-                            Ext.MessageBox.alert("提示", "保存失败！");
+                            //var message =Ext.decode(response.responseText).showmessage;
+                            Ext.MessageBox.alert("提示","入库失败" );
                         }
                     });
 
                 }
             }]
         });
+
+
+
         var grid = Ext.create("Ext.grid.Panel", {
-            id : 'product_Inbound_addDataGrid',
-            dockedItems : [toolbar2],
+            id : 'addDataGrid',
+            //dockedItems : [toolbar2],
             store : {
-                fields: ['产品名称', '长', '类型', '宽' , '重量', '成本', '操作用户', '上传时间',]
-//				fields : ['fieldName', 'fieldType', 'taxUnitCode',
-//						'taxUnitName', 'isNull', 'fieldCheck', 'width']
+                // fields: ['材料名','品号', '长',"；类型","宽",'规格','库存单位','仓库编号','数量','成本','存放位置']
+                fields: ['productName','warehouseName','count']
             },
-            columns : [{
-                dataIndex : '产品名称',
-                name : '产品名称',
-                text : '产品名称',
-                //width : 110,
-                editor : {// 文本字段
-                    xtype : 'textfield',
-                    allowBlank : false
-                }
-            }, {
-                dataIndex : '长',
-                name : '长',
-                text : '长',
-                //width : 110,
-                editor : {// 文本字段
-                    xtype : 'textfield',
-                    allowBlank : false,
 
-                }
-
-            }, {
-                dataIndex : '类型',
-                name : '类型',
-                text : '类型',
-                //width : 110,
-                editor : {// 文本字段
-                    xtype : 'textfield',
-                    allowBlank : false,
-
+            columns : [
+                // {
+                //     // dataIndex : '序号',
+                //     name : '序号',
+                //     text : '序号',
+                //     width : 60,
+                //     value:'99',
+                //     renderer:function(value,metadata,record,rowIndex){
+                //         return　record_start　+　1　+　rowIndex;
+                //     }
+                // },
+                {dataIndex : 'productName', text : '产品名称', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
+                {dataIndex : 'warehouseName', text : '仓库名称', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'count', text : '入库数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {
+                    name : '操作',
+                    text : '操作',
+                    renderer:function(value, cellmeta){
+                        return "<INPUT type='button' value='删 除' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
+                    }
                 }
 
-            },{
-                dataIndex : '宽',
-                name : '宽',
-                text : '宽',
-                //width : 110,
-                editor : {// 文本字段
-                    xtype : 'textfield',
-                    allowBlank : false,
-
-                }
-
-            },{
-                dataIndex : '重量',
-                name : '重量',
-                text : '重量',
-                //width : 160,
-                editor : {
-                    xtype : 'textfield',
-                    allowBlank : false
-                }
-            },{
-                dataIndex : '成本',
-                name : '成本',
-                text : '成本',
-                //width : 160,
-                editor : {
-                    xtype : 'textfield',
-                    allowBlank : false
-                }
-            },{
-                dataIndex : '操作用户',
-                name : '操作用户',
-                text : '操作用户',
-                //width : 160,
-                editor : {
-                    xtype : 'textfield',
-                    allowBlank : false
-                }
-            },{
-                dataIndex : '上传时间',
-                name : '上传时间',
-                text : '上传时间',
-                //width : 160,
-                editor : {
-                    xtype : 'textfield',
-                    allowBlank : false
-                }
-            }
             ],
             viewConfig : {
                 plugins : {
@@ -202,128 +407,57 @@ Ext.define('product.product_Inbound', {
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 1
             })],
-            selType : 'rowmodel'
+            selType : 'checkboxmodel'//'rowmodel'
         });
-        var form = Ext.create("Ext.form.Panel", {
-            border : false,
-            items : [ {
-                xtype : 'filefield',
-                width : 400,
-                margin: '1 0 0 0',
-                buttonText : '上传数据文件',
-                name : 'uploadFile',
-                //id : 'uploadFile',
-                listeners : {
-                    change : function(file, value, eOpts) {
-                        if (value.indexOf('.xls',value.length-4)==-1) {
-                            Ext.Msg.alert('错误', '文件格式错误，请重新选择xls格式的文件！')
+
+        grid.addListener('cellclick', cellclick);
+        function cellclick(grid, rowIndex, columnIndex, e) {
+            if (rowIndex < 0) {
+                return;
+            }
+            var fieldName = Ext.getCmp('addDataGrid').columns[columnIndex-1].text;
+
+            console.log("列名：",fieldName)
+            if (fieldName == "操作") {
+                //设置监听事件getSelectionModel().getSelection()
+                var sm = Ext.getCmp('addDataGrid').getSelectionModel();
+                var oldpanelArr = sm.getSelection();
+                if (oldpanelArr.length != 0) {
+                    Ext.Msg.confirm("提示", "共选中" + oldpanelArr.length + "条数据，是否确认删除？", function (btn) {
+                        if (btn == 'yes') {
+                            //先删除后台再删除前台
+                            //ajax 删除后台数据 成功则删除前台数据；失败则不删除前台数据
+
+                            //Extjs 4.x 删除
+                            Ext.getCmp('addDataGrid').getStore().remove(oldpanelArr);
                         } else {
-                            Ext.Msg.show({
-                                title : '操作确认',
-                                message : '将上传数据，选择“是”否确认？',
-                                buttons : Ext.Msg.YESNO,
-                                icon : Ext.Msg.QUESTION,
-                                fn : function(btn) {
-                                    if (btn === 'yes') {
-                                        var check=Ext.getCmp("check").getValue();
-
-                                        form.submit({
-                                            url : 'oldpanel/uploadExcel.do',
-                                            waitMsg : '正在上传...',
-                                            params : {
-                                                // tableName:tableName,
-                                                // materialtype:materialtype,
-                                                // check:check
-                                            },
-                                            success : function(form, action) {
-                                                var response = action.result;
-                                                Ext.MessageBox.alert("提示", "上传成功!");
-//												var toolbar2 = Ext.getCmp("toolbar2");
-//												var toolbar3 = Ext.getCmp("toolbar3");
-//												toolbar2.setVisible(false);
-//												toolbar3.setVisible(false);
-//												me.showDataGrid(tableName, response.uploadId);
-                                            },
-                                            failure : function(form, action) {
-                                                var response = action.result;
-                                                switch (response.errorCode) {
-                                                    case 0:
-                                                        Ext.MessageBox.alert("错误", "上传批次或者所属期错误，重新生成上传批次和所属期!");
-                                                        break;
-                                                    case 1:
-                                                        Ext.MessageBox.alert("错误", "上传文件中的批次与生成的上传批次不同，请检查上传文件!");
-                                                        me.showMsgGrid([ "name", "input", "expected" ], response.value, [ {
-                                                            text : "错误字段",
-                                                            dataIndex : "name",
-                                                            width : 100
-                                                        }, {
-                                                            text : "上传文件中的值",
-                                                            dataIndex : "input",
-                                                            width : 200
-                                                        }, {
-                                                            text : "期望值",
-                                                            dataIndex : "expected",
-                                                            width : 100
-                                                        } ]);
-                                                        break;
-                                                    case 2:
-                                                        Ext.MessageBox.alert("错误", "上传文件中的数据项与系统需要的不一致，请检查上传文件!");
-                                                        me.showMsgGrid([ "name", "value" ], response.value, [ {
-                                                            text : "错误描述",
-                                                            dataIndex : "name",
-                                                            width : 250
-                                                        }, {
-                                                            text : "错误字段",
-                                                            dataIndex : "value",
-                                                            width : 400
-                                                        } ]);
-                                                        break;
-                                                    case 3:
-                                                        Ext.MessageBox.alert("错误", "上传文件中的数据项与系统需要的不一致，请检查上传文件!");
-                                                        me.showMsgGrid([ "row", "col", "value", "type" ], response.value, [ {
-                                                            text : "出错行",
-                                                            dataIndex : "row",
-                                                            width : 100
-                                                        }, {
-                                                            text : "出错列",
-                                                            dataIndex : "col",
-                                                            width : 250
-                                                        }, {
-                                                            text : "出错值",
-                                                            dataIndex : "value",
-                                                            width : 250
-                                                        }, {
-                                                            text : "期望类型",
-                                                            dataIndex : "type",
-                                                            width : 250
-                                                        } ]);
-                                                        break;
-                                                    case 1000:
-                                                        Ext.MessageBox.alert("错误", "上传文件出现未知错误，请检查上传文件格式！<br>若无法解决问题，请联系管理员！");
-                                                        Ext.MessageBox.alert("错误原因", response.msg);
-                                                        break;
-                                                    default:
-                                                        Ext.MessageBox.alert("错误", "服务器异常，请检查网络连接，或者联系管理员");
-                                                }
-
-                                            }
-                                        });
-                                    }
-                                }
-                            });
+                            return;
                         }
-                    }
+                    });
+                } else {
+                    //Ext.Msg.confirm("提示", "无选中数据");
+                    Ext.Msg.alert("提示", "无选中数据");
                 }
-            } ]
-        });
+            }
 
-        var toolbar2 = Ext.create('Ext.toolbar.Toolbar', {
-            dock : "top",
-            //id : "toolbar2",
-            items : [form]
-        });
 
-        this.dockedItems = [ toolbar2,grid];
+            console.log("rowIndex:",rowIndex)
+            console.log("columnIndex:",columnIndex)
+            // var record = grid.getStore().getAt(rowIndex);
+            // var id = record.get('id');
+            // var fieldName = grid.getColumnModel().getDataIndex(columnIndex);
+            // if (fieldName == "c_reply") {
+            //     Ext.Msg.alert('c_reply', rowIndex + "  -  " + id);
+            // }else if (fieldName == "c_agree") {
+            //     Ext.Msg.alert('c_agree', rowIndex + "  -  " + id);
+            // }
+
+        };
+
+        this.dockedItems = [
+            //toolbar,
+            //toobar,toolbar1,
+            toolbar2, grid, toolbar3];
         //this.items = [ me.grid ];
         this.callParent(arguments);
 
