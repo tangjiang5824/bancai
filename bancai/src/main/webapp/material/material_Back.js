@@ -164,6 +164,22 @@ Ext.define('material.material_Back', {
             editable : false,
             store: MaterialNameList,
             listeners:{
+                //
+                select: function(combo, record, index) {
+                    var type = MaterialTypeList.rawValue;
+                    //选中后
+                    var select = record[0].data;
+                    console.log("select=========",select)
+                    var specification = select.specification;
+                    var width = select.width;
+                    var inventoryUnit = select.inventoryUnit;
+                    var description = select.description;
+
+                    //设置其他的值
+                    Ext.getCmp("specification").setValue(specification);//开始时间
+                    Ext.getCmp("width").setValue(width);//开始时间
+                    Ext.getCmp("stockUnit").setValue(inventoryUnit);//开始时间
+                }
             }
 
         });
@@ -193,7 +209,7 @@ Ext.define('material.material_Back', {
             emptyText : "--请选择--",
             displayField: 'warehousename',
             valueField: 'id',
-            value:'101',
+            // value:'101',
             editable : false,
             store: storeNameList,
             listeners:{
@@ -459,11 +475,21 @@ Ext.define('material.material_Back', {
                     {
                         xtype: 'textfield',
                         margin: '0 10 0 40',
-                        fieldLabel: '横截面',
+                        fieldLabel: '宽',
                         id: 'width',
                         labelWidth : 50,
                         width : 180,
                         name: 'width',
+                        value: "",
+                    },
+                    {
+                        xtype: 'textfield',
+                        // margin: '0 10 0 0',
+                        fieldLabel: ' 库存单位',
+                        id: 'stockUnit',
+                        width: 230,
+                        labelWidth: 70,
+                        name: 'stockUnit',
                         value: "",
                     },
                     // {
@@ -497,16 +523,7 @@ Ext.define('material.material_Back', {
                         value: "",
                         allowBlank:false,
                     },
-                    {
-                        xtype: 'textfield',
-                        // margin: '0 10 0 0',
-                        fieldLabel: ' 库存单位',
-                        id: 'stockUnit',
-                        width: 230,
-                        labelWidth: 70,
-                        name: 'stockUnit',
-                        value: "",
-                    },
+
                     storePosition,
                     // {xtype: 'textfield',fieldLabel: '职工类别',name: 'personType'}
                 ]

@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
+@Table(name = "building")
 public class Building {
     private Integer id;
     private String buildingNo;

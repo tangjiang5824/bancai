@@ -687,7 +687,8 @@ Ext.define('material.material_Outbound',{
                     //fields:['materialName','length','materialType','width','count'],//'oldpanelId','oldpanelName','count'
                     proxy: {
                         type: 'ajax',
-                        url: 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName=material_logdetail&columnName=materiallogId&columnValue=' + id,//获取同一批出入库的原材料
+                        url: 'material/findMaterialLogdetails.do?materiallogId=' + id,//获取同一批出入库的原材料
+
                         reader: {
                             type: 'json',
                             rootProperty: 'material_logdetail',

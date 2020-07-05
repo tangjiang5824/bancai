@@ -234,6 +234,7 @@ public class MaterialController {
                 store.setTotalWeight(store.getTotalWeight()+totalWeight);
 
             }else {
+                store=new MaterialStore();
                 store.setCountUse(count);
                 store.setCount(count);
                 store.setWarehouseName(warehouseName);
