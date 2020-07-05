@@ -284,7 +284,11 @@ Ext.define("menu.MenuRole_bc0", {
 						text : '查看旧版基础信息',
 						id : 'oldpanel.query_Ocatergory_baseInfo',
 						leaf : true
-					}
+					},{
+							text : '添加旧板匹配规则',
+							id : 'oldpanel.add_oldpanel_rules',
+							leaf : true
+						}
 					]
 				} , {
 					text : '产品种类管理',

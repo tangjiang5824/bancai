@@ -16,6 +16,7 @@ Ext.define('material.material_Query_Records',{
                 3: { value: '3', name: '撤销入库' },
                 4: { value: '4', name: '撤销出库' },
                 5: { value: '5', name: '撤销退库' },
+                null: { value: 'null', name: '无' },
             }
         });
 
@@ -136,7 +137,7 @@ Ext.define('material.material_Query_Records',{
                                 endTime : Ext.getCmp('endTime').getValue(),
                                 startTime:Ext.getCmp('startTime').getValue(),
                                 projectId:Ext.getCmp('projectName').getValue(),
-                                optionType:Ext.getCmp('material_query_records_optionType').getValue(),
+                                type:Ext.getCmp('material_query_records_optionType').getValue(),
                             }
                         });
                     }
@@ -165,7 +166,7 @@ Ext.define('material.material_Query_Records',{
                     endTime : Ext.getCmp('endTime').getValue(),
                     startTime:Ext.getCmp('startTime').getValue(),
                     projectId:Ext.getCmp('projectName').getValue(),
-                    optionType:Ext.getCmp('material_query_records_optionType').getValue(),
+                    type:Ext.getCmp('material_query_records_optionType').getValue(),
                 }
             },
             listeners : {
@@ -176,7 +177,7 @@ Ext.define('material.material_Query_Records',{
                         endTime : Ext.getCmp('endTime').getValue(),
                         startTime:Ext.getCmp('startTime').getValue(),
                         projectId:Ext.getCmp('projectName').getValue(),
-                        optionType:Ext.getCmp('material_query_records_optionType').getValue(),
+                        type:Ext.getCmp('material_query_records_optionType').getValue(),
 
                     });
                 }
@@ -318,10 +319,10 @@ Ext.define('material.material_Query_Records',{
                         //fields:['materialName','length','materialType','width','count'],//'oldpanelId','oldpanelName','count'
                         proxy : {
                             type : 'ajax',
-                            url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName=materiallogdetail&columnName=materiallogId&columnValue='+id,//获取同类型的原材料
+                            url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName=material_logdetail&columnName=materiallogId&columnValue='+id,//获取同类型的原材料
                             reader : {
                                 type : 'json',
-                                rootProperty: 'materiallogdetail',
+                                rootProperty: 'material_logdetail',
                             },
                         },
                         autoLoad : true

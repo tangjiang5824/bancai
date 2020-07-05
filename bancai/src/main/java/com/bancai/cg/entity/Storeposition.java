@@ -6,12 +6,10 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
+@Table(name = "storeposition")
 public class Storeposition {
     private Integer id;
-    private Integer warehouseNo;
     private String warehouseName;
-    private Integer rowNum;
-    private Integer columnNum;
 
 
     @Id
@@ -24,14 +22,6 @@ public class Storeposition {
         this.id = id;
     }
 
-    public Integer getWarehouseNo() {
-        return warehouseNo;
-    }
-
-    public void setWarehouseNo(Integer warehouseNo) {
-        this.warehouseNo = warehouseNo;
-    }
-
     public String getWarehouseName() {
         return warehouseName;
     }
@@ -40,36 +30,8 @@ public class Storeposition {
         this.warehouseName = warehouseName;
     }
 
-    public Integer getRowNum() {
-        return rowNum;
-    }
 
-    public void setRowNum(Integer rowNum) {
-        this.rowNum = rowNum;
-    }
 
-    public Integer getColumnNum() {
-        return columnNum;
-    }
 
-    public void setColumnNum(Integer columnNum) {
-        this.columnNum = columnNum;
-    }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Storeposition that = (Storeposition) o;
-        return id == that.id &&
-                Objects.equals(warehouseNo, that.warehouseNo) &&
-                Objects.equals(warehouseName, that.warehouseName) &&
-                Objects.equals(rowNum, that.rowNum) &&
-                Objects.equals(columnNum, that.columnNum);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, warehouseNo, warehouseName, rowNum, columnNum);
-    }
 }

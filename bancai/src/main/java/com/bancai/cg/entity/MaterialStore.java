@@ -1,6 +1,7 @@
 package com.bancai.cg.entity;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 
@@ -13,9 +14,7 @@ public class MaterialStore {
     private String description;
     private Double countUse;
     private String warehouseName;
-    private Integer rowNum;
-    private  Integer columnNum;
-    private Set<MaterialLogdetail> materialLogdetails;
+    private Set<MaterialLogdetail> materialLogdetails =new HashSet<>();
 
     @OneToMany(mappedBy = "materialStore")
     public Set<MaterialLogdetail> getMaterialLogdetails() {
@@ -34,21 +33,7 @@ public class MaterialStore {
         this.warehouseName = warehouseName;
     }
 
-    public Integer getRowNum() {
-        return rowNum;
-    }
 
-    public void setRowNum(Integer rowNum) {
-        this.rowNum = rowNum;
-    }
-
-    public Integer getColumnNum() {
-        return columnNum;
-    }
-
-    public void setColumnNum(Integer columnNum) {
-        this.columnNum = columnNum;
-    }
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)

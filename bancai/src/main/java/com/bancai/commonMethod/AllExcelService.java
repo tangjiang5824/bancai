@@ -1,5 +1,13 @@
 package com.bancai.commonMethod;
 
+import com.bancai.cg.dao.mateialLogdetaildao;
+import com.bancai.cg.dao.materialLogdao;
+import com.bancai.cg.dao.materialinfodao;
+import com.bancai.cg.dao.materialstoredao;
+import com.bancai.cg.entity.MaterialInfo;
+import com.bancai.cg.entity.MaterialLog;
+import com.bancai.cg.entity.MaterialLogdetail;
+import com.bancai.cg.entity.MaterialStore;
 import com.bancai.cg.service.InsertProjectService;
 import com.bancai.domain.DataList;
 import com.bancai.domain.DataRow;
@@ -20,6 +28,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 @Service
 public class AllExcelService extends BaseService {
@@ -32,6 +42,16 @@ public class AllExcelService extends BaseService {
 	private InsertProjectService insertProjectService;
 	@Autowired
 	private Y_Upload_Data_Service y_Upload_Data_Service;
+
+	//JPA dao
+	@Autowired
+	private com.bancai.cg.dao.materialinfodao materialinfodao;
+	@Autowired
+	private com.bancai.cg.dao.materialstoredao materialstoredao;
+	@Autowired
+	private com.bancai.cg.dao.materialLogdao materialLogdao;
+	@Autowired
+	private com.bancai.cg.dao.mateialLogdetaildao mateialLogdetaildao;
 
 	private void saveData(DataList dataList,String userid,String tableName) {
 		int userId = Integer.parseInt(userid);
@@ -55,110 +75,118 @@ public class AllExcelService extends BaseService {
 	 * @throws IOException
 	 */
 	@Transactional
-	public UploadDataResult uploadExcelData(InputStream inputStream,String userid, String tablename,String main_key) throws IOException {
+	public UploadDataResult uploadExcelData(InputStream inputStream, String userid, String tablename, MaterialLog log) throws IOException {
 		DataList dataList;
 		UploadDataResult result = new UploadDataResult();
 		Excel excel = new Excel(inputStream);
 		dataList = excel.readExcelContent();
-		//通过jackson实现深拷贝：序列化
-		ObjectMapper mapper=new ObjectMapper();
-		DataList dataList2 = mapper.readValue(mapper.writeValueAsString(dataList),DataList.class);
-		DataList id_List;
-		DataList typeList;
+//		//通过jackson实现深拷贝：序列化
+//		ObjectMapper mapper=new ObjectMapper();
+//		DataList dataList2 = mapper.readValue(mapper.writeValueAsString(dataList),DataList.class);
+//		DataList id_List;
+//		DataList typeList;
+
+		//新增JPA时改动
+		MaterialInfo material=null;
 //		System.out.println(dataList);
 		if (tablename.equals("material_store")) {
 			for (int i = 0; i < dataList.size(); i++) {
 				String materialName = dataList.get(i).get("materialName") + "";
-				String sql_find_id = "select id from material_info where materialName =?";
-				id_List = queryService.query(sql_find_id,materialName);
-				String width=null;
-				if(null!=dataList2.get(i).get("width")){
-					width=dataList2.get(i).get("width")+"";
-				}
-				String materialId=null;
-				String inventoryUnit=null;
-				if(null!=dataList2.get(i).get("inventoryUnit")){
-					inventoryUnit=dataList2.get(i).get("inventoryUnit")+"";
-				}
-				String count=null;
-				if(null!=dataList2.get(i).get("count")){
-					count=dataList2.get(i).get("count")+"";
+				String specification = dataList.get(i).get("specification") + "";
+				MaterialStore store=new MaterialStore();
+				List<MaterialInfo> materialList=materialinfodao.findByMaterialNameAndSpecification(materialName,specification);
+				if(materialList.size()!=1) {
+					result.setSuccess(false);
+					result.setErrorCode(2);
+					return result;
 				}
 				String warehouseName=null;
-				if(null!=dataList2.get(i).get("warehouseName")){
-					warehouseName=dataList2.get(i).get("warehouseName")+"";
+				if(null!=dataList.get(i).get("warehouseName")){
+					warehouseName=dataList.get(i).get("warehouseName")+"";
+					store.setWarehouseName(warehouseName);
+
 				}
-				String unitWeight=null;
-				if(null!=dataList2.get(i).get("unitWeight")){
-					unitWeight=dataList2.get(i).get("unitWeight")+"";
+				material=materialList.get(0);
+				store.setMaterialInfo(material);
+				Double count=null;
+				if(null!=dataList.get(i).get("count")){
+					count=Double.parseDouble(dataList.get(i).get("count")+"");
+					store.setCount(count);
+					store.setCountUse(count);
+				}
+
+				Double totalWeight=null;
+				if(null!=dataList.get(i).get("totalWeight")){
+					totalWeight=Double.parseDouble(dataList.get(i).get("totalWeight")+"");
+					store.setTotalWeight(totalWeight);
 				}
 				String description=null;
-				if(null!=dataList2.get(i).get("description")){
-					description=dataList2.get(i).get("description")+"";
+				if(null!=dataList.get(i).get("description")){
+					description=dataList.get(i).get("description")+"";
+					store.setDescription(description);
 				}
-				//查出的materialId大于一个
-				if(id_List.size()>1){
-					result.setErrorCode(2);
-					return result;
-				}
-				//通过原材料名没有查到数据，需要宽这个字段插入material_info表
-				if(id_List.isEmpty()) {
-					//宽有值，不需要进行解析
-					if(null!=dataList.get(i).get("width")){
-						width=dataList.get(i).get("width")+"";
-					}else {
-						//需要进行解析
-						//解析规则待完善
-						//解析成功给width赋值，
-						// 需要修改datalist2里面的width，
-						// 并返回新的materialId
-						// 失败返回错误项
+				boolean flag=true;
+				//通过warehouseName和materialId看仓库里面是否存在
+				MaterialLogdetail logdetail=new MaterialLogdetail();
+				Set<MaterialStore> stores=material.getMaterialStores();
+				for(MaterialStore store1:stores){
+					if(store1.getWarehouseName().equals(warehouseName)){
+						store1.setCount(store1.getCount()+count);
+						store1.setCountUse(store1.getCountUse()+count);
+						store1.setTotalWeight(store1.getTotalWeight()+totalWeight);
+						materialstoredao.save(store1);
+						logdetail.setMaterialStore(store1);
+						flag=false;
+						break;
 					}
-				} else {
-					materialId=id_List.get(0).get("id")+"";
 				}
+
+				if(flag) materialstoredao.save(store);
+
 				//修改插入到数据库里面的datalist
 
-				dataList2.get(i).remove("materialName");
-				dataList2.get(i).remove("width");
-				dataList2.get(i).remove("rowindex");
-				dataList2.get(i).put("materialId",materialId);
-				String totalWeight="0.0";
-				if(null!=dataList2.get(i).get("unitWeight")&&null!=dataList2.get(i).get("count")){
-					totalWeight=Double.parseDouble(unitWeight)*Double.parseDouble(count)+"";
-				}
-				dataList2.get(i).put("totalWeight",totalWeight);
-				dataList.get(i).put("totalWeight",totalWeight);
-				String specification = dataList.get(i).get("specification")+"";
+
+
+
+
+
+				logdetail.setIsrollback(0);
+				logdetail.setMaterialLog(log);
+				logdetail.setMaterialInfo(material);
+				logdetail.setCount(store.getCount());
+				if (flag) logdetail.setMaterialStore(store);
+				mateialLogdetaildao.save(logdetail);
+
 				//原材料入库
-				String sql_insert_material="insert into material_store (materialId,specification,inventoryUnit,count,countUse,warehouseName,unitWeight,totalWeight,description,uploadId) values (?,?,?,?,?,?,?,?,?,?)";
-				int store_id= insertProjectService.insertDataToTable(sql_insert_material,materialId,specification,inventoryUnit,count,count,warehouseName,unitWeight,totalWeight,description,userid);
-				//后面为log记录
-				String sql_log_detail = "insert into material_logdetail (materialName,materialId,count,specification,materiallogId,materialstoreId,isrollback) values (?,?,?,?,?,?,?)";
-				boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_log_detail,materialName,materialId,count,specification,String.valueOf(main_key),store_id+"","0");
-			}
-		} else if (tablename.equals("oldpanel")) {
-			for (int i = 0; i < dataList.size(); i++) {
-				String oldpanelTypeName = dataList.get(i).get("oldpanelType") + "";
-				String sql_trans = "select oldpanelType from oldpaneltype where oldpanelTypeName = ?";
-				typeList = queryService.query(sql_trans,oldpanelTypeName.toUpperCase());
-				if(typeList.isEmpty())
-				{
-					result.setErrorCode(2);
-					return result;
-				} else {
-					String oldpanelType = typeList.get(0).get("oldpanelType") + "";
-					dataList2.get(i).put("oldpanelType",oldpanelType);
-					String countStore = dataList.get(i).get("countStore") + "";
-					dataList2.get(i).put("countUse",countStore);
-//					System.out.println(dataList2);
-					String oldpanelName = dataList.get(i).get("oldpanelName") + "";
-					String specification = dataList.get(i).get("specification")+"";
-					String sql_log_detail = "insert into oldpanellogdetail (oldpanelName,count,specification,oldpanellogId) values (?,?,?,?)";
-					boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_log_detail,oldpanelName,countStore,specification,String.valueOf(main_key));
-				}
+//				String sql_insert_material="insert into material_store (materialId,specification,inventoryUnit,count,countUse,warehouseName,unitWeight,totalWeight,description,uploadId) values (?,?,?,?,?,?,?,?,?,?)";
+//				int store_id= insertProjectService.insertDataToTable(sql_insert_material,materialId,specification,inventoryUnit,count,count,warehouseName,unitWeight,totalWeight,description,userid);
+//				//后面为log记录
+//				String sql_log_detail = "insert into material_logdetail (materialName,materialId,count,specification,materiallogId,materialstoreId,isrollback) values (?,?,?,?,?,?,?)";
+//				boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_log_detail,materialName,materialId,count,specification,String.valueOf(main_key),store_id+"","0");
 			}
 		}
+//		else if (tablename.equals("oldpanel")) {
+//			for (int i = 0; i < dataList.size(); i++) {
+//				String oldpanelTypeName = dataList.get(i).get("oldpanelType") + "";
+//				String sql_trans = "select oldpanelType from oldpaneltype where oldpanelTypeName = ?";
+//				typeList = queryService.query(sql_trans,oldpanelTypeName.toUpperCase());
+//				if(typeList.isEmpty())
+//				{
+//					result.setErrorCode(2);
+//					return result;
+//				} else {
+//					String oldpanelType = typeList.get(0).get("oldpanelType") + "";
+//					dataList2.get(i).put("oldpanelType",oldpanelType);
+//					String countStore = dataList.get(i).get("countStore") + "";
+//					dataList2.get(i).put("countUse",countStore);
+////					System.out.println(dataList2);
+//					String oldpanelName = dataList.get(i).get("oldpanelName") + "";
+//					String specification = dataList.get(i).get("specification")+"";
+//					String sql_log_detail = "insert into oldpanellogdetail (oldpanelName,count,specification,oldpanellogId) values (?,?,?,?)";
+////					boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_log_detail,oldpanelName,countStore,specification,String.valueOf(main_key));
+//				}
+//			}
+//		}
 		// 插入数据
 		//log.debug("materialtype= "+materialtype);
 		//boolean upload = uploadData(dataList2,userid,tablename);
