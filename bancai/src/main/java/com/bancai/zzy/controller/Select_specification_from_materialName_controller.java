@@ -378,7 +378,7 @@ public class Select_specification_from_materialName_controller {
 			c.and(new mysqlcondition("buildingId", "=", buildingId));
 		}
 		if (positionId.length() != 0) {
-			c.and(new mysqlcondition("positionId", "=", positionId));
+			c.and(new mysqlcondition("buildingpositionId", "=", positionId));
 		}
 		WebResponse wr=queryAllService.queryDataPage(start, limit, c, tableName);
 		return wr;

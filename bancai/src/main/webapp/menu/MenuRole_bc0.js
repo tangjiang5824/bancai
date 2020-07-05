@@ -11,11 +11,11 @@ Ext.define("menu.MenuRole_bc0", {
 				text : '旧板管理',
 				expanded : true,
 				children : [
-					{
-					text : '旧板领料',
-					id : 'oldpanel.oldpanel_Receive',
-					leaf : true
-				},
+				// 	{
+				// 	text : '旧板领料',
+				// 	id : 'oldpanel.oldpanel_Receive',
+				// 	leaf : true
+				// },
 					{
 					text : '旧板入库',
 					id : 'oldpanel.oldpanel_Inbound',
@@ -49,12 +49,12 @@ Ext.define("menu.MenuRole_bc0", {
 				text : '原材料管理',
 				expanded : true,
 				children : [
+				// 	{
+				// 	text : '原材料领料',
+				// 	id : 'material.material_Receive',
+				// 	leaf : true
+				// },
 					{
-					text : '原材料领料',
-					id : 'material.material_Receive',
-					leaf : true
-				}
-				, {
 					text : '原材料入库',
 					id : 'material.material_Inbound',
 					leaf : true
@@ -152,11 +152,13 @@ Ext.define("menu.MenuRole_bc0", {
 			},{
 				text : '产品成品仓库管理',
 				expanded : true,
-				children : [  {
-					text : '单件产品成品入库',
-					id : 'product.product_Inbound_One',
-					leaf : true
-				} ,{
+				children : [
+				// 	{
+				// 	text : '单件产品成品入库',
+				// 	id : 'product.product_Inbound_One',
+				// 	leaf : true
+				// } ,
+					{
 					text : '产品成品入库',
 					id : 'product.product_Inbound',
 					leaf : true
