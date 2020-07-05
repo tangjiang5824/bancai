@@ -77,12 +77,25 @@ public class PanelMatchService extends BaseService{
             }
         }
         map = matchBackProduct(map,projectId,buildingId,buildingpositionId);
+        map = matchPreprocess(map,projectId,buildingId,buildingpositionId);
 //            map = matchOldpanel(map);
-//            map = matchPreprocess(map);
 //            map = matchMaterial(map);
         result.success = matchError(map,projectId,buildingId,buildingpositionId);
         return result;
     }
+
+    /**
+     * 插入设计清单，返回清单id
+     */
+    @Transactional
+    public int insertDesignlist(String projectId, String buildingId, String buildingpositionId, String productId, String position,
+                                int madeBy, int processStatus) {
+        return insertProjectService.insertDataToTable("insert into designlist " +
+                        "(projectId,buildingId,buildingpositionId,productId,position,madeBy,processStatus) values " +
+                        "(?,?,?,?,?,?,?)", projectId, buildingId, buildingpositionId, productId, position,
+                String.valueOf(madeBy), String.valueOf(processStatus));
+    }
+
     /**
      * 退库成品匹配
      */
@@ -108,11 +121,9 @@ public class PanelMatchService extends BaseService{
                         if (num > countUse) {
                             while (countUse > 0) {
                                 String position = value.get(num - 1);
-                                int designlistId = insertProjectService.insertDataToTable("insert into designlist " +
-                                        "(projectId,buildingId,buildingpositionId,productId,position,madeBy,processStatus) values " +
-                                        "(?,?,?,?,?,?,?)", projectId, buildingId, buildingpositionId, productId, position, "0", "0");
-                                int resultId = insertProjectService.insertDataToTable("insert into backproduct_match_result " +
-                                        "(designlistId,backproductId) values (?,?)", String.valueOf(designlistId), String.valueOf(backproductId));
+                                int designlistId = insertDesignlist(projectId, buildingId, buildingpositionId,
+                                        productId, position, 0, 0);
+                                int resultId = insertBackProductMatchResult(designlistId,backproductId);
                                 value.remove(num - 1);
                                 num--;
                                 countUse--;
@@ -121,11 +132,9 @@ public class PanelMatchService extends BaseService{
                         } else {
                             while (num > 0) {
                                 String position = value.get(num - 1);
-                                int designlistId = insertProjectService.insertDataToTable("insert into designlist " +
-                                        "(projectId,buildingId,buildingpositionId,productId,position,madeBy,processStatus) values " +
-                                        "(?,?,?,?,?,?,?)", projectId, buildingId, buildingpositionId, productId, position, "0", "0");
-                                int resultId = insertProjectService.insertDataToTable("insert into backproduct_match_result " +
-                                        "(designlistId,backproductId) values (?,?)", String.valueOf(designlistId), String.valueOf(backproductId));
+                                int designlistId = insertDesignlist(projectId, buildingId, buildingpositionId,
+                                        productId, position, 0, 0);
+                                int resultId = insertBackProductMatchResult(designlistId,backproductId);
                                 value.remove(num - 1);
                                 num--;
                                 countUse--;
@@ -147,22 +156,89 @@ public class PanelMatchService extends BaseService{
         return map;
 
     }
+
+    /**
+     * 插入退库成品匹配结果，返回id
+     */
+    @Transactional
+    public int insertBackProductMatchResult(int designlistId, int backproductId) {
+        return insertProjectService.insertDataToTable("insert into backproduct_match_result " +
+                "(designlistId,backproductId) values (?,?)", String.valueOf(designlistId), String.valueOf(backproductId));
+    }
+
+    /**
+     * 预加工半成品匹配
+     */
+    @Transactional
+    public Map<String,ArrayList<String>> matchPreprocess(Map<String,ArrayList<String>> map,
+                                                          String projectId, String buildingId, String buildingpositionId){
+        try{
+            Iterator iterator = map.keySet().iterator();
+            while (iterator.hasNext()) {
+                String key = iterator.next().toString();
+                ArrayList<String> value = map.get(key);
+                String productId = key.split("N")[0];
+                String productName = key.substring(productId.length()+1,key.length()-1);
+                System.out.println("match="+productName+"===position="+value);
+                //匹配列表
+                DataList preprocessList = queryService.query("select * from preprocess_store where productId=? and countUse>0"
+                        ,productId);
+                int num = value.size();
+                if(!preprocessList.isEmpty()) {
+                    for (DataRow dataRow : preprocessList) {
+                        int preprocessId = Integer.parseInt(dataRow.get("id").toString());
+                        int countUse = Integer.parseInt(dataRow.get("countUse").toString());
+                        if (num > countUse) {
+                            while (countUse > 0) {
+                                String position = value.get(num - 1);
+                                int designlistId = insertDesignlist(projectId, buildingId, buildingpositionId,
+                                        productId, position, 1, 0);
+                                int resultId = insertPreprocessMatchResult(designlistId,preprocessId);
+                                value.remove(num - 1);
+                                num--;
+                                countUse--;
+                            }
+                            jo.update("update preprocess_store set countUse=" + countUse + " where id=" + preprocessId);
+                        } else {
+                            while (num > 0) {
+                                String position = value.get(num - 1);
+                                int designlistId = insertDesignlist(projectId, buildingId, buildingpositionId,
+                                        productId, position, 1, 0);
+                                int resultId = insertPreprocessMatchResult(designlistId,preprocessId);
+                                value.remove(num - 1);
+                                num--;
+                                countUse--;
+                            }
+                            jo.update("update preprocess_store set countUse=" + countUse + " where id=" + preprocessId);
+                            break;
+                        }
+
+                    }
+                }
+                if(num==0)
+                    iterator.remove();
+            }
+        } catch (Exception e){
+            return map;
+        }
+//        String[] analyzeProductName = AnalyzeNameService.analyzeProductName(productName);
+        //String[]{format,productType,m,n,a,b,mnAngle,suffix,igSuffix,productTypeName}
+        return map;
+
+    }
+    /**
+     * 插入预加工半成品匹配结果，返回id
+     */
+    @Transactional
+    public int insertPreprocessMatchResult(int designlistId, int preprocessId) {
+        return insertProjectService.insertDataToTable("insert into preprocess_match_result " +
+                "(designlistId,preprocessId) values (?,?)", String.valueOf(designlistId), String.valueOf(preprocessId));
+    }
 //    /**
 //     * 旧板匹配
 //     */
 //    @Transactional
 //    public Map<String,ArrayList<String>> matchOldpanel(Map<String,ArrayList<String>> map){
-//        DataList matchList = new DataList();
-//        String[] analyzeProductName = AnalyzeNameService.analyzeProductName(productName);
-//        //String[]{format,productType,m,n,a,b,mnAngle,suffix,igSuffix,productTypeName}
-//
-//        return map;
-//    }
-//    /**
-//     * 预加工半成品匹配
-//     */
-//    @Transactional
-//    public Map<String,ArrayList<String>> matchPreprocess(Map<String,ArrayList<String>> map){
 //        DataList matchList = new DataList();
 //        String[] analyzeProductName = AnalyzeNameService.analyzeProductName(productName);
 //        //String[]{format,productType,m,n,a,b,mnAngle,suffix,igSuffix,productTypeName}
@@ -204,19 +280,9 @@ public class PanelMatchService extends BaseService{
             return false;
         }
     }
-    @Transactional
-    public DataList insertDesignlist(String productTypeId, String productNameFormat) {
-        String sql = "select * from matchrules where productTypeId=? and productNameFormat=?";
-        DataList list = queryService.query(sql, productTypeId, productNameFormat);
-        return list;
-    }
 
-    @Transactional
-    public DataList insertMatchResult(String productTypeId, String productNameFormat) {
-        String sql = "select * from matchrules where productTypeId=? and productNameFormat=?";
-        DataList list = queryService.query(sql, productTypeId, productNameFormat);
-        return list;
-    }
+
+
 
     @Transactional
     public DataList findOldpanelMatchRules(String productTypeId, String productNameFormat) {
