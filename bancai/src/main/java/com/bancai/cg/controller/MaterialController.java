@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.bancai.cg.dao.*;
 import com.bancai.cg.entity.*;
+import com.bancai.cg.util.JPAObjectUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -79,12 +80,8 @@ public class MaterialController {
         Pageable pageable=PageRequest.of(Integer.parseInt(page)-1,Integer.parseInt(limit));
         Page<MaterialInfo> page1=materialinfodao.findAll(spec,pageable);
         List<MaterialInfo> list= page1.getContent();
-        JSONArray array=new JSONArray(Arrays.asList(list));
-        JSONObject object=new JSONObject();
-        object.put("totalcount",page1.getTotalElements());
-        object.put("material_info",array.get(0));
-        //JSONArray.toJSONString(Arrays.asList(list));
-        return object.toJSONString();
+    //    JSONArray array=new JSONArray(Arrays.asList(list));
+        return JPAObjectUtil.transListForString(list,"material_info");
     }
 
     /*
