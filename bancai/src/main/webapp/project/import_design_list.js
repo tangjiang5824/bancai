@@ -218,8 +218,10 @@ Ext.define('project.import_design_list', {
 												buildingId:buildingId,
 												buildingpositionId:positionId,
 											},
-											success : function(exceluploadform, action) {
-												var response = action.result;
+											success : function(exceluploadform,response, action) {
+												var response1 = action;
+												console.log("exceluploadform=========================>",exceluploadform)
+												console.log("response1=========================>",response1)
 												Ext.MessageBox.alert("提示", "上传成功!");
 //												var toolbar2 = Ext.getCmp("toolbar2");
 //												var toolbar3 = Ext.getCmp("toolbar3");
