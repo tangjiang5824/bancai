@@ -265,6 +265,23 @@ public class MaterialController {
         object.put("material_logdetail",list);
         return object.toJSONString();
     }
+    @RequestMapping("/project/addAndupdateBuiling.do")
+    @Transactional
+    public boolean addAndupdateBuiling(Integer projectId,Integer id,String buildingNo,String buildingName,String buildingLeader){
+        Project project=projectdao.findById(projectId).orElse(null);
+        Building building=new Building();
+        if(buildingNo!=null&&buildingNo.trim().length()!=0)
+        building.setBuildingNo(buildingNo);
+        if(buildingName!=null&&buildingName.trim().length()!=0)
+            building.setBuildingName(buildingName);
+        if(buildingLeader!=null&&buildingLeader.trim().length()!=0)
+            building.setBuildingLeader(buildingLeader);
+        if(id!=null&&id>0)
+            building.setId(id);
+        building.setProject(project);
+        buildingdao.save(building);
+        return true;
+    }
 
 
 }

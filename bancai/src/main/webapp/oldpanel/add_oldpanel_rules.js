@@ -240,7 +240,7 @@ Ext.define('oldpanel.add_oldpanel_rules', {
             items: [{
                 columnWidth: .3,
                 xtype: 'fieldset',
-                title: '退库信息',
+                title: '添加约束条件',
                 layout: 'form',
                 defaults: {anchor: '95%'},
                 style: 'margin-left: 5px;padding-left: 5px;',
@@ -318,7 +318,7 @@ Ext.define('oldpanel.add_oldpanel_rules', {
         var grid_pro_condition = Ext.create("Ext.panel.Panel", {
             id : 'grid_pro_condition',
             // region:'north',
-            title:'新建原材料退库表',
+            // title:'新建原材料退库表',
             height:400,
             store : {
                 fields :[]

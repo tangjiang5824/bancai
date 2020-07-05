@@ -1,7 +1,9 @@
 package com.bancai.cg.service;
 
 import com.bancai.commonMethod.QueryAllService;
+import com.bancai.db.mysqlcondition;
 import com.bancai.domain.DataList;
+import com.bancai.vo.WebResponse;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,6 +14,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.bancai.service.BaseService;
+import com.bancai.db.mysqlcondition;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -23,7 +26,8 @@ public class InsertProjectService extends BaseService {
     private Logger log = Logger.getLogger(InsertProjectService.class);
     @Autowired
     private QueryAllService queryService;
-
+    @Autowired
+    private QueryAllService queryAllService;
     /**
      * 插入通用接口，sql和要插入的字段值，所有插入都是String
      * @param sql
@@ -84,7 +88,7 @@ public class InsertProjectService extends BaseService {
      * @return
      */
     @Transactional
-    public DataList findallbytableName(String tablename,String start,String limit,String...args){
+    public DataList findcolumbytableName(String tablename,String start,String limit,String...args){
         String colum="";
         if(null==args){
             colum="*";
@@ -99,6 +103,34 @@ public class InsertProjectService extends BaseService {
         DataList typelist = queryService.query(sql);
         return typelist;
     }
+    /**
+     * 通用接口  通过表名和要查的字段和条件查询结果
+     * @param tablename
+     * @param args
+     * @return
+     */
+    @Transactional
+    public WebResponse findcolumbytableNameAndcondition(String tablename, String start, String limit, String...args){
+        int i=0;
+        mysqlcondition c=new mysqlcondition();
+        mysqlcondition condition=null;
+        String colum=null;
+        String symbol=null;
+        String value=null;
+        for(String arg:args){
+            if(i%3==0){
+                condition=new mysqlcondition();
+                colum=arg;
+            }else if(i%3==1){
+                symbol=arg;
+            }else {
+                value=arg;
+                c.and(new mysqlcondition(colum,symbol,value) );
+            }
+            i++;
+        }
+        return queryAllService.queryDataPage(Integer.parseInt(start), Integer.parseInt(limit), c, tablename);
+    }
     //通用接口 重载 全查 只用传入tablename
     @Transactional
     public DataList findallbytableName(String tablename,String start,String limit){
@@ -112,7 +144,7 @@ public class InsertProjectService extends BaseService {
     public DataList findallbytableNameAndinfo(String tablename,String variable,String value,String start,String limit){
         String sql=null;
         DataList list=null;
-        if (value!=null) {
+        if (value!=null&&value.trim().length()!=0) {
          sql="select * from " + tablename + " where " + variable + "= ? limit " + start + "," + limit;
          list=queryService.query(sql,value);
         }else {
