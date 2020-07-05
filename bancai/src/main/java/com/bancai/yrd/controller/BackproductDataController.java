@@ -49,8 +49,8 @@ public class BackproductDataController {
     @RequestMapping(value = "/backproduct/addData.do")
     public boolean backproductAddData(String s, String projectId, String buildingId, String operator, HttpSession session) {
         JSONArray jsonArray = new JSONArray(s);
-//        String userId = (String) session.getAttribute("userid");
-        String userId ="1";
+        String userId = (String) session.getAttribute("userid");
+//        String userId ="1";
         Date date = new Date();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String sql_backLog = "insert into backproduct_log (type,userId,time,projectId,buildingId,operator) values(?,?,?,?,?,?)";
@@ -75,6 +75,33 @@ public class BackproductDataController {
         }
         return true;
     }
+//    /*
+//     * 上传excel文件
+//     * */
+//
+//    //produces = {"text/html;charset=UTF-8"}
+//    @RequestMapping(value = "/backproduct/uploadExcel.do")
+//    public WebResponse uploadOldpanel(MultipartFile uploadFile, String projectId, String buildingId, String operator, HttpSession session) {
+//        WebResponse response = new WebResponse();
+//        String userId = (String) session.getAttribute("userid");
+//        Date date=new Date();
+//        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        String sql_addLog = "insert into backproduct_log (type,userId,time,projectId,buildingId,operator) values(?,?,?,?,?,?)";
+//        int backproductlogId= insertProjectService.insertDataToTable(sql_addLog,"0",userId,simpleDateFormat.format(date),projectId,buildingId,operator);
+//        try {
+//            UploadDataResult result = allExcelService.uploadBackproductExcelData(uploadFile.getInputStream(),userId,backproductlogId);
+//            response.put("value",result.dataList);
+//            response.put("totalCount", result.dataList.size());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            response.setSuccess(false);
+//            response.setErrorCode(1000); //未知错误
+//            response.setMsg(e.getMessage());
+//        }
+//        System.out.println(response.get("success"));
+//        System.out.println(response.get("value"));
+//        return response;
+//    }
 
 
 }
