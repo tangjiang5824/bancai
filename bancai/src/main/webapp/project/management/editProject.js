@@ -328,9 +328,9 @@ Ext.define('project.management.editProject',{
                     // console.log("editor===",editor.context.newValues)  //
 
                     Ext.Ajax.request({
-                        // url:"data/BuildingEditCellById.do",  //EditDataById.do
+                        url:"project/addAndupdateBuiling.do",  //EditDataById.do
                         params:{
-                            tableName:table_name,
+                            // tableName:table_name,
                             projectId:project_Id,
                             // field:field,
                             // value:e.value,
@@ -341,10 +341,15 @@ Ext.define('project.management.editProject',{
                             buildingLeader:buildingLeader
                         },
                         success:function (response) {
+                            Ext.MessageBox.alert("提示","修改成功" );
                             if(flag){
                                 e.record.data.id=response.responseText;
                             }
-
+                            //重新加载
+                            Ext.getCmp('building_grid').getStore().load();
+                        },
+                        failure:function (response) {
+                            Ext.MessageBox.alert("提示","修改失败" );
                         }
                     })
                 }
