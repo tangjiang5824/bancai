@@ -2,7 +2,7 @@ Ext.define('material.material_Query_Data',{
     extend:'Ext.panel.Panel',
     region: 'center',
     layout:'fit',
-    title: '原材料数据查询',
+    title: '原材料仓库查询',
     initComponent: function(){
         var itemsPerPage = 50;
         var tableName="material_info";
@@ -23,7 +23,7 @@ Ext.define('material.material_Query_Data',{
             listeners:{
                 load:function(store,records){
                     for(var i=0;i<records.length;i++){
-                        records[i].set('material_name',records[i].get('material_name')+"(规格:"+records[i].get('specification')+")");
+                        records[i].set('material_name',records[i].get('materialName')+"(规格:"+records[i].get('specification')+")");
                     }
                 }
             },
@@ -41,10 +41,9 @@ Ext.define('material.material_Query_Data',{
             // allowBlank:false,
             emptyText : "--请选择--",
             displayField: 'material_name',
-            valueField: 'id',
+            valueField: 'materialName', //显示name
             editable : true,
             store: MaterialNameList,
-
         });
         var toolbar_top = Ext.create("Ext.toolbar.Toolbar", {
             // dock : "top",
@@ -134,7 +133,8 @@ Ext.define('material.material_Query_Data',{
                                 // startWidth : Ext.getCmp('startWidth').getValue(),
                                 // endTWidth : Ext.getCmp('endWidth').getValue(),
                                 // materialName:Ext.getCmp('materialName').getValue(),//获取id  Ext.getCmp('materialName').rawValue
-                                materialName:Ext.getCmp('materialName').rawValue,//获取显示字段
+                                // materialName:Ext.getCmp('materialName').rawValue,//获取显示字段
+                                materialName:Ext.getCmp('materialName').value,//获取显示字段
                                 specification:Ext.getCmp('specification').getValue(),
                                 totalCount_min:Ext.getCmp('minCount').getValue(),
                                 totalCount_max:Ext.getCmp('maxCount').getValue(),
