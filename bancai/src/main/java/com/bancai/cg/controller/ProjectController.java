@@ -171,11 +171,24 @@ public class ProjectController {
 
     //返回对应projectId的所有项目信息和对应的楼栋信息
     @RequestMapping(value="/project/findProjectAndBuilding.do")
-    public void findProjectAndBuilding(String projectId,String start,String limit,HttpServletResponse response) throws IOException, JSONException {
-            if(null==start) start="0";
-            if(null==limit) limit="50";
-            DataList projectList= insertProjectService.findallbytableNameAndinfo("project","id",projectId,start,limit);
-            DataList buildingList=insertProjectService.findallbytableNameAndinfo("building","projectId",projectId,start,limit);
+    public void findProjectAndBuilding(String projectId,String page,String start,String limit,HttpServletResponse response) throws IOException, JSONException {
+        int thisPage=1;
+        int thisStart=0;
+        int thisLimit=25;
+        if(null==page||page.equals("")){
+            thisPage=1;
+        }else {
+            thisPage=Integer.parseInt(page);
+        }
+        if(null==start||start.equals("")||null==limit||limit.equals("")){
+            thisStart=0;
+            thisLimit=25;
+        }else {
+            thisLimit=Integer.parseInt(limit);
+            thisStart=(thisPage-1)*thisLimit;
+        }
+            DataList projectList= insertProjectService.findallbytableNameAndinfo("project","id",projectId,thisStart+"",thisLimit+"");
+            DataList buildingList=insertProjectService.findallbytableNameAndinfo("building","projectId",projectId,thisStart+"",thisLimit+"");
             JSONObject object=new JSONObject();
             JSONArray parray =new JSONArray(projectList);
             JSONArray barray=new JSONArray(buildingList);
@@ -189,11 +202,24 @@ public class ProjectController {
     }
     //返回对应projectId的楼栋信息
     @RequestMapping(value="/project/findBuilding.do")
-    public void findProjectBuilding(String projectId,String start,String limit,HttpServletResponse response) throws IOException, JSONException {
+    public void findProjectBuilding(String projectId,String page,String start,String limit,HttpServletResponse response) throws IOException, JSONException {
         //DataList projectList= insertProjectService.findallbytableNameAndinfo("project","id",projectId);
-        if(null==start) start="0";
-        if(null==limit) limit="50";
-        DataList buildingList=insertProjectService.findallbytableNameAndinfo("building","projectId",projectId,start,limit);
+        int thisPage=1;
+        int thisStart=0;
+        int thisLimit=25;
+        if(null==page||page.equals("")){
+            thisPage=1;
+        }else {
+            thisPage=Integer.parseInt(page);
+        }
+        if(null==start||start.equals("")||null==limit||limit.equals("")){
+            thisStart=0;
+            thisLimit=25;
+        }else {
+            thisLimit=Integer.parseInt(limit);
+            thisStart=(thisPage-1)*thisLimit;
+        }
+        DataList buildingList=insertProjectService.findallbytableNameAndinfo("building","projectId",projectId,thisStart+"",thisLimit+"");
         JSONObject object=new JSONObject();
         //JSONArray parray =new JSONArray(projectList);
         JSONArray barray=new JSONArray(buildingList);
@@ -212,10 +238,23 @@ public class ProjectController {
      * @throws IOException
      */
     @RequestMapping(value="/material/materialType.do")
-    public void findmaterialtype(HttpServletResponse response,String start,String limit) throws IOException, JSONException {
-        if(null==start) start="0";
-        if(null==limit) limit="50";
-        DataList projectList = insertProjectService.findmaterialtype(start,limit);
+    public void findmaterialtype(HttpServletResponse response,String start,String page,String limit) throws IOException, JSONException {
+        int thisPage=1;
+        int thisStart=0;
+        int thisLimit=25;
+        if(null==page||page.equals("")){
+            thisPage=1;
+        }else {
+            thisPage=Integer.parseInt(page);
+        }
+        if(null==start||start.equals("")||null==limit||limit.equals("")){
+            thisStart=0;
+            thisLimit=25;
+        }else {
+            thisLimit=Integer.parseInt(limit);
+            thisStart=(thisPage-1)*thisLimit;
+        }
+        DataList projectList = insertProjectService.findmaterialtype(thisStart+"",thisLimit+"");
         //写回前端
         JSONObject object = new JSONObject();
         JSONArray array = new JSONArray(projectList);
