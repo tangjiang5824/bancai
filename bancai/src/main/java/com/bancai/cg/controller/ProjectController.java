@@ -521,7 +521,7 @@ public class ProjectController {
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String update_log="update oldpanel_log set isrollback=1 where id=?";
         //把isrollback改为1
-        insertProjectService.insertIntoTableBySQL(update_log,oldpanellogId);
+        insertProjectService.insertIntoTableBySQL(update_log,oldpanellogId);//更新log表
 
         //log主键
         String sql_insert_new_log="insert into oldpanel_log (type,userId,time,operator,isrollback) values(?,?,?,?,?)";
@@ -530,35 +530,35 @@ public class ProjectController {
         if (type.equals("0")) main_key= insertProjectService.insertDataToTable(sql_insert_new_log,"3",userid,simpleDateFormat.format(date),operator,"1");
 
 
-        DataList list=queryService.query(sql_find_log_detail,oldpanellogId);
+        DataList list=queryService.query(sql_find_log_detail,oldpanellogId);//通过oldpanellogId找对应的oldpanellogdetail
         for(int i=0;i<list.size();i++){
             String oldpanelstoreId=list.get(i).get("oldpanelstoreId")+"";
             String oldpanelName="";
             String specification="";
-            String oldpanelId="";
+            String oldpanelId=list.get(i).get("oldpanelId")+"";
 
-            if(null!=list.get(i).get("oldpanelName")) oldpanelName=list.get(i).get("oldpanelName")+"";
-            if(null!=list.get(i).get("specification")) specification=list.get(i).get("specification")+"";
-            if(null!=list.get(i).get("oldpanelId")) oldpanelId=list.get(i).get("oldpanelId")+"";
+            //if(null!=list.get(i).get("oldpanelName")) oldpanelName=list.get(i).get("oldpanelName")+"";
+            //if(null!=list.get(i).get("specification")) specification=list.get(i).get("specification")+"";
+            //if(null!=list.get(i).get("oldpanelId")) oldpanelId=list.get(i).get("oldpanelId")+"";
             String count=list.get(i).get("count")+"";
-            int count_to_op=Integer.valueOf(count);
+            //int count_to_op=Integer.valueOf(count);
             if(type.equals("0")){
                 //撤销入库
 
                 //进行回滚出库
                 String sql_find_list="select * from oldpanel_store where id=?";
                 DataList count_list=queryService.query(sql_find_list,oldpanelstoreId);
-                if(count_list.size()!=1||Integer.valueOf(count_list.get(0).get("count")+"")!=count_to_op) return  false;
-                String sql_update_count="update oldpanel_store set count=0 where id=?";
-                insertProjectService.insertIntoTableBySQL(sql_update_count,oldpanelstoreId);
+                //if(count_list.size()!=1||Integer.valueOf(count_list.get(0).get("count")+"")!=count_to_op) return  false;
+                String sql_update_count="update oldpanel_store set countUse=countUse-?,countStore=countStore-? where id=?";
+                insertProjectService.insertIntoTableBySQL(sql_update_count,count,count,oldpanelstoreId);
 
                 //修改完成撤销的原logdetail
                 String detail_id=list.get(i).get("id")+"";
                 String update_detail_isrollback="update oldpanel_logdetail set isrollback=1 where id=?";
                 insertProjectService.insertIntoTableBySQL(update_detail_isrollback,detail_id);
                 //插入新的detail
-                String sql_insert_new_detial="insert into oldpanel_logdetail (oldpanelName,count,specification,oldpanellogId,oldpanelId,oldpanelstoreId,isrollback) values(?,?,?,?,?,?,?)";
-                insertProjectService.insertIntoTableBySQL(sql_insert_new_detial,oldpanelName,count,specification,main_key+"",oldpanelId,oldpanelstoreId,"1");
+                String sql_insert_new_detial="insert into oldpanel_logdetail (count,oldpanellogId,oldpanelId,oldpanelstoreId,isrollback) values(?,?,?,?,?)";
+                insertProjectService.insertIntoTableBySQL(sql_insert_new_detial,count,main_key+"",oldpanelId,oldpanelstoreId,"1");
             }
         }
 
