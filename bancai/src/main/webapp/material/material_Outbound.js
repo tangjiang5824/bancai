@@ -37,8 +37,8 @@ Ext.define('material.material_Outbound',{
         //操作类型：枚举类型
         Ext.define('material.oepration.state', {
             statics: { // 关键
-                0: { value: '0', name: '未回滚' },
-                1: { value: '1', name: '已回滚' },
+                0: { value: '0', name: '未撤销' },
+                1: { value: '1', name: '已撤销' },
             }
         });
 
@@ -312,7 +312,7 @@ Ext.define('material.material_Outbound',{
 
                 {
                     xtype : 'button',
-                    text: '回滚所有记录',
+                    text: '撤销所有记录',
                     width: 100,
                     margin: '0 0 0 40',
                     layout: 'right',
@@ -360,8 +360,8 @@ Ext.define('material.material_Outbound',{
         });
 
         //弹出框，出入库详细记录
-        var material_Query_Records_specific_data_grid=Ext.create('Ext.grid.Panel',{
-            id : 'material_Query_Records_specific_data_grid',
+        var specific_data_grid_outbound=Ext.create('Ext.grid.Panel',{
+            id : 'specific_data_grid_outbound',
             tbar: toolbar_pop,
             // store:material_Query_Records_store1,//oldpanellogdetailList，store1的数据固定
             dock: 'bottom',
@@ -396,16 +396,16 @@ Ext.define('material.material_Outbound',{
             // }
         });
 
-        var material_Query_Records_win_showmaterialData = Ext.create('Ext.window.Window', {
-            id:'material_Query_Records_win_showmaterialData',
-            title: '原材料出入库记录回滚',
+        var win_showmaterialData_outbound = Ext.create('Ext.window.Window', {
+            id:'win_showmaterialData_outbound',
+            title: '原材料出入库记录撤销',
             height: 500,
             width: 650,
             layout: 'fit',
             closable : true,
             draggable:true,
-            closeAction : 'close',
-            items:material_Query_Records_specific_data_grid,
+            closeAction : 'hidden',
+            items:specific_data_grid_outbound,
         });
 
         var grid = Ext.create("Ext.grid.Panel", {
@@ -442,7 +442,7 @@ Ext.define('material.material_Outbound',{
                         return "<INPUT type='button' value='查看' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
                     }
                 },
-                {   text: '记录是否回滚',
+                {   text: '记录是否撤销',
                     dataIndex: 'isrollback',
                     flex :1 ,
                     renderer: function (value) {
@@ -660,6 +660,8 @@ Ext.define('material.material_Outbound',{
             }
 
         });
+
+
         //添加cell单击事件
         grid.addListener('cellclick', cellclick);
         function cellclick(grid, rowIndex, columnIndex, e) {
@@ -696,7 +698,7 @@ Ext.define('material.material_Outbound',{
                     autoLoad: true
                 });
                 // 根据出入库0/1，决定弹出框表格列名
-                var col = material_Query_Records_specific_data_grid.columns[1];
+                var col = specific_data_grid_outbound.columns[1];
                 // if (opType == 1) {
                 //     col.setText("出库数量");
                 // }
@@ -708,9 +710,9 @@ Ext.define('material.material_Outbound',{
 
                 Ext.getCmp("toolbar_pop").items.items[0].setText(id); //设置log id的值
                 Ext.getCmp("toolbar_pop").items.items[1].setText(isrollback);
-                material_Query_Records_specific_data_grid.setStore(materiallogdetailList);
+                specific_data_grid_outbound.setStore(materiallogdetailList);
                 // console.log(materiallogdetailList);
-                Ext.getCmp('material_Query_Records_win_showmaterialData').show();
+                Ext.getCmp('win_showmaterialData_outbound').show();
 
                 // if (materialArr.length != 0) {
                 //     Ext.Msg.confirm("提示", "共选中" + materialArr.length + "条数据，是否确认撤消？", function (btn) {

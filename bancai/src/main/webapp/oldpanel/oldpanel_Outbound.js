@@ -286,12 +286,21 @@ Ext.define('oldpanel.oldpanel_Outbound',{
             layout: 'fit',
             closable : true,
             draggable:true,
-            closeAction : 'close',
-            items:oldpanel_Query_Records_specific_data_grid,
+            closeAction : 'hidden',
+            items:[oldpanel_Query_Records_specific_data_grid],
+            autoDestroy:true,
         });
 
+        // //点击右上角的关闭按钮后
+        // oldpanel_Query_Records_win_showoldpanelData.on("close",function(){
+        //     console.log("关闭窗口")
+        //     //重新加载
+        //     Ext.getCmp('oldpanel_inbound_DataGrid').getStore().load();
+        //
+        // });
+
         var grid = Ext.create("Ext.grid.Panel", {
-            id : 'addDataGrid',
+            id : 'oldpanel_inbound_DataGrid',
             //dockedItems : [toolbar2],
             // store : {
             //     fields :['projectId','类型','长1','宽1','数量','成本','行','列','库存单位','仓库编号','规格','原材料名称']
@@ -369,15 +378,15 @@ Ext.define('oldpanel.oldpanel_Outbound',{
             if (rowIndex < 0) {
                 return;
             }
-            var fieldName = Ext.getCmp('addDataGrid').columns[columnIndex].text;
-            var sm = Ext.getCmp('addDataGrid').getSelectionModel();
+            var fieldName = Ext.getCmp('oldpanel_inbound_DataGrid').columns[columnIndex].text;
+            var sm = Ext.getCmp('oldpanel_inbound_DataGrid').getSelectionModel();
             var id = e.data.id  //选中记录的logid
             var isrollback = e.data.isrollback
             // console.log("行号：",e.data)
 
             if (fieldName == "操作") {
 
-                var oldpanellogdetailList = Ext.create('Ext.data.Store', {
+                var oldpanellogdetailList_outbound = Ext.create('Ext.data.Store', {
                     fields: ['oldpanelName', //'length', 'width','materialType',
                          'count'],
                     proxy: {
@@ -394,7 +403,7 @@ Ext.define('oldpanel.oldpanel_Outbound',{
 
                 Ext.getCmp("toolbar_pop").items.items[0].setText(id); //设置log id的值
                 Ext.getCmp("toolbar_pop").items.items[1].setText(isrollback);
-                oldpanel_Query_Records_specific_data_grid.setStore(oldpanellogdetailList);
+                oldpanel_Query_Records_specific_data_grid.setStore(oldpanellogdetailList_outbound);
                 Ext.getCmp('oldpanel_Query_Records_win_showoldpanelData').show();
 
 

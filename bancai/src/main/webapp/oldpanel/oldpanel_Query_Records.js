@@ -182,8 +182,8 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
         });
 
         //弹出框
-        var oldpanel_Query_Records_specific_data_grid=Ext.create('Ext.grid.Panel',{
-            id : 'oldpanel_Query_Records_specific_data_grid',
+        var oldpanel_specific_data_grid_query=Ext.create('Ext.grid.Panel',{
+            id : 'oldpanel_specific_data_grid_query',
             dock: 'bottom',
             columns:[
                 {text: '旧板名称', dataIndex: 'oldpanelName', flex :1, width:"80"},
@@ -201,8 +201,8 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
                 },
             }
         });
-        var oldpanel_Query_Records_win_showoldpanelData = Ext.create('Ext.window.Window', {
-            id:'oldpanel_Query_Records_win_showoldpanelData',
+        var win_showoldpanelData_query = Ext.create('Ext.window.Window', {
+            id:'win_showoldpanelData_query',
             title: '旧板出入库详细信息',
             height: 500,
             width: 650,
@@ -210,7 +210,7 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
             closable : true,
             draggable:true,
             closeAction : 'close',
-            items:oldpanel_Query_Records_specific_data_grid,
+            items:oldpanel_specific_data_grid_query,
         });
 
         var grid = Ext.create('Ext.grid.Panel',{
@@ -274,7 +274,7 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
                         autoLoad : true
                     });
                     // 根据出入库0/1，决定弹出框表格列名
-                    var col = oldpanel_Query_Records_specific_data_grid.columns[1];
+                    var col = oldpanel_specific_data_grid_query.columns[1];
                     if(opType == 1){
                         col.setText("出库数量");
                     }
@@ -286,9 +286,9 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
                     }
 
 
-                    oldpanel_Query_Records_specific_data_grid.setStore(oldpanellogdetailList);
+                    oldpanel_specific_data_grid_query.setStore(oldpanellogdetailList);
                     console.log(oldpanellogdetailList);
-                    Ext.getCmp('oldpanel_Query_Records_win_showoldpanelData').show();
+                    Ext.getCmp('win_showoldpanelData_query').show();
                 }
             }
         });
