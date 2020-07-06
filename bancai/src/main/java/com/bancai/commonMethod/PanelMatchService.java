@@ -1,11 +1,9 @@
 package com.bancai.commonMethod;
 
-
 import com.bancai.cg.service.InsertProjectService;
+import com.bancai.domain.DataList;
 import com.bancai.domain.DataRow;
 import com.bancai.service.BaseService;
-import com.bancai.commonMethod.QueryAllService;
-import com.bancai.domain.DataList;
 import com.bancai.util.Excel;
 import com.bancai.vo.UploadDataResult;
 import com.bancai.yrd.service.ProductDataService;
@@ -14,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -102,55 +99,54 @@ public class PanelMatchService extends BaseService{
     @Transactional
     public Map<String,ArrayList<String>> matchBackProduct(Map<String,ArrayList<String>> map,
                                                           String projectId, String buildingId, String buildingpositionId){
-        try{
-            Iterator iterator = map.keySet().iterator();
-            while (iterator.hasNext()) {
-                String key = iterator.next().toString();
-                ArrayList<String> value = map.get(key);
-                String productId = key.split("N")[0];
-                String productName = key.substring(productId.length()+1,key.length()-1);
-                System.out.println("match="+productName+"===position="+value);
-                //匹配列表
-                DataList backproductList = queryService.query("select * from backproduct_store where productId=? and countUse>0"
-                        ,productId);
-                int num = value.size();
-                if(!backproductList.isEmpty()) {
-                    for (DataRow dataRow : backproductList) {
-                        int backproductId = Integer.parseInt(dataRow.get("id").toString());
-                        int countUse = Integer.parseInt(dataRow.get("countUse").toString());
-                        if (num > countUse) {
-                            while (countUse > 0) {
-                                String position = value.get(num - 1);
-                                int designlistId = insertDesignlist(projectId, buildingId, buildingpositionId,
-                                        productId, position, 0, 0);
-                                int resultId = insertBackProductMatchResult(designlistId,backproductId);
-                                value.remove(num - 1);
-                                num--;
-                                countUse--;
-                            }
-                            jo.update("update backproduct_store set countUse=" + countUse + " where id=" + backproductId);
-                        } else {
-                            while (num > 0) {
-                                String position = value.get(num - 1);
-                                int designlistId = insertDesignlist(projectId, buildingId, buildingpositionId,
-                                        productId, position, 0, 0);
-                                int resultId = insertBackProductMatchResult(designlistId,backproductId);
-                                value.remove(num - 1);
-                                num--;
-                                countUse--;
-                            }
-                            jo.update("update backproduct_store set countUse=" + countUse + " where id=" + backproductId);
-                            break;
+        Iterator iterator = map.keySet().iterator();
+        while (iterator.hasNext()) {
+            String key = iterator.next().toString();
+            ArrayList<String> value = map.get(key);
+            String productId = key.split("N")[0];
+            String productName = key.substring(productId.length()+1);
+            System.out.println("Backmatch="+productName+"===productId="+productId+"===position="+value);
+            //匹配列表
+            DataList backproductList = queryService.query("select * from backproduct_store where productId=? and countUse>0"
+                    ,productId);
+            int num = value.size();
+            if(!backproductList.isEmpty()) {
+                for (DataRow dataRow : backproductList) {
+                    int backproductId = Integer.parseInt(dataRow.get("id").toString());
+                    int countUse = Integer.parseInt(dataRow.get("countUse").toString());
+                    if (num > countUse) {
+                        while (countUse > 0) {
+                            String position = value.get(num - 1);
+                            int designlistId = insertDesignlist(projectId, buildingId, buildingpositionId,
+                                    productId, position, 0, 0);
+                            int resultId = insertBackProductMatchResult(designlistId,backproductId);
+                            value.remove(num - 1);
+                            num--;
+                            countUse--;
                         }
-
+                        updateStoreCount("backproduct",countUse,backproductId);
+//                        jo.update("update backproduct_store set countUse=" + countUse + " where id=" + backproductId);
+                    } else {
+                        while (num > 0) {
+                            String position = value.get(num - 1);
+                            int designlistId = insertDesignlist(projectId, buildingId, buildingpositionId,
+                                    productId, position, 0, 0);
+                            int resultId = insertBackProductMatchResult(designlistId,backproductId);
+                            value.remove(num - 1);
+                            num--;
+                            countUse--;
+                        }
+                        updateStoreCount("backproduct",countUse,backproductId);
+//                        jo.update("update backproduct_store set countUse=" + countUse + " where id=" + backproductId);
+                        break;
                     }
+
                 }
-                if(num==0)
-                    iterator.remove();
             }
-        } catch (Exception e){
-            return map;
+            if(num==0)
+                iterator.remove();
         }
+
 //        String[] analyzeProductName = AnalyzeNameService.analyzeProductName(productName);
         //String[]{format,productType,m,n,a,b,mnAngle,suffix,igSuffix,productTypeName}
         return map;
@@ -172,54 +168,52 @@ public class PanelMatchService extends BaseService{
     @Transactional
     public Map<String,ArrayList<String>> matchPreprocess(Map<String,ArrayList<String>> map,
                                                           String projectId, String buildingId, String buildingpositionId){
-        try{
-            Iterator iterator = map.keySet().iterator();
-            while (iterator.hasNext()) {
-                String key = iterator.next().toString();
-                ArrayList<String> value = map.get(key);
-                String productId = key.split("N")[0];
-                String productName = key.substring(productId.length()+1,key.length()-1);
-                System.out.println("match="+productName+"===position="+value);
-                //匹配列表
-                DataList preprocessList = queryService.query("select * from preprocess_store where productId=? and countUse>0"
-                        ,productId);
-                int num = value.size();
-                if(!preprocessList.isEmpty()) {
-                    for (DataRow dataRow : preprocessList) {
-                        int preprocessId = Integer.parseInt(dataRow.get("id").toString());
-                        int countUse = Integer.parseInt(dataRow.get("countUse").toString());
-                        if (num > countUse) {
-                            while (countUse > 0) {
-                                String position = value.get(num - 1);
-                                int designlistId = insertDesignlist(projectId, buildingId, buildingpositionId,
-                                        productId, position, 1, 0);
-                                int resultId = insertPreprocessMatchResult(designlistId,preprocessId);
-                                value.remove(num - 1);
-                                num--;
-                                countUse--;
-                            }
-                            jo.update("update preprocess_store set countUse=" + countUse + " where id=" + preprocessId);
-                        } else {
-                            while (num > 0) {
-                                String position = value.get(num - 1);
-                                int designlistId = insertDesignlist(projectId, buildingId, buildingpositionId,
-                                        productId, position, 1, 0);
-                                int resultId = insertPreprocessMatchResult(designlistId,preprocessId);
-                                value.remove(num - 1);
-                                num--;
-                                countUse--;
-                            }
-                            jo.update("update preprocess_store set countUse=" + countUse + " where id=" + preprocessId);
-                            break;
+        Iterator iterator = map.keySet().iterator();
+        while (iterator.hasNext()) {
+            String key = iterator.next().toString();
+            ArrayList<String> value = map.get(key);
+            String productId = key.split("N")[0];
+            String productName = key.substring(productId.length()+1);
+            System.out.println("Prematch="+productName+"===productId="+productId+"===position="+value);
+            //匹配列表
+            DataList preprocessList = queryService.query("select * from preprocess_store where productId=? and countUse>0"
+                    ,productId);
+            int num = value.size();
+            if(!preprocessList.isEmpty()) {
+                for (DataRow dataRow : preprocessList) {
+                    int preprocessId = Integer.parseInt(dataRow.get("id").toString());
+                    int countUse = Integer.parseInt(dataRow.get("countUse").toString());
+                    if (num > countUse) {
+                        while (countUse > 0) {
+                            String position = value.get(num - 1);
+                            int designlistId = insertDesignlist(projectId, buildingId, buildingpositionId,
+                                    productId, position, 1, 0);
+                            int resultId = insertPreprocessMatchResult(designlistId,preprocessId);
+                            value.remove(num - 1);
+                            num--;
+                            countUse--;
                         }
-
+                        updateStoreCount("preprocess",countUse,preprocessId);
+//                        jo.update("update preprocess_store set countUse=" + countUse + " where id=" + preprocessId);
+                    } else {
+                        while (num > 0) {
+                            String position = value.get(num - 1);
+                            int designlistId = insertDesignlist(projectId, buildingId, buildingpositionId,
+                                    productId, position, 1, 0);
+                            int resultId = insertPreprocessMatchResult(designlistId,preprocessId);
+                            value.remove(num - 1);
+                            num--;
+                            countUse--;
+                        }
+                        updateStoreCount("preprocess",countUse,preprocessId);
+//                        jo.update("update preprocess_store set countUse=" + countUse + " where id=" + preprocessId);
+                        break;
                     }
+
                 }
-                if(num==0)
-                    iterator.remove();
             }
-        } catch (Exception e){
-            return map;
+            if(num==0)
+                iterator.remove();
         }
 //        String[] analyzeProductName = AnalyzeNameService.analyzeProductName(productName);
         //String[]{format,productType,m,n,a,b,mnAngle,suffix,igSuffix,productTypeName}
@@ -259,26 +253,22 @@ public class PanelMatchService extends BaseService{
 
     @Transactional
     public boolean matchError(Map<String,ArrayList<String>> map, String projectId, String buildingId, String buildingpositionId){
-        try {
-            Iterator iterator = map.keySet().iterator();
-            while (iterator.hasNext()) {
-                String key = iterator.next().toString();
-                ArrayList<String> value = map.get(key);
-                String productId = key.split("N")[0];
-                String productName = key.substring(productId.length() + 1, key.length() - 1);
-                System.out.println("fell to match=" + productName + "===position=" + value);
-                while (value.size()>0){
-                    String position = value.get(value.size()-1);
-                    int designlistId = insertProjectService.insertDataToTable("insert into designlist " +
-                            "(projectId,buildingId,buildingpositionId,productId,position,madeBy,processStatus) values " +
-                            "(?,?,?,?,?,?,?)", projectId, buildingId, buildingpositionId, productId, position, "9", "0");
-                    value.remove(value.size()-1);
-                }
+        Iterator iterator = map.keySet().iterator();
+        while (iterator.hasNext()) {
+            String key = iterator.next().toString();
+            ArrayList<String> value = map.get(key);
+            String productId = key.split("N")[0];
+            String productName = key.substring(productId.length() + 1, key.length());
+            System.out.println("Errmatch==="+productName+"===productId="+productId+"===position="+value);
+            while (value.size()>0){
+                String position = value.get(value.size()-1);
+                int designlistId = insertProjectService.insertDataToTable("insert into designlist " +
+                        "(projectId,buildingId,buildingpositionId,productId,position,madeBy,processStatus) values " +
+                        "(?,?,?,?,?,?,?)", projectId, buildingId, buildingpositionId, productId, position, "9", "0");
+                value.remove(value.size()-1);
             }
-            return true;
-        }catch (Exception e){
-            return false;
         }
+        return true;
     }
 
 
@@ -307,10 +297,13 @@ public class PanelMatchService extends BaseService{
                 b = false;
             }
         }
+        System.out.println("correct to ==="+productName);
         return productName;
     }
 
-
+    private void updateStoreCount(String storeName, int countUse, int id){
+        jo.update("update "+storeName+"_store set countUse=" + countUse + " where id=" + id);
+    }
 
 
 }
