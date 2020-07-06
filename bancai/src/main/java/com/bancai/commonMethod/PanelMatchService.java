@@ -81,6 +81,7 @@ public class PanelMatchService extends BaseService{
 //            map = matchOldpanel(map);
 //            map = matchMaterial(map);
         result.success = matchError(map,projectId,buildingId,buildingpositionId);
+        result.dataList = dataList;
         return result;
     }
 

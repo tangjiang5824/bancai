@@ -253,7 +253,7 @@ Ext.define('material.material_Query_Records',{
             layout: 'fit',
             closable : true,
             draggable:true,
-            closeAction : 'close',
+            closeAction : 'hidden',
             items:material_Query_Records_specific_data_grid,
         });
 

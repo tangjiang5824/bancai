@@ -210,11 +210,11 @@ Ext.define("menu.MenuRole_bc0", {
 					id : 'project.management.editProject',
 					leaf : true
 				},
-					{
-					text : '项目楼栋信息查询',
-					id : 'project.management.buildinglist',
-					leaf : true
-				},
+				// 	{
+				// 	text : '项目楼栋信息查询',
+				// 	id : 'project.management.buildinglist',
+				// 	leaf : true
+				// },
 					{
 					text : '导入设计清单',
 					id : 'project.import_design_list',//project.import_planList

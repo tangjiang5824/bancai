@@ -289,6 +289,11 @@ Ext.define('oldpanel.oldpanel_Outbound',{
             closeAction : 'close',
             items:oldpanel_Query_Records_specific_data_grid,
         });
+        //点击右上角的关闭按钮后
+        oldpanel_Query_Records_win_showoldpanelData.on("close",function(){
+            oldpanel_Query_Records_win_showoldpanelData.close();
+
+        });
 
         var grid = Ext.create("Ext.grid.Panel", {
             id : 'addDataGrid',
