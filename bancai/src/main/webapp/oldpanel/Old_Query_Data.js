@@ -6,6 +6,15 @@ Ext.define('oldpanel.Old_Query_Data',{
     initComponent: function(){
         var itemsPerPage = 50;
         var tableName="oldpanel_info_store_type";
+        Ext.define('Soims.model.application.ApplicationState', {
+            statics: { // 关键
+                0: { value: '0', name: '墙板' },
+                1: { value: '1', name: '梁板' },
+                2: { value: '2', name: 'K板' },
+                3: { value: '3', name: '异型' },
+                //
+            }
+        });
         //仓库编号
         var storeNameList = Ext.create('Ext.data.Store',{
             fields : [ 'warehouseName'],
@@ -284,7 +293,14 @@ Ext.define('oldpanel.Old_Query_Data',{
             //readOnly:true,
             columns : [
                 {dataIndex : 'oldpanelName', text : '旧板名称', flex :1, },
-                {dataIndex : 'classificationName', text : '分类', flex :1, },
+                //{dataIndex : 'classificationName', text : '分类', flex :1, },
+                {text: '分类', dataIndex: 'classificationId', flex :1,
+                    //枚举，1：出库，0：入库
+                    renderer: function (value) {
+                        return Soims.model.application.ApplicationState[value].name; // key-value
+                    },
+                    editor:{xtype : 'textfield', allowBlank : false}
+                },
                 {dataIndex : 'inventoryUnit', text : '库存单位', flex :1, },
                 {dataIndex : 'countUse', text : '可用数量', flex :1, },
                 {dataIndex : 'countStore', text : '库存数量', flex :1, },
