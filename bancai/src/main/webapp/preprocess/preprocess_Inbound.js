@@ -256,7 +256,11 @@ Ext.define('preprocess.preprocess_Inbound', {
                             },
                             success : function(response) {
                                 console.log("12312312312321",response.responseText);
+<<<<<<< HEAD
                                 if(response.responseText="false")
+=======
+                                if(response.responseText.includes("false"))
+>>>>>>> ad179638a2ad4f2d2b99719ff65b6f258c38eef5
                                 {
                                     Ext.MessageBox.alert("提示","入库失败，品名不规范" );
                                 }

@@ -110,15 +110,17 @@ Ext.define("menu.MenuRole_bc0", {
 					leaf : true
 				} ,{
 					text : '预加工半成品库存查询',
-					id : '',
+					id : 'preprocess.preprocess_Query_Data',
 					leaf : true
-				}, {
-					text : '预加工半成品出库',
-					id : '',
-					leaf : true
-				}, {
+				},
+				// 	{
+				// 	text : '预加工半成品出库',
+				// 	id : '',
+				// 	leaf : true
+				// },
+					{
 					text : '预加工半成品出入库记录查询',
-					id : '',
+					id : 'preprocess.preprocess_Query_Records',
 					leaf : true
 				}, {
 					text : '预加工半成品出入库记录统计',
@@ -136,11 +138,13 @@ Ext.define("menu.MenuRole_bc0", {
 					text : '退库成品库存查询',
 					id : 'backproduct.backproduct_Query_Data',
 					leaf : true
-				}, {
-					text : '退库成品出库',
-					id : 'backproduct.backproduct_Outbound',
-					leaf : true
-				}, {
+				},
+				// 	{
+				// 	text : '退库成品出库',
+				// 	id : 'backproduct.backproduct_Outbound',
+				// 	leaf : true
+				// },
+					{
 					text : '退库成品出入库记录查询',
 					id : 'backproduct.backproduct_Query_Records',
 					leaf : true
@@ -158,19 +162,22 @@ Ext.define("menu.MenuRole_bc0", {
 				// 	id : 'product.product_Inbound_One',
 				// 	leaf : true
 				// } ,
+				// 	{
+				// 	text : '产品成品入库',
+				// 	id : 'product.product_Inbound',
+				// 	leaf : true
+				// } ,
 					{
-					text : '产品成品入库',
-					id : 'product.product_Inbound',
-					leaf : true
-				} ,{
 					text : '产品成品库存查询',
 					id : 'product.product_Query_Data',
 					leaf : true
-				}, {
-					text : '产品成品出库',
-					id : 'product.product_outBound',
-					leaf : true
-				}, {
+				},
+				// 	{
+				// 	text : '产品成品出库',
+				// 	id : 'product.product_outBound',
+				// 	leaf : true
+				// },
+					{
 					text : '产品成品出入库记录查询',
 					id : 'product.product_Query_Records',
 					leaf : true
