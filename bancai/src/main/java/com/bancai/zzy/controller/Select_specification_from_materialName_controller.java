@@ -118,7 +118,7 @@ public class Select_specification_from_materialName_controller {
 	 * */
 	@RequestMapping(value = "/oldpanel/outbound_query_records.do")
 	public WebResponse outboundQueryRecords(String start, String limit,String page, String type,
-											String startTime, String endTime, String operator) throws ParseException {
+											String startTime, String endTime, String operator,String tableName) throws ParseException {
 		//log.debug(startWidth+" "+endWidth);
 		int thisPage=1;
 		int thisStart=0;
@@ -135,7 +135,7 @@ public class Select_specification_from_materialName_controller {
 			thisLimit=Integer.parseInt(limit);
 			thisStart=(thisPage-1)*thisLimit;
 		}
-		String tableName = "oldpanel_log";
+		//String tableName = "oldpanel_log";
 //		System.out.println(startWidth);
 //		System.out.println(endWidth);
 //
@@ -385,13 +385,22 @@ public class Select_specification_from_materialName_controller {
 	}
 
 	@RequestMapping(value = "/oldpanel/query_data.do")
-	public WebResponse query_data(Integer start, Integer limit, String tableName,String oldpanelType,
+	public WebResponse query_data(Integer start, Integer limit, String tableName,String oldpanelType,String productType,
 										 String maxCount,String minCount,String warehouseName) throws ParseException {
 		if(null==start||start.equals("")) start=0;
 		if(null==limit||limit.equals("")) limit=50;
 		mysqlcondition c=new mysqlcondition();
-		if (oldpanelType.length() != 0) {
-			c.and(new mysqlcondition("oldpanelType", "=", oldpanelType));
+		if(tableName.contains("oldpanel"))
+		{
+			if (oldpanelType.length() != 0) {
+				c.and(new mysqlcondition("oldpanelType", "=", oldpanelType));
+			}
+		}
+		if(tableName.contains("product")||tableName.contains("process"))
+		{
+			if (productType.length() != 0) {
+				c.and(new mysqlcondition("productType", "=", productType));
+			}
 		}
 		if (warehouseName.length() != 0) {
 			c.and(new mysqlcondition("warehouseName", "=", warehouseName));

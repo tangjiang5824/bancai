@@ -2,10 +2,19 @@ Ext.define('backproduct.backproduct_Query_Data',{
     extend:'Ext.panel.Panel',
     region: 'center',
     layout:'fit',
-    title: '旧板库存查询',
+    title: '退库成品库存查询',
     initComponent: function(){
         var itemsPerPage = 50;
-        var tableName="oldpanel_info_store_type";
+        var tableName="backproduct_info_store_type";
+        Ext.define('Soims.model.application.ApplicationState', {
+            statics: { // 关键
+                0: { value: '0', name: '墙板' },
+                1: { value: '1', name: '梁板' },
+                2: { value: '2', name: 'K板' },
+                3: { value: '3', name: '异型' },
+                //
+            }
+        });
         //仓库编号
         var storeNameList = Ext.create('Ext.data.Store',{
             fields : [ 'warehouseName'],
@@ -33,83 +42,83 @@ Ext.define('backproduct.backproduct_Query_Data',{
             editable : false,
             store: storeNameList,
         });
-
-        var oldPanelNameList = Ext.create('Ext.data.Store',{
-            fields : [ 'oldpanelName'],
+        var productNameList = Ext.create('Ext.data.Store',{
+            fields : [ 'productTypeName'],
             proxy : {
                 type : 'ajax',
-                url : 'oldpanel/oldpanelType.do',
+                url : 'material/findAllBytableName.do?tableName=producttype',
                 reader : {
                     type : 'json',
-                    rootProperty: 'typeList',
+                    rootProperty: 'producttype',
                 }
             },
             autoLoad : true
         });
-        var oldpanelTypeList = Ext.create('Ext.form.ComboBox',{
-            fieldLabel : '旧板类型',
+        var productTypeList = Ext.create('Ext.form.ComboBox',{
+            fieldLabel : '产品类型',
             labelWidth : 70,
             width : 230,
-            id :  'oldpanelType',
-            name : 'oldpanelType',
+            id :  'productType',
+            name : 'productType',
             matchFieldWidth: false,
             emptyText : "--请选择--",
-            displayField: 'oldpanelTypeName',
-            valueField: 'oldpanelType',
+            displayField: 'productTypeName',
+            valueField: 'id',
             editable : false,
-            store: oldPanelNameList,
+            store: productNameList,
             listeners:{
                 select: function(combo, record, index) {
 
-                    console.log(oldpanelTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
+                    console.log(productTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
                     //console.log(record[0].data.materialName);
                 }
             }
 
         });
+
         var toobar = Ext.create('Ext.toolbar.Toolbar',{
-            items: [oldpanelTypeList,
-            //     {
-            //     xtype: 'textfield',
-            //     fieldLabel: '长度下限:',
-            //     // labelSeparator: '',
-            //     id :'startLength',
-            //     labelWidth: 60,
-            //     width: 180,
-            //     margin : '0 10 0 0',
-            //     name: 'startLength',
-            //     value:"",
-            // },{
-            //     xtype: 'textfield',
-            //     fieldLabel: '长度上限:',
-            //     // labelSeparator: '',
-            //     id :'endLength',
-            //     labelWidth: 60,
-            //     width: 180,
-            //     margin : '0 10 0 0',
-            //     name: 'endLength',
-            //     value:"",
-            // },{
-            //     xtype: 'textfield',
-            //     fieldLabel: '宽度下限:',
-            //     // labelSeparator: '',
-            //     id :'startWidth',
-            //     labelWidth: 60,
-            //     width: 180,
-            //     margin : '0 10 0 0',
-            //     name: 'startWidth',
-            //     value:"",
-            // },{
-            //     xtype: 'textfield',
-            //     fieldLabel: '宽度上限:',
-            //     // labelSeparator: '',
-            //     id :'endWidth',
-            //     labelWidth: 60,
-            //     width: 180,
-            //     margin : '0 10 0 0',
-            //     name: 'endWidth',
-            //     value:"",
-            // },
+            items: [productTypeList,
+                //     {
+                //     xtype: 'textfield',
+                //     fieldLabel: '长度下限:',
+                //     // labelSeparator: '',
+                //     id :'startLength',
+                //     labelWidth: 60,
+                //     width: 180,
+                //     margin : '0 10 0 0',
+                //     name: 'startLength',
+                //     value:"",
+                // },{
+                //     xtype: 'textfield',
+                //     fieldLabel: '长度上限:',
+                //     // labelSeparator: '',
+                //     id :'endLength',
+                //     labelWidth: 60,
+                //     width: 180,
+                //     margin : '0 10 0 0',
+                //     name: 'endLength',
+                //     value:"",
+                // },{
+                //     xtype: 'textfield',
+                //     fieldLabel: '宽度下限:',
+                //     // labelSeparator: '',
+                //     id :'startWidth',
+                //     labelWidth: 60,
+                //     width: 180,
+                //     margin : '0 10 0 0',
+                //     name: 'startWidth',
+                //     value:"",
+                // },{
+                //     xtype: 'textfield',
+                //     fieldLabel: '宽度上限:',
+                //     // labelSeparator: '',
+                //     id :'endWidth',
+                //     labelWidth: 60,
+                //     width: 180,
+                //     margin : '0 10 0 0',
+                //     name: 'endWidth',
+                //     value:"",
+                // },
                 {
                     xtype:'tbtext',
                     text:'库存数量:',
@@ -140,96 +149,96 @@ Ext.define('backproduct.backproduct_Query_Data',{
                 },
                 storePosition,
                 {
-                xtype : 'button',
-                text: '查询',
-                width: 80,
-                margin: '0 0 0 15',
-                layout: 'right',
-                handler: function(){
-                    uploadRecordsStore.load({
-                        params : {
-                            minCount : Ext.getCmp('minCount').getValue(),
-                            maxCount : Ext.getCmp('maxCount').getValue(),
-                            oldpanelType:Ext.getCmp('oldpanelType').getValue(),
-                            warehouseName:Ext.getCmp('storePosition').rawValue,
-                            tableName:tableName,
+                    xtype : 'button',
+                    text: '查询',
+                    width: 80,
+                    margin: '0 0 0 15',
+                    layout: 'right',
+                    handler: function(){
+                        uploadRecordsStore.load({
+                            params : {
+                                minCount : Ext.getCmp('minCount').getValue(),
+                                maxCount : Ext.getCmp('maxCount').getValue(),
+                                productType:Ext.getCmp('productType').getValue(),
+                                warehouseName:Ext.getCmp('storePosition').rawValue,
+                                tableName:tableName,
 
-                        }
-                    });
-                }
-            },
-            //     {
-            //     xtype : 'button',
-            //     text: '修改',
-            //     width: 80,
-            //     margin: '0 0 0 15',
-            //     layout: 'right',
-            //     handler: function(){
-            //         //保存修改
-            //         var select = Ext.getCmp('uploadRecordsMain').getStore().getData();
-            //         var s = new Array();
-            //         select.each(function(rec) {
-            //             //delete rec.data.id;
-            //             s.push(JSON.stringify(rec.data));
-            //             //alert(JSON.stringify(rec.data));//获得表格中的数据
-            //         });
-            //         Ext.Ajax.request({
-            //             url : 'old/editData.do',
-            //             method:'POST',
-            //             //submitEmptyText : false,
-            //             params : {
-            //                 s : "[" + s + "]",
-            //             },
-            //             success : function(response) {
-            //                 Ext.MessageBox.alert("提示", "修改成功！");
-            //                 uploadRecordsStore.load({
-            //                     params : {
-            //                     }
-            //                 });
-            //                 me.close();
-            //
-            //             },
-            //             failure : function(response) {
-            //                 Ext.MessageBox.alert("提示", "修改失败！");
-            //             }
-            //         });
-            //
-            //
-            //     }
-            // },
-            //     {
-            //         xtype : 'button',
-            //         text: '删除选中行',
-            //         width: 80,
-            //         margin: '0 0 0 15',
-            //         layout: 'right',
-            //         handler: function(){
-            //             //删除
-            //             //获得当前选择的行对象
-            //             var select = grid.getSelectionModel().getSelection();
-            //             if(select.length==0){
-            //                 Ext.Msg.alert('错误', '请选择要删除的记录')
-            //             }
-            //             else{
-            //                 Ext.Ajax.request({
-            //                     url:"data/deleteItemById.do",
-            //                     params:{
-            //                         tableName:tableName,
-            //                         id:select[0].data.id
-            //                     },
-            //                     success:function (response) {
-            //                         Ext.MessageBox.alert("提示","删除成功！")
-            //                         grid.store.remove(grid.getSelectionModel().getSelection());//移除删除的记录
-            //                     },
-            //                     failure:function (response) {
-            //                         Ext.MessageBox.alert("提示","删除失败！")
-            //
-            //                     }
-            //                 })
-            //             }
-            //
-            //         }
-            //     }
+                            }
+                        });
+                    }
+                },
+                //     {
+                //     xtype : 'button',
+                //     text: '修改',
+                //     width: 80,
+                //     margin: '0 0 0 15',
+                //     layout: 'right',
+                //     handler: function(){
+                //         //保存修改
+                //         var select = Ext.getCmp('uploadRecordsMain').getStore().getData();
+                //         var s = new Array();
+                //         select.each(function(rec) {
+                //             //delete rec.data.id;
+                //             s.push(JSON.stringify(rec.data));
+                //             //alert(JSON.stringify(rec.data));//获得表格中的数据
+                //         });
+                //         Ext.Ajax.request({
+                //             url : 'old/editData.do',
+                //             method:'POST',
+                //             //submitEmptyText : false,
+                //             params : {
+                //                 s : "[" + s + "]",
+                //             },
+                //             success : function(response) {
+                //                 Ext.MessageBox.alert("提示", "修改成功！");
+                //                 uploadRecordsStore.load({
+                //                     params : {
+                //                     }
+                //                 });
+                //                 me.close();
+                //
+                //             },
+                //             failure : function(response) {
+                //                 Ext.MessageBox.alert("提示", "修改失败！");
+                //             }
+                //         });
+                //
+                //
+                //     }
+                // },
+                //     {
+                //         xtype : 'button',
+                //         text: '删除选中行',
+                //         width: 80,
+                //         margin: '0 0 0 15',
+                //         layout: 'right',
+                //         handler: function(){
+                //             //删除
+                //             //获得当前选择的行对象
+                //             var select = grid.getSelectionModel().getSelection();
+                //             if(select.length==0){
+                //                 Ext.Msg.alert('错误', '请选择要删除的记录')
+                //             }
+                //             else{
+                //                 Ext.Ajax.request({
+                //                     url:"data/deleteItemById.do",
+                //                     params:{
+                //                         tableName:tableName,
+                //                         id:select[0].data.id
+                //                     },
+                //                     success:function (response) {
+                //                         Ext.MessageBox.alert("提示","删除成功！")
+                //                         grid.store.remove(grid.getSelectionModel().getSelection());//移除删除的记录
+                //                     },
+                //                     failure:function (response) {
+                //                         Ext.MessageBox.alert("提示","删除失败！")
+                //
+                //                     }
+                //                 })
+                //             }
+                //
+                //         }
+                //     }
             ]
         })
 
@@ -264,7 +273,7 @@ Ext.define('backproduct.backproduct_Query_Data',{
                         // mType:Ext.getCmp('mType').getValue(),
                         minCount : Ext.getCmp('minCount').getValue(),
                         maxCount : Ext.getCmp('maxCount').getValue(),
-                        oldpanelType:Ext.getCmp('oldpanelType').getValue(),
+                        productType:Ext.getCmp('productType').getValue(),
                         warehouseName:Ext.getCmp('storePosition').rawValue,
                         tableName:tableName,
 
@@ -283,8 +292,15 @@ Ext.define('backproduct.backproduct_Query_Data',{
             },
             //readOnly:true,
             columns : [
-                {dataIndex : 'oldpanelName', text : '旧板名称', flex :1, },
-                {dataIndex : 'classificationName', text : '分类', flex :1, },
+                {dataIndex : 'productName', text : '预加工半成品名称', flex :1, },
+                //{dataIndex : 'classificationName', text : '分类', flex :1, },
+                {text: '分类', dataIndex: 'classificationId', flex :1,
+                    //枚举，1：出库，0：入库
+                    renderer: function (value) {
+                        return Soims.model.application.ApplicationState[value].name; // key-value
+                    },
+                    editor:{xtype : 'textfield', allowBlank : false}
+                },
                 {dataIndex : 'inventoryUnit', text : '库存单位', flex :1, },
                 {dataIndex : 'countUse', text : '可用数量', flex :1, },
                 {dataIndex : 'countStore', text : '库存数量', flex :1, },

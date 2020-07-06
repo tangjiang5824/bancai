@@ -5,7 +5,20 @@ Ext.define('product.product_Query_Data',{
     title: '产品成品库存查询',
     initComponent: function(){
         var itemsPerPage = 50;
+<<<<<<< HEAD
         var tableName="product_store";
+=======
+        var tableName="product_info_store_type";
+        Ext.define('Soims.model.application.ApplicationState', {
+            statics: { // 关键
+                0: { value: '0', name: '墙板' },
+                1: { value: '1', name: '梁板' },
+                2: { value: '2', name: 'K板' },
+                3: { value: '3', name: '异型' },
+                //
+            }
+        });
+>>>>>>> ad179638a2ad4f2d2b99719ff65b6f258c38eef5
         //仓库编号
         var storeNameList = Ext.create('Ext.data.Store',{
             fields : [ 'warehouseName'],
@@ -33,7 +46,10 @@ Ext.define('product.product_Query_Data',{
             editable : false,
             store: storeNameList,
         });
+<<<<<<< HEAD
 
+=======
+>>>>>>> ad179638a2ad4f2d2b99719ff65b6f258c38eef5
         var productNameList = Ext.create('Ext.data.Store',{
             fields : [ 'productTypeName'],
             proxy : {
@@ -67,9 +83,54 @@ Ext.define('product.product_Query_Data',{
             }
 
         });
+
         var toobar = Ext.create('Ext.toolbar.Toolbar',{
             items: [productTypeList,
+<<<<<<< HEAD
 
+=======
+                //     {
+                //     xtype: 'textfield',
+                //     fieldLabel: '长度下限:',
+                //     // labelSeparator: '',
+                //     id :'startLength',
+                //     labelWidth: 60,
+                //     width: 180,
+                //     margin : '0 10 0 0',
+                //     name: 'startLength',
+                //     value:"",
+                // },{
+                //     xtype: 'textfield',
+                //     fieldLabel: '长度上限:',
+                //     // labelSeparator: '',
+                //     id :'endLength',
+                //     labelWidth: 60,
+                //     width: 180,
+                //     margin : '0 10 0 0',
+                //     name: 'endLength',
+                //     value:"",
+                // },{
+                //     xtype: 'textfield',
+                //     fieldLabel: '宽度下限:',
+                //     // labelSeparator: '',
+                //     id :'startWidth',
+                //     labelWidth: 60,
+                //     width: 180,
+                //     margin : '0 10 0 0',
+                //     name: 'startWidth',
+                //     value:"",
+                // },{
+                //     xtype: 'textfield',
+                //     fieldLabel: '宽度上限:',
+                //     // labelSeparator: '',
+                //     id :'endWidth',
+                //     labelWidth: 60,
+                //     width: 180,
+                //     margin : '0 10 0 0',
+                //     name: 'endWidth',
+                //     value:"",
+                // },
+>>>>>>> ad179638a2ad4f2d2b99719ff65b6f258c38eef5
                 {
                     xtype:'tbtext',
                     text:'库存数量:',
@@ -110,7 +171,11 @@ Ext.define('product.product_Query_Data',{
                             params : {
                                 minCount : Ext.getCmp('minCount').getValue(),
                                 maxCount : Ext.getCmp('maxCount').getValue(),
+<<<<<<< HEAD
                                 productTypeId:Ext.getCmp('productType').getValue(),
+=======
+                                productType:Ext.getCmp('productType').getValue(),
+>>>>>>> ad179638a2ad4f2d2b99719ff65b6f258c38eef5
                                 warehouseName:Ext.getCmp('storePosition').rawValue,
                                 tableName:tableName,
 
@@ -149,7 +214,11 @@ Ext.define('product.product_Query_Data',{
 
                         minCount : Ext.getCmp('minCount').getValue(),
                         maxCount : Ext.getCmp('maxCount').getValue(),
+<<<<<<< HEAD
                         productTypeId:Ext.getCmp('productType').getValue(),
+=======
+                        productType:Ext.getCmp('productType').getValue(),
+>>>>>>> ad179638a2ad4f2d2b99719ff65b6f258c38eef5
                         warehouseName:Ext.getCmp('storePosition').rawValue,
                         tableName:tableName,
 
@@ -168,8 +237,20 @@ Ext.define('product.product_Query_Data',{
             },
             //readOnly:true,
             columns : [
+<<<<<<< HEAD
                 {dataIndex : 'productName', text : '产品名称', flex :1, },
                 {dataIndex : 'classificationName', text : '分类', flex :1, },
+=======
+                {dataIndex : 'productName', text : '预加工半成品名称', flex :1, },
+                //{dataIndex : 'classificationName', text : '分类', flex :1, },
+                {text: '分类', dataIndex: 'classificationId', flex :1,
+                    //枚举，1：出库，0：入库
+                    renderer: function (value) {
+                        return Soims.model.application.ApplicationState[value].name; // key-value
+                    },
+                    editor:{xtype : 'textfield', allowBlank : false}
+                },
+>>>>>>> ad179638a2ad4f2d2b99719ff65b6f258c38eef5
                 {dataIndex : 'inventoryUnit', text : '库存单位', flex :1, },
                 {dataIndex : 'countUse', text : '可用数量', flex :1, },
                 {dataIndex : 'countStore', text : '库存数量', flex :1, },
