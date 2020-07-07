@@ -43,6 +43,30 @@ public class Oldpanel_Data_Controller {
 
     Logger log = Logger.getLogger(Oldpanel_Data_Controller.class);
 
+    /*
+     * 新增旧板品名格式
+     * */
+    @RequestMapping(value = "/oldpanel/addFormat.do")
+    public boolean oldpanelAddFormat(String oldpanelTypeId, String oldpanelFormat, HttpSession session) throws JSONException {
+        try {
+            int formatId = y_Upload_Data_Service.oldpanelAddNewFormat(oldpanelTypeId, oldpanelFormat);
+            if (formatId == 0) {
+                return false;//已经存在
+            }
+            String userId = (String) session.getAttribute("userid");
+            Date date = new Date();
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String sql_addLog = "insert into format_log (type,formatId,userId,time) values(?,?,?,?)";
+            boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLog,
+                    "2", String.valueOf(formatId),userId,simpleDateFormat.format(date));
+            if (!is_log_right) {
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
 
     /*
      * 添加旧板基础信息
@@ -59,13 +83,13 @@ public class Oldpanel_Data_Controller {
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonTemp = jsonArray.getJSONObject(i);
                 System.out.println("第" + i + "个---" + jsonTemp);
-                String oldpanelName=(jsonTemp.get("oldpanelName")+"").toUpperCase();
-                String classificationId=jsonTemp.get("classificationId")+"";
+                String oldpanelName=(jsonTemp.get("oldpanelName")+"").trim().toUpperCase();
+//                String classificationId=jsonTemp.get("classificationId")+"";
                 String inventoryUnit=jsonTemp.get("inventoryUnit")+"";
                 String unitWeight=jsonTemp.get("unitWeight")+"";
                 String unitArea=jsonTemp.get("unitArea")+"";
                 String remark=jsonTemp.get("remark")+"";
-                int oldpanelId =  y_Upload_Data_Service.oldpanelAddNewInfo(oldpanelName,classificationId,inventoryUnit,
+                int oldpanelId =  y_Upload_Data_Service.oldpanelAddNewInfo(oldpanelName,inventoryUnit,
                         unitWeight,unitArea,remark,userId);
                 if(oldpanelId==0){
                     return false;//已经存在这种旧板
@@ -143,17 +167,17 @@ public class Oldpanel_Data_Controller {
             JSONObject jsonTemp = jsonArray.getJSONObject(i);
             //获得第i条数据的各个属性值
             System.out.println("第" + i + "个:userid=" + userId + "---" + jsonTemp);
-            String oldpanelName=(jsonTemp.get("oldpanelName")+"").toUpperCase();
+            String oldpanelName=(jsonTemp.get("oldpanelName")+"").trim().toUpperCase();
             String warehouseName=jsonTemp.get("warehouseName")+"";
             String count=jsonTemp.get("count")+"";
 
-            int oldpanelId = y_Upload_Data_Service.oldpanelUpload(oldpanelName,warehouseName,count);
-            if(oldpanelId==0){
+            int[] oldpanelId = y_Upload_Data_Service.oldpanelUpload(oldpanelName,warehouseName,count);
+            if(oldpanelId[0]==0){
                 return false;
             }
-            String sql_addLogDetail="insert into oldpanel_logdetail (oldpanelId,count,oldpanellogId) values (?,?,?)";
-            boolean is_log_right= insertProjectService.insertIntoTableBySQL(sql_addLogDetail,String.valueOf(oldpanelId),
-                    count,String.valueOf(oldpanellogId));
+            String sql_addLogDetail="insert into oldpanel_logdetail (oldpanelId,count,oldpanellogId,oldpanelstoreId) values (?,?,?,?)";
+            boolean is_log_right= insertProjectService.insertIntoTableBySQL(sql_addLogDetail,String.valueOf(oldpanelId[0]),
+                    count,String.valueOf(oldpanellogId),String.valueOf(oldpanelId[1]));
             if(!is_log_right){
                 return false;
             }

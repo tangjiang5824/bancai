@@ -92,9 +92,9 @@ public class AllExcelService extends BaseService {
 		if (tablename.equals("material_store")) {
 			for (int i = 0; i < dataList.size(); i++) {
 				String materialName = dataList.get(i).get("materialName") + "";
-				String specification = dataList.get(i).get("specification") + "";
+	//			String specification = dataList.get(i).get("specification") + "";
 				MaterialStore store=new MaterialStore();
-				List<MaterialInfo> materialList=materialinfodao.findByMaterialNameAndSpecification(materialName,specification);
+				List<MaterialInfo> materialList=materialinfodao.findByMaterialName(materialName);
 				if(materialList.size()!=1) {
 					result.setSuccess(false);
 					result.setErrorCode(2);
@@ -213,7 +213,7 @@ public class AllExcelService extends BaseService {
 		Iterator it = dataList.iterator();
 		while (it.hasNext()){
 			com.bancai.domain.DataRow dataRow = (DataRow) it.next();
-			String oldpanelName = dataRow.get("品名") + "";
+			String oldpanelName = (dataRow.get("品名") + "").trim().toUpperCase();
 			if(oldpanelName.equals("")){
 				it.remove();
 				continue;
@@ -234,15 +234,15 @@ public class AllExcelService extends BaseService {
 				result.setErrorCode(2);
 				return result;
 			}
-			int oldpanelId = y_Upload_Data_Service.oldpanelUpload(oldpanelName,warehouseName,count);
-			if (oldpanelId==0) {
+			int[] oldpanelId = y_Upload_Data_Service.oldpanelUpload(oldpanelName,warehouseName,count);
+			if (oldpanelId[0]==0) {
 				result.success = false;
 				result.setErrorCode(2);
 				return result;
 			}
-			String sql_addLogDetail = "insert into oldpanel_logdetail (oldpanelId,count,oldpanellogId) values (?,?,?)";
-			boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLogDetail,String.valueOf(oldpanelId),
-					count,String.valueOf(oldpanellogId));
+			String sql_addLogDetail = "insert into oldpanel_logdetail (oldpanelId,count,oldpanellogId,oldpanelstoreId) values (?,?,?,?)";
+			boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLogDetail,String.valueOf(oldpanelId[0]),
+					count,String.valueOf(oldpanellogId),String.valueOf(oldpanelId[1]));
 			if (!is_log_right) {
 				result.success = false;
 				result.setErrorCode(2);
