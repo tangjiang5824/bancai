@@ -248,7 +248,7 @@ Ext.define('oldpanel.oldpanel_Outbound',{
 
         //弹出框，出入库详细记录
         var oldpanel_Query_Records_specific_data_grid=Ext.create('Ext.grid.Panel',{
-            id : 'oldpanel_Query_Records_specific_data_grid',
+            // id : 'oldpanel_Query_Records_specific_data_grid',
             tbar: toolbar_pop,
             dock: 'bottom',
             columns:[
@@ -282,23 +282,39 @@ Ext.define('oldpanel.oldpanel_Outbound',{
             // }
         });
 
+        //
+        // if(!oldpanel_Query_Records_win_showoldpanelData){
+        //     var oldpanel_Query_Records_win_showoldpanelData = Ext.create('Ext.window.Window', {
+        //         id:'oldpanel_Query_Records_win_showoldpanelData',
+        //         title: '原材料出入库记录回滚',
+        //         height: 500,
+        //         width: 650,
+        //         layout: 'fit',
+        //         closable : true,
+        //         draggable:true,
+        //         closeAction : 'close',
+        //         items:[oldpanel_Query_Records_specific_data_grid],
+        //         autoDestroy:true,
+        //     });
+        // }
+
         var oldpanel_Query_Records_win_showoldpanelData = Ext.create('Ext.window.Window', {
-            id:'oldpanel_Query_Records_win_showoldpanelData',
+            // id:'oldpanel_Query_Records_win_showoldpanelData',
             title: '原材料出入库记录回滚',
             height: 500,
             width: 650,
             layout: 'fit',
             closable : true,
             draggable:true,
-            closeAction : 'hidden',
+            closeAction : 'close',
             items:[oldpanel_Query_Records_specific_data_grid],
             autoDestroy:true,
         });
-        //点击右上角的关闭按钮后
-        oldpanel_Query_Records_win_showoldpanelData.on("close",function(){
-            oldpanel_Query_Records_win_showoldpanelData.close();
-
-        });
+        // //点击右上角的关闭按钮后
+        // oldpanel_Query_Records_win_showoldpanelData.on("close",function(){
+        //     oldpanel_Query_Records_win_showoldpanelData.close();
+        //
+        // });
 
         // //点击右上角的关闭按钮后
         // oldpanel_Query_Records_win_showoldpanelData.on("close",function(){
@@ -408,14 +424,14 @@ Ext.define('oldpanel.oldpanel_Outbound',{
                     },
                     autoLoad: true
                 });
+
                 var col = oldpanel_Query_Records_specific_data_grid.columns[1];
 
                 Ext.getCmp("toolbar_pop").items.items[0].setText(id); //设置log id的值
                 Ext.getCmp("toolbar_pop").items.items[1].setText(isrollback);
                 oldpanel_Query_Records_specific_data_grid.setStore(oldpanellogdetailList_outbound);
-                Ext.getCmp('oldpanel_Query_Records_win_showoldpanelData').show();
-
-
+                // Ext.getCmp('oldpanel_Query_Records_win_showoldpanelData').show();
+                oldpanel_Query_Records_win_showoldpanelData.show();
             }
 
 

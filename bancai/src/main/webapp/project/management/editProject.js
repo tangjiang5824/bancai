@@ -399,7 +399,7 @@ Ext.define('project.management.editProject',{
 
         //弹出窗口
         var win_showbuildingData = Ext.create('Ext.window.Window', {
-            id:'win_showbuildingData',
+            // id:'win_showbuildingData', //添加id，会影响弹框界面混乱
             title: '项目楼栋信息',
             height: 500,
             width: 650,
@@ -493,7 +493,7 @@ Ext.define('project.management.editProject',{
                     //将projectId传给弹出框
                     Ext.getCmp("toolbar_pop").items.items[0].setText(projectId);
                     building_grid.setStore(buildinglList_projectId);
-                    Ext.getCmp('win_showbuildingData').show();
+                    win_showbuildingData.show();
                 }
             }
         });
