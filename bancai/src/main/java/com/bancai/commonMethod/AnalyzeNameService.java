@@ -36,7 +36,7 @@ public class AnalyzeNameService extends BaseService {
      */
     @Transactional
     public String[] analyzeOldpanelName(String oldpanelName){
-        oldpanelName = oldpanelName.toUpperCase();
+        oldpanelName = oldpanelName.trim().toUpperCase();
         System.out.println("analyzeOldpanelName==="+oldpanelName);
         String isPureNumber = "^-?[0-9]+";
         String isPureWord = "^[A-Za-z]+$";
@@ -160,25 +160,35 @@ public class AnalyzeNameService extends BaseService {
     }
 
     /**
-     * 判断旧板格式是否存在
+     * 根据产品品名获取type表内容
      */
     @Transactional
-    public boolean isOldpanelFormatExist(String format, String oldpanelType, String suffix, String oldpanelTypeName){
-        StringBuilder formatInfoBuilder = new StringBuilder();
-        String[] sSuffix = suffix.split("\\s+");
-        int n = 0;
+    public DataList getTypeByProductName(String productName){
+        String isPureWord = "^[A-Za-z]+$";
+        String productTypeName = "";
+        String[] sPName = productName.split("\\s+");
+        DataList list = new DataList();
         for (int i = 0; i < 4; i++) {
-            if(format.substring(i,i+1).equals("7")){
-                formatInfoBuilder.append(sSuffix[n]);
-                n++;
-            } else if(format.substring(i,i+1).equals("1")){
-                formatInfoBuilder.append(oldpanelTypeName);
+            if(sPName[i].substring(i,i+1).matches(isPureWord)){
+                productTypeName = sPName[i];
+                break;
             }
-            formatInfoBuilder.append("%");
         }
-        String formatInfo = formatInfoBuilder.toString().substring(0,formatInfoBuilder.toString().length()-1);
-        return !queryService.query("select * from oldpanel_info where oldpanelFormat=? and oldpanelType=? and formatInfo=?",
-                format, oldpanelType, formatInfo).isEmpty();
+        if(productTypeName.equals(""))
+            return list;
+        list = queryService.query("select * from producttype where productTypeName=?",productTypeName);
+        return list;
+    }
+    /**
+     * 根据类型（旧板、产品）和品名判断format是否存在，返回id或0
+     */
+    @Transactional
+    public int isFormatExist(String tablename, String productTypeId, String productFormat) {
+        String sql = "select id from "+tablename+"_format where "+tablename+"TypeId=? and "+tablename+"Format=?";
+        DataList dataList = queryService.query(sql,productTypeId,productFormat);
+        if(dataList.isEmpty())
+            return 0;
+        return Integer.parseInt(dataList.get(0).get("id").toString());
     }
 
     /**
@@ -215,115 +225,151 @@ public class AnalyzeNameService extends BaseService {
             return "0";
         return list.get(0).get("id").toString();
     }
+    /**
+     * 根据产品类型id查询含+的格式为m+n或m+n+p或a+b。1,2,3。0为不存在
+     */
+    @Transactional
+    public int getFormatWithPlus(String productTypeId){
+        DataList list = queryService.query("select * from product_format where productTypeId=?", productTypeId);
+        if(list.size()!=0) {
+            for (DataRow dataRow : list) {
+                String format = dataRow.get("productFormat").toString();
+                if (format.contains("6"))
+                    return 1;
+                else if (format.contains("8"))
+                    return 2;
+                else if (format.contains("9"))
+                    return 3;
+            }
+        }
+        return 0;
+    }
 
     /**
      * 清单产品品名解析。
      */
     @Transactional
     public String[] analyzeProductName(String productName){
-        productName = productName.toUpperCase();
+        productName = productName.trim().toUpperCase();
         System.out.println("analyzeProductName==="+productName);
         String isPureNumber = "^-?[0-9]+";
         String isPureWord = "^[A-Za-z]+$";
         String[] sPName = productName.split("-")[0].split("\\s+");
         String igSuffix;
-        try{
-            igSuffix =  productName.split("-")[1];
-        } catch (ArrayIndexOutOfBoundsException e){
+        if(productName.split("-").length>1)
+            igSuffix = productName.substring(productName.split("-")[0].length()+1);
+        else
             igSuffix = "";
-        }
-        String productType = "0";
+        DataList typeList = getTypeByProductName(productName.split("-")[0]);
+        if(typeList.size()==0)
+            return null;
+        String productTypeId = typeList.get(0).get("id").toString();
+        String classificationId = typeList.get(0).get("classificationId").toString();
+        String productTypeName = typeList.get(0).get("productTypeName").toString();
         StringBuilder formatBuilder = new StringBuilder();
         String m = "0";
         String n = "0";
+        String p = "0";
         String a = "0";
         String b = "0";
-        String mnAngle = "00";
+        int mAngle = 0;
+        int nAngle = 0;
+        int pAngle = 0;
         StringBuilder suffixBuilder = new StringBuilder();
-        String productTypeName = "";
         int conM = 0;
-        int conT = 0;
         for (int i = 0; i < 4; i++) {
-            try {
-//                System.out.println("ana====="+sOName[i]);
-                if (sPName[i].matches(isPureNumber)){
-                    if(conM==0){
-                        m = sPName[i];
-                        formatBuilder.append("2");
-                        conM=1;
-                    } else if(conM==1){
-                        n = sPName[i];
-                        formatBuilder.append("3");
-                        conM=2;
-                    } else {
-                        suffixBuilder.append(sPName[i]);
-                        suffixBuilder.append(" ");
-                        formatBuilder.append("7");
-                    }
-                } else if (sPName[i].substring(0,1).matches(isPureWord)){
-                    if(conT==0) {
-                        productTypeName = sPName[i];
-                        productType = getProductType(sPName[i]);
-                        formatBuilder.append("1");
-                        conT = 1;
-                    }
-                    else {
-                        suffixBuilder.append(sPName[i]);
-                        suffixBuilder.append(" ");
-                        formatBuilder.append("7");
-                    }
-                } else if (sPName[i].contains("X")) {
-                    b = SetLengthAndWidth(sPName[i].split("X")[0],sPName[i].split("X")[1])[0];
-                    a = SetLengthAndWidth(sPName[i].split("X")[0],sPName[i].split("X")[1])[1];
-                    if(a.equals(sPName[i].split("X")[0]))
-                        formatBuilder.append("4");
-                    else
-                        formatBuilder.append("5");
-                } else if (sPName[i].contains("+")) {
-                    m = sPName[i].split("\\+")[0];
-                    n = sPName[i].split("\\+")[1];
-                    if(m.contains("A")){
-                        m = m.substring(0,m.length()-1);
-                        if(n.contains("A")){
-                            n = n.substring(0,n.length()-1);
-                            mnAngle = "11";
-                        } else if (n.contains("B")){
-                            n = n.substring(0,n.length()-1);
-                            mnAngle = "12";
-                        } else {
-                            mnAngle = "10";
-                        }
-                    } else if(m.contains("B")){
-                        m = m.substring(0,m.length()-1);
-                        if(n.contains("A")){
-                            n = n.substring(0,n.length()-1);
-                            mnAngle = "21";
-                        } else if (n.contains("B")){
-                            n = n.substring(0,n.length()-1);
-                            mnAngle = "22";
-                        } else {
-                            mnAngle = "20";
-                        }
-                    } else {
-                        if(n.contains("A")){
-                            n = n.substring(0,n.length()-1);
-                            mnAngle = "01";
-                        } else if (n.contains("B")){
-                            n = n.substring(0,n.length()-1);
-                            mnAngle = "02";
-                        } else {
-                            mnAngle = "00";
-                        }
-                    }
-                    formatBuilder.append("6");
+            if(i>=(sPName.length-1)){
+                formatBuilder.append("0");
+            } else if(sPName[i].equals(productTypeName)){
+                formatBuilder.append("1");
+            } else if(sPName[i].matches(isPureNumber)){
+                if(conM==0){
+                    m = sPName[i];
+                    formatBuilder.append("2");
+                    conM=1;
+                } else if(conM==1){
+                    n = sPName[i];
+                    formatBuilder.append("3");
+                    conM=2;
                 } else {
                     suffixBuilder.append(sPName[i]);
                     suffixBuilder.append(" ");
                     formatBuilder.append("7");
                 }
-            } catch (Exception e){
-                formatBuilder.append("0");
+            } else if (sPName[i].contains("X")) {
+                b = SetLengthAndWidth(sPName[i].split("X")[0],sPName[i].split("X")[1])[0];
+                a = SetLengthAndWidth(sPName[i].split("X")[0],sPName[i].split("X")[1])[1];
+                if(a.equals(sPName[i].split("X")[0]))
+                    formatBuilder.append("4");
+                else
+                    formatBuilder.append("5");
+            } else if (sPName[i].contains("+")) {
+                switch (getFormatWithPlus(productTypeId)){
+                    case 1:
+                        m = sPName[i].split("\\+")[0];
+                        n = sPName[i].split("\\+")[1];
+                        if(m.contains("A")){
+                            m = m.substring(0,m.length()-1);
+                            mAngle = 1;
+                        } else if(p.contains("B")){
+                            m = m.substring(0,m.length()-1);
+                            mAngle = 2;
+                        } else
+                            mAngle = 0;
+                        if(n.contains("A")){
+                            n = n.substring(0,n.length()-1);
+                            nAngle = 1;
+                        } else if(n.contains("B")){
+                            n = n.substring(0,n.length()-1);
+                            nAngle = 2;
+                        } else
+                            nAngle = 0;
+                        formatBuilder.append("6");
+                        break;
+                    case 2:
+                        m = sPName[i].split("\\+")[0];
+                        n = sPName[i].split("\\+")[1];
+                        if(m.contains("A")){
+                            m = m.substring(0,m.length()-1);
+                            mAngle = 1;
+                        } else if(p.contains("B")){
+                            m = m.substring(0,m.length()-1);
+                            mAngle = 2;
+                        } else
+                            mAngle = 0;
+                        if(n.contains("A")){
+                            n = n.substring(0,n.length()-1);
+                            nAngle = 1;
+                        } else if(n.contains("B")){
+                            n = n.substring(0,n.length()-1);
+                            nAngle = 2;
+                        } else
+                            nAngle = 0;
+                        p = sPName[i].split("\\+")[2];
+                        if(p.contains("A")){
+                            p = p.substring(0,p.length()-1);
+                            pAngle = 1;
+                        } else if(p.contains("B")){
+                            p = p.substring(0,p.length()-1);
+                            pAngle = 2;
+                        } else
+                            pAngle = 0;
+                        formatBuilder.append("8");
+                        break;
+                    case 3:
+                        a = sPName[i].split("\\+")[0];
+                        b = sPName[i].split("\\+")[1];
+                        formatBuilder.append("9");
+                        break;
+                    case 0:
+                        return null;
+                }
+            } else {
+                suffixBuilder.append(sPName[i]);
+                suffixBuilder.append(" ");
+                formatBuilder.append("7");
             }
+
         }
         String format = formatBuilder.toString() + "";
         String suffix = suffixBuilder.toString() + "";
@@ -337,8 +383,12 @@ public class AnalyzeNameService extends BaseService {
             format = format.replace("2","3");
             format = format.replace("l","2");
         }
-        System.out.println("AnaResult======="+ Arrays.toString(new String[]{productName,format,productType,m,n,a,b,mnAngle,suffix,igSuffix,productTypeName}));
-        return new String[]{format,productType,m,n,a,b,mnAngle,suffix,igSuffix,productTypeName};
+        System.out.println("AnaResult======="+ Arrays.toString(new String[]{productName,format,productTypeId,classificationId,
+                m,n,p,a,b, String.valueOf(mAngle),String.valueOf(nAngle),String.valueOf(pAngle),suffix,igSuffix,productTypeName}));
+        return new String[]{format,productTypeId,classificationId,m,n,p,a,b,
+                String.valueOf(mAngle),String.valueOf(nAngle),String.valueOf(pAngle),suffix,igSuffix,productTypeName};
     }
+
+
 
 }

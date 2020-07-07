@@ -39,16 +39,16 @@ public class Y_Upload_Data_Service extends BaseService {
      * 添加数据,返回添加的旧板info id
      */
     @Transactional
-    public int oldpanelUpload(String oldpanelName, String warehouseName, String count) {
+    public int[] oldpanelUpload(String oldpanelName, String warehouseName, String count) {
         String[] info = AnalyzeNameService.isInfoExistBackUnit("oldpanel",oldpanelName);
         //id,unitWeight,unitArea
         int oldpanelId = Integer.parseInt(info[0]);
         System.out.println("oldpanelUpload===oldpanelId="+oldpanelId);
         if(oldpanelId==0){
-            return 0;
+            return new int[]{0, 0};
         }
-        oldpanelSaveData(info,warehouseName,count);
-        return oldpanelId;
+        int oldpanelstoreId = oldpanelSaveData(info,warehouseName,count);
+        return new int[]{oldpanelId, oldpanelstoreId};
 
 //        String[] analyzeOldpanelName = AnalyzeNameService.analyzeOldpanelName(oldpanelName);
 //        if(!AnalyzeNameService.isOldpanelFormatExist(analyzeOldpanelName[0],analyzeOldpanelName[1],analyzeOldpanelName[7],analyzeOldpanelName[8]))
@@ -77,22 +77,24 @@ public class Y_Upload_Data_Service extends BaseService {
                 analyzeOldpanelName[4],analyzeOldpanelName[5],analyzeOldpanelName[6],analyzeOldpanelName[7],userId);
     }
 
-    private void oldpanelSaveData(String[] info, String warehouseName, String count){
+    private int oldpanelSaveData(String[] info, String warehouseName, String count){
         //id,unitWeight,unitArea
         String sql = "select * from oldpanel_store where oldpanelId=? and warehouseName=?";
         DataList queryList = queryService.query(sql,info[0],warehouseName);
         if(queryList.isEmpty()){
-            insertProjectService.insertDataToTable("insert into oldpanel_store " +
+            return insertProjectService.insertDataToTable("insert into oldpanel_store " +
                     "(oldpanelId,countUse,countStore,warehouseName,totalArea,totalWeight) values (?,?,?,?,?,?)",
                     info[0],count,count,warehouseName,String.valueOf(Double.parseDouble(info[2])*Integer.parseInt(count)),
                     String.valueOf(Double.parseDouble(info[1])*Integer.parseInt(count)));
         } else {
+            String oldpanelstoreId = queryList.get(0).get("id").toString();
             String sql2 = "update oldpanel_store set countUse=countUse+"+count+
                     ",countStore=countStore+"+count+",totalArea=totalArea+"+
                     String.valueOf(Double.parseDouble(info[2]) * Integer.parseInt(count)) +
                     ",totalWeight=totalWeight+"+String.valueOf(Double.parseDouble(info[1])*Integer.parseInt(count))+
-                    " where id="+queryList.get(0).get("id").toString();
+                    " where id="+oldpanelstoreId;
             jo.update(sql2);
+            return Integer.parseInt(oldpanelstoreId);
         }
     }
 //    private int oldpanelSaveData(String[] analyzeOldpanelName, String oldpanelName, String classificationId, String inventoryUnit,
