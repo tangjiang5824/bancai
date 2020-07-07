@@ -62,13 +62,13 @@ public class BackproductDataController {
             String productName = (jsonTemp.get("productName") + "").toUpperCase();
             String warehouseName = jsonTemp.get("warehouseName") + "";
             String count = jsonTemp.get("count") + "";
-            int productId = backproductDataService.backProduct(productName, warehouseName, count);
-            if (productId == 0) {
+            int[] productId = backproductDataService.backProduct(productName, warehouseName, count);
+            if (productId[0] == 0) {
                 return false;
             }
-            String sql_addLogDetail = "insert into backproduct_logdetail (productId,count,backproductlogId) values (?,?,?)";
-            boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLogDetail, String.valueOf(productId),
-                    count, String.valueOf(backproductlogId));
+            String sql_addLogDetail = "insert into backproduct_logdetail (productId,count,backproductlogId,backproductstoreId) values (?,?,?,?)";
+            boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLogDetail, String.valueOf(productId[0]),
+                    count, String.valueOf(backproductlogId),String.valueOf(productId[1]));
             if (!is_log_right) {
                 return false;
             }

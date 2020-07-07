@@ -29,19 +29,19 @@ public class BackproductDataService extends BaseService{
      * 添加数据,返回添加的产品id
      */
     @Transactional
-    public int backProduct(String productName, String warehouseName, String count) {
+    public int[] backProduct(String productName, String warehouseName, String count) {
         String[] info = AnalyzeNameService.isInfoExistBackUnit("product", productName);
         //id,unitWeight,unitArea
         int productId = Integer.parseInt(info[0]);
         System.out.println("backproductUpload===productId=" + productId);
         if (productId == 0) {
-            return 0;
+            return new int[]{0,0};
         }
-        backproductSaveData(info, warehouseName, count);
-        return productId;
+        int backproductstoreId = backproductSaveData(info, warehouseName, count);
+        return new int[]{productId,backproductstoreId};
     }
 
-    private void backproductSaveData(String[] info, String warehouseName, String count){
+    private int backproductSaveData(String[] info, String warehouseName, String count){
         //id,unitWeight,unitArea
 //        if(Double.parseDouble(info[1])!=0)
         info[1] = String.valueOf(Double.parseDouble(info[1])*Integer.parseInt(count));
@@ -50,7 +50,7 @@ public class BackproductDataService extends BaseService{
         String sql = "select * from backproduct_store where productId=? and warehouseName=?";
         DataList queryList = queryService.query(sql,info[0],warehouseName);
         if(queryList.isEmpty()){
-            insertProjectService.insertDataToTable("insert into backproduct_store " +
+            return insertProjectService.insertDataToTable("insert into backproduct_store " +
                             "(productId,countUse,countStore,warehouseName,totalArea,totalWeight) values (?,?,?,?,?,?)",
                     info[0],count,count,warehouseName,info[2], info[1]);
         } else {
@@ -59,6 +59,7 @@ public class BackproductDataService extends BaseService{
                     ",totalWeight=totalWeight+"+info[1]+
                     " where id="+queryList.get(0).get("id").toString();
             jo.update(sql2);
+            return Integer.parseInt(queryList.get(0).get("id").toString());
         }
     }
 
