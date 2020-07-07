@@ -41,98 +41,116 @@ public class AnalyzeNameService extends BaseService {
         String isPureNumber = "^-?[0-9]+";
         String isPureWord = "^[A-Za-z]+$";
         String[] sOName = oldpanelName.split("\\s+");
-        String oldpanelType = "0";
+        DataList typeList = getTypeByOldpanelName(oldpanelName.split("-")[0]);
+        if(typeList.size()==0)
+            return null;
+        String oldpanelTypeId = typeList.get(0).get("oldpanelType").toString();
+        String classificationId = typeList.get(0).get("classificationId").toString();
+        String oldpanelTypeName = typeList.get(0).get("oldpanelTypeName").toString();
         StringBuilder formatBuilder = new StringBuilder();
         String m = "0";
         String n = "0";
+        String p = "0";
         String a = "0";
         String b = "0";
-        String mnAngle = "00";
+        int mAngle = 0;
+        int nAngle = 0;
+        int pAngle = 0;
         StringBuilder suffixBuilder = new StringBuilder();
-        String oldpanelTypeName = "";
         int conM = 0;
-        int conT = 0;
         for (int i = 0; i < 4; i++) {
-            try {
-//                System.out.println("ana====="+sOName[i]);
-                if (sOName[i].matches(isPureNumber)){
-                    if(conM==0){
-                        m = sOName[i];
-                        formatBuilder.append("2");
-                        conM=1;
-                    } else if(conM==1){
-                        n = sOName[i];
-                        formatBuilder.append("3");
-                        conM=2;
-                    } else {
-                        suffixBuilder.append(sOName[i]);
-                        suffixBuilder.append(" ");
-                        formatBuilder.append("7");
-                    }
-                } else if (sOName[i].substring(0,1).matches(isPureWord)){
-                    if(conT==0) {
-                        oldpanelTypeName = sOName[i];
-                        oldpanelType = getOldpanelType(sOName[i]);
-                        formatBuilder.append("1");
-                        conT = 1;
-                    }
-                    else {
-                        suffixBuilder.append(sOName[i]);
-                        suffixBuilder.append(" ");
-                        formatBuilder.append("7");
-                    }
-                } else if (sOName[i].contains("*")) {
-                    b = SetLengthAndWidth(sOName[i].split("\\*")[0],sOName[i].split("\\*")[1])[0];
-                    a = SetLengthAndWidth(sOName[i].split("\\*")[0],sOName[i].split("\\*")[1])[1];
-                    if(a.equals(sOName[i].split("\\*")[0]))
-                        formatBuilder.append("4");
-                    else
-                        formatBuilder.append("5");
-                } else if (sOName[i].contains("+")) {
-                    m = sOName[i].split("\\+")[0];
-                    n = sOName[i].split("\\+")[1];
-                    if(m.contains("A")){
-                        m = m.substring(0,m.length()-1);
-                        if(n.contains("A")){
-                            n = n.substring(0,n.length()-1);
-                            mnAngle = "11";
-                        } else if (n.contains("B")){
-                            n = n.substring(0,n.length()-1);
-                            mnAngle = "12";
-                        } else {
-                            mnAngle = "10";
-                        }
-                    } else if(m.contains("B")){
-                        m = m.substring(0,m.length()-1);
-                        if(n.contains("A")){
-                            n = n.substring(0,n.length()-1);
-                            mnAngle = "21";
-                        } else if (n.contains("B")){
-                            n = n.substring(0,n.length()-1);
-                            mnAngle = "22";
-                        } else {
-                            mnAngle = "20";
-                        }
-                    } else {
-                        if(n.contains("A")){
-                            n = n.substring(0,n.length()-1);
-                            mnAngle = "01";
-                        } else if (n.contains("B")){
-                            n = n.substring(0,n.length()-1);
-                            mnAngle = "02";
-                        } else {
-                            mnAngle = "00";
-                        }
-                    }
-                    formatBuilder.append("6");
+            if(i>=(sOName.length-1)){
+                formatBuilder.append("0");
+            } else if(sOName[i].equals(oldpanelTypeName)){
+                formatBuilder.append("1");
+            } else if(sOName[i].matches(isPureNumber)){
+                if(conM==0){
+                    m = sOName[i];
+                    formatBuilder.append("2");
+                    conM=1;
+                } else if(conM==1){
+                    n = sOName[i];
+                    formatBuilder.append("3");
+                    conM=2;
                 } else {
                     suffixBuilder.append(sOName[i]);
                     suffixBuilder.append(" ");
                     formatBuilder.append("7");
                 }
-            } catch (Exception e){
-                formatBuilder.append("0");
+            } else if (sOName[i].contains("*")) {
+                b = SetLengthAndWidth(sOName[i].split("\\*")[0],sOName[i].split("\\*")[1])[0];
+                a = SetLengthAndWidth(sOName[i].split("\\*")[0],sOName[i].split("\\*")[1])[1];
+                if(a.equals(sOName[i].split("\\*")[0]))
+                    formatBuilder.append("4");
+                else
+                    formatBuilder.append("5");
+            } else if (sOName[i].contains("+")) {
+                switch (getFormatWithPlus("oldpanel",oldpanelTypeId)){
+                    case 1:
+                        m = sOName[i].split("\\+")[0];
+                        n = sOName[i].split("\\+")[1];
+                        if(m.contains("A")){
+                            m = m.substring(0,m.length()-1);
+                            mAngle = 1;
+                        } else if(p.contains("B")){
+                            m = m.substring(0,m.length()-1);
+                            mAngle = 2;
+                        } else
+                            mAngle = 0;
+                        if(n.contains("A")){
+                            n = n.substring(0,n.length()-1);
+                            nAngle = 1;
+                        } else if(n.contains("B")){
+                            n = n.substring(0,n.length()-1);
+                            nAngle = 2;
+                        } else
+                            nAngle = 0;
+                        formatBuilder.append("6");
+                        break;
+                    case 2:
+                        m = sOName[i].split("\\+")[0];
+                        n = sOName[i].split("\\+")[1];
+                        if(m.contains("A")){
+                            m = m.substring(0,m.length()-1);
+                            mAngle = 1;
+                        } else if(p.contains("B")){
+                            m = m.substring(0,m.length()-1);
+                            mAngle = 2;
+                        } else
+                            mAngle = 0;
+                        if(n.contains("A")){
+                            n = n.substring(0,n.length()-1);
+                            nAngle = 1;
+                        } else if(n.contains("B")){
+                            n = n.substring(0,n.length()-1);
+                            nAngle = 2;
+                        } else
+                            nAngle = 0;
+                        p = sOName[i].split("\\+")[2];
+                        if(p.contains("A")){
+                            p = p.substring(0,p.length()-1);
+                            pAngle = 1;
+                        } else if(p.contains("B")){
+                            p = p.substring(0,p.length()-1);
+                            pAngle = 2;
+                        } else
+                            pAngle = 0;
+                        formatBuilder.append("8");
+                        break;
+                    case 3:
+                        a = sOName[i].split("\\+")[0];
+                        b = sOName[i].split("\\+")[1];
+                        formatBuilder.append("9");
+                        break;
+                    case 0:
+                        return null;
+                }
+            } else {
+                suffixBuilder.append(sOName[i]);
+                suffixBuilder.append(" ");
+                formatBuilder.append("7");
             }
+
         }
         String format = formatBuilder.toString() + "";
         String suffix = suffixBuilder.toString() + "";
@@ -146,8 +164,10 @@ public class AnalyzeNameService extends BaseService {
             format = format.replace("2","3");
             format = format.replace("l","2");
         }
-        System.out.println("AnaResult======="+ Arrays.toString(new String[]{oldpanelName,format,oldpanelType,m,n,a,b,mnAngle,suffix,oldpanelTypeName}));
-        return new String[]{format,oldpanelType,m,n,a,b,mnAngle,suffix,oldpanelTypeName};
+        System.out.println("AnaResult======="+ Arrays.toString(new String[]{oldpanelName,format,oldpanelTypeId,classificationId,
+                m,n,p,a,b, String.valueOf(mAngle),String.valueOf(nAngle),String.valueOf(pAngle),suffix,oldpanelTypeName}));
+        return new String[]{format,oldpanelTypeId,classificationId,m,n,p,a,b,
+                String.valueOf(mAngle),String.valueOf(nAngle),String.valueOf(pAngle),suffix,oldpanelTypeName};
     }
 
 
@@ -159,6 +179,26 @@ public class AnalyzeNameService extends BaseService {
         return new String[]{String.valueOf(max),String.valueOf(min)};
     }
 
+    /**
+     * 根据旧板品名获取type表内容
+     */
+    @Transactional
+    public DataList getTypeByOldpanelName(String oldpanelName){
+        String isPureWord = "^[A-Za-z]+$";
+        String oldpanelTypeName = "";
+        String[] sOName = oldpanelName.split("\\s+");
+        DataList list = new DataList();
+        for (int i = 0; i < 4; i++) {
+            if(sOName[i].substring(i,i+1).matches(isPureWord)){
+                oldpanelTypeName = sOName[i];
+                break;
+            }
+        }
+        if(oldpanelTypeName.equals(""))
+            return list;
+        list = queryService.query("select * from oldpaneltype where oldpanelTypeName=?",oldpanelTypeName);
+        return list;
+    }
     /**
      * 根据产品品名获取type表内容
      */
@@ -226,14 +266,14 @@ public class AnalyzeNameService extends BaseService {
         return list.get(0).get("id").toString();
     }
     /**
-     * 根据产品类型id查询含+的格式为m+n或m+n+p或a+b。1,2,3。0为不存在
+     * 根据（产品，旧板）类型id查询含+的格式为m+n或m+n+p或a+b。1,2,3。0为不存在
      */
     @Transactional
-    public int getFormatWithPlus(String productTypeId){
-        DataList list = queryService.query("select * from product_format where productTypeId=?", productTypeId);
+    public int getFormatWithPlus(String name, String panelTypeId){
+        DataList list = queryService.query("select * from "+name+"_format where "+name+"TypeId=?", panelTypeId);
         if(list.size()!=0) {
             for (DataRow dataRow : list) {
-                String format = dataRow.get("productFormat").toString();
+                String format = dataRow.get(name+"Format").toString();
                 if (format.contains("6"))
                     return 1;
                 else if (format.contains("8"))
@@ -304,7 +344,7 @@ public class AnalyzeNameService extends BaseService {
                 else
                     formatBuilder.append("5");
             } else if (sPName[i].contains("+")) {
-                switch (getFormatWithPlus(productTypeId)){
+                switch (getFormatWithPlus("product",productTypeId)){
                     case 1:
                         m = sPName[i].split("\\+")[0];
                         n = sPName[i].split("\\+")[1];

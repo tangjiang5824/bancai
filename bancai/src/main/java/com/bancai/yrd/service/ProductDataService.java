@@ -2,7 +2,9 @@ package com.bancai.yrd.service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 
 import com.bancai.cg.service.InsertProjectService;
 import com.bancai.commonMethod.AnalyzeNameService;
@@ -49,6 +51,30 @@ public class ProductDataService extends BaseService{
         return productSaveInfo(productName, inventoryUnit, unitWeight, unitArea, remark, userId);
     }
 
+    /**
+     * 如果没有info，且品名合法则添加产品info，返回info id或0
+     */
+    @Transactional
+    public int addProductInfoIfNameValid(String productName,String userId){
+        int productId = AnalyzeNameService.isInfoExist("product", productName);
+        if (productId == 0) {
+            if (AnalyzeNameService.getTypeByProductName(productName).size() == 0)
+                return 0;
+            Date date = new Date();
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String sql_addLog = "insert into product_log (type,userId,time) values(?,?,?)";
+            productId = productAddNewInfo(productName, "", "", "", "", userId);
+            if (productId == 0)
+                return 0;
+            int productlogId = insertProjectService.insertDataToTable(sql_addLog, "6", "0", simpleDateFormat.format(date));
+            boolean isLogRight = insertProjectService.insertIntoTableBySQL("insert into product_logdetail (productlogId,productId) values (?,?)",
+                    String.valueOf(productlogId), String.valueOf(productId));
+            if (!isLogRight)
+                return 0;
+        }
+        return productId;
+    }
+
     private int productSaveInfo(String productName, String inventoryUnit, String unitWeight,
                                 String unitArea, String remark, String userId){
         if(!unitArea.equals(""))
@@ -73,15 +99,15 @@ public class ProductDataService extends BaseService{
                 "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         String[] t = {productName,analyzeProductName[2],inventoryUnit,
                 unitWeight,unitArea,remark, productFormatId,analyzeProductName[1],
-                analyzeProductName[2],analyzeProductName[3], analyzeProductName[4],analyzeProductName[5],
+                analyzeProductName[3], analyzeProductName[4],analyzeProductName[5],
                 analyzeProductName[6],analyzeProductName[7],analyzeProductName[8],analyzeProductName[9],
-                analyzeProductName[10],analyzeProductName[11],userId};
+                analyzeProductName[10],analyzeProductName[11],analyzeProductName[12],userId};
         System.out.println("SaveInfo======="+Arrays.toString(t));
         return insertProjectService.insertDataToTable(sql,productName,analyzeProductName[2],inventoryUnit,
                 unitWeight,unitArea,remark, productFormatId,analyzeProductName[1],
-                analyzeProductName[2],analyzeProductName[3], analyzeProductName[4],analyzeProductName[5],
+                analyzeProductName[3], analyzeProductName[4],analyzeProductName[5],
                 analyzeProductName[6],analyzeProductName[7],analyzeProductName[8],analyzeProductName[9],
-                analyzeProductName[10],analyzeProductName[11],userId);
+                analyzeProductName[10],analyzeProductName[11],analyzeProductName[12],userId);
     }
     /**
      * 添加数据,返回添加的产品id
@@ -118,5 +144,22 @@ public class ProductDataService extends BaseService{
             jo.update(sql2);
             return Integer.parseInt(productstoreId);
         }
+    }
+
+    /*
+     * 查询所有的产品类型
+     * */
+    @Transactional
+    public DataList findProductTypeList(){
+        return queryService.query("select * from producttype order by id ASC");
+
+    }
+    /*
+     * 根据类型id查询所有的产品格式
+     * */
+    @Transactional
+    public DataList findProductFormatList(String productTypeId){
+        return queryService.query("select * from product_format order by id ASC");
+
     }
 }

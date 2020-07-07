@@ -30,69 +30,7 @@ public class PanelMatchService extends BaseService{
     @Autowired
     private ProductDataService productDataService;
 
-    /**
-     * 设计清单解析
-     */
-    @Transactional
-    public UploadDataResult uploadDesignlist(InputStream inputStream, String userId, String projectId, String buildingId,
-                                             String buildingpositionId) throws IOException {
-        UploadDataResult result = new UploadDataResult();
 
-        Excel excel = new Excel(inputStream);
-        DataList dataList = excel.readExcelContent();
-        Map<String, ArrayList<String>> map = new HashMap<>();
-        for (DataRow dataRow : dataList) {
-            String productName = dataRow.get("productName").toString().trim().toUpperCase();
-            String position = dataRow.get("position").toString();
-            if (!queryService.query("select * from designlist where projectId=? and buildingId=? and position=?"
-                    , projectId, buildingId, position).isEmpty()) {
-                result.setErrorCode(2);
-                return result;
-            }
-            int productId = AnalyzeNameService.isInfoExist("product", productName);
-            if (productId == 0) {
-                if(AnalyzeNameService.getTypeByProductName(productName).size()==0){
-                    result.setErrorCode(2);
-                    return result;
-                }
-                Date date = new Date();
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                String sql_addLog = "insert into product_log (type,userId,time) values(?,?,?)";
-                productId = productDataService.productAddNewInfo(productName, "", "",
-                        "", "", userId);
-                if(productId==0){
-                    result.setErrorCode(2);
-                    return result;
-                }
-                int productlogId = insertProjectService.insertDataToTable(sql_addLog, "6", "0", simpleDateFormat.format(date));
-                boolean isLogRight = insertProjectService.insertIntoTableBySQL("insert into product_logdetail (productlogId,productId) values (?,?)",
-                        String.valueOf(productlogId), String.valueOf(productId));
-                if(!isLogRight){
-                    result.setErrorCode(2);
-                    return result;
-                }
-            }
-            productName = String.valueOf(productId) + "N" + productName;
-            //productName形如 15N100 B 200  即  idNproductName
-            if (map.containsKey(productName)) {
-                ArrayList<String> a = new ArrayList<>();
-                a = map.get(productName);
-                a.add(position);
-                map.put(productName, a);
-            } else {
-                ArrayList<String> a = new ArrayList<>();
-                a.add(position);
-                map.put(productName, a);
-            }
-        }
-        map = matchBackProduct(map,projectId,buildingId,buildingpositionId);
-        map = matchPreprocess(map,projectId,buildingId,buildingpositionId);
-//            map = matchOldpanel(map);
-//            map = matchMaterial(map);
-        result.success = matchError(map,projectId,buildingId,buildingpositionId);
-        result.dataList = dataList;
-        return result;
-    }
 
     /**
      * 插入设计清单，返回清单id
@@ -104,6 +42,20 @@ public class PanelMatchService extends BaseService{
                         "(projectId,buildingId,buildingpositionId,productId,position,madeBy,processStatus) values " +
                         "(?,?,?,?,?,?,?)", projectId, buildingId, buildingpositionId, productId, position,
                 String.valueOf(madeBy), String.valueOf(processStatus));
+    }
+    /**
+     * 更新设计清单madeBy，返回清单id
+     */
+    @Transactional
+    public int updateDesignlist(String projectId, String buildingId, String position, int madeBy) {
+        String sql = "select * from designlist where projectId=? and buildingId=? and position=?";
+        DataList queryList = queryService.query(sql,projectId,buildingId,position);
+        if(queryList.size()!=1)
+            return 0;
+        String designlistId = queryList.get(0).get("id").toString();
+        String sql2 = "update designlist set madeBy="+madeBy+" where id="+designlistId;
+        jo.update(sql2);
+        return Integer.parseInt(designlistId);
     }
 
     /**
@@ -130,8 +82,7 @@ public class PanelMatchService extends BaseService{
                     if (num > countUse) {
                         while (countUse > 0) {
                             String position = value.get(num - 1);
-                            int designlistId = insertDesignlist(projectId, buildingId, buildingpositionId,
-                                    productId, position, 0, 0);
+                            int designlistId = updateDesignlist(projectId, buildingId, position, 1);
                             int resultId = insertBackProductMatchResult(designlistId,backproductId);
                             value.remove(num - 1);
                             num--;
@@ -142,8 +93,7 @@ public class PanelMatchService extends BaseService{
                     } else {
                         while (num > 0) {
                             String position = value.get(num - 1);
-                            int designlistId = insertDesignlist(projectId, buildingId, buildingpositionId,
-                                    productId, position, 0, 0);
+                            int designlistId = updateDesignlist(projectId, buildingId, position, 1);
                             int resultId = insertBackProductMatchResult(designlistId,backproductId);
                             value.remove(num - 1);
                             num--;
@@ -199,8 +149,7 @@ public class PanelMatchService extends BaseService{
                     if (num > countUse) {
                         while (countUse > 0) {
                             String position = value.get(num - 1);
-                            int designlistId = insertDesignlist(projectId, buildingId, buildingpositionId,
-                                    productId, position, 1, 0);
+                            int designlistId = updateDesignlist(projectId, buildingId, position, 2);
                             int resultId = insertPreprocessMatchResult(designlistId,preprocessId);
                             value.remove(num - 1);
                             num--;
@@ -211,8 +160,7 @@ public class PanelMatchService extends BaseService{
                     } else {
                         while (num > 0) {
                             String position = value.get(num - 1);
-                            int designlistId = insertDesignlist(projectId, buildingId, buildingpositionId,
-                                    productId, position, 1, 0);
+                            int designlistId = updateDesignlist(projectId, buildingId, position, 2);
                             int resultId = insertPreprocessMatchResult(designlistId,preprocessId);
                             value.remove(num - 1);
                             num--;

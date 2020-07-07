@@ -58,7 +58,8 @@ public class ProductDataController {
             Date date = new Date();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String sql_addLog = "insert into format_log (type,formatId,userId,time) values(?,?,?,?)";
-            boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLog, "1", userId, simpleDateFormat.format(date));
+            boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLog,
+                    "1",String.valueOf(formatId), userId, simpleDateFormat.format(date));
             if (!is_log_right) {
                 return false;
             }

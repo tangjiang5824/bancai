@@ -364,6 +364,7 @@ public class Select_specification_from_materialName_controller {
 		WebResponse wr=queryAllService.queryDataPage(start, limit, c, tableName);
 		return wr;
 	}
+	//查询旧板匹配结果
 	@RequestMapping(value = "/project/queryBackproductMatchResult.do")
 	public WebResponse queryBackproductMatchResult(Integer start, Integer limit, String projectId,
 										 String buildingId,String positionId) throws ParseException {
@@ -383,7 +384,30 @@ public class Select_specification_from_materialName_controller {
 		WebResponse wr=queryAllService.queryDataPage(start, limit, c, tableName);
 		return wr;
 	}
-
+	//查询新板匹配结果
+	@RequestMapping(value = "/project/queryNewPanelMatchResult.do")
+	public WebResponse queryNewPanelMatchResult(Integer start, Integer limit, String projectId,
+												   String buildingId,String buildingpositionId) throws ParseException {
+		if(null==start||start.equals("")) start=0;
+		if(null==limit||limit.equals("")) limit=50;
+		String tableName = "query_material_match_result";
+		String madeBy = "4";
+		mysqlcondition c=new mysqlcondition();
+		if (madeBy.length() != 0) {
+			c.and(new mysqlcondition("madeBy", "=", madeBy));
+		}
+		if (projectId.length() != 0) {
+			c.and(new mysqlcondition("projectId", "=", projectId));
+		}
+		if (buildingId.length() != 0) {
+			c.and(new mysqlcondition("buildingId", "=", buildingId));
+		}
+		if (buildingpositionId.length() != 0) {
+			c.and(new mysqlcondition("buildingpositionId", "=", buildingpositionId));
+		}
+		WebResponse wr=queryAllService.queryDataPage(start, limit, c, tableName);
+		return wr;
+	}
 	@RequestMapping(value = "/oldpanel/query_data.do")
 	public WebResponse query_data(Integer start, Integer limit, String tableName,String oldpanelType,String productType,
 										 String maxCount,String minCount,String warehouseName) throws ParseException {

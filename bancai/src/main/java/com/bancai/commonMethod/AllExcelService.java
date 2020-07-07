@@ -213,7 +213,7 @@ public class AllExcelService extends BaseService {
 		Iterator it = dataList.iterator();
 		while (it.hasNext()){
 			com.bancai.domain.DataRow dataRow = (DataRow) it.next();
-			String oldpanelName = dataRow.get("品名") + "";
+			String oldpanelName = (dataRow.get("品名") + "").trim().toUpperCase();
 			if(oldpanelName.equals("")){
 				it.remove();
 				continue;
