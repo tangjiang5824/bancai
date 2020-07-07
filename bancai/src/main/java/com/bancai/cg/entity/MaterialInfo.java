@@ -9,14 +9,28 @@ import java.util.Set;
 @Table(name = "material_info")
 public class MaterialInfo {
     private Integer materialid;
-    private String description;
     private String inventoryUnit;
     private String materialName;
-    private String specification;
     private Integer width;
+    private Integer nValue;
+    private Integer mValue;
+    private Integer aValue;
+    private Integer bValue;
+    private String orientation;
     private Double unitWeight;
+    private MaterialType typeId;
     private Set<MaterialStore> materialStores =new HashSet<>();
     private Set<MaterialLogdetail> materialLogdetails =new HashSet<>();
+
+    @ManyToOne(targetEntity = MaterialType.class)
+    @JoinColumn(name = "typeId",referencedColumnName = "id")
+    public MaterialType getTypeId() {
+        return typeId;
+    }
+
+    public void setTypeId(MaterialType typeId) {
+        this.typeId = typeId;
+    }
 
     @OneToMany(mappedBy = "materialInfo")
     public Set<MaterialLogdetail> getMaterialLogdetails() {
@@ -38,17 +52,45 @@ public class MaterialInfo {
     }
 
 
-
-
-
-    public String getDescription() {
-        return description;
+    public Integer getnValue() {
+        return nValue;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setnValue(Integer nValue) {
+        this.nValue = nValue;
     }
 
+    public Integer getmValue() {
+        return mValue;
+    }
+
+    public void setmValue(Integer mValue) {
+        this.mValue = mValue;
+    }
+
+    public Integer getaValue() {
+        return aValue;
+    }
+
+    public void setaValue(Integer aValue) {
+        this.aValue = aValue;
+    }
+
+    public Integer getbValue() {
+        return bValue;
+    }
+
+    public void setbValue(Integer bValue) {
+        this.bValue = bValue;
+    }
+
+    public String getOrientation() {
+        return orientation;
+    }
+
+    public void setOrientation(String orientation) {
+        this.orientation = orientation;
+    }
 
     public String getInventoryUnit() {
         return inventoryUnit;
@@ -66,16 +108,6 @@ public class MaterialInfo {
     public void setMaterialName(String materialName) {
         this.materialName = materialName;
     }
-
-
-    public String getSpecification() {
-        return specification;
-    }
-
-    public void setSpecification(String specification) {
-        this.specification = specification;
-    }
-
 
     public Integer getWidth() {
         return width;

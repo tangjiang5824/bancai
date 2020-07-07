@@ -45,6 +45,31 @@ public class ProductDataController {
     Logger log = Logger.getLogger(ProductDataController.class);
 
     /*
+     * 新增产品品名格式
+     * */
+    @RequestMapping(value = "/product/addFormat.do")
+    public boolean productAddFormat(String productTypeId, String productFormat, HttpSession session) throws JSONException {
+        try {
+            int formatId = productDataService.productAddNewFormat(productTypeId, productFormat);
+            if (formatId == 0) {
+                return false;//已经存在
+            }
+            String userId = (String) session.getAttribute("userid");
+            Date date = new Date();
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String sql_addLog = "insert into format_log (type,formatId,userId,time) values(?,?,?,?)";
+            boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLog,
+                    "1",String.valueOf(formatId), userId, simpleDateFormat.format(date));
+            if (!is_log_right) {
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    /*
      * 新增产品基础信息
      * */
     @RequestMapping(value = "/product/addInfo.do")
@@ -59,13 +84,13 @@ public class ProductDataController {
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonTemp = jsonArray.getJSONObject(i);
                 System.out.println("第" + i + "个---" + jsonTemp);
-                String productName = (jsonTemp.get("productName") + "").toUpperCase();
-                String classificationId = jsonTemp.get("classificationId") + "";
+                String productName = (jsonTemp.get("productName") + "").trim().toUpperCase();
+//                String classificationId = jsonTemp.get("classificationId") + "";
                 String inventoryUnit = jsonTemp.get("inventoryUnit") + "";
                 String unitWeight = jsonTemp.get("unitWeight") + "";
                 String unitArea = jsonTemp.get("unitArea") + "";
                 String remark = jsonTemp.get("remark") + "";
-                int productId = productDataService.productAddNewInfo(productName, classificationId, inventoryUnit,
+                int productId = productDataService.productAddNewInfo(productName, inventoryUnit,
                         unitWeight, unitArea, remark, userId);
                 if (productId == 0) {
                     return false;//已经存在
@@ -82,6 +107,7 @@ public class ProductDataController {
         }
         return true;
     }
+
     /*
      * 添加单个数据
      * */
@@ -94,21 +120,22 @@ public class ProductDataController {
         Date date = new Date();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String sql_backLog = "insert into product_log (type,userId,time,projectId,buildingId,operator) values(?,?,?,?,?,?)";
-        int productlogId = insertProjectService.insertDataToTable(sql_backLog, "2", userId, simpleDateFormat.format(date), projectId, buildingId, operator);
+        int productlogId = insertProjectService.insertDataToTable(sql_backLog, "2", userId, simpleDateFormat.format(date)
+                , projectId, buildingId, operator);
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonTemp = jsonArray.getJSONObject(i);
             //获得第i条数据的各个属性值
             System.out.println("第" + i + "个:userid=" + userId + "---" + jsonTemp);
-            String productName = (jsonTemp.get("productName") + "").toUpperCase();
+            String productName = (jsonTemp.get("productName") + "").trim().toUpperCase();
             String warehouseName = jsonTemp.get("warehouseName") + "";
             String count = jsonTemp.get("count") + "";
-            int productId = productDataService.addProduct(productName, warehouseName, count);
-            if (productId == 0) {
+            int[] productId = productDataService.addProduct(productName, warehouseName, count);
+            if (productId[0] == 0) {
                 return false;
             }
-            String sql_addLogDetail = "insert into product_logdetail (productId,count,productlogId) values (?,?,?)";
-            boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLogDetail, String.valueOf(productId),
-                    count, String.valueOf(productlogId));
+            String sql_addLogDetail = "insert into product_logdetail (productId,count,productlogId,productstoreId) values (?,?,?,?)";
+            boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLogDetail, String.valueOf(productId[0]),
+                    count, String.valueOf(productlogId),String.valueOf(productId[1]));
             if (!is_log_right) {
                 return false;
             }

@@ -61,13 +61,13 @@ public class PreprocessDataController {
             String productName = (jsonTemp.get("productName") + "").toUpperCase();
             String warehouseName = jsonTemp.get("warehouseName") + "";
             String count = jsonTemp.get("count") + "";
-            int productId = preprocessDataService.preprocessInbound(productName, warehouseName, count);
-            if (productId == 0) {
+            int[] productId = preprocessDataService.preprocessInbound(productName, warehouseName, count);
+            if (productId[0] == 0) {
                 return false;
             }
-            String sql_addLogDetail = "insert into preprocess_logdetail (productId,count,preprocesslogId) values (?,?,?)";
-            boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLogDetail, String.valueOf(productId),
-                    count, String.valueOf(preprocesslogId));
+            String sql_addLogDetail = "insert into preprocess_logdetail (productId,count,preprocesslogId,preprocessstoreId) values (?,?,?,?)";
+            boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLogDetail, String.valueOf(productId[0]),
+                    count, String.valueOf(preprocesslogId), String.valueOf(productId[1]));
             if (!is_log_right) {
                 return false;
             }

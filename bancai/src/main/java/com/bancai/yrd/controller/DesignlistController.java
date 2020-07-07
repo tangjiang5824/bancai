@@ -2,6 +2,7 @@ package com.bancai.yrd.controller;
 
 import com.bancai.commonMethod.PanelMatchService;
 import com.bancai.commonMethod.QueryAllService;
+import com.bancai.yrd.service.DesignlistService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,8 @@ public class DesignlistController {
     private QueryAllService queryService;
     @Autowired
     private PanelMatchService panelMatchService;
+    @Autowired
+    private DesignlistService designlistService;
 
     Logger log=Logger.getLogger(DesignlistController.class);
 
@@ -34,7 +37,7 @@ public class DesignlistController {
         WebResponse response = new WebResponse();
         String userId = (String)session.getAttribute("userid");
         try {
-            UploadDataResult result = panelMatchService.uploadDesignlist(uploadFile.getInputStream(), userId, projectId, buildingId, buildingpositionId);
+            UploadDataResult result = designlistService.uploadDesignlist(uploadFile.getInputStream(), userId, projectId, buildingId, buildingpositionId);
             response.setSuccess(result.success);
             response.setErrorCode(result.errorCode);
             response.put("value",result.dataList);
