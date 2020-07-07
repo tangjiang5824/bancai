@@ -49,11 +49,11 @@ Ext.define("menu.MenuRole_bc0", {
 				text : '原材料管理',
 				expanded : true,
 				children : [
-				// 	{
-				// 	text : '原材料领料',
-				// 	id : 'material.material_Receive',
-				// 	leaf : true
-				// },
+					{
+					text : '原材料领料',
+					id : 'material.material_Receive',
+					leaf : true
+				},
 					{
 					text : '原材料入库',
 					id : 'material.material_Inbound',
@@ -344,6 +344,11 @@ Ext.define("menu.MenuRole_bc0", {
 							text : '添加产品基础信息',
 							id : 'product.product_Basic_Info_Input',
 							leaf : true
+					},
+					{
+						text: 'scscscscscscscsc',
+						id :'product.product_Basic_Info_Input_2',
+						leaf : true
 					}
 					]
 				}
