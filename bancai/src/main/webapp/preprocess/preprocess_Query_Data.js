@@ -1,8 +1,8 @@
-Ext.define('backproduct.backproduct_Query_Records',{
+Ext.define('preprocess.preprocess_Query_Data',{
     extend:'Ext.panel.Panel',
     region: 'center',
     layout:'fit',
-    title: '旧板出入库记录查询',
+    title: '预加工半成品库存查询',
     reloadPage : function() {
         var p = Ext.getCmp('functionPanel');
         p.removeAll();
@@ -17,8 +17,8 @@ Ext.define('backproduct.backproduct_Query_Records',{
 
     initComponent : function() {
         var me = this;
-        var tableName="backproduct_log";
-        var whichStore="backproduct";
+        var tableName="preprocess_log";
+        //var whichStore="preprocess";
         var itemsPerPage=50;
 
         //操作类型：枚举类型
@@ -219,7 +219,7 @@ Ext.define('backproduct.backproduct_Query_Records',{
                                                 operator:operator,  //回滚操作人
                                                 oldpanellogId:oldpanel_logId,
                                                 type:0,  //撤销出库1
-                                                whichStore:whichStore,
+                                                //whichStore:whichStore,
                                             },
                                             success:function (response) {
                                                 //console.log(response.responseText);
@@ -386,7 +386,7 @@ Ext.define('backproduct.backproduct_Query_Records',{
                         'count'],
                     proxy: {
                         type: 'ajax',
-                        url: 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName=backproduct_logdetail_productName&columnName=backproductlogId&columnValue=' + id,//获取同一批出入库的原材料
+                        url: 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName=preprocess_logdetail_productName&columnName=oldpanellogId&columnValue=' + id,//获取同一批出入库的原材料
                         reader: {
                             type: 'json',
                             rootProperty: 'oldpanel_logdetail_oldpanelName',

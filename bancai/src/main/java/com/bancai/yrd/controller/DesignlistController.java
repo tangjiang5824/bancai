@@ -37,8 +37,8 @@ public class DesignlistController {
             UploadDataResult result = panelMatchService.uploadDesignlist(uploadFile.getInputStream(), userId, projectId, buildingId, buildingpositionId);
             response.setSuccess(result.success);
             response.setErrorCode(result.errorCode);
-//            response.put("value",result.dataList);
-//            response.put("totalCount", result.dataList.size());
+            response.put("value",result.dataList);
+            response.put("totalCount", result.dataList.size());
 
         } catch (IOException e) {
             e.printStackTrace();

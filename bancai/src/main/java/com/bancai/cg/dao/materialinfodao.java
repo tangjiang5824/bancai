@@ -10,6 +10,6 @@ import java.util.List;
 public interface materialinfodao extends JpaRepository<MaterialInfo,Integer>, JpaSpecificationExecutor<MaterialInfo> {
 
 
-    public List<MaterialInfo> findByMaterialNameAndSpecification(String materialName,String specification);
+    public List<MaterialInfo> findByMaterialName(String materialName);
 
 }

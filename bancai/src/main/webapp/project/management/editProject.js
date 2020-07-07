@@ -408,7 +408,7 @@ Ext.define('project.management.editProject',{
             draggable:true,
             tbar:toolbar_pop,
             items:building_grid,
-            closeAction : 'hide',
+            closeAction : 'hidden',
             modal:true,//模态窗口，背景窗口不可编辑
         });
 

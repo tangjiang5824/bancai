@@ -17,7 +17,8 @@ Ext.define('oldpanel.oldpanel_Outbound',{
 
     initComponent : function() {
         var me = this;
-        var tableName="oldpanel_store";
+        var tableName="oldpanel_log";
+        var whichStore="oldpanel";
         var itemsPerPage=50;
 
         //操作类型：枚举类型
@@ -120,6 +121,7 @@ Ext.define('oldpanel.oldpanel_Outbound',{
                     operator : Ext.getCmp('operator').getValue(),//获取操作员名，type操作类型
                     startTime:Ext.getCmp('startTime').getValue(),
                     endTime:Ext.getCmp('endTime').getValue(),
+                    tableName:tableName,
                     type:0
                 }
             },
@@ -131,6 +133,7 @@ Ext.define('oldpanel.oldpanel_Outbound',{
                         operator : Ext.getCmp('operator').getValue(),//获取操作员名
                         startTime:Ext.getCmp('startTime').getValue(),
                         endTime:Ext.getCmp('endTime').getValue(),
+                        tableName:tableName,
                         type:0
                         // projectId:Ext.getCmp('projectName').getValue(),
                     });
@@ -215,7 +218,8 @@ Ext.define('oldpanel.oldpanel_Outbound',{
                                             params:{
                                                 operator:operator,  //回滚操作人
                                                 oldpanellogId:oldpanel_logId,
-                                                type:0  //撤销出库1
+                                                type:0,  //撤销出库1
+                                                whichStore:whichStore,
                                             },
                                             success:function (response) {
                                                 //console.log(response.responseText);
@@ -288,6 +292,11 @@ Ext.define('oldpanel.oldpanel_Outbound',{
             draggable:true,
             closeAction : 'close',
             items:oldpanel_Query_Records_specific_data_grid,
+        });
+        //点击右上角的关闭按钮后
+        oldpanel_Query_Records_win_showoldpanelData.on("close",function(){
+            oldpanel_Query_Records_win_showoldpanelData.close();
+
         });
 
         var grid = Ext.create("Ext.grid.Panel", {

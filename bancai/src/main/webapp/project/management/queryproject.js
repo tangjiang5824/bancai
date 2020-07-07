@@ -194,8 +194,8 @@ Ext.define('project.management.queryproject',{
 
 
         //弹出表格，楼栋信息表
-        var building_grid=Ext.create('Ext.grid.Panel',{
-            id : 'building_grid',
+        var building_grid_query=Ext.create('Ext.grid.Panel',{
+            id : 'building_grid_query',
             // store:store1,//specificMaterialList，store1的数据固定
             dock: 'bottom',
             // bbar:toolbar4,
@@ -223,8 +223,8 @@ Ext.define('project.management.queryproject',{
         });
 
         //弹出窗口
-        var win_showbuildingData = Ext.create('Ext.window.Window', {
-            id:'win_showbuildingData',
+        var win_showbuildingData_query = Ext.create('Ext.window.Window', {
+            id:'win_showbuildingData_query',
             title: '项目楼栋信息',
             height: 500,
             width: 650,
@@ -232,8 +232,8 @@ Ext.define('project.management.queryproject',{
             closable : true,
             draggable:true,
             // tbar:toolbar5,
-            items:building_grid,
-            closeAction : 'hide',
+            items:building_grid_query,
+            closeAction : 'destroy',
             modal:true,//模态窗口，背景窗口不可编辑
         });
 
@@ -379,8 +379,8 @@ Ext.define('project.management.queryproject',{
                         autoLoad : true
                     });
 
-                    building_grid.setStore(buildinglList_projectId);
-                    Ext.getCmp('win_showbuildingData').show();
+                    building_grid_query.setStore(buildinglList_projectId);
+                    Ext.getCmp('win_showbuildingData_query').show();
                 }
             }
         });
