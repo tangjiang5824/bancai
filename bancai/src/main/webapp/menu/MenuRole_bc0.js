@@ -234,17 +234,17 @@ Ext.define("menu.MenuRole_bc0", {
 					} ,
 					{
 						text : '预加工半成品匹配结果查询',
-						id : 'project.Query_Preprocess_Match_Result',//project.import_planList
+						id : 'project.result.preProduct_material_match_result',//project.import_planList
 						leaf : true
 					} ,
 					{
 						text : '旧板匹配结果查询',
-						id : 'project.Query_Oldpanel_Match_Result',//project.import_planList
+						id : 'project.result.oldpanel_material_match_result',//project.import_planList
 						leaf : true
 					} ,
 					{
 						text : '原材料匹配结果查询',
-						id : 'project.Query_Material_Match_Result',//project.import_planList
+						id : 'project.result.newpanel_material_match_result',//project.import_planList
 						leaf : true
 					} ,
 					{

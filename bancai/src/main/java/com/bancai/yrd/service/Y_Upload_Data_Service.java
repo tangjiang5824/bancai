@@ -177,7 +177,7 @@ public class Y_Upload_Data_Service extends BaseService {
      * */
     @Transactional
     public DataList findOldpanelFormatList(String oldpanelTypeId){
-        return queryService.query("select * from oldpanel_format order by id ASC");
+        return queryService.query("select * from oldpanel_format where oldpanelTypeId=? order by id ASC",oldpanelTypeId);
 
     }
 
