@@ -159,7 +159,7 @@ public class ProductDataService extends BaseService{
      * */
     @Transactional
     public DataList findProductFormatList(String productTypeId){
-        return queryService.query("select * from product_format order by id ASC");
+        return queryService.query("select * from product_format where productTypeId=? order by id ASC",productTypeId);
 
     }
     /*

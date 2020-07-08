@@ -397,7 +397,7 @@ Ext.define('material.material_Outbound',{
         });
 
         var win_showmaterialData_outbound = Ext.create('Ext.window.Window', {
-            id:'win_showmaterialData_outbound',
+            // id:'win_showmaterialData_outbound',
             title: '原材料出入库记录撤销',
             height: 500,
             width: 650,
@@ -712,7 +712,7 @@ Ext.define('material.material_Outbound',{
                 Ext.getCmp("toolbar_pop").items.items[1].setText(isrollback);
                 specific_data_grid_outbound.setStore(materiallogdetailList);
                 // console.log(materiallogdetailList);
-                Ext.getCmp('win_showmaterialData_outbound').show();
+                win_showmaterialData_outbound.show();
 
                 // if (materialArr.length != 0) {
                 //     Ext.Msg.confirm("提示", "共选中" + materialArr.length + "条数据，是否确认撤消？", function (btn) {

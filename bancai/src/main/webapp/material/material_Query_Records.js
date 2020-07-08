@@ -246,7 +246,7 @@ Ext.define('material.material_Query_Records',{
         });
 
         var material_Query_Records_win_showmaterialData = Ext.create('Ext.window.Window', {
-            id:'material_Query_Records_win_showmaterialData',
+            // id:'material_Query_Records_win_showmaterialData',
             title: '原材料出入库详细信息',
             height: 500,
             width: 650,
@@ -343,7 +343,7 @@ Ext.define('material.material_Query_Records',{
 
                     material_Query_Records_specific_data_grid.setStore(materiallogdetailList);
                     console.log(materiallogdetailList);
-                    Ext.getCmp('material_Query_Records_win_showmaterialData').show();
+                    material_Query_Records_win_showmaterialData.show();
                 }
             }
         });

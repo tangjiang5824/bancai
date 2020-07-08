@@ -224,7 +224,7 @@ Ext.define('project.management.queryproject',{
 
         //弹出窗口
         var win_showbuildingData_query = Ext.create('Ext.window.Window', {
-            id:'win_showbuildingData_query',
+            // id:'win_showbuildingData_query',
             title: '项目楼栋信息',
             height: 500,
             width: 650,
@@ -380,7 +380,7 @@ Ext.define('project.management.queryproject',{
                     });
 
                     building_grid_query.setStore(buildinglList_projectId);
-                    Ext.getCmp('win_showbuildingData_query').show();
+                    win_showbuildingData_query.show();
                 }
             }
         });

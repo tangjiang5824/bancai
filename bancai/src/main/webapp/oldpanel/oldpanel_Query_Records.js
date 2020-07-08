@@ -202,7 +202,7 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
             }
         });
         var win_showoldpanelData_query = Ext.create('Ext.window.Window', {
-            id:'win_showoldpanelData_query',
+            // id:'win_showoldpanelData_query',
             title: '旧板出入库详细信息',
             height: 500,
             width: 650,
@@ -288,7 +288,7 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
 
                     oldpanel_specific_data_grid_query.setStore(oldpanellogdetailList);
                     console.log(oldpanellogdetailList);
-                    Ext.getCmp('win_showoldpanelData_query').show();
+                    win_showoldpanelData_query.show();
                 }
             }
         });
