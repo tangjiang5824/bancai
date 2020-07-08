@@ -228,6 +228,11 @@ Ext.define("menu.MenuRole_bc0", {
 					leaf : true
 				} ,
 					{
+						text : '项目总览',
+						id : 'project.result.project_match_result',//project.import_planList
+						leaf : true
+					},
+					{
 						text : '成品退库匹配结果查询',
 						id : 'project.Query_Backproduct_Match_Result',//project.import_planList
 						leaf : true
