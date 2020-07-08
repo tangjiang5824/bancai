@@ -1,10 +1,15 @@
 package com.bancai.zzy.controller;
 
+import com.bancai.cg.service.InsertProjectService;
 import com.bancai.commonMethod.QueryAllService;
 import com.bancai.db.mysqlcondition;
+import com.bancai.domain.DataList;
+import com.bancai.service.QueryService;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.bancai.vo.WebResponse;
@@ -13,12 +18,121 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @RestController
 public class Select_specification_from_materialName_controller {
 
 	@Autowired
 	private QueryAllService queryAllService;
+	@Autowired
+	private QueryService queryService;
+	@Autowired
+	private InsertProjectService insertProjectService;
+
+	//旧板仓库出库入库回滚
+	//类型：0入库，1出库，2退库， 3撤销入库，4撤销出库，5撤销退库
+	@RequestMapping(value = "/oldpanel/backOldpanelStore.do")
+	@Transactional
+	public boolean backOldpanelStore(String oldpanellogId,HttpSession session ,String operator,String type,String whichStore) throws JSONException {
+		String which_logdetail;
+		String which_log;
+		String which_logId;
+		String which_storeId;
+		String which_Id;
+		String which_store;
+		if(whichStore.contains("oldpanel"))
+		{
+			which_logdetail="oldpanel_logdetail";
+			which_log="oldpanel_log";
+			which_logId="oldpanellogId";
+			which_storeId="oldpanelstoreId";
+			which_Id="oldpanelId";
+			which_store="oldpanel_store";
+		}
+		else if(whichStore.contains("preprocess"))
+		{
+			which_logdetail="preprocess_logdetail";
+			which_log="preprocess_log";
+			which_logId="preprocesslogId";
+			which_storeId="preprocessstoreId";
+			which_Id="preprocessId";
+			which_store="preprocess_store";
+		}
+		else if(whichStore.contains("backproduct"))
+		{
+			which_logdetail="backproduct_logdetail";
+			which_log="backproduct_log";
+			which_logId="backproductlogId";
+			which_storeId="backproductstoreId";
+			which_Id="backproductId";
+			which_store="backproduct_store";
+		}
+		else if(whichStore.contains("product"))
+		{
+			which_logdetail="product_logdetail";
+			which_log="product_log";
+			which_logId="productlogId";
+			which_storeId="productstoreId";
+			which_Id="productId";
+			which_store="product_store";
+		}
+		else {
+			return false;
+		}
+		String sql_find_log_detail="select * from "+which_logdetail+" where "+which_logId+"=? and isrollback<>1";
+		String userid = (String) session.getAttribute("userid");
+
+		Date date=new Date();
+		SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String update_log="update "+which_log+" set isrollback=1 where id=?";
+		//把isrollback改为1
+		insertProjectService.insertIntoTableBySQL(update_log,oldpanellogId);//更新log表
+
+		//log主键
+		String sql_insert_new_log="insert into "+which_log+" (type,userId,time,operator,isrollback) values(?,?,?,?,?)";
+		int main_key=0;
+		//插入新的log
+		if (type.equals("0")) main_key= insertProjectService.insertDataToTable(sql_insert_new_log,"3",userid,simpleDateFormat.format(date),operator,"1");
+
+
+		DataList list=queryService.query(sql_find_log_detail,oldpanellogId);//通过oldpanellogId找对应的oldpanellogdetail
+		for(int i=0;i<list.size();i++){
+			String oldpanelstoreId=list.get(i).get(which_storeId)+"";
+			String oldpanelName="";
+			String specification="";
+			String oldpanelId=list.get(i).get(which_Id)+"";
+
+			//if(null!=list.get(i).get("oldpanelName")) oldpanelName=list.get(i).get("oldpanelName")+"";
+			//if(null!=list.get(i).get("specification")) specification=list.get(i).get("specification")+"";
+			//if(null!=list.get(i).get("oldpanelId")) oldpanelId=list.get(i).get("oldpanelId")+"";
+			String count=list.get(i).get("count")+"";
+			//int count_to_op=Integer.valueOf(count);
+			if(type.equals("0")){
+				//撤销入库
+
+				//进行回滚出库
+				String sql_find_list="select * from "+which_store+" where id=?";
+				DataList count_list=queryService.query(sql_find_list,oldpanelstoreId);
+				//if(count_list.size()!=1||Integer.valueOf(count_list.get(0).get("count")+"")!=count_to_op) return  false;
+				String sql_update_count="update "+which_store+" set countUse=countUse-?,countStore=countStore-? where id=?";
+				insertProjectService.insertIntoTableBySQL(sql_update_count,count,count,oldpanelstoreId);
+
+				//修改完成撤销的原logdetail
+				String detail_id=list.get(i).get("id")+"";
+				String update_detail_isrollback="update "+which_logdetail+" set isrollback=1 where id=?";
+				insertProjectService.insertIntoTableBySQL(update_detail_isrollback,detail_id);
+				//插入新的detail
+				String sql_insert_new_detial="insert into "+which_logdetail+" (count,"+which_logId
+						+","+which_Id+","+which_storeId+",isrollback) values(?,?,?,?,?)";
+				insertProjectService.insertIntoTableBySQL(sql_insert_new_detial,count,main_key+"",oldpanelId,oldpanelstoreId,"1");
+			}
+		}
+
+		return true;
+	}
+
 
 	/*
 	 * 根据原材料名称如400U找出其所有的规格。（原材料领料模块）周洁
@@ -33,6 +147,50 @@ public class Select_specification_from_materialName_controller {
 			c.and(new mysqlcondition("materialName", "=", materialName));
 		}
 		WebResponse wr=queryAllService.queryDataPage(start, limit, c, tableName);
+		return wr;
+	}
+
+	/*
+	 * 返回项目整体匹配结果
+	 * */
+	@RequestMapping(value="/project/findProjectMatchResult.do")
+	public WebResponse findProjectMatchResult(String start, String limit,String page) throws ParseException {
+		//log.debug(startWidth+" "+endWidth);
+		String tableName = "designlist";
+		int thisPage=1;
+		int thisStart=0;
+		int thisLimit=25;
+		if(null==page||page.equals("")){
+			thisPage=1;
+		}else {
+			thisPage=Integer.parseInt(page);
+		}
+		if(null==start||start.equals("")||null==limit||limit.equals("")){
+			thisStart=0;
+			thisLimit=25;
+		}else {
+			thisLimit=Integer.parseInt(limit);
+			thisStart=(thisPage-1)*thisLimit;
+		}
+		//String tableName = "oldpanel_log";
+//		System.out.println(startWidth);
+//		System.out.println(endWidth);
+//
+		mysqlcondition c=new mysqlcondition();
+
+//		if (null!=type&&type.length() != 0) {
+//			c.and(new mysqlcondition("type", "=", type));
+//		}
+//		if (null!=startTime&&startTime.length() != 0) {
+//			c.and(new mysqlcondition("time", ">=", startTime));
+//		}
+//		if (null!=endTime&&endTime.length() != 0) {
+//			c.and(new mysqlcondition("time", "<=", endTime));
+//		}
+//		if (null!=operator&&operator.length() != 0) {
+//			c.and(new mysqlcondition("operator", "=", operator));
+//		}
+		WebResponse wr=queryAllService.queryDataPage(thisStart, thisLimit, c, tableName);
 		return wr;
 	}
 
