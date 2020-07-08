@@ -8,7 +8,7 @@ import java.util.Objects;
 public class NewpanelRules {
     private Integer id;
     private Integer productId;
-    private Integer materialTypeId;
+    private MaterialType materialTypeId;
     private Double count;
     private String countValue;
     private Integer mNum;
@@ -20,6 +20,15 @@ public class NewpanelRules {
     private String condition1;
     private String condition2;
     private String upWidth;
+    private String orientation;
+
+    public String getOrientation() {
+        return orientation;
+    }
+
+    public void setOrientation(String orientation) {
+        this.orientation = orientation;
+    }
 
     @Id
     @Column(name = "id", nullable = false)
@@ -32,7 +41,7 @@ public class NewpanelRules {
         this.id = id;
     }
 
-    @Basic
+
     @Column(name = "productId", nullable = true)
     public Integer getProductId() {
         return productId;
@@ -42,17 +51,17 @@ public class NewpanelRules {
         this.productId = productId;
     }
 
-    @Basic
-    @Column(name = "materialTypeId", nullable = true)
-    public Integer getMaterialTypeId() {
+    @ManyToOne(targetEntity = MaterialType.class)
+    @JoinColumn(name = "materialTypeId",referencedColumnName = "id")
+    public MaterialType getMaterialTypeId() {
         return materialTypeId;
     }
 
-    public void setMaterialTypeId(Integer materialTypeId) {
+    public void setMaterialTypeId(MaterialType materialTypeId) {
         this.materialTypeId = materialTypeId;
     }
 
-    @Basic
+
     @Column(name = "count", nullable = true, precision = 0)
     public Double getCount() {
         return count;
@@ -62,7 +71,6 @@ public class NewpanelRules {
         this.count = count;
     }
 
-    @Basic
     @Column(name = "countValue", nullable = true, length = 50)
     public String getCountValue() {
         return countValue;
@@ -72,7 +80,7 @@ public class NewpanelRules {
         this.countValue = countValue;
     }
 
-    @Basic
+
     @Column(name = "mNum", nullable = true)
     public Integer getmNum() {
         return mNum;
@@ -82,7 +90,6 @@ public class NewpanelRules {
         this.mNum = mNum;
     }
 
-    @Basic
     @Column(name = "mValue", nullable = true, length = 50)
     public String getmValue() {
         return mValue;
@@ -92,7 +99,7 @@ public class NewpanelRules {
         this.mValue = mValue;
     }
 
-    @Basic
+
     @Column(name = "nNum", nullable = true)
     public Integer getnNum() {
         return nNum;
@@ -102,7 +109,7 @@ public class NewpanelRules {
         this.nNum = nNum;
     }
 
-    @Basic
+
     @Column(name = "nValue", nullable = true, length = 50)
     public String getnValue() {
         return nValue;
@@ -112,7 +119,7 @@ public class NewpanelRules {
         this.nValue = nValue;
     }
 
-    @Basic
+
     @Column(name = "aValue", nullable = true, length = 50)
     public String getaValue() {
         return aValue;
@@ -122,7 +129,7 @@ public class NewpanelRules {
         this.aValue = aValue;
     }
 
-    @Basic
+
     @Column(name = "bValue", nullable = true, length = 50)
     public String getbValue() {
         return bValue;
@@ -132,7 +139,7 @@ public class NewpanelRules {
         this.bValue = bValue;
     }
 
-    @Basic
+
     @Column(name = "condition1", nullable = true, length = 50)
     public String getCondition1() {
         return condition1;
@@ -142,7 +149,7 @@ public class NewpanelRules {
         this.condition1 = condition1;
     }
 
-    @Basic
+
     @Column(name = "condition2", nullable = true, length = 50)
     public String getCondition2() {
         return condition2;
@@ -152,7 +159,7 @@ public class NewpanelRules {
         this.condition2 = condition2;
     }
 
-    @Basic
+
     @Column(name = "upWidth", nullable = true, length = 255)
     public String getUpWidth() {
         return upWidth;
@@ -162,29 +169,5 @@ public class NewpanelRules {
         this.upWidth = upWidth;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        NewpanelRules that = (NewpanelRules) o;
-        return id == that.id &&
-                Objects.equals(productId, that.productId) &&
-                Objects.equals(materialTypeId, that.materialTypeId) &&
-                Objects.equals(count, that.count) &&
-                Objects.equals(countValue, that.countValue) &&
-                Objects.equals(mNum, that.mNum) &&
-                Objects.equals(mValue, that.mValue) &&
-                Objects.equals(nNum, that.nNum) &&
-                Objects.equals(nValue, that.nValue) &&
-                Objects.equals(aValue, that.aValue) &&
-                Objects.equals(bValue, that.bValue) &&
-                Objects.equals(condition1, that.condition1) &&
-                Objects.equals(condition2, that.condition2) &&
-                Objects.equals(upWidth, that.upWidth);
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, productId, materialTypeId, count, countValue, mNum, mValue, nNum, nValue, aValue, bValue, condition1, condition2, upWidth);
-    }
 }

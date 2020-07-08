@@ -8,7 +8,7 @@ import java.util.Objects;
 public class Newpanelmateriallist {
     private Integer id;
     private Integer designlistId;
-    private String materialName;
+    private Integer materialId;
     private Double materialCount;
 
     @Id
@@ -33,13 +33,13 @@ public class Newpanelmateriallist {
     }
 
     @Basic
-    @Column(name = "materialName", nullable = true, length = 255)
-    public String getMaterialName() {
-        return materialName;
+    @Column(name = "materialId", nullable = true, length = 11)
+    public Integer getMaterialId() {
+        return materialId;
     }
 
-    public void setMaterialName(String materialName) {
-        this.materialName = materialName;
+    public void setMaterialId(Integer materialId) {
+        this.materialId = materialId;
     }
 
     @Basic
@@ -52,19 +52,4 @@ public class Newpanelmateriallist {
         this.materialCount = materialCount;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Newpanelmateriallist that = (Newpanelmateriallist) o;
-        return id == that.id &&
-                Objects.equals(designlistId, that.designlistId) &&
-                Objects.equals(materialName, that.materialName) &&
-                Objects.equals(materialCount, that.materialCount);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, designlistId, materialName, materialCount);
-    }
 }
