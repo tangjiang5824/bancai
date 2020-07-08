@@ -36,14 +36,28 @@ Ext.define('oldpanel.add_oldpanel_rules', {
             ]
         });
 
+        var ProductTypeStore = Ext.create('Ext.data.Store',{
+            fields : [ 'projectName'],
+            proxy : {
+                type : 'ajax',
+                url : 'match/findProductTypeList.do',
+
+                reader : {
+                    type : 'json',
+                    rootProperty: 'productTypeList',
+                }
+            },
+            autoLoad : true
+        });
+        //
         var product_type = Ext.create('Ext.form.ComboBox', {
             fieldLabel: '产品类型',
             name: 'component1',
             id: 'component1',
-            store: optionTypeList,
+            store: ProductTypeStore,
             queryMode: 'local',
-            displayField: 'name',
-            valueField: 'abbr',
+            displayField: 'productTypeName',
+            valueField: 'id',
             margin : '0 20 0 40',
             width: 180,
             labelWidth: 60,
@@ -72,23 +86,21 @@ Ext.define('oldpanel.add_oldpanel_rules', {
                         proxy : {
                             type : 'ajax',
                             //通用接口，material/findAllbyTableNameAndOnlyOneCondition.do传入表名，属性及属性值
-                            url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName='+tableName+'&columnName='+projectId+'&columnValue='+id,//根据项目id查询对应的楼栋名
-                            // params : {
-                            // 	tableName:tableName,
-                            // 	columnName:projectId,
-                            // 	columnValue:id,
-                            // },
+                            url : 'match/findProductFormatList.do',//根据项目id查询对应的楼栋名
+                            params : {
+                                productTypeId:id,
+                            },
                             reader : {
                                 type : 'json',
-                                rootProperty: 'building',
+                                rootProperty: 'productFormatList',
                             }
                         },
                         autoLoad : true,
-                        listeners:{
-                            load:function () {
-                                Ext.getCmp('buildingName').setValue("");
-                            }
-                        }
+                        // listeners:{
+                        //     load:function () {
+                        //         Ext.getCmp('buildingName').setValue("");
+                        //     }
+                        // }
                     });
 
                     //product_format,下拉框重新加载数据
@@ -105,8 +117,8 @@ Ext.define('oldpanel.add_oldpanel_rules', {
             name: 'product_format',
             store: optionTypeList,
             queryMode: 'local',
-            displayField: 'name',
-            valueField: 'abbr',
+            displayField: 'productFormat',
+            valueField: 'id',
             margin : '0 20 0 40',
             width: 180,
             labelWidth: 35,
@@ -121,7 +133,7 @@ Ext.define('oldpanel.add_oldpanel_rules', {
                     data = [{
                         '格式名称' : typeName,
                     }];
-                    
+
                     Ext.getCmp('product_addDataGrid').getStore().loadData(data,
                         true);
 
