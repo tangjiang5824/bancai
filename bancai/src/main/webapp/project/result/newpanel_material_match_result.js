@@ -9,162 +9,162 @@ Ext.define('project.result.newpanel_material_match_result',{
          * *store.on("load",function(){gridSpan(grid,"row","[FbillNumber],[FbillDate],[FAudit],[FAuditDate],[FSure],[FSureDate]","FbillNumber");});
          * *参数：grid-需要合并的表格,rowOrCol-合并行还是列,cols-需要合并的列（行合并的时候有效）,sepCols以哪个列为分割(即此字段不合并的2行，其他字段也不许合并)，默认为空
          */
-        function gridSpan(grid, rowOrCol, cols, sepCol){
-            // alert('grid===='+grid+';rowOrCol='+rowOrCol+';cols='+cols);
-            var array1 = new Array();
-            var arraySep = new Array();
-            var count1 = 0;
-            var count2 = 0;
-            var index1 = 0;
-            var index2 = 0;
-            var aRow = undefined;
-            var preValue = undefined;
-            var firstSameCell = 0;
-            var allRecs = grid.getStore().getRange();
-            if(rowOrCol == "row"){
-                // count1 = grid.getColumnModel().getColumnCount();  //列数columns
-                count1 = grid.columns.length;
-                // console.log("luuuuu:"+count1);
-                count2 = grid.getStore().getCount();  //行数(纪录数)
-            } else {
-                count1 = grid.getStore().getCount();
-                count2 = grid.columns.length;
-            }
-            for(i = 0; i < count1; i++){
-                if(rowOrCol == "row"){
-                    // var curColName = grid.getColumnModel().getDataIndex(i); //列名
-                    var curColName = grid.columns[i].dataIndex; //列名
-                    // console.log("lieming:"+curColName);
-                    var curCol = "[" + curColName + "]";
-
-                    if(cols.indexOf(curCol) < 0)
-                        continue;
-                }
-
-                preValue = undefined;
-                firstSameCell = 0;
-                array1[i] = new Array();
-                for(j = 0; j < count2; j++){
-
-                    if(rowOrCol == "row"){
-                        index1 = j;
-                        index2 = i;
-                    } else {
-                        index1 = i;
-                        index2 = j;
-                    }
-                    // var colName = grid.getColumnModel().getDataIndex(index2);
-                    var colName = grid.columns[index2].dataIndex;
-                    if(sepCol && colName == sepCol)
-                        arraySep[index1] = allRecs[index1].get(sepCol);
-                    var seqOldValue = seqCurValue = "1";
-                    if(sepCol && index1 > 0){
-                        seqOldValue = arraySep[index1 - 1];
-                        seqCurValue = arraySep[index1];
-                    }
-
-                    if(allRecs[index1].get(colName) == preValue && (colName == sepCol || seqOldValue == seqCurValue)){
-                        //alert(colName + "======" + seqOldValue + "======" + seqCurValue);
-                        allRecs[index1].set(colName, "");
-                        array1[i].push(j);
-                        if(j == count2 - 1){
-                            var index = firstSameCell + Math.round((j + 1 - firstSameCell) / 2 - 1);
-                            if(rowOrCol == "row"){
-                                allRecs[index].set(colName, preValue);
-                            } else {
-                                allRecs[index1].set(grid.getColumnModel().getColumnId(index), preValue);
-                            }
-                        }
-                    } else {
-                        if(j != 0){
-                            var index = firstSameCell + Math.round((j + 1 - firstSameCell) / 2 - 1);
-                            if(rowOrCol == "row"){
-                                allRecs[index].set(colName, preValue);
-                            } else {
-                                allRecs[index1].set(grid.getColumnModel().getColumnId(index), preValue);
-                            }
-                        }
-                        firstSameCell = j;
-                        preValue = allRecs[index1].get(colName);
-                        allRecs[index1].set(colName, "");
-                        if(j == count2 - 1){
-                            allRecs[index1].set(colName, preValue);
-                        }
-                    }
-
-                }
-            }
-            grid.getStore().commitChanges();
-
-            // 添加所有分隔线
-            var rCount = grid.getStore().getCount();
-            for(i = 0; i < rCount; i ++){
-                hRow = grid.getView().getRow(i);
-                hRow.style.border = "none";
-                //hRow.style.borderBottom= "none";
-                for(j = 0; j < grid.columns.length; j ++){
-                    console.log(Ext.get(grid.view.getNode(i)).query('td')[j]);
-                    // console.log(grid.getView());
-                    // console.log(grid.store.getAt(i,j).style.margin="0");
-                    console.log("loglog------------");
-                    // aRow = grid.getView().getCell(i,j);
-                    aRow = Ext.get(grid.view.getNode(i)).query('td')[j]; //获取某一单元格
-
-                    aRow.style.margin="0";
-                    aRow.style.padding="0";
-
-                    if(i == 0){
-                        aRow.style.borderTop = "none";
-                        aRow.style.borderLeft = "1px solid #8db2e3";
-
-                    }else if(i == rCount - 1){
-                        aRow.style.borderTop = "1px solid #8db2e3";
-                        aRow.style.borderLeft = "1px solid #8db2e3";
-                        aRow.style.borderBottom = "1px solid #8db2e3";
-                    }else{
-                        aRow.style.borderTop = "1px solid #8db2e3";
-                        aRow.style.borderLeft = "1px solid #8db2e3";
-                    }
-                    if(j == grid.columns.length-1)
-                        aRow.style.borderRight = "1px solid #8db2e3";
-                    if(i == rCount-1)
-                        aRow.style.borderBottom = "1px solid #8db2e3";
-                }
-            }
-            // 去除合并的单元格的分隔线
-            for(i = 0; i < array1.length; i++){
-                if(!Ext.isEmpty(array1[i])){
-                    for(j = 0; j < array1[i].length; j++){
-                        if(rowOrCol == "row"){
-                            aRow = Ext.get(grid.view.getNode(array1[i][j])).query('td')[i]; //获取某一单元格
-                            // aRow = grid.getView().getCell(array1[i][j],i);
-                            aRow.style.borderTop = "none";
-
-                        } else {
-                            // aRow = grid.getView().getCell(i, array1[i][j]);
-                            aRow = Ext.get(grid.view.getNode(i)).query('td')[array1[i][j]];
-                            aRow.style.borderLeft = "none";
-                        }
-                    }
-                }
-            }
-
-            for(i = 0; i < count1; i++){
-                if(rowOrCol == "row"){
-                    var curColName = grid.columns[i].dataIndex; //列名
-                    var curCol = "[" + curColName + "]";
-                    if(cols.indexOf(curCol) < 0)
-                        continue;
-                }
-
-                for(j = 0; j < count2; j++){
-                    // var hbcell = grid.getView().getCell(j,i);
-                    var hbcell = Ext.get(grid.view.getNode(j)).query('td')[i];
-                    hbcell.style.background="#FFF"; //改变合并列所有单元格背景为白色
-                }
-            }
-
-        };
+        // function gridSpan(grid, rowOrCol, cols, sepCol){
+        //     // alert('grid===='+grid+';rowOrCol='+rowOrCol+';cols='+cols);
+        //     var array1 = new Array();
+        //     var arraySep = new Array();
+        //     var count1 = 0;
+        //     var count2 = 0;
+        //     var index1 = 0;
+        //     var index2 = 0;
+        //     var aRow = undefined;
+        //     var preValue = undefined;
+        //     var firstSameCell = 0;
+        //     var allRecs = grid.getStore().getRange();
+        //     if(rowOrCol == "row"){
+        //         // count1 = grid.getColumnModel().getColumnCount();  //列数columns
+        //         count1 = grid.columns.length;
+        //         // console.log("luuuuu:"+count1);
+        //         count2 = grid.getStore().getCount();  //行数(纪录数)
+        //     } else {
+        //         count1 = grid.getStore().getCount();
+        //         count2 = grid.columns.length;
+        //     }
+        //     for(i = 0; i < count1; i++){
+        //         if(rowOrCol == "row"){
+        //             // var curColName = grid.getColumnModel().getDataIndex(i); //列名
+        //             var curColName = grid.columns[i].dataIndex; //列名
+        //             // console.log("lieming:"+curColName);
+        //             var curCol = "[" + curColName + "]";
+        //
+        //             if(cols.indexOf(curCol) < 0)
+        //                 continue;
+        //         }
+        //
+        //         preValue = undefined;
+        //         firstSameCell = 0;
+        //         array1[i] = new Array();
+        //         for(j = 0; j < count2; j++){
+        //
+        //             if(rowOrCol == "row"){
+        //                 index1 = j;
+        //                 index2 = i;
+        //             } else {
+        //                 index1 = i;
+        //                 index2 = j;
+        //             }
+        //             // var colName = grid.getColumnModel().getDataIndex(index2);
+        //             var colName = grid.columns[index2].dataIndex;
+        //             if(sepCol && colName == sepCol)
+        //                 arraySep[index1] = allRecs[index1].get(sepCol);
+        //             var seqOldValue = seqCurValue = "1";
+        //             if(sepCol && index1 > 0){
+        //                 seqOldValue = arraySep[index1 - 1];
+        //                 seqCurValue = arraySep[index1];
+        //             }
+        //
+        //             if(allRecs[index1].get(colName) == preValue && (colName == sepCol || seqOldValue == seqCurValue)){
+        //                 //alert(colName + "======" + seqOldValue + "======" + seqCurValue);
+        //                 allRecs[index1].set(colName, "");
+        //                 array1[i].push(j);
+        //                 if(j == count2 - 1){
+        //                     var index = firstSameCell + Math.round((j + 1 - firstSameCell) / 2 - 1);
+        //                     if(rowOrCol == "row"){
+        //                         allRecs[index].set(colName, preValue);
+        //                     } else {
+        //                         allRecs[index1].set(grid.getColumnModel().getColumnId(index), preValue);
+        //                     }
+        //                 }
+        //             } else {
+        //                 if(j != 0){
+        //                     var index = firstSameCell + Math.round((j + 1 - firstSameCell) / 2 - 1);
+        //                     if(rowOrCol == "row"){
+        //                         allRecs[index].set(colName, preValue);
+        //                     } else {
+        //                         allRecs[index1].set(grid.getColumnModel().getColumnId(index), preValue);
+        //                     }
+        //                 }
+        //                 firstSameCell = j;
+        //                 preValue = allRecs[index1].get(colName);
+        //                 allRecs[index1].set(colName, "");
+        //                 if(j == count2 - 1){
+        //                     allRecs[index1].set(colName, preValue);
+        //                 }
+        //             }
+        //
+        //         }
+        //     }
+        //     grid.getStore().commitChanges();
+        //
+        //     // 添加所有分隔线
+        //     var rCount = grid.getStore().getCount();
+        //     for(i = 0; i < rCount; i ++){
+        //         hRow = grid.getView().getRow(i);
+        //         hRow.style.border = "none";
+        //         //hRow.style.borderBottom= "none";
+        //         for(j = 0; j < grid.columns.length; j ++){
+        //             console.log(Ext.get(grid.view.getNode(i)).query('td')[j]);
+        //             // console.log(grid.getView());
+        //             // console.log(grid.store.getAt(i,j).style.margin="0");
+        //             console.log("loglog------------");
+        //             // aRow = grid.getView().getCell(i,j);
+        //             aRow = Ext.get(grid.view.getNode(i)).query('td')[j]; //获取某一单元格
+        //
+        //             aRow.style.margin="0";
+        //             aRow.style.padding="0";
+        //
+        //             if(i == 0){
+        //                 aRow.style.borderTop = "none";
+        //                 aRow.style.borderLeft = "1px solid #8db2e3";
+        //
+        //             }else if(i == rCount - 1){
+        //                 aRow.style.borderTop = "1px solid #8db2e3";
+        //                 aRow.style.borderLeft = "1px solid #8db2e3";
+        //                 aRow.style.borderBottom = "1px solid #8db2e3";
+        //             }else{
+        //                 aRow.style.borderTop = "1px solid #8db2e3";
+        //                 aRow.style.borderLeft = "1px solid #8db2e3";
+        //             }
+        //             if(j == grid.columns.length-1)
+        //                 aRow.style.borderRight = "1px solid #8db2e3";
+        //             if(i == rCount-1)
+        //                 aRow.style.borderBottom = "1px solid #8db2e3";
+        //         }
+        //     }
+        //     // 去除合并的单元格的分隔线
+        //     for(i = 0; i < array1.length; i++){
+        //         if(!Ext.isEmpty(array1[i])){
+        //             for(j = 0; j < array1[i].length; j++){
+        //                 if(rowOrCol == "row"){
+        //                     aRow = Ext.get(grid.view.getNode(array1[i][j])).query('td')[i]; //获取某一单元格
+        //                     // aRow = grid.getView().getCell(array1[i][j],i);
+        //                     aRow.style.borderTop = "none";
+        //
+        //                 } else {
+        //                     // aRow = grid.getView().getCell(i, array1[i][j]);
+        //                     aRow = Ext.get(grid.view.getNode(i)).query('td')[array1[i][j]];
+        //                     aRow.style.borderLeft = "none";
+        //                 }
+        //             }
+        //         }
+        //     }
+        //
+        //     for(i = 0; i < count1; i++){
+        //         if(rowOrCol == "row"){
+        //             var curColName = grid.columns[i].dataIndex; //列名
+        //             var curCol = "[" + curColName + "]";
+        //             if(cols.indexOf(curCol) < 0)
+        //                 continue;
+        //         }
+        //
+        //         for(j = 0; j < count2; j++){
+        //             // var hbcell = grid.getView().getCell(j,i);
+        //             var hbcell = Ext.get(grid.view.getNode(j)).query('td')[i];
+        //             hbcell.style.background="#FFF"; //改变合并列所有单元格背景为白色
+        //         }
+        //     }
+        //
+        // };
 
         var itemsPerPage = 50;
         //var tableName="material";
@@ -432,7 +432,9 @@ Ext.define('project.result.newpanel_material_match_result',{
             var trCount = arrayTr.length;
             var arrayTd;
             var td;
-            var merge = function(rowspanObj,removeObjs){ //定义合并函数
+
+            //定义合并函数
+            var merge = function(rowspanObj,removeObjs){
                 if(rowspanObj.rowspan != 1){
                     arrayTd =arrayTr[rowspanObj.tr].getElementsByTagName("td"); //合并行
                     td=arrayTd[rowspanObj.td-1];
@@ -447,28 +449,29 @@ Ext.define('project.result.newpanel_material_match_result',{
             var rowspanObj = {}; //要进行跨列操作的td对象{tr:1,td:2,rowspan:5}
             var removeObjs = []; //要进行删除的td对象[{tr:2,td:2},{tr:3,td:2}]
             var col;
-            Ext.each(cols,function(colIndex){ //逐列去操作tr
+
+            //逐列去操作tr
+            Ext.each(cols,function(colIndex){
                 var rowspan = 1;
                 var divHtml = null;//单元格内的数值
                 for(var i=1;i<trCount;i++){  //i=0表示表头等没用的行
                     arrayTd = arrayTr[i].getElementsByTagName("td");
                     var cold=0;
-//			Ext.each(arrayTd,function(Td){ //获取RowNumber列和check列
-//				if(Td.getAttribute("class").indexOf("x-grid-cell-special") != -1)
-//					cold++;
-//			});
+
                     col=colIndex+cold;//跳过RowNumber列和check列
                     if(!divHtml){
                         divHtml = arrayTd[col-1].innerHTML;
                         rowspanObj = {tr:i,td:col,rowspan:rowspan}
                     }else{
                         var cellText = arrayTd[col-1].innerHTML;
+                        //新的单元格
                         var addf=function(){
                             rowspanObj["rowspan"] = rowspanObj["rowspan"]+1;
                             removeObjs.push({tr:i,td:col});
                             if(i==trCount-1)
                                 merge(rowspanObj,removeObjs);//执行合并函数
                         };
+                        //合并
                         var mergef=function(){
                             merge(rowspanObj,removeObjs);//执行合并函数
                             divHtml = cellText;
@@ -517,6 +520,7 @@ Ext.define('project.result.newpanel_material_match_result',{
             //     trArray = gridView.getElementsByTagName('tr');
             // }
             trArray = document.getElementById(grid.getId()+"-body").firstChild.lastChild.getElementsByTagName('tr');
+            console.log('trArray================',trArray)
 
             // 3.进行合并操作
             if (isAllSome) { // 3.1 全部列合并：只有相邻tr所指定的td都相同才会进行合并
@@ -549,9 +553,7 @@ Ext.define('project.result.newpanel_material_match_result',{
                                 lastTr.childNodes[colIndex].setAttribute('rowspan', '2');
                             }
                             // lastTr.childNodes[colIndex].style['text-align'] = 'center';; // 水平居中
-                            lastTr.childNodes[colIndex].style['vertical-align'] = 'middle';
-                            ; // 纵向居中
-
+                            lastTr.childNodes[colIndex].style['vertical-align'] = 'middle';// 纵向居中
 
                             thisTr.childNodes[colIndex].style.display = 'none';
                         }
@@ -597,13 +599,102 @@ Ext.define('project.result.newpanel_material_match_result',{
         }
 
 
+        function gridSpan(grid, rowOrCol, borderStyle){
+            var array1 = new Array();
+            var count1 = 0;
+            var count2 = 0;
+            var index1 = 0;
+            var index2 = 0;
+            var aRow = undefined;
+            var preValue = undefined;
+            var firstSameCell = 0;
+            var allRecs = grid.getStore().getRange();
+
+            if(rowOrCol == 'row'){
+                count1 = grid.columns.length;
+                count2 = grid.getStore().getCount();
+            } else {
+                count1 = grid.getStore().getCount();
+                count2 = grid.columns.length;
+            }
+
+            for(i = 0; i < count1; i++){
+                preValue = undefined;
+                firstSameCell = 0;
+                array1[i] = new Array();
+                for(j = 0; j < count2; j++){
+                    if(rowOrCol == 'row'){
+                        index1 = j;
+                        index2 = i;
+                    } else {
+                        index1 = i;
+                        index2 = j;
+                    }
+                    var colName = grid.columns[index2].dataIndex;
+                    if(allRecs[index1].get(colName) == preValue){
+                        allRecs[index1].set(colName, ' ');
+                        array1[i].push(j);
+                        if(j == count2 - 1){
+                            var index = firstSameCell + Math.round((j + 1 - firstSameCell) / 2 - 1);
+                            if(rowOrCol == 'row'){
+                                allRecs[index].set(colName, preValue);
+                            } else {
+                                allRecs[index1].set(grid.getColumnModel().getColumnId(index), preValue);
+                            }
+                        }
+                    } else {
+                        if(j != 0){
+                            var index = firstSameCell + Math.round((j + 1 - firstSameCell) / 2 - 1);
+                            if(rowOrCol == 'row'){
+                                allRecs[index].set(colName, preValue);
+                            } else {
+                                allRecs[index1].set(grid.getColumnModel().getColumnId(index), preValue);
+                            }
+                        }
+                        firstSameCell = j;
+                        preValue = allRecs[index1].get(colName);
+                        allRecs[index1].set(colName, ' ');
+                        if(j == count2 - 1){
+                            allRecs[index1].set(colName, preValue);
+                        }
+                    }
+                }
+            }
+            grid.getStore().commitChanges();
+
+            //添加所有分隔线
+            for(i = 0; i < grid.getStore().getCount(); i ++){
+                for(j = 0; j < grid.columns.length; j ++){
+                    // aRow = grid.getView().getCell(i,j);
+                    aRow = Ext.get(grid.view.getNode(i)).query('td')[j]; //获取某一单元格
+                    aRow.style.borderTop = borderStyle;
+                    aRow.style.borderLeft = borderStyle;
+                }
+            }
+
+            //去除合并的单元格的分隔线
+            for(i = 0; i < array1.length; i++){
+                for(j = 0; j < array1[i].length; j++){
+                    if(rowOrCol == 'row'){
+                        // aRow = grid.getView().getCell(array1[i][j],i);
+                        aRow = Ext.get(grid.view.getNode(array1[i][j])).query('td')[i]; //获取某一单元格
+                        aRow.style.borderTop = 'none';
+                    } else {
+                        aRow = grid.getView().getCell(i, array1[i][j]);
+                        aRow.style.borderLeft = 'none';
+                    }
+                }
+            }
+        };
+
+
         // ==>监听load , 执行合并单元格
         var gridp = Ext.getCmp('material_Query_Data_Main');
         Ext.getCmp('material_Query_Data_Main').getStore().on('load', function () {
-            mergeGrid(gridp,[0,1,2,3],true);
-            // mergeCells(Ext.getCmp('material_Query_Data_Main'),[1,2,3]);
+            // mergeGrid(gridp,[0,1,2,3],true);
+            mergeCells(Ext.getCmp('material_Query_Data_Main'),[1,2,3]);
             // gridSpan(gridp,"row","[projectName],[buildingName],[positionName],[productName]");  //
-
+            // gridSpan(gridp,"row","1px solid #8080FF");
         });
 
     }
