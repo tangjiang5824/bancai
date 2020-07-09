@@ -49,12 +49,14 @@ public class DesignlistService extends BaseService{
             String productName = dataRow.get("productName").toString().trim().toUpperCase();
             String position = dataRow.get("position").toString();
             if (!isDesignlistPositionValid(projectId, buildingId, position)) {
+                result.dataList = dataList;
                 result.setErrorCode(2);
                 return result;
             }
             int productId = productDataService.addProductInfoIfNameValid(productName,userId);
             if(productId==0){
                 result.setErrorCode(2);
+                result.dataList = dataList;
                 return result;
             }
             productName = String.valueOf(productId) + "N" + productName;
@@ -73,7 +75,7 @@ public class DesignlistService extends BaseService{
         }
         map = panelMatchService.matchBackProduct(map,projectId,buildingId,buildingpositionId);
         map = panelMatchService.matchPreprocess(map,projectId,buildingId,buildingpositionId);
-//            map = matchOldpanel(map);
+        map = panelMatchService.matchOldpanel(map,projectId,buildingId,buildingpositionId);
 //            map = matchMaterial(map);
         result.success = panelMatchService.matchError(map,projectId,buildingId,buildingpositionId);
         result.dataList = dataList;
