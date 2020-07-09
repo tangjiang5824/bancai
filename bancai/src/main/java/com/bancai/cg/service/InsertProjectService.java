@@ -14,7 +14,6 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.bancai.service.BaseService;
-import com.bancai.db.mysqlcondition;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -131,6 +130,47 @@ public class InsertProjectService extends BaseService {
         }
         return queryAllService.queryDataPage(Integer.parseInt(start), Integer.parseInt(limit), c, tablename);
     }
+    /**
+     * 通用接口  通过表名和要查的字段和条件查询结果
+     * @param tablename
+     * @param args
+     * @return
+     */
+    @Transactional
+    public DataList findbytableNameAndcondition(String tablename,  String...args){
+        int i=0;
+        mysqlcondition c=new mysqlcondition();
+        mysqlcondition condition=null;
+        String colum=null;
+        String symbol=null;
+        String value=null;
+        for(String arg:args){
+            if(i%3==0){
+                condition=new mysqlcondition();
+                colum=arg;
+            }else if(i%3==1){
+                symbol=arg;
+            }else {
+                value=arg;
+                c.and(new mysqlcondition(colum,symbol,value) );
+            }
+            i++;
+        }
+        String whereClause=c.toString();
+        if(whereClause.length()>0)
+            return queryService.query("select * from "+tablename+" where "+whereClause,c.getParameters());
+        else
+            return queryService.query("select * from "+tablename+"");
+    }
+
+    public DataList findObjectId(String tablename,mysqlcondition c){
+        String whereClause=c.toString();
+        if(whereClause.length()>0)
+            return queryService.query("select * from "+tablename+" where "+whereClause,c.getParameters());
+        else
+            return queryService.query("select * from "+tablename+"");
+    }
+
     //通用接口 重载 全查 只用传入tablename
     @Transactional
     public DataList findallbytableName(String tablename,String start,String limit){

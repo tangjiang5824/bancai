@@ -2,6 +2,7 @@ package com.bancai.cg.entity;
 
 import javax.persistence.*;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "producttype")
@@ -9,7 +10,27 @@ public class Producttype {
     private Integer id;
     private String productTypeName;
     private String description;
-    private Integer classificationId;
+    private ProductClassification classification;
+    private Set<ProductInfo> productInfoSet;
+
+    @OneToMany(mappedBy = "productType")
+    public Set<ProductInfo> getProductInfoSet() {
+        return productInfoSet;
+    }
+
+    public void setProductInfoSet(Set<ProductInfo> productInfoSet) {
+        this.productInfoSet = productInfoSet;
+    }
+
+    @ManyToOne(targetEntity = ProductClassification.class)
+    @JoinColumn(name = "classificationId",referencedColumnName = "classificationId")
+    public ProductClassification getClassification() {
+        return classification;
+    }
+
+    public void setClassification(ProductClassification classification) {
+        this.classification = classification;
+    }
 
     @Id
     @Column(name = "id", nullable = false)
@@ -42,29 +63,5 @@ public class Producttype {
         this.description = description;
     }
 
-    @Basic
-    @Column(name = "classificationId", nullable = true)
-    public Integer getClassificationId() {
-        return classificationId;
-    }
 
-    public void setClassificationId(Integer classificationId) {
-        this.classificationId = classificationId;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Producttype that = (Producttype) o;
-        return id == that.id &&
-                Objects.equals(productTypeName, that.productTypeName) &&
-                Objects.equals(description, that.description) &&
-                Objects.equals(classificationId, that.classificationId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, productTypeName, description, classificationId);
-    }
 }

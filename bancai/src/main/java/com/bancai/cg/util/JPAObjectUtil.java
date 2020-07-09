@@ -24,12 +24,14 @@ public class JPAObjectUtil {
         object.put(tableName,rslist);
         return object.toJSONString();
     }
-    public List<HashMap<MaterialInfo,Integer>> NewPanelMatch(ProductInfo productInfo,String classification_name,List<NewpanelRules> rules) throws ScriptException {
-        List<HashMap<MaterialInfo,Integer>> list=new ArrayList<>();
+    public static List<List<Object>> NewPanelMatch(ProductInfo productInfo,String classification_name,List<NewpanelRules> rules) throws ScriptException {
+        List<List<Object>> list=new ArrayList<>();
         for(NewpanelRules rule:rules){
             if(!(CondtionSatisfy(rule.getCondition1(),productInfo)&&CondtionSatisfy(rule.getCondition2(),productInfo))) continue;
             int count=1;
-            HashMap<MaterialInfo,Integer> map=new HashMap<>();
+            List<Object> arrayList =new ArrayList<>();
+            MaterialInfo material=new MaterialInfo();
+            material.setTypeId(rule.getMaterialTypeId());
             if (classification_name.equals("墙板")||
                     classification_name.equals("其他平板")||
                     classification_name.equals("飞机板")||
@@ -37,8 +39,6 @@ public class JPAObjectUtil {
                     classification_name.equals("直转角")||
                     classification_name.equals("窗企口")
             ){
-                MaterialInfo material=new MaterialInfo();
-
                 //计算原材料m的值 公式中含有m或n
                 material=getValue(rule,material,productInfo,"m");
                 //计算原材料n的值，公式中含有m或n
@@ -51,8 +51,8 @@ public class JPAObjectUtil {
                 if(rule.getCountValue()!=null&&rule.getCountValue().trim().length()!=0){
                     String match=rule.getCountValue();
                     String match_rs=match;
-                    if(productInfo.getmValue()!=null) match_rs = match.replace("m", productInfo.getmValue()+"");
-                    if(productInfo.getnValue()!=null) match_rs = match.replace("n", productInfo.getnValue()+"");
+                    if(productInfo.getmValue()!=null) match_rs = match_rs.replace("m", productInfo.getmValue()+"");
+                    if(productInfo.getnValue()!=null) match_rs = match_rs.replace("n", productInfo.getnValue()+"");
                     count=((int)Math.ceil(Double.parseDouble(jse.eval(match_rs).toString())));
                 }else if(rule.getCount()!=null){
                     count=(int)(double)rule.getCount();
@@ -65,20 +65,86 @@ public class JPAObjectUtil {
                         material.setnValue(Integer.parseInt(s[i]));
                     }
                 }
-                material.setTypeId(rule.getMaterialTypeId());
-                map.put(material,count);
-                list.add(map);
+                arrayList.add(material);
+                arrayList.add(count);
+                list.add(arrayList);
             }else if(classification_name.equals("两转转角")||classification_name.equals("三转转角")||classification_name.equals("企口转角")){
-                MaterialInfo material=new MaterialInfo();
                 if(rule.getOrientation()!=null&&rule.getOrientation().trim().length()!=0){
+                    material.setOrientation(rule.getOrientation());
                     material=getValue(rule,material,productInfo,"a");
                     material=getValue(rule,material,productInfo,"b");
-                    if(rule.getOrientation().equals("a"));
+                    if(rule.getOrientation().equals("m")){
+                        int angle_value=0;
+                        if(productInfo.getmAngle()!=null){
+                            if(productInfo.getmAngle()==1) angle_value=60;
+                            else if(productInfo.getmAngle()==2) angle_value=10;
+                        }
+                        if(rule.getmValue()!=null&&rule.getmValue().trim().length()!=0){
+                            String match=rule.getmValue();
+                            String match_rs=match;
+                            if(productInfo.getmValue()!=null) match_rs = match_rs.replace("m", productInfo.getmValue()+"");
+                            if(productInfo.getaValue()!=null) match_rs = match_rs.replace("a", productInfo.getaValue()+"");
+                            material.setmValue(Integer.parseInt(jse.eval(match_rs).toString())+angle_value);
+                        }else if(rule.getmNum()!=null){
+                            material.setmValue(rule.getmNum()+angle_value);
+                        }
+                    }else if(rule.getOrientation().equals("n")){
+                        int angle_value=0;
+                        if(productInfo.getnAngle()!=null){
+                            if(productInfo.getnAngle()==1) angle_value=60;
+                            else if(productInfo.getnAngle()==2) angle_value=10;
+                        }
+                        if(rule.getnValue()!=null&&rule.getnValue().trim().length()!=0){
+                            String match=rule.getnValue();
+                            String match_rs=match;
+                            if(productInfo.getnValue()!=null) match_rs = match_rs.replace("n", productInfo.getnValue()+"");
+                            if(productInfo.getaValue()!=null) match_rs = match_rs.replace("a", productInfo.getaValue()+"");
+                            material.setnValue(Integer.parseInt(jse.eval(match_rs).toString())+angle_value);
+                        }else if(rule.getnNum()!=null){
+                            material.setnValue(rule.getnNum()+angle_value);
+                        }
+                    }else if(rule.getOrientation().equals("p")){
+                        int angle_value=0;
+                        if(productInfo.getpAngle()!=null){
+                            if(productInfo.getpAngle()==1) angle_value=60;
+                            else if(productInfo.getpAngle()==2) angle_value=10;
+                        }
+                        if(rule.getpValue()!=null&&rule.getpValue().trim().length()!=0){
+                            String match=rule.getpValue();
+                            String match_rs=match;
+                            if(productInfo.getpValue()!=null) match_rs = match_rs.replace("p", productInfo.getpValue()+"");
+                            if(productInfo.getaValue()!=null) match_rs = match_rs.replace("a", productInfo.getaValue()+"");
+                            material.setpValue(Integer.parseInt(jse.eval(match_rs).toString())+angle_value);
+                        }else if(rule.getpNum()!=null){
+                            material.setpValue(rule.getpNum()+angle_value);
+                        }
+                    }
 
-
+                }else {
+                    //含方向产品中的普通原材料
+                    material=getValue(rule,material,productInfo,"m");
+                    //计算原材料n的值，公式中含有m或n
+                    material=getValue(rule,material,productInfo,"n");
+                    //计算原材料a的值，公式中含有a
+                    material=getValue(rule,material,productInfo,"a");
+                    //计算原材料b的值，公式中含有b
+                    material=getValue(rule,material,productInfo,"b");
+                }
+                //数量 分析匹配规则后暂定只和a，b有关
+                if(rule.getCountValue()!=null&&rule.getCountValue().trim().length()!=0){
+                    String match=rule.getCountValue();
+                    String match_rs=match;
+                    if(productInfo.getaValue()!=null) match_rs = match_rs.replace("a", productInfo.getaValue()+"");
+                    if(productInfo.getbValue()!=null) match_rs = match_rs.replace("b", productInfo.getbValue()+"");
+                    count=((int)Math.ceil(Double.parseDouble(jse.eval(match_rs).toString())));
+                }else if(rule.getCount()!=null){
+                    count=(int)(double)rule.getCount();
                 }
 
-
+                arrayList.add(material);
+                arrayList.add(count);
+                list.add(arrayList);
+            }else {
 
             }
             //a,b
@@ -93,12 +159,12 @@ public class JPAObjectUtil {
         return list;
     }
 
-    private MaterialInfo getValue(NewpanelRules rule, MaterialInfo material, ProductInfo productInfo,String type) throws ScriptException {
+    private static MaterialInfo getValue(NewpanelRules rule, MaterialInfo material, ProductInfo productInfo,String type) throws ScriptException {
        if(type.equals("m")){
            if(rule.getmValue()!=null&&rule.getmValue().trim().length()!=0){
                String match=rule.getmValue();
                String match_rs=match;
-               if(productInfo.getmValue()!=null) match_rs = match.replace("m", productInfo.getmValue()+"");
+               if(productInfo.getmValue()!=null) match_rs = match_rs.replace("m", productInfo.getmValue()+"");
                //   if(productInfo.getnValue()!=null) match_rs = match.replace("n", productInfo.getnValue()+"");
                material.setmValue(Integer.parseInt(jse.eval(match_rs).toString()));
            }else if(rule.getmNum()!=null){
@@ -109,7 +175,7 @@ public class JPAObjectUtil {
                String match=rule.getnValue();
                String match_rs=match;
                //    if(productInfo.getmValue()!=null) match_rs = match.replace("m", productInfo.getmValue()+"");
-               if(productInfo.getnValue()!=null) match_rs = match.replace("n", productInfo.getnValue()+"");
+               if(productInfo.getnValue()!=null) match_rs = match_rs.replace("n", productInfo.getnValue()+"");
                material.setnValue(Integer.parseInt(jse.eval(match_rs).toString()));
            }else if(rule.getnNum()!=null){
                material.setnValue(rule.getnNum());
@@ -118,14 +184,14 @@ public class JPAObjectUtil {
            if(rule.getaValue()!=null&&rule.getaValue().trim().length()!=0){
                String match=rule.getaValue();
                String match_rs=match;
-               if(productInfo.getaValue()!=null) match_rs = match.replace("a", productInfo.getaValue()+"");
+               if(productInfo.getaValue()!=null) match_rs = match_rs.replace("a", productInfo.getaValue()+"");
                material.setaValue(Integer.parseInt(jse.eval(match_rs).toString()));
            }
        }else if(type.equals("b")){
            if(rule.getbValue()!=null&&rule.getbValue().trim().length()!=0){
                String match=rule.getbValue();
                String match_rs=match;
-               if(productInfo.getbValue()!=null) match_rs = match.replace("b", productInfo.getaValue()+"");
+               if(productInfo.getbValue()!=null) match_rs = match_rs.replace("b", productInfo.getaValue()+"");
                material.setbValue(Integer.parseInt(jse.eval(match_rs).toString()));
            }
        }
@@ -133,7 +199,7 @@ public class JPAObjectUtil {
     }
 
 
-    public boolean CondtionSatisfy(String condition,ProductInfo productInfo){
+    public static boolean CondtionSatisfy(String condition,ProductInfo productInfo){
         //condition 最高位 1：n， 2：m，3：p，4：a，5：b
         //condition 第二位 1:=, 2:>, 3:>=, 4:<, 5:<=
         if(condition==null||condition.trim().length()==0) return true;
