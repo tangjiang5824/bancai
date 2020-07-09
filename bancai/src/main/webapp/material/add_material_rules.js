@@ -18,159 +18,78 @@ Ext.define('material.add_material_rules', {
 
     initComponent : function() {
         var me = this;
-        var tableName="material";
+        var type_tableName="material_type";
+        var pro_tableName="product_info";
 
-        //保存类型名的数组
-        var product_typeArr = [];
-        //var materialtype="1";
-
-        //出库or入库选择
-        var optionTypeList = Ext.create('Ext.data.Store', {
-            fields: ['abbr', 'name'],
-            data : [
-                {"abbr":"0", "name":"类型名"},
-                {"abbr":"1", "name":"m"},
-                {"abbr":"2", "name":"n"},
-                {"abbr":"3", "name":"axb"},
-                {"abbr":"4", "name":"bxa"},
-                {"abbr":"5", "name":"m+n"},
-                {"abbr":"6", "name":"后缀"},
-                //...
-            ]
+        //方法重写，表单验证，必填项加*号
+        Ext.override(Ext.form.field.Base,{
+            initComponent:function(){
+                if(this.allowBlank!==undefined && !this.allowBlank){
+                    if(this.fieldLabel){
+                        this.fieldLabel += '<font color=red>*</font>';
+                    }
+                }
+                this.callParent(arguments);
+            }
         });
 
-        var ProductTypeStore = Ext.create('Ext.data.Store',{
+        var materialTypeStore = Ext.create('Ext.data.Store',{
             fields : [ 'projectName'],
             proxy : {
                 type : 'ajax',
-                url : 'match/findProductTypeList.do',
+                url : "material/findAllBytableName.do?tableName="+type_tableName,  //通用接口,查询原材料基础信息
 
                 reader : {
                     type : 'json',
-                    rootProperty: 'productTypeList',
+                    rootProperty: 'material_type',
                 }
             },
             autoLoad : true
         });
         //
-        var product_type = Ext.create('Ext.form.ComboBox', {
-            fieldLabel: '产品类型',
-            name: 'product_type',
-            id: 'product_type',
-            store: ProductTypeStore,
+        var material_type = Ext.create('Ext.form.ComboBox', {
+            fieldLabel: '原材料类型',
+            name: 'material_type',
+            id: 'material_type',
+            store: materialTypeStore,
             queryMode: 'local',
-            displayField: 'productTypeName',
+            displayField: 'typeName',
             valueField: 'id',
             margin : '0 20 0 40',
             width: 200,
-            labelWidth: 60,
+            labelWidth: 75,
+            allowBlank:false,
+            blankText  : "原材料类型不能为空",
             renderTo: Ext.getBody(),
-            listeners:{
-                //    typeStore
-                select: function(combo, record, index) {
 
-                    //将产品查询store放到数组中
-                    var records = ProductTypeStore.data.items;
-                    var records_len = records.length;
-                    //循环
-                    for(var i=0;i<records_len;i++){
-                        var rec = records[i];
-                        var typename = rec.data.productTypeName;
-                        product_typeArr.push(typename)
-                    }
-
-
-                    //选中后
-                    var select = record[0].data;
-                    var id = select.id;//type对应的id
-                    console.log(id)
-
-                    // var type = component1.value; //id值
-                    // var typeName = component1.rawValue; //id值
-                    //    store中的数据添加类型
-                    // data = [{
-                    //     '格式名称' : typeName,
-                    // }];
-
-                    //表名
-                    // var tableName = 'building';
-                    //属性名
-                    var projectId = 'productTypeId';
-                    var tableListStore2 = Ext.create('Ext.data.Store',{
-                        fields : [ 'buildingName'],
-                        proxy : {
-                            type : 'ajax',
-                            //通用接口，material/findAllbyTableNameAndOnlyOneCondition.do传入表名，属性及属性值
-                            url : 'match/findProductFormatList.do?productTypeId='+id,//根据项目id查询对应的楼栋名
-                            // params : {
-                            //     productTypeId:id,
-                            // },
-                            reader : {
-                                type : 'json',
-                                rootProperty: 'productFormatList',
-                            }
-                        },
-                        autoLoad : true,
-                        // listeners:{
-                        //     load:function () {
-                        //         Ext.getCmp('buildingName').setValue("");
-                        //     }
-                        // }
-                    });
-
-                    //product_format,下拉框重新加载数据
-                    product_format.setStore(tableListStore2);
-
-                    //grid store重载
-                    Ext.getCmp('product_addDataGrid').getStore().removeAll();
-
-                    // Ext.getCmp('product_addDataGrid').getStore().loadData(data,
-                    //     true);
-
-                }
-            }
         });
-        var product_format = Ext.create('Ext.form.ComboBox', {
-            fieldLabel: '格式',
-            name: 'product_format',
-            store: optionTypeList,
+
+        var productStore = Ext.create('Ext.data.Store',{
+            fields : [ 'projectName'],
+            proxy : {
+                type : 'ajax',
+                url : 'material/findAllBytableName.do?tableName='+pro_tableName,  //通用接口,查询原材料基础信息
+                reader : {
+                    type : 'json',
+                    rootProperty: 'product_info',
+                }
+            },
+            autoLoad : true
+        });
+        var productNameList = Ext.create('Ext.form.ComboBox', {
+            fieldLabel: '产品名',
+            name: 'productNameList',
+            store: productStore,
             queryMode: 'local',
-            displayField: 'productFormat',
+            displayField: 'productName',
             valueField: 'id',
             margin : '0 20 0 40',
             width: 200,
-            labelWidth: 35,
+            labelWidth: 50,
+            allowBlank:false,
+            blankText  : "产品名不能为空",
             renderTo: Ext.getBody(),
-            listeners:{
-                //    typeStore
-                select: function(combo, record, index) {
 
-                    //grid store重载
-                    Ext.getCmp('product_addDataGrid').getStore().removeAll();
-
-                    // var type = product_format.value; //id值
-                    var productFormat = record[0].data.productFormat;
-                    //按空格切分
-                    var arr = productFormat.split(' ');
-                    console.log("arr================>",arr[0])
-
-                    // var typeName = product_format.rawValue; //id值
-                    //    store中的数据添加类型
-                    data = [
-                        // {
-                        // '格式名称' : arr[0],
-                        // },
-                    ];
-                    //循环
-                    Ext.each(arr,function (typeName,index,self) {
-                        // console.log("typeName................",typeName);
-                        data.push({'format_each_name' : typeName})
-                    }),
-
-                    Ext.getCmp('product_addDataGrid').getStore().loadData(data,
-                        true);
-                }
-            }
         });
 
 
@@ -183,21 +102,16 @@ Ext.define('material.add_material_rules', {
                     margin: '0 0 0 0',
                     text:'<strong>产品品名格式选择：</strong>'
                 },
-                product_type,
-
-                product_format,
-                // component3,
-                // component4,
             ]
         });
 
 
 
         // 产品右侧
-        var condition_form_ab = new Ext.form.Panel({
+        var new_condition_form = new Ext.form.Panel({
             // title: '添加约束条件',
             // margin:'10 10 10 10',
-            id: 'condition_form_ab',
+            id: 'new_condition_form',
             // autoHeight: true,
             // autoWidth: true,
             // layout: 'form',
@@ -262,7 +176,7 @@ Ext.define('material.add_material_rules', {
                                         type: 'vbox'
                                     },
                                     items:[
-                                        product_type,
+                                        material_type,
                                     ]
                                 },
                                 {
@@ -279,7 +193,7 @@ Ext.define('material.add_material_rules', {
                                         type: 'vbox'
                                     },
                                     items:[
-                                        product_format,
+                                        productNameList,
                                     ]
                                 },
                             ]
@@ -409,7 +323,35 @@ Ext.define('material.add_material_rules', {
                 // }
             ],
             buttons:[{
-                text:'保存'
+                text:'保存',
+                handler : function(btn) { // 按钮响应函数
+                    Ext.Msg.show({
+                        title: '操作确认',
+                        message: '添加新的规则，选择“是”、“否”确认？',
+                        buttons: Ext.Msg.YESNO,
+                        icon: Ext.Msg.QUESTION,
+                        fn: function (btn) {
+                            console.log("btn:----",btn)
+                            // console.log("operatorName:----",Ext.getCmp('formMain').getForm().findField('projectName').getValue())
+                            // console.log("projectid:----",Ext.getCmp('formMain').getForm().findField('projectName').value)
+                            if (btn === 'yes') {
+                                Ext.getCmp('new_condition_form').getForm().submit({
+                                    url: 'project/match/newPanel.do', //新版添加规则
+                                    method: 'POST',
+                                    //submitEmptyText : false,
+                                    success: function (response) {
+                                        //var message =Ext.decode(response.responseText).showmessage;
+                                        Ext.MessageBox.alert("提示", "保存成功");
+                                    },
+                                    failure: function (response) {
+                                        //var message =Ext.decode(response.responseText).showmessage;
+                                        Ext.MessageBox.alert("提示", "保存失败");
+                                    }
+                                })
+                            }
+                        }
+                    })
+                },
             },{
                 text:'取消'
             }]
@@ -427,11 +369,10 @@ Ext.define('material.add_material_rules', {
             },
             //bbar:,
             // width:800,
-            // tbar:toolbar,
             // columns : [],
             // hidden:true,//隐藏
             // bodyStyle: 'text-align:center;',
-            items:[condition_form_ab],
+            items:[new_condition_form],
             selType : 'rowmodel'
         });
 
@@ -443,7 +384,7 @@ Ext.define('material.add_material_rules', {
 
             width:1800,
             height:1000,
-            tbar:toolbar,
+            // tbar:toolbar,
             items:[
                 grid_pro_condition,
             ]
