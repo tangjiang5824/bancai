@@ -41,6 +41,10 @@ public class MaterialController {
     private projectdao projectdao;
     @Autowired
     private buildingdao buildingdao;
+    @Autowired
+    private materialTypedao materialTypedao;
+    @Autowired
+    private newpanelrulesdao newpanelrulesdao;
 
 
     //向materialtype原材料类型表插入
@@ -278,6 +282,51 @@ public class MaterialController {
         building.setProject(project);
         buildingdao.save(building);
         return true;
+    }
+
+    @RequestMapping("/project/match/newPanel.do")
+    public boolean addNewPanelRule(Integer productId,Integer materialTypeId,String count, String m,String n, String a,String b, String p, String condition1, String condition2, String upWidth, String orientation){
+        NewpanelRules rule=new NewpanelRules();
+        if(count.trim().length()==0) count=null;
+        if(m.trim().length()==0) m=null;
+        if(n.trim().length()==0) n=null;
+        if(p.trim().length()==0) p=null;
+        if(a.trim().length()==0) a=null;
+        if(b.trim().length()==0) b=null;
+        if(condition1.trim().length()==0) condition1=null;
+        if(condition2.trim().length()==0) condition2=null;
+        if(upWidth.trim().length()==0) upWidth=null;
+        if(orientation.trim().length()==0) orientation=null;
+        rule.setProductId(productId);
+        rule.setMaterialTypeId(materialTypedao.findById(materialTypeId).orElse(null));
+        try {
+            rule.setCount(Double.parseDouble(count));
+        }catch (Exception e){
+            rule.setCountValue(count);
+        }
+        try {
+            rule.setmNum(Integer.parseInt(m));
+        }catch (Exception e){
+            rule.setmValue(m);
+        }
+        try {
+            rule.setnNum(Integer.parseInt(n));
+        }catch (Exception e){
+            rule.setmValue(n);
+        }
+        try {
+            rule.setpNum(Integer.parseInt(p));
+        }catch (Exception e){
+            rule.setpValue(p);
+        }
+        rule.setaValue(a);
+        rule.setbValue(b);
+        rule.setCondition1(condition1);
+        rule.setCondition2(condition2);
+        rule.setUpWidth(upWidth);
+        rule.setOrientation(orientation);
+        newpanelrulesdao.save(rule);
+        return  true;
     }
 
 
