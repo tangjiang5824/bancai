@@ -52,8 +52,8 @@ Ext.define('oldpanel.oldpanel_Inbound', {
             name : 'storePosition',
             matchFieldWidth: false,
             emptyText : "--请选择--",
-            displayField: 'warehousename',
-            valueField: 'warehousename',
+            displayField: 'warehouseName',
+            valueField: 'warehouseName',
             editable : false,
             store: storeNameList,
         });

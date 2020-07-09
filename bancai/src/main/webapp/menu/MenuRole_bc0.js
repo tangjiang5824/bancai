@@ -302,6 +302,10 @@ Ext.define("menu.MenuRole_bc0", {
 						text : '查看原材料类型',
 						id : 'material.query_Mcatergory_baseInfo',
 						leaf : true
+					},{
+						text : '添加原材料基础信息',
+						id : 'material.material_Basic_Info_Input',
+						leaf : true
 					}
 					]
 				} , {
