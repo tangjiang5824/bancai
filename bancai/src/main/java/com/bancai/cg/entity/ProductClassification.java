@@ -2,12 +2,22 @@ package com.bancai.cg.entity;
 
 import javax.persistence.*;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "product_classification")
 public class ProductClassification {
     private Integer classificationId;
     private String classificationName;
+    private Set<Producttype> producttypes;
+    @OneToMany(mappedBy ="classification" )
+    public Set<Producttype> getProducttypes() {
+        return producttypes;
+    }
+
+    public void setProducttypes(Set<Producttype> producttypes) {
+        this.producttypes = producttypes;
+    }
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)

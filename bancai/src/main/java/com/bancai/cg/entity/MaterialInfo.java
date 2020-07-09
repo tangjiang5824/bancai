@@ -11,9 +11,9 @@ public class MaterialInfo {
     private Integer materialid;
     private String inventoryUnit;
     private String materialName;
-    private Integer width;
     private Integer nValue;
     private Integer mValue;
+    private Integer pValue;
     private Integer aValue;
     private Integer bValue;
     private String orientation;
@@ -22,7 +22,7 @@ public class MaterialInfo {
     private Set<MaterialStore> materialStores =new HashSet<>();
     private Set<MaterialLogdetail> materialLogdetails =new HashSet<>();
 
-    @ManyToOne(targetEntity = MaterialType.class)
+    @ManyToOne(targetEntity = MaterialType.class,fetch = FetchType.LAZY)
     @JoinColumn(name = "typeId",referencedColumnName = "id")
     public MaterialType getTypeId() {
         return typeId;
@@ -51,6 +51,13 @@ public class MaterialInfo {
         this.materialid = materialid;
     }
 
+    public Integer getpValue() {
+        return pValue;
+    }
+
+    public void setpValue(Integer pValue) {
+        this.pValue = pValue;
+    }
 
     public Integer getnValue() {
         return nValue;
@@ -109,13 +116,6 @@ public class MaterialInfo {
         this.materialName = materialName;
     }
 
-    public Integer getWidth() {
-        return width;
-    }
-
-    public void setWidth(Integer width) {
-        this.width = width;
-    }
 
     public Double getUnitWeight() {
         return unitWeight;

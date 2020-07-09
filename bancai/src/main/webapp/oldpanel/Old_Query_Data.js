@@ -8,7 +8,7 @@ Ext.define('oldpanel.Old_Query_Data',{
         var tableName="oldpanel_info_store_type";
         Ext.define('Soims.model.application.ApplicationState', {
             statics: { // 关键
-                0: { value: '0', name: '墙板' },
+                4: { value: '4', name: '墙板' },
                 1: { value: '1', name: '梁板' },
                 2: { value: '2', name: 'K板' },
                 3: { value: '3', name: '异型' },
@@ -249,7 +249,6 @@ Ext.define('oldpanel.Old_Query_Data',{
             fields: [],
             pageSize: itemsPerPage, // items per page
             proxy:{
-                //url:"hisExcelList.do",
                 url : "oldpanel/query_data.do",
                 type: 'ajax',
                 method:'POST',
@@ -261,6 +260,11 @@ Ext.define('oldpanel.Old_Query_Data',{
                 params:{
                     start: 0,
                     limit: itemsPerPage,
+                    minCount : Ext.getCmp('minCount').getValue(),
+                    maxCount : Ext.getCmp('maxCount').getValue(),
+                    oldpanelType:Ext.getCmp('oldpanelType').getValue(),
+                    warehouseName:Ext.getCmp('storePosition').rawValue,
+                    tableName:tableName,
                 }
             },
             listeners : {
@@ -271,12 +275,13 @@ Ext.define('oldpanel.Old_Query_Data',{
                         // startLength:Ext.getCmp('startLength').getValue(),
                         // endLength:Ext.getCmp('endLength').getValue(),
                         // mType:Ext.getCmp('mType').getValue(),
+                        start: 0,
+                        limit: itemsPerPage,
                         minCount : Ext.getCmp('minCount').getValue(),
                         maxCount : Ext.getCmp('maxCount').getValue(),
                         oldpanelType:Ext.getCmp('oldpanelType').getValue(),
                         warehouseName:Ext.getCmp('storePosition').rawValue,
                         tableName:tableName,
-
                     });
                 }
 

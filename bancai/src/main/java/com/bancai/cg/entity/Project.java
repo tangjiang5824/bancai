@@ -19,8 +19,26 @@ public class Project {
     private String purchaseLeader;
     private String financeLeader;
     private String storeLeader;
+    private Integer uploadId;
+    private Integer statusId;
     private Set<Building> buildings =new HashSet<>();
     private Set<MaterialLog> materialLogs =new HashSet<>();
+
+    public Integer getStatusId() {
+        return statusId;
+    }
+
+    public void setStatusId(Integer statusId) {
+        this.statusId = statusId;
+    }
+
+    public Integer getUploadId() {
+        return uploadId;
+    }
+
+    public void setUploadId(Integer uploadId) {
+        this.uploadId = uploadId;
+    }
 
     @OneToMany(mappedBy = "project")
     public Set<MaterialLog> getMaterialLogs() {

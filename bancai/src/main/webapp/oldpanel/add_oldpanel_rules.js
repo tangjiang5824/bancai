@@ -19,6 +19,9 @@ Ext.define('oldpanel.add_oldpanel_rules', {
     initComponent : function() {
         var me = this;
         var tableName="material";
+
+        //保存类型名的数组
+        var product_typeArr = [];
         //var materialtype="1";
 
         //出库or入库选择
@@ -52,8 +55,8 @@ Ext.define('oldpanel.add_oldpanel_rules', {
         //
         var product_type = Ext.create('Ext.form.ComboBox', {
             fieldLabel: '产品类型',
-            name: 'component1',
-            id: 'component1',
+            name: 'product_type',
+            id: 'product_type',
             store: ProductTypeStore,
             queryMode: 'local',
             displayField: 'productTypeName',
@@ -65,6 +68,18 @@ Ext.define('oldpanel.add_oldpanel_rules', {
             listeners:{
                 //    typeStore
                 select: function(combo, record, index) {
+
+                    //将产品查询store放到数组中
+                    var records = ProductTypeStore.data.items;
+                    var records_len = records.length;
+                    //循环
+                    for(var i=0;i<records_len;i++){
+                        var rec = records[i];
+                        var typename = rec.data.productTypeName;
+                        product_typeArr.push(typename)
+                    }
+
+
                     //选中后
                     var select = record[0].data;
                     var id = select.id;//type对应的id
@@ -86,10 +101,10 @@ Ext.define('oldpanel.add_oldpanel_rules', {
                         proxy : {
                             type : 'ajax',
                             //通用接口，material/findAllbyTableNameAndOnlyOneCondition.do传入表名，属性及属性值
-                            url : 'match/findProductFormatList.do',//根据项目id查询对应的楼栋名
-                            params : {
-                                productTypeId:id,
-                            },
+                            url : 'match/findProductFormatList.do?productTypeId='+id,//根据项目id查询对应的楼栋名
+                            // params : {
+                            //     productTypeId:id,
+                            // },
                             reader : {
                                 type : 'json',
                                 rootProperty: 'productFormatList',
@@ -105,6 +120,9 @@ Ext.define('oldpanel.add_oldpanel_rules', {
 
                     //product_format,下拉框重新加载数据
                     product_format.setStore(tableListStore2);
+
+                    //grid store重载
+                    Ext.getCmp('product_addDataGrid').getStore().removeAll();
 
                     // Ext.getCmp('product_addDataGrid').getStore().loadData(data,
                     //     true);
@@ -126,17 +144,31 @@ Ext.define('oldpanel.add_oldpanel_rules', {
             listeners:{
                 //    typeStore
                 select: function(combo, record, index) {
-                    // var type = product_format.value; //id值
-                    var typeName = product_format.rawValue; //id值
 
+                    //grid store重载
+                    Ext.getCmp('product_addDataGrid').getStore().removeAll();
+
+                    // var type = product_format.value; //id值
+                    var productFormat = record[0].data.productFormat;
+                    //按空格切分
+                    var arr = productFormat.split(' ');
+                    console.log("arr================>",arr[0])
+
+                    // var typeName = product_format.rawValue; //id值
                     //    store中的数据添加类型
-                    data = [{
-                        '格式名称' : typeName,
-                    }];
+                    data = [
+                        // {
+                        // '格式名称' : arr[0],
+                        // },
+                    ];
+                    //循环
+                    Ext.each(arr,function (typeName,index,self) {
+                        // console.log("typeName................",typeName);
+                        data.push({'format_each_name' : typeName})
+                    }),
 
                     Ext.getCmp('product_addDataGrid').getStore().loadData(data,
                         true);
-
                 }
             }
         });
@@ -159,7 +191,7 @@ Ext.define('oldpanel.add_oldpanel_rules', {
                     var typeName = component3.rawValue; //id值
                     //    store中的数据添加类型
                     data = [{
-                        '格式名称' : typeName,
+                        'format_each_name' : typeName,
                     }];
                     Ext.getCmp('product_addDataGrid').getStore().loadData(data,
                         true);
@@ -186,7 +218,7 @@ Ext.define('oldpanel.add_oldpanel_rules', {
                     var typeName = component4.rawValue; //id值
                     //    store中的数据添加类型
                     data = [{
-                        '格式名称' : typeName,
+                        'format_each_name' : typeName,
                     }];
                     Ext.getCmp('product_addDataGrid').getStore().loadData(data,
                         true);
@@ -242,15 +274,16 @@ Ext.define('oldpanel.add_oldpanel_rules', {
                 fields :[]
             },
             //bbar:,
-            width:800,
+            width:600,
+            // flex:1,
             // tbar:toolbar,
 
             columns : [
                 {
-                    dataIndex : '格式名称',
+                    dataIndex : 'format_each_name',
                     text : '格式名称',
                     //width : 110,
-                    id:'类型名',
+                    id:'typename',
                 },
                 {
                     // name : '操作',
@@ -271,116 +304,275 @@ Ext.define('oldpanel.add_oldpanel_rules', {
             })],
             selType : 'rowmodel'
         });
+        var condition_form_ab = Ext.create('project.form.abform');
+        var condition_form_m = Ext.create('project.form.mform');
         //产品右侧
-        var condition_form1 = new Ext.form.Panel({
-            // title:'新建原材料退库表',
-            id: 'condition_form1',
-            autoHeight: true,
-            autoWidth: true,
-            layout: 'form',
-            border: false,
-            bodyStyle: 'text-align:center;',
-            // height:700,
-            // baseCls : 'my-panel-no-border',  //去掉边框
-            //居中
-            // layout: {
-            //     align: 'middle',
-            //     pack: 'center',
-            //     type: 'vbox'
-            // },
-            items: [{
-                columnWidth: .3,
-                xtype: 'fieldset',
-                title: '添加约束条件',
-                layout: 'form',
-                defaults: {anchor: '95%'},
-                style: 'margin-left: 5px;padding-left: 5px;',
-                width:500,
-                // 第二列中的表项
-                bodyStyle:'text-align:center;',
-                items:[
-                    {
-                        xtype: 'textfield',
-                        margin: '0 10 0 40',
-                        fieldLabel: '规格',
-                        id: 'specification',
-                        width: 140,
-                        labelWidth: 30,
-                        name: 'specification',
-                        value: "",
-                        allowBlank:false,
-                    },
-                    {
-                        xtype: 'textfield',
-                        margin: '0 10 0 40',
-                        fieldLabel: '横截面',
-                        id: 'width',
-                        labelWidth : 50,
-                        width : 180,
-                        name: 'width',
-                        value: "",
-                    },
-                    {
-                        xtype: 'textfield',
-                        margin: '0 10 0 40',
-                        fieldLabel: '单重',
-                        id: 'unitWeight',
-                        width: 180,
-                        labelWidth: 30,
-                        name: 'unitWeight',
-                        value: "",
-                    },
-                    {
-                        xtype: 'textfield',
-                        margin: '0 10 0 40',
-                        fieldLabel: '总重',
-                        id: 'totalWeight',
-                        width: 180,
-                        labelWidth: 30,
-                        name: 'totalWeight',
-                        value: "",
-                    },
-                    {
-                        xtype: 'textfield',
-                        margin: '0 10 0 40',
-                        fieldLabel: '数量',
-                        id: 'count',
-                        width: 140,
-                        labelWidth: 30,
-                        name: 'count',
-                        value: "",
-                        allowBlank:false,
-                    },{
-                        xtype: 'textfield',
-                        // margin: '0 10 0 0',
-                        fieldLabel: ' 库存单位',
-                        id: 'stockUnit',
-                        width: 230,
-                        labelWidth: 70,
-                        name: 'stockUnit',
-                        value: "",
-                    }
-                    // {xtype: 'textfield',fieldLabel: '职工类别',name: 'personType'}
-                ]
-            }]
-        });
+        // var condition_form_m = new Ext.form.Panel({
+        //     // title: '添加约束条件',
+        //     // margin:'10 10 10 10',
+        //     id: 'condition_form_m',
+        //     // autoHeight: true,
+        //     // autoWidth: true,
+        //     // layout: 'form',
+        //     // border: true,
+        //     width:'95%',
+        //     bodyStyle: 'text-align:center;padding:20px 10px 0px 5px',
+        //     buttonAlign:'center',
+        //     defaults: {
+        //         // border:false,
+        //         labelWidth:70,
+        //         labelAlign:'right',
+        //         width:'95%'
+        //     },
+        //     hidden:true,
+        //
+        //     // height:700,
+        //     baseCls : 'my-panel-no-border',  //去掉边框
+        //     //居中
+        //     layout: {
+        //         align: 'left',
+        //         pack: 'center',
+        //         type: 'vbox'
+        //     },
+        //     items: [
+        //         {
+        //             xtype: 'fieldset',
+        //             title: 'm的约束条件',
+        //             layout: 'form',
+        //             defaults: {anchor: '95%'},
+        //             style: 'margin-left: 5px;padding-left: 5px;',
+        //             width:500,
+        //             bodyStyle:'text-align:center;margin-top:5px;',
+        //             // 第一列中的表项
+        //             // style:"margin-top:50px;",
+        //             fieldDefaults:{
+        //                 labelAlign:'right',
+        //                 labelWidth:80,
+        //             },
+        //             items:[
+        //                 {
+        //                     layout: {
+        //                         align: 'left',
+        //                         // pack: 'center',
+        //                         type: 'hbox'
+        //                     },
+        //                     defaults: {
+        //                         border:false,
+        //                         labelWidth:70,
+        //                         labelAlign:'right',
+        //                     },
+        //                     items:[
+        //                         {
+        //                             flex:0.6,
+        //                             defaults: {
+        //                                 border:false,
+        //                                 labelWidth:70,
+        //                                 labelAlign:'right',
+        //                                 width:'65%'
+        //                             },
+        //                             layout:{
+        //                                 align: 'left',
+        //                                 // pack: 'center',
+        //                                 type: 'vbox'
+        //                             },
+        //                             items:[
+        //                                 {
+        //                                     xtype: 'textfield',
+        //                                     name:'greaterAndequal',
+        //                                     fieldLabel: '大于等于',
+        //                                 },
+        //                                 {
+        //                                     xtype: 'textfield',
+        //                                     name:'lessAndequal',
+        //                                     fieldLabel: '小于等于',
+        //                                 },
+        //                                 {
+        //                                     xtype: 'textfield',
+        //                                     name:'equal',
+        //                                     fieldLabel: '等于',
+        //                                 }
+        //                             ]
+        //                         },
+        //                         {
+        //                             flex:0.6,
+        //                             defaults: {
+        //                                 border:false,
+        //                                 labelWidth:70,
+        //                                 labelAlign:'right',
+        //                                 width:'65%'
+        //                             },
+        //                             layout:{
+        //                                 align: 'left',
+        //                                 // pack: 'center',
+        //                                 type: 'vbox'
+        //                             },
+        //                             items:[
+        //                                 {
+        //                                     xtype: 'textfield',
+        //                                     name:'greater',
+        //                                     fieldLabel: '大于',
+        //                                 },
+        //                                 {
+        //                                     xtype: 'textfield',
+        //                                     name:'less',
+        //                                     fieldLabel: '小于',
+        //                                 },
+        //                             ]
+        //                         },
+        //                         // {
+        //                         //     flex:1,
+        //                         //     defaults: {
+        //                         //         border:false,
+        //                         //         labelWidth:70,
+        //                         //         labelAlign:'right',
+        //                         //         width:'95%'
+        //                         //     },
+        //                         //     layout:{
+        //                         //         align: 'left',
+        //                         //         // pack: 'center',
+        //                         //         type: 'vbox'
+        //                         //     },
+        //                         //     items:[
+        //                         //         {
+        //                         //             xtype: 'textfield',
+        //                         //             name:'bigger',
+        //                         //             fieldLabel: '大于等于',
+        //                         //         },
+        //                         //         {
+        //                         //             xtype: 'textfield',
+        //                         //             name:'bigger',
+        //                         //             fieldLabel: '大于等于',
+        //                         //         },
+        //                         //         {
+        //                         //             xtype: 'textfield',
+        //                         //             name:'bigger',
+        //                         //             fieldLabel: '大于等于',
+        //                         //         }
+        //                         //     ]
+        //                         // }
+        //                     ]
+        //                 },
+        //             ]},
+        //
+        //         {
+        //             xtype: 'fieldset',
+        //             title: 'b的约束条件',
+        //             layout: 'form',
+        //             defaults: {anchor: '95%'},
+        //             style: 'margin-left: 5px;padding-left: 5px;',
+        //             width:500,
+        //             bodyStyle:'text-align:center;margin-top:5px;',
+        //             // 第一列中的表项
+        //             // style:"margin-top:50px;",
+        //             fieldDefaults:{
+        //                 labelAlign:'right',
+        //                 labelWidth:80,
+        //             },
+        //             items:[
+        //                 {
+        //                     layout: {
+        //                         align: 'left',
+        //                         // pack: 'center',
+        //                         type: 'hbox'
+        //                     },
+        //                     defaults: {
+        //                         border:false,
+        //                         labelWidth:70,
+        //                         labelAlign:'right',
+        //                     },
+        //                     items:[
+        //                         {
+        //                             flex:1,
+        //                             defaults: {
+        //                                 border:false,
+        //                                 labelWidth:70,
+        //                                 labelAlign:'right',
+        //                                 width:'65%'
+        //                             },
+        //                             layout:{
+        //                                 align: 'left',
+        //                                 // pack: 'center',
+        //                                 type: 'vbox'
+        //                             },
+        //                             items:[
+        //                                 {
+        //                                     xtype: 'textfield',
+        //                                     name:'greaterAndequal',
+        //                                     fieldLabel: '大于等于',
+        //                                 },
+        //                                 {
+        //                                     xtype: 'textfield',
+        //                                     name:'lessAndequal',
+        //                                     fieldLabel: '小于等于',
+        //                                 },
+        //                                 {
+        //                                     xtype: 'textfield',
+        //                                     name:'equal',
+        //                                     fieldLabel: '等于',
+        //                                 }
+        //                             ]
+        //                         },
+        //                         {
+        //                             flex:1,
+        //                             defaults: {
+        //                                 border:false,
+        //                                 labelWidth:70,
+        //                                 labelAlign:'right',
+        //                                 width:'65%'
+        //                             },
+        //                             layout:{
+        //                                 align: 'left',
+        //                                 // pack: 'center',
+        //                                 type: 'vbox'
+        //                             },
+        //                             items:[
+        //                                 {
+        //                                     xtype: 'textfield',
+        //                                     name:'greater',
+        //                                     fieldLabel: '大于',
+        //                                 },
+        //                                 {
+        //                                     xtype: 'textfield',
+        //                                     name:'less',
+        //                                     fieldLabel: '小于',
+        //                                 },
+        //                             ]
+        //                         },
+        //                     ]
+        //                 },
+        //             ]},
+        //
+        //
+        //         // {
+        //         //     xtype: 'textarea',
+        //         //     name:'desc',
+        //         //     fieldLabel: '备注',
+        //         // }
+        //     ],
+        //     buttons:[{
+        //         text:'保存'
+        //     },{
+        //         text:'取消'
+        //     }]
+        // });
+
 
 
         var grid_pro_condition = Ext.create("Ext.panel.Panel", {
             id : 'grid_pro_condition',
             // region:'north',
-            // title:'新建原材料退库表',
+            title:'填写约束条件',
             height:400,
             store : {
                 fields :[]
             },
             //bbar:,
-            width:1000,
+            width:800,
             // tbar:toolbar,
             // columns : [],
-            hidden:true,//隐藏
-            items:[condition_form1],
-            // form:condition_form1,
+            // hidden:true,//隐藏
+            bodyStyle: 'text-align:center;',
+            // items:[condition_form_ab],
             selType : 'rowmodel'
         });
 
@@ -432,7 +624,6 @@ Ext.define('oldpanel.add_oldpanel_rules', {
                 align:'stretch'
             },
             tbar:toolbar,
-            // width:800,
             items:[
                 grid,
                 grid_pro_condition,
@@ -477,7 +668,29 @@ Ext.define('oldpanel.add_oldpanel_rules', {
                 //设置监听事件getSelectionModel().getSelection()
                 var sm = Ext.getCmp('product_addDataGrid').getSelectionModel();
                 var materialArr = sm.getSelection();
-                Ext.getCmp('grid_pro_condition').setHidden(false);
+
+                var format_each_name = e.data.format_each_name
+                console.log("选择记录：",e.data.format_each_name);
+                //判断格式名称，若为W（产品类型）和无，则无约束条件。
+                // format_each_nameconsole.log(typeArr.includes("WPE"))
+                if(format_each_name == '无' || product_typeArr.includes(format_each_name)){
+
+                    Ext.MessageBox.alert("提示", "没有约束条件");
+
+                    condition_form_ab.setHidden(true);
+                    console.log("typeArr---------",product_typeArr);
+                    console.log("format_each_name---------",format_each_name);
+                }
+                else if(format_each_name == 'n'){
+
+                    // condition_form_ab.setHidden(false);
+                    grid_pro_condition.addItem(condition_form_ab);
+                }
+                else if(format_each_name == 'm'){
+                    // grid_pro_condition.items = condition_form_m;
+                    grid_pro_condition.addItem(condition_form_m);
+                    // condition_form_m.setHidden(false);
+                }
             }
         }
 

@@ -1,8 +1,6 @@
 package com.bancai.cg.controller;
 
 
-import com.bancai.cg.dao.materialinfodao;
-import com.bancai.cg.entity.MaterialInfo;
 import com.bancai.cg.service.InsertProjectService;
 import com.bancai.cg.util.newPanelMatch;
 import com.bancai.commonMethod.QueryAllService;
@@ -62,7 +60,9 @@ public class ProjectController {
     @RequestMapping(value="/generate_project.do")
     public void add_project(String s,HttpServletResponse response,HttpSession session,String projectName,String startTime,String proEndTime,String planLeader,String produceLeader,String purchaseLeader,String financeLeader,String storeLeader ) throws IOException, JSONException {
         JSONArray jsonArray = new JSONArray(s);
-        String userid = session.getAttribute("userid")+"";
+        String userid=null;
+        if(session.getAttribute("userid")!=null)
+        userid = session.getAttribute("userid")+"";
 
         //应该先验证是否有项目重名的情况，返回时输出错误信息
         String sql_search="select count(*) from project where projectName='"+projectName+"'";
