@@ -17,6 +17,8 @@ public class NewpanelRules {
     private String nValue;
     private String aValue;
     private String bValue;
+    private String pValue;
+    private Integer pNum;
     private String condition1;
     private String condition2;
     private String upWidth;
@@ -28,6 +30,22 @@ public class NewpanelRules {
 
     public void setOrientation(String orientation) {
         this.orientation = orientation;
+    }
+
+    public Integer getpNum() {
+        return pNum;
+    }
+
+    public void setpNum(Integer pNum) {
+        this.pNum = pNum;
+    }
+
+    public String getpValue() {
+        return pValue;
+    }
+
+    public void setpValue(String pValue) {
+        this.pValue = pValue;
     }
 
     @Id
