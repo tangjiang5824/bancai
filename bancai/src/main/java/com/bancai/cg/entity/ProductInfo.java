@@ -13,7 +13,7 @@ public class ProductInfo {
     private Double unitArea;
     private String remark;
     private Integer productFormatId;
-    private Integer productType;
+    private Producttype productType;
     private Integer mValue;
     private Integer nValue;
     private Integer pValue;
@@ -97,13 +97,13 @@ public class ProductInfo {
         this.productFormatId = productFormatId;
     }
 
-    @Basic
-    @Column(name = "productType", nullable = true)
-    public Integer getProductType() {
+    @ManyToOne(targetEntity = Producttype.class,fetch = FetchType.LAZY)
+    @JoinColumn(name = "productType",referencedColumnName = "id")
+    public Producttype getProductType() {
         return productType;
     }
 
-    public void setProductType(Integer productType) {
+    public void setProductType(Producttype productType) {
         this.productType = productType;
     }
 

@@ -26,7 +26,6 @@ public class TaxNumMatchController {
 		
 		response = queryService.queryPage(start, limit, "select * from ["+ tableName+"] where id=(select uploadId from matchingInfo where id=?)", id);
 
-
 		return response;
 	}
 	

@@ -10,6 +10,15 @@ public class Newpanelmateriallist {
     private Integer designlistId;
     private Integer materialId;
     private Double materialCount;
+    private String materialName;
+
+    public String getMaterialName() {
+        return materialName;
+    }
+
+    public void setMaterialName(String materialName) {
+        this.materialName = materialName;
+    }
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
