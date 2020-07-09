@@ -159,7 +159,52 @@ public class ProductDataService extends BaseService{
      * */
     @Transactional
     public DataList findProductFormatList(String productTypeId){
-        return queryService.query("select * from product_format order by id ASC");
-
+        DataList formatList = queryService.query("select * from product_format where productTypeId=? order by id ASC",productTypeId);
+        System.out.println(productTypeId);
+        String productTypeName = queryService.query("select * from producttype where id=?",productTypeId).get(0).get("productTypeName").toString();
+        for (DataRow dataRow : formatList) {
+            String productFormat = dataRow.get("productFormat").toString();
+            StringBuilder sb = new StringBuilder();
+            for (int j = 0; j < productFormat.length(); j++) {
+                switch (productFormat.substring(j, j + 1)) {
+                    case "0":
+                        sb.append("无 ");
+                        break;
+                    case "1":
+                        sb.append(productTypeName).append(" ");
+                        break;
+                    case "2":
+                        sb.append("m ");
+                        break;
+                    case "3":
+                        sb.append("n ");
+                        break;
+                    case "4":
+                        sb.append("aXb ");
+                        break;
+                    case "5":
+                        sb.append("bXa ");
+                        break;
+                    case "6":
+                        sb.append("m+n ");
+                        break;
+                    case "7":
+                        sb.append("后缀 ");
+                        break;
+                    case "8":
+                        sb.append("m+n+p ");
+                        break;
+                    case "9":
+                        sb.append("a+b ");
+                        break;
+                }
+            }
+            dataRow.replace("productFormat", sb.toString().trim());
+        }
+        return formatList;
     }
+
+
+
+
 }

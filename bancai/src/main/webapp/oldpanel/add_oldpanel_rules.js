@@ -36,54 +36,104 @@ Ext.define('oldpanel.add_oldpanel_rules', {
             ]
         });
 
-        var component1 = Ext.create('Ext.form.ComboBox', {
-            // fieldLabel: '操作类型',
+        var ProductTypeStore = Ext.create('Ext.data.Store',{
+            fields : [ 'projectName'],
+            proxy : {
+                type : 'ajax',
+                url : 'match/findProductTypeList.do',
+
+                reader : {
+                    type : 'json',
+                    rootProperty: 'productTypeList',
+                }
+            },
+            autoLoad : true
+        });
+        //
+        var product_type = Ext.create('Ext.form.ComboBox', {
+            fieldLabel: '产品类型',
             name: 'component1',
             id: 'component1',
-            store: optionTypeList,
+            store: ProductTypeStore,
             queryMode: 'local',
-            displayField: 'name',
-            valueField: 'abbr',
+            displayField: 'productTypeName',
+            valueField: 'id',
             margin : '0 20 0 40',
-            width: 80,
-            // labelWidth: 60,
+            width: 180,
+            labelWidth: 60,
             renderTo: Ext.getBody(),
             listeners:{
                 //    typeStore
                 select: function(combo, record, index) {
-                    var type = component1.value; //id值
-                    var typeName = component1.rawValue; //id值
+                    //选中后
+                    var select = record[0].data;
+                    var id = select.id;//type对应的id
+                    console.log(id)
+
+                    // var type = component1.value; //id值
+                    // var typeName = component1.rawValue; //id值
                     //    store中的数据添加类型
-                    data = [{
-                        '格式名称' : typeName,
-                    }];
-                    Ext.getCmp('product_addDataGrid').getStore().loadData(data,
-                        true);
+                    // data = [{
+                    //     '格式名称' : typeName,
+                    // }];
+
+                    //表名
+                    // var tableName = 'building';
+                    //属性名
+                    var projectId = 'productTypeId';
+                    var tableListStore2 = Ext.create('Ext.data.Store',{
+                        fields : [ 'buildingName'],
+                        proxy : {
+                            type : 'ajax',
+                            //通用接口，material/findAllbyTableNameAndOnlyOneCondition.do传入表名，属性及属性值
+                            url : 'match/findProductFormatList.do',//根据项目id查询对应的楼栋名
+                            params : {
+                                productTypeId:id,
+                            },
+                            reader : {
+                                type : 'json',
+                                rootProperty: 'productFormatList',
+                            }
+                        },
+                        autoLoad : true,
+                        // listeners:{
+                        //     load:function () {
+                        //         Ext.getCmp('buildingName').setValue("");
+                        //     }
+                        // }
+                    });
+
+                    //product_format,下拉框重新加载数据
+                    product_format.setStore(tableListStore2);
+
+                    // Ext.getCmp('product_addDataGrid').getStore().loadData(data,
+                    //     true);
 
                 }
             }
         });
-        var component2 = Ext.create('Ext.form.ComboBox', {
-            // fieldLabel: '操作类型',
-            name: 'component2',
-            id: 'component2',
+        var product_format = Ext.create('Ext.form.ComboBox', {
+            fieldLabel: '格式',
+            name: 'product_format',
             store: optionTypeList,
             queryMode: 'local',
-            displayField: 'name',
-            valueField: 'abbr',
+            displayField: 'productFormat',
+            valueField: 'id',
             margin : '0 20 0 40',
-            width: 80,
-            // labelWidth: 60,
+            width: 180,
+            labelWidth: 35,
             renderTo: Ext.getBody(),
             listeners:{
                 //    typeStore
                 select: function(combo, record, index) {
-                    var type = component2.value; //id值
-                    var typeName = component2.rawValue; //id值
+                    // var type = product_format.value; //id值
+                    var typeName = product_format.rawValue; //id值
+
                     //    store中的数据添加类型
                     data = [{
                         '格式名称' : typeName,
                     }];
+
                     Ext.getCmp('product_addDataGrid').getStore().loadData(data,
                         true);
 
@@ -161,10 +211,11 @@ Ext.define('oldpanel.add_oldpanel_rules', {
                     margin: '0 0 0 0',
                     text:'<strong>产品品名格式选择：</strong>'
                 },
-                component1,
-                component2,
-                component3,
-                component4,
+                product_type,
+
+                product_format,
+                // component3,
+                // component4,
             ]
         });
         //成本 数量 存放位置

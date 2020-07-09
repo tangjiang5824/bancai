@@ -64,7 +64,6 @@ public class MatchRulesController {
     @RequestMapping(value="/match/findProductFormatList.do")
     public void findProductFormat(String productTypeId, HttpServletResponse response) throws IOException, JSONException {
         DataList formatList = productDataService.findProductFormatList(productTypeId);
-        
         //写回前端
         JSONObject object = new JSONObject();
         JSONArray array = new JSONArray(formatList);
@@ -113,4 +112,8 @@ public class MatchRulesController {
         response.getWriter().close();
 
     }
+
+
+
+
 }
