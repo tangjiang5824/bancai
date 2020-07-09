@@ -1,8 +1,6 @@
 package com.bancai.cg.controller;
 
 
-import com.bancai.cg.dao.materialinfodao;
-import com.bancai.cg.entity.MaterialInfo;
 import com.bancai.cg.service.InsertProjectService;
 import com.bancai.cg.util.newPanelMatch;
 import com.bancai.commonMethod.QueryAllService;
