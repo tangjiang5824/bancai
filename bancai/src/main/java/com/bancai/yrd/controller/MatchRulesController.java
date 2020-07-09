@@ -112,7 +112,20 @@ public class MatchRulesController {
         response.getWriter().close();
 
     }
+    /*
+     * 新增旧板匹配规则
+     * */
+    @RequestMapping(value = "/match/addOldpanelMatchRules.do")
+    public boolean addOldpanelMatchRules(String pCon1,String pCon2,String pCon3,String pCon4, String productFormatId,
+                                         String oCon1,String oCon2,String oCon3,String oCon4, String oldpanelFormatId,
+                                         String priority, HttpSession session) throws JSONException {
+        try {
 
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
 
 
 

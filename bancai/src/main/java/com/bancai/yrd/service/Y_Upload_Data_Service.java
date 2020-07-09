@@ -177,8 +177,49 @@ public class Y_Upload_Data_Service extends BaseService {
      * */
     @Transactional
     public DataList findOldpanelFormatList(String oldpanelTypeId){
-        return queryService.query("select * from oldpanel_format where oldpanelTypeId=? order by id ASC",oldpanelTypeId);
-
+        DataList formatList = queryService.query("select * from oldpanel_format where oldpanelTypeId=? order by id ASC",oldpanelTypeId);
+        String oldpanelTypeName = queryService.query("select * from oldpaneltype where id=?",oldpanelTypeId)
+                .get(0).get("oldpanelTypeName").toString();
+        for (DataRow dataRow : formatList) {
+            String oldpanelFormat = dataRow.get("oldpanelFormat").toString();
+            StringBuilder sb = new StringBuilder();
+            for (int j = 0; j < oldpanelFormat.length(); j++) {
+                switch (oldpanelFormat.charAt(j)) {
+                    case '0':
+                        sb.append("无 ");
+                        break;
+                    case '1':
+                        sb.append(oldpanelTypeName).append(" ");
+                        break;
+                    case '2':
+                        sb.append("m ");
+                        break;
+                    case '3':
+                        sb.append("n ");
+                        break;
+                    case '4':
+                        sb.append("a*b ");
+                        break;
+                    case '5':
+                        sb.append("b*a ");
+                        break;
+                    case '6':
+                        sb.append("m+n ");
+                        break;
+                    case '7':
+                        sb.append("后缀 ");
+                        break;
+                    case '8':
+                        sb.append("m+n+p ");
+                        break;
+                    case '9':
+                        sb.append("a+b ");
+                        break;
+                }
+            }
+            dataRow.replace("oldpanelFormat", sb.toString().trim());
+        }
+        return formatList;
     }
 
 }

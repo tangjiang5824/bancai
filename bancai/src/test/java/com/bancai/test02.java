@@ -159,35 +159,53 @@ public class test02 {
 //                System.out.println(map);
 //            }
 //        }
-        String key ="15N100 W 200";
-        String productId = key.split("N")[0];
-        String productName = key.substring(productId.length()+1);
-        System.out.println(productId);
-        System.out.println(productName);
-        DataList l = new DataList();
-        DataRow r = new DataRow();
-        DataRow r2 = new DataRow();
-        DataRow r3 = new DataRow();
-        r.put("id",1);
-        r.put("num",5);
-        r2.put("id",2);
-        r2.put("num",7);
-        r3.put("id",3);
-        r3.put("num",3);
-        l.add(r);
-        l.add(r2);
-        l.add(r3);
-        for (int i = 0; i < l.size(); i++) {
-            System.out.println("now==="+l.get(i).toString());
-            System.out.println(l.size());
-            if(l.get(i).get("id").toString().equals("2")){
-                System.out.println("remove=="+l.get(i).toString());
-                l.remove(i);
-                i--;
+//        String key ="15N100 W 200";
+//        String productId = key.split("N")[0];
+//        String productName = key.substring(productId.length()+1);
+//        System.out.println(productId);
+//        System.out.println(productName);
+//        DataList l = new DataList();
+//        DataRow r = new DataRow();
+//        DataRow r2 = new DataRow();
+//        DataRow r3 = new DataRow();
+//        r.put("id",1);
+//        r.put("num",5);
+//        r2.put("id",2);
+//        r2.put("num",7);
+//        r3.put("id",3);
+//        r3.put("num",3);
+//        l.add(r);
+//        l.add(r2);
+//        l.add(r3);
+//        for (int i = 0; i < l.size(); i++) {
+//            System.out.println("now==="+l.get(i).toString());
+//            System.out.println(l.size());
+//            if(l.get(i).get("id").toString().equals("2")){
+//                System.out.println("remove=="+l.get(i).toString());
+//                l.remove(i);
+//                i--;
+//            }
+//        }
+//        String tt = "100+200";
+//        System.out.println(tt.split("\\+").length);
+        //=========================================================
+        String s="2103";
+        for (int i = 0; i < 4; i++) {
+            switch (s.charAt(i)){
+                case '0':
+                    System.out.println("00");
+                    break;
+                case '1':
+                    System.out.println("11");
+                    break;
+                default:
+                    System.out.println("aa");
+                    break;
             }
         }
-        String tt = "100+200";
-        System.out.println(tt.split("\\+").length);
+        String ss = ">100%100%200";
+        System.out.println(ss.substring(2));
+        System.out.println(ss.split("%")[0].split("-").length);
     }
 
     private String IgnoreSuffix(String a){
