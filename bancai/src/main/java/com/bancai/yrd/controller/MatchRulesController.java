@@ -3,6 +3,7 @@ package com.bancai.yrd.controller;
 import com.bancai.cg.service.InsertProjectService;
 import com.bancai.commonMethod.*;
 import com.bancai.domain.DataList;
+import com.bancai.yrd.service.MatchRulesService;
 import com.bancai.yrd.service.ProductDataService;
 import com.bancai.yrd.service.Y_Upload_Data_Service;
 import org.apache.log4j.Logger;
@@ -37,6 +38,8 @@ public class MatchRulesController {
     private ProductDataService productDataService;
     @Autowired
     private Y_Upload_Data_Service y_upload_data_service;
+    @Autowired
+    private MatchRulesService matchRulesService;
 
     Logger log = Logger.getLogger(MatchRulesController.class);
 
@@ -117,15 +120,25 @@ public class MatchRulesController {
      * */
     @RequestMapping(value = "/match/addOldpanelMatchRules.do")
     public boolean addOldpanelMatchRules(String pCon1,String pCon2,String pCon3,String pCon4, String productFormatId,
-                                         String oCon1,String oCon2,String oCon3,String oCon4, String oldpanelFormatId,
-                                         String priority, HttpSession session) throws JSONException {
+                                         String oRan1,String oRan2,String oRan3,String oRan4, String oldpanelFormatId,
+                                         String priority, String isCompleteMatch, HttpSession session) throws JSONException {
         try {
-
+            String userId = (String)session.getAttribute("userid");
+            Date date=new Date();
+            SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            int oldpanelMatchRulesId = matchRulesService.addOldpanelMatchRules(pCon1,pCon2,pCon3,pCon4,productFormatId,
+                    oRan1,oRan2,oRan3,oRan4,oldpanelFormatId,priority,isCompleteMatch);
+            String sql_addLog = "insert into oldpanel_match_ruleslog (oldpanelMatchRulesId,type,time,userId) values (?,?,?,?)";
+            boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLog,String.valueOf(oldpanelMatchRulesId)
+                    ,"0",simpleDateFormat.format(date),userId);
+            if(!is_log_right)
+                return false;
         } catch (Exception e) {
             return false;
         }
         return true;
     }
+    
 
 
 

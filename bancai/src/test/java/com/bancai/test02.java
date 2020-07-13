@@ -1,5 +1,6 @@
 package com.bancai;
 
+import com.bancai.cg.service.InsertProjectService;
 import com.bancai.commonMethod.QueryAllService;
 import com.bancai.domain.DataList;
 import com.bancai.domain.DataRow;
@@ -10,6 +11,7 @@ import java.util.*;
 
 public class test02 {
     private QueryAllService queryService;
+    private InsertProjectService insertProjectService;
     @Test
     public void test() {
 //        String s = "1 2 3 4";
@@ -189,23 +191,24 @@ public class test02 {
 //        String tt = "100+200";
 //        System.out.println(tt.split("\\+").length);
         //=========================================================
-        String s="2103";
-        for (int i = 0; i < 4; i++) {
-            switch (s.charAt(i)){
-                case '0':
-                    System.out.println("00");
-                    break;
-                case '1':
-                    System.out.println("11");
-                    break;
-                default:
-                    System.out.println("aa");
-                    break;
-            }
-        }
-        String ss = ">100%100%200";
-        System.out.println(ss.substring(2));
-        System.out.println(ss.split("%")[0].split("-").length);
+//        String s="2103";
+//        for (int i = 0; i < 4; i++) {
+//            switch (s.charAt(i)){
+//                case '0':
+//                    System.out.println("00");
+//                    break;
+//                case '1':
+//                    System.out.println("11");
+//                    break;
+//                default:
+//                    System.out.println("aa");
+//                    break;
+//            }
+//        }
+//        String ss = ">100%100%200";
+//        System.out.println(ss.substring(2));
+//        System.out.println(ss.split("%")[0].split("-").length);
+
     }
 
     private String IgnoreSuffix(String a){
