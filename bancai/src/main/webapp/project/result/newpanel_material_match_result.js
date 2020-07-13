@@ -302,7 +302,7 @@ Ext.define('project.result.newpanel_material_match_result',{
                         newpanelMaterial_Store.load({
                             params : {
                                 projectId:'1',
-                                buildingId:'',
+                                buildingId:'1',
                                 buildingpositionId:'1',
                             }
                         });
@@ -357,7 +357,7 @@ Ext.define('project.result.newpanel_material_match_result',{
                     start: 0,
                     limit: itemsPerPage,
                     projectId:'1',
-                    buildingId:'',
+                    buildingId:'1',
                     buildingpositionId:'1',
                 }
             },
@@ -365,7 +365,7 @@ Ext.define('project.result.newpanel_material_match_result',{
                 beforeload : function(store, operation, eOpts) {
                     store.getProxy().setExtraParams({
                         projectId:'1',
-                        buildingId:'',
+                        buildingId:'1',
                         buildingpositionId:'1',
                     });
                 }

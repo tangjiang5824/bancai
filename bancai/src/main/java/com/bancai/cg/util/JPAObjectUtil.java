@@ -27,7 +27,15 @@ public class JPAObjectUtil {
     public static List<List<Object>> NewPanelMatch(ProductInfo productInfo,String classification_name,List<NewpanelRules> rules) throws ScriptException {
         List<List<Object>> list=new ArrayList<>();
         for(NewpanelRules rule:rules){
-            if(!(CondtionSatisfy(rule.getCondition1(),productInfo)&&CondtionSatisfy(rule.getCondition2(),productInfo))) continue;
+            String[] c1=rule.getCondition1().split(",");
+            for(int i=0;i<c1.length;i++){
+                if(!CondtionSatisfy(c1[i],productInfo)) continue;
+            }
+            String[] c2=rule.getCondition2().split(",");
+            for(int i=0;i<c2.length;i++){
+                if(!CondtionSatisfy(c2[i],productInfo)) continue;
+            }
+            //if(!(CondtionSatisfy(rule.getCondition1(),productInfo)&&CondtionSatisfy(rule.getCondition2(),productInfo))) continue;
             int count=1;
             List<Object> arrayList =new ArrayList<>();
             MaterialInfo material=new MaterialInfo();
@@ -59,7 +67,7 @@ public class JPAObjectUtil {
                 }
 
                 if(rule.getUpWidth()!=null&&rule.getUpWidth().trim().length()!=0){
-                    String s[]=rule.getUpWidth().trim().split(" ");
+                    String s[]=rule.getUpWidth().trim().split(",");
                     for (int i=0;i<s.length;i++){
                         if(material.getnValue()>Integer.parseInt(s[i])) continue;
                         material.setnValue(Integer.parseInt(s[i]));
@@ -245,5 +253,11 @@ public class JPAObjectUtil {
                 }
             }
         return true;
+    }
+
+
+    public static String removeSpace(String s){
+        s=s.replace(" ","");
+        return s;
     }
 }

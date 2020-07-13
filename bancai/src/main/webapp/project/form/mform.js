@@ -1,16 +1,15 @@
 Ext.define("project.form.mform",{
     extend:"Ext.form.Panel",
     width:'95%',
-    bodyStyle: 'text-align:center;padding:20px 10px 0px 5px',
-    buttonAlign:'center',
+    bodyStyle: 'text-align:center;padding:10px 10px 0px 5px',
+    buttonAlign:'right',
     defaults: {
         // border:false,
-        labelWidth:70,
+        labelWidth:30,
         labelAlign:'right',
         width:'95%'
     },
-    // height:700,
-    // hidden:true,
+
     baseCls : 'my-panel-no-border',  //去掉边框
     //居中
     layout: {
@@ -20,132 +19,20 @@ Ext.define("project.form.mform",{
     },
     items: [
         {
-            xtype: 'fieldset',
-            title: 'm的约束条件',
-            layout: 'form',
-            defaults: {anchor: '95%'},
-            style: 'margin-left: 5px;padding-left: 5px;',
-            width:500,
-            bodyStyle:'text-align:center;margin-top:5px;',
-            // 第一列中的表项
-            // style:"margin-top:50px;",
-            fieldDefaults:{
-                labelAlign:'right',
-                labelWidth:80,
-            },
-            items:[
-                {
-                    layout: {
-                        align: 'left',
-                        // pack: 'center',
-                        type: 'hbox'
-                    },
-                    defaults: {
-                        border:false,
-                        labelWidth:70,
-                        labelAlign:'right',
-                    },
-                    items:[
-                        {
-                            flex:0.6,
-                            defaults: {
-                                border:false,
-                                labelWidth:70,
-                                labelAlign:'right',
-                                width:'65%'
-                            },
-                            layout:{
-                                align: 'left',
-                                // pack: 'center',
-                                type: 'vbox'
-                            },
-                            items:[
-                                {
-                                    xtype: 'textfield',
-                                    name:'greaterAndequal',
-                                    fieldLabel: '大于等于',
-                                },
-                                {
-                                    xtype: 'textfield',
-                                    name:'lessAndequal',
-                                    fieldLabel: '小于等于',
-                                },
-                                {
-                                    xtype: 'textfield',
-                                    name:'equal',
-                                    fieldLabel: '等于',
-                                }
-                            ]
-                        },
-                        {
-                            flex:0.6,
-                            defaults: {
-                                border:false,
-                                labelWidth:70,
-                                labelAlign:'right',
-                                width:'65%'
-                            },
-                            layout:{
-                                align: 'left',
-                                // pack: 'center',
-                                type: 'vbox'
-                            },
-                            items:[
-                                {
-                                    xtype: 'textfield',
-                                    name:'greater',
-                                    fieldLabel: '大于',
-                                },
-                                {
-                                    xtype: 'textfield',
-                                    name:'less',
-                                    fieldLabel: '小于',
-                                },
-                            ]
-                        },
-                        // {
-                        //     flex:1,
-                        //     defaults: {
-                        //         border:false,
-                        //         labelWidth:70,
-                        //         labelAlign:'right',
-                        //         width:'95%'
-                        //     },
-                        //     layout:{
-                        //         align: 'left',
-                        //         // pack: 'center',
-                        //         type: 'vbox'
-                        //     },
-                        //     items:[
-                        //         {
-                        //             xtype: 'textfield',
-                        //             name:'bigger',
-                        //             fieldLabel: '大于等于',
-                        //         },
-                        //         {
-                        //             xtype: 'textfield',
-                        //             name:'bigger',
-                        //             fieldLabel: '大于等于',
-                        //         },
-                        //         {
-                        //             xtype: 'textfield',
-                        //             name:'bigger',
-                        //             fieldLabel: '大于等于',
-                        //         }
-                        //     ]
-                        // }
-                    ]
-                },
-            ]},
-        // {
-        //     xtype: 'textarea',
-        //     name:'desc',
-        //     fieldLabel: '备注',
-        // }
+            xtype: 'textfield',
+            name:'m',
+            fieldLabel: 'm',
+            id:'m1'
+        },
     ],
     buttons:[{
-        text:'保存'
-    },{
-        text:'取消'
+        text:'保存',
+        handler : function(btn) {
+            var con = Ext.getCmp('m1').getValue();
+            //将表格的值传到父页面
+           Ext.getCmp("product_addDataGrid").getSelectionModel().getSelection()[0].set('format_con',con);
+            //关闭窗口
+            Ext.getCmp("win_condition").close();
+        },
     }]
 });

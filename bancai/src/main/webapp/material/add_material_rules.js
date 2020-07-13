@@ -49,8 +49,8 @@ Ext.define('material.add_material_rules', {
         //
         var material_type = Ext.create('Ext.form.ComboBox', {
             fieldLabel: '原材料类型',
-            name: 'material_type',
-            id: 'material_type',
+            name: 'materialTypeId',
+            id: 'materialTypeId',
             store: materialTypeStore,
             queryMode: 'local',
             displayField: 'typeName',
@@ -78,7 +78,7 @@ Ext.define('material.add_material_rules', {
         });
         var productNameList = Ext.create('Ext.form.ComboBox', {
             fieldLabel: '产品名',
-            name: 'productNameList',
+            name: 'productId',
             store: productStore,
             queryMode: 'local',
             displayField: 'productName',
@@ -245,38 +245,48 @@ Ext.define('material.add_material_rules', {
                                         {
                                             xtype: 'textfield',
                                             fieldLabel: 'm',
-                                            name: 'm_con',
+                                            name: 'm',
                                         },
                                         {
                                             xtype: 'textfield',
                                             fieldLabel: 'n',
-                                            name: 'n_con',
+                                            name: 'n',
                                         },
                                         {
                                             xtype: 'textfield',
                                             fieldLabel: 'a',
-                                            name: 'a_con',
+                                            name: 'a',
                                         },{
                                             xtype: 'textfield',
                                             fieldLabel: 'b',
-                                            name: 'm_con',
+                                            name: 'b',
 
                                         },
                                         {
                                             xtype: 'textfield',
                                             fieldLabel: 'p',
-                                            name: 'p_con',
+                                            name: 'p',
 
                                         },
                                         {
                                             xtype: 'textfield',
                                             fieldLabel: '条件1',
-                                            name: 'con1',
+                                            name: 'condition1',
                                         },{
                                             xtype: 'textfield',
                                             fieldLabel: '条件2',
-                                            name: 'con2',
+                                            name: 'condition2',
 
+                                        },{
+                                            xtype: 'textfield',
+                                            fieldLabel: '数量',
+                                            name: 'count',
+
+                                        },
+                                        {
+                                            xtype: 'textfield',
+                                            fieldLabel: '起源',
+                                            name: 'orientation',
                                         },
                                         {
                                             xtype: 'textfield',

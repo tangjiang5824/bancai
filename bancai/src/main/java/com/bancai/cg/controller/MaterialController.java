@@ -287,16 +287,59 @@ public class MaterialController {
     @RequestMapping("/project/match/newPanel.do")
     public boolean addNewPanelRule(Integer productId,Integer materialTypeId,String count, String m,String n, String a,String b, String p, String condition1, String condition2, String upWidth, String orientation){
         NewpanelRules rule=new NewpanelRules();
-        if(count.trim().length()==0) count=null;
-        if(m.trim().length()==0) m=null;
-        if(n.trim().length()==0) n=null;
-        if(p.trim().length()==0) p=null;
-        if(a.trim().length()==0) a=null;
-        if(b.trim().length()==0) b=null;
-        if(condition1.trim().length()==0) condition1=null;
-        if(condition2.trim().length()==0) condition2=null;
-        if(upWidth.trim().length()==0) upWidth=null;
-        if(orientation.trim().length()==0) orientation=null;
+        if(count.trim().length()==0) {
+            count=null;
+        }else {
+            JPAObjectUtil.removeSpace(count);
+        }
+        if(m.trim().length()==0) {
+            m=null;
+        }else {
+            JPAObjectUtil.removeSpace(m);
+        }
+        if(n.trim().length()==0) {
+            n=null;
+        }else {
+            JPAObjectUtil.removeSpace(n);
+        }
+        if(p.trim().length()==0){
+            p=null;
+        }else {
+            JPAObjectUtil.removeSpace(p);
+        }
+        if(a.trim().length()==0){
+            a=null;
+        }else {
+            JPAObjectUtil.removeSpace(a);
+        }
+        if(b.trim().length()==0){
+            b=null;
+        }else {
+            JPAObjectUtil.removeSpace(b);
+        }
+        if(condition1.trim().length()==0) {
+            condition1=null;
+        }else {
+            JPAObjectUtil.removeSpace(condition1);
+           condition1=condition1.replace("，",",");
+        }
+        if(condition2.trim().length()==0){
+            condition2=null;
+        }else {
+            JPAObjectUtil.removeSpace(condition2);
+            condition2=condition2.replace("，",",");
+        }
+        if(upWidth.trim().length()==0) {
+            upWidth=null;
+        }else {
+            JPAObjectUtil.removeSpace(upWidth);
+            upWidth=upWidth.replace("，",",");
+        }
+        if(orientation.trim().length()==0) {
+            orientation=null;
+        }else {
+            JPAObjectUtil.removeSpace(orientation);
+        }
         rule.setProductId(productId);
         rule.setMaterialTypeId(materialTypedao.findById(materialTypeId).orElse(null));
         try {
