@@ -22,19 +22,19 @@ Ext.define("project.form.abform",{
             xtype: 'textfield',
             name:'a',
             fieldLabel: 'a',
-            id:'a'
+            id:'a1'
         },{
             xtype: 'textfield',
             name:'b',
             fieldLabel: 'b',
-            id:'b'
+            id:'b1'
         },
     ],
     buttons:[{
         text:'保存',
         handler : function(btn) {
-            var con1 = Ext.getCmp('a').getValue();
-            var con2 = Ext.getCmp('b').getValue();
+            var con1 = Ext.getCmp('a1').getValue();
+            var con2 = Ext.getCmp('b1').getValue();
             var con = con1+'#'+con2
             //将表格的值传到父页面
             Ext.getCmp("product_addDataGrid").getSelectionModel().getSelection()[0].set('format_con',con);

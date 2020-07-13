@@ -38,8 +38,8 @@ Ext.define("project.form.mnpform",{
     buttons:[{
         text:'保存',
         handler : function(btn) {
-            var con1 = Ext.getCmp('m').getValue();
-            var con2 = Ext.getCmp('n').getValue();
+            var con1 = Ext.getCmp('m3').getValue();
+            var con2 = Ext.getCmp('n3').getValue();
             var con3 = Ext.getCmp('p').getValue();
             var con = con1+'#'+con2+'#'+con3;
             //将表格的值传到父页面

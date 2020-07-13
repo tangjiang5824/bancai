@@ -22,6 +22,7 @@ Ext.define('oldpanel.add_oldpanel_rules', {
 
         //保存类型名的数组
         var product_typeArr = [];
+        var oldPanel_typeArr = [];
         //var materialtype="1";
 
         var toolbar_top = Ext.create('Ext.toolbar.Toolbar', {
@@ -40,7 +41,39 @@ Ext.define('oldpanel.add_oldpanel_rules', {
                 bodyStyle: 'background:#fff;',
                 handler : function() {
                     //保存规则
-                    
+                    //产品表格
+                    var pro_select = Ext.getCmp('product_addDataGrid').getStore()
+                        .getData();
+                    var s_pro = new Array();
+                    pro_select.each(function(rec) {
+                        s_pro.push(JSON.stringify(rec.data));
+                    });
+                    console.log("产品------------",s_pro);
+                    //产品格式Id
+                    var pro_format_id = Ext.getCmp('product_format').getValue();
+                    console.log("Id------------",pro_format_id);
+
+                    //获取数据
+                    // Ext.Ajax.request({
+                    //     url : 'material/updateprojectmateriallist.do', //原材料入库
+                    //     method:'POST',
+                    //     //submitEmptyText : false,
+                    //     params : {
+                    //         s : "[" + s + "]",//存储选择领料的数量
+                    //         materialList : "[" + materialList + "]",
+                    //     },
+                    //     success : function(response) {
+                    //         //var message =Ext.decode(response.responseText).showmessage;
+                    //         Ext.MessageBox.alert("提示","保存成功" );
+                    //         //刷新页面
+                    //         MaterialList.reload();
+                    //
+                    //     },
+                    //     failure : function(response) {
+                    //         //var message =Ext.decode(response.responseText).showmessage;
+                    //         Ext.MessageBox.alert("提示","保存失败" );
+                    //     }
+                    // });
                 }
             }]
         });
@@ -156,6 +189,7 @@ Ext.define('oldpanel.add_oldpanel_rules', {
         });
         var product_format = Ext.create('Ext.form.ComboBox', {
             fieldLabel: '格式',
+            id:'product_format',
             name: 'product_format',
             store: optionTypeList,
             queryMode: 'local',
@@ -196,6 +230,126 @@ Ext.define('oldpanel.add_oldpanel_rules', {
                 }
             }
         });
+
+        //旧板
+        var oldPanelTypeStore = Ext.create('Ext.data.Store',{
+            fields : [ 'projectName'],
+            proxy : {
+                type : 'ajax',
+                url : 'match/findProductTypeList.do',
+
+                reader : {
+                    type : 'json',
+                    rootProperty: 'productTypeList',
+                }
+            },
+            autoLoad : true
+        });
+        //
+        var oldPanel_type = Ext.create('Ext.form.ComboBox', {
+            fieldLabel: '旧板类型',
+            name: 'oldPanel_type',
+            id: 'oldPanel_type',
+            store: oldPanelTypeStore,
+            queryMode: 'local',
+            displayField: 'productTypeName',
+            valueField: 'id',
+            margin : '0 20 0 40',
+            width: 180,
+            labelWidth: 60,
+            renderTo: Ext.getBody(),
+            listeners:{
+                //    typeStore
+                select: function(combo, record, index) {
+
+                    //将产品查询store放到数组中
+                    var records = ProductTypeStore.data.items;
+                    var records_len = records.length;
+                    //循环
+                    for(var i=0;i<records_len;i++){
+                        var rec = records[i];
+                        var typename = rec.data.oldpanelTypeName;
+                        oldPanel_typeArr.push(typename)
+                    }
+
+                    //选中后
+                    var select = record[0].data;
+                    var id = select.id;//type对应的id
+                    console.log(id)
+                    var projectId = 'productTypeId';
+                    var tableListStore2 = Ext.create('Ext.data.Store',{
+                        fields : [ 'buildingName'],
+                        proxy : {
+                            type : 'ajax',
+                            //通用接口，material/findAllbyTableNameAndOnlyOneCondition.do传入表名，属性及属性值
+                            // url : 'match/findProductFormatList.do?productTypeId='+id,//根据项目id查询对应的楼栋名
+                            // params : {
+                            //     productTypeId:id,
+                            // },
+                            reader : {
+                                type : 'json',
+                                rootProperty: 'productFormatList',
+                            }
+                        },
+                        autoLoad : true,
+                        // listeners:{
+                        //     load:function () {
+                        //         Ext.getCmp('buildingName').setValue("");
+                        //     }
+                        // }
+                    });
+
+                    //product_format,下拉框重新加载数据
+                    oldpanel_format.setStore(tableListStore2);
+
+                    //grid store重载
+                    Ext.getCmp('product_addDataGrid').getStore().removeAll();
+
+                    // Ext.getCmp('product_addDataGrid').getStore().loadData(data,
+                    //     true);
+
+                }
+            }
+        });
+        var oldpanel_format = Ext.create('Ext.form.ComboBox', {
+            fieldLabel: '格式',
+            id:'oldpanel_format',
+            name: 'oldpanel_format',
+            store: optionTypeList,
+            queryMode: 'local',
+            displayField: 'oldpanelFormat',
+            valueField: 'id',
+            margin : '0 20 0 40',
+            width: 180,
+            labelWidth: 35,
+            renderTo: Ext.getBody(),
+            listeners:{
+                //    typeStore
+                select: function(combo, record, index) {
+
+                    //grid store重载
+                    Ext.getCmp('old_addDataGrid').getStore().removeAll();
+
+                    // var type = product_format.value; //id值
+                    var oldpanelFormat = record[0].data.oldpanelFormat;
+                    //按空格切分
+                    var arr = oldpanelFormat.split(' ');
+                    console.log("arr================>",arr[0])
+
+                    data = [];
+                    //循环
+                    Ext.each(arr,function (typeName,index,self) {
+                        // console.log("typeName................",typeName);
+                        data.push({'format_each_name' : typeName})
+                    }),
+
+                        Ext.getCmp('old_addDataGrid').getStore().loadData(data,
+                            true);
+                }
+            }
+        });
+
+
         var component3 = Ext.create('Ext.form.ComboBox', {
             // fieldLabel: '操作类型',
             name: 'component3',
@@ -274,8 +428,8 @@ Ext.define('oldpanel.add_oldpanel_rules', {
                 // component4,
             ]
         });
-        //成本 数量 存放位置
-        var toolbar1 = Ext.create('Ext.toolbar.Toolbar', {
+        //j旧板的toolbar
+        var toolbar_old = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
             items: [
                 {
@@ -283,8 +437,8 @@ Ext.define('oldpanel.add_oldpanel_rules', {
                     margin: '0 0 0 0',
                     text:'<strong>旧板品名格式选择：</strong>'
                 },
-                // component1,
-                // component2,
+                oldPanel_type,
+                oldpanel_format,
                 // component3,
                 // component4,
             ]
@@ -701,7 +855,7 @@ Ext.define('oldpanel.add_oldpanel_rules', {
                 type:'hbox',
                 align:'stretch'
             },
-            // tbar:toolbar,
+            tbar:toolbar_old,
             items:[
                 grid2,
             ]
@@ -775,7 +929,7 @@ Ext.define('oldpanel.add_oldpanel_rules', {
 
                     // Ext.getCmp('win_condition').show();
                     win_condition.show();
-                }else if(format_each_name == 'a+b' || format_each_name == 'a*b' ||format_each_name == 'b*a'){
+                }else if(format_each_name == 'a+b' || format_each_name == 'aXb' ||format_each_name == 'bXa'){
                     form_con.add(condition_form_ab);
                     form_con.doLayout();  //动态添加items
                     win_condition.show();
