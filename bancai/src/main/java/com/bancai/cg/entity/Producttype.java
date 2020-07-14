@@ -11,15 +11,15 @@ public class Producttype {
     private String productTypeName;
     private String description;
     private ProductClassification classification;
-    private Set<ProductInfo> productInfoSet;
+    private Set<ProductFormat> productFormats;
 
-    @OneToMany(mappedBy = "productType")
-    public Set<ProductInfo> getProductInfoSet() {
-        return productInfoSet;
+    @OneToMany(mappedBy = "producttype")
+    public Set<ProductFormat> getProductFormats() {
+        return productFormats;
     }
 
-    public void setProductInfoSet(Set<ProductInfo> productInfoSet) {
-        this.productInfoSet = productInfoSet;
+    public void setProductFormats(Set<ProductFormat> productFormats) {
+        this.productFormats = productFormats;
     }
 
     @ManyToOne(targetEntity = ProductClassification.class)

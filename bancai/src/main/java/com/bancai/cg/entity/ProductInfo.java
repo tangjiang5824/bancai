@@ -12,8 +12,7 @@ public class ProductInfo {
     private Double unitWeight;
     private Double unitArea;
     private String remark;
-    private Integer productFormatId;
-    private Producttype productType;
+    private ProductFormat productFormatId;
     private Integer mValue;
     private Integer nValue;
     private Integer pValue;
@@ -87,25 +86,17 @@ public class ProductInfo {
         this.remark = remark;
     }
 
-    @Basic
-    @Column(name = "productFormatId", nullable = true)
-    public Integer getProductFormatId() {
+
+    @ManyToOne(targetEntity = ProductFormat.class)
+    @JoinColumn(name = "productFormatId",referencedColumnName = "id")
+    public ProductFormat getProductFormatId() {
         return productFormatId;
     }
 
-    public void setProductFormatId(Integer productFormatId) {
+    public void setProductFormatId(ProductFormat productFormatId) {
         this.productFormatId = productFormatId;
     }
 
-    @ManyToOne(targetEntity = Producttype.class,fetch = FetchType.LAZY)
-    @JoinColumn(name = "productType",referencedColumnName = "id")
-    public Producttype getProductType() {
-        return productType;
-    }
-
-    public void setProductType(Producttype productType) {
-        this.productType = productType;
-    }
 
     @Basic
     @Column(name = "mValue", nullable = true)
@@ -229,7 +220,6 @@ public class ProductInfo {
                 Objects.equals(unitArea, that.unitArea) &&
                 Objects.equals(remark, that.remark) &&
                 Objects.equals(productFormatId, that.productFormatId) &&
-                Objects.equals(productType, that.productType) &&
                 Objects.equals(mValue, that.mValue) &&
                 Objects.equals(nValue, that.nValue) &&
                 Objects.equals(pValue, that.pValue) &&
@@ -245,6 +235,6 @@ public class ProductInfo {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, productName, inventoryUnit, unitWeight, unitArea, remark, productFormatId, productType, mValue, nValue, pValue, aValue, bValue, mAngle, nAngle, pAngle, suffix, ignoredSuffix, userId);
+        return Objects.hash(id, productName, inventoryUnit, unitWeight, unitArea, remark, productFormatId, mValue, nValue, pValue, aValue, bValue, mAngle, nAngle, pAngle, suffix, ignoredSuffix, userId);
     }
 }
