@@ -79,21 +79,28 @@ Ext.define('oldpanel.add_oldpanel_rules', {
         });
 
         //出库or入库选择
-        var optionTypeList = Ext.create('Ext.data.Store', {
+        var haveABList = Ext.create('Ext.data.Store', {
             fields: ['abbr', 'name'],
             data : [
-                {"abbr":"0", "name":"类型名"},
-                {"abbr":"1", "name":"m"},
-                {"abbr":"2", "name":"n"},
-                {"abbr":"3", "name":"axb"},
-                {"abbr":"4", "name":"bxa"},
-                {"abbr":"5", "name":"m+n"},
-                {"abbr":"6", "name":"后缀"},
-                //...
+                {"abbr":"0", "name":"无AB角"},
+                {"abbr":"1", "name":"有A角"},
+                {"abbr":"2", "name":"有B角"},
             ]
         });
-
-        var map = new Ext.util.MixedCollection();
+        var haveAB = Ext.create('Ext.form.ComboBox', {
+            // fieldLabel: '格式',
+            id: 'haveAB',
+            name: 'haveAB',
+            store: haveABList,
+            queryMode: 'local',
+            displayField: 'name',
+            editable:false,
+            valueField: 'abbr',
+            // margin: '0 20 0 0',
+            width: 70,
+            // labelWidth: 35,
+            renderTo: Ext.getBody(),
+        });
 
 
         var ProductTypeStore = Ext.create('Ext.data.Store',{
@@ -135,7 +142,6 @@ Ext.define('oldpanel.add_oldpanel_rules', {
                         var typename = rec.data.productTypeName;
                         product_typeArr.push(typename)
                     }
-
 
                     //选中后
                     var select = record[0].data;
@@ -191,7 +197,7 @@ Ext.define('oldpanel.add_oldpanel_rules', {
             fieldLabel: '格式',
             id:'product_format',
             name: 'product_format',
-            store: optionTypeList,
+            store: '',
             queryMode: 'local',
             displayField: 'productFormat',
             valueField: 'id',
@@ -236,11 +242,11 @@ Ext.define('oldpanel.add_oldpanel_rules', {
             fields : [ 'projectName'],
             proxy : {
                 type : 'ajax',
-                url : 'match/findProductTypeList.do',
+                url : 'match/findOldpanelTypeList.do',
 
                 reader : {
                     type : 'json',
-                    rootProperty: 'productTypeList',
+                    rootProperty: 'oldpanelTypeList',
                 }
             },
             autoLoad : true
@@ -252,7 +258,7 @@ Ext.define('oldpanel.add_oldpanel_rules', {
             id: 'oldPanel_type',
             store: oldPanelTypeStore,
             queryMode: 'local',
-            displayField: 'productTypeName',
+            displayField: 'oldpanelTypeName',
             valueField: 'id',
             margin : '0 20 0 40',
             width: 180,
@@ -282,13 +288,13 @@ Ext.define('oldpanel.add_oldpanel_rules', {
                         proxy : {
                             type : 'ajax',
                             //通用接口，material/findAllbyTableNameAndOnlyOneCondition.do传入表名，属性及属性值
-                            // url : 'match/findProductFormatList.do?productTypeId='+id,//根据项目id查询对应的楼栋名
+                            url : 'match/findOldpanelFormatList.do?oldpanelTypeId='+id,//根据项目id查询对应的楼栋名
                             // params : {
                             //     productTypeId:id,
                             // },
                             reader : {
                                 type : 'json',
-                                rootProperty: 'productFormatList',
+                                rootProperty: 'oldpanelFormatList',
                             }
                         },
                         autoLoad : true,
@@ -315,7 +321,7 @@ Ext.define('oldpanel.add_oldpanel_rules', {
             fieldLabel: '格式',
             id:'oldpanel_format',
             name: 'oldpanel_format',
-            store: optionTypeList,
+            store: '',
             queryMode: 'local',
             displayField: 'oldpanelFormat',
             valueField: 'id',
@@ -349,61 +355,6 @@ Ext.define('oldpanel.add_oldpanel_rules', {
             }
         });
 
-
-        var component3 = Ext.create('Ext.form.ComboBox', {
-            // fieldLabel: '操作类型',
-            name: 'component3',
-            id: 'component3',
-            store: optionTypeList,
-            queryMode: 'local',
-            displayField: 'name',
-            valueField: 'abbr',
-            margin : '0 20 0 40',
-            width: 80,
-            // labelWidth: 60,
-            renderTo: Ext.getBody(),
-            listeners:{
-                //    typeStore
-                select: function(combo, record, index) {
-                    var type = component3.value; //id值
-                    var typeName = component3.rawValue; //id值
-                    //    store中的数据添加类型
-                    data = [{
-                        'format_each_name' : typeName,
-                    }];
-                    Ext.getCmp('product_addDataGrid').getStore().loadData(data,
-                        true);
-
-                }
-            }
-        });
-        var component4 = Ext.create('Ext.form.ComboBox', {
-            // fieldLabel: '操作类型',
-            name: 'component4',
-            id: 'component4',
-            store: optionTypeList,
-            queryMode: 'local',
-            displayField: 'name',
-            valueField: 'abbr',
-            margin : '0 20 0 40',
-            width: 80,
-            // labelWidth: 60,
-            renderTo: Ext.getBody(),
-            listeners:{
-                //    typeStore
-                select: function(combo, record, index) {
-                    var type = component4.value; //id值
-                    var typeName = component4.rawValue; //id值
-                    //    store中的数据添加类型
-                    data = [{
-                        'format_each_name' : typeName,
-                    }];
-                    Ext.getCmp('product_addDataGrid').getStore().loadData(data,
-                        true);
-
-                }
-            }
-        });
 
         //根据类型名确认store的data数据
         var typeStore = Ext.create('Ext.data.Store', {
@@ -444,359 +395,347 @@ Ext.define('oldpanel.add_oldpanel_rules', {
             ]
         });
 
-        var grid = Ext.create("Ext.grid.Panel", {
-            id : 'product_addDataGrid',
-            region:'north',
-            height:300,
-            store : {
-                fields :[]
+        var product_condition_form = new Ext.form.Panel({
+            // title: '添加约束条件',
+            // margin:'10 10 10 10',
+            id: 'product_condition_form',
+            width:'95%',
+            bodyStyle: 'text-align:center;padding:20px 10px 0px 5px',
+            buttonAlign:'left',
+            defaults: {
+                // border:false,
+                labelWidth:70,
+                labelAlign:'right',
+                width:'95%'
             },
-            //bbar:,
-            width:1800,
-            // flex:1,
-            // tbar:toolbar,
+            // height:700,
+            baseCls : 'my-panel-no-border',  //去掉边框
+            //居中
+            layout: {
+                align: 'left',
+                pack: 'center',
+                type: 'vbox'
+            },
+            items: [
+                {
+                    xtype: 'fieldset',
+                    title: '约束条件',
+                    layout: 'form',
+                    defaults: {anchor: '95%'},
+                    style: 'margin-left: 5px;padding-left: 5px;',
+                    width:700,
+                    bodyStyle:'text-align:center;margin-top:5px;',
+                    // 第一列中的表项
+                    // style:"margin-top:50px;",
+                    fieldDefaults:{
+                        labelAlign:'right',
+                        labelWidth:80,
+                    },
+                    items:[
+                        {
+                            layout: {
+                                align: 'left',
+                                // pack: 'center',
+                                type: 'hbox'
+                            },
+                            defaults: {
+                                border:false,
+                                labelWidth:70,
+                                labelAlign:'right',
+                            },
+                            baseCls : 'my-panel-no-border',  //去掉边框
+                            items:[
+                                {
+                                    flex:1,
+                                    defaults: {
+                                        border:false,
+                                        labelWidth:70,
+                                        labelAlign:'right',
+                                        width:'95%'
+                                    },
+                                    layout:{
+                                        align: 'left',
+                                        // pack: 'center',
+                                        type: 'vbox'
+                                    },
+                                    items:[
+                                        {
+                                            xtype: 'textfield',
+                                            fieldLabel: 'm',
+                                            name: 'm',
+                                        },
+                                        {
+                                            xtype: 'textfield',
+                                            fieldLabel: 'n',
+                                            name: 'n',
+                                        },
+                                        {
+                                            xtype: 'textfield',
+                                            fieldLabel: 'p',
+                                            name: 'p',
 
-            columns : [
-                {
-                    dataIndex : 'format_each_name',
-                    text : '格式名称',
-                    width : 110,
-                    id:'typename',
-                    // flex:0.2
-                },
-                {
-                    // name : '操作',
-                    // flex:0.2,
-                    width : 110,
-                    text : '约束条件',
-                    renderer:function(value, cellmeta){
-                        return "<INPUT type='button' value='添 加' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
-                    }
-                },{
-                    dataIndex : 'format_con',
-                    text : '条件',
-                    width : 600,
-                    id:'condition',
-                    // flex:0.6,
-                    editor:{xtype : 'textfield', allowBlank : false}
-                },
+                                        },
+                                        {
+                                            xtype: 'textfield',
+                                            fieldLabel: 'a',
+                                            name: 'a',
+                                        },{
+                                            xtype: 'textfield',
+                                            fieldLabel: 'b',
+                                            name: 'b',
+
+                                        }
+                                    ]
+                                },
+                                {
+                                    flex:.3,
+                                    defaults: {
+                                        border:false,
+                                        labelWidth:70,
+                                        labelAlign:'right',
+                                        width:'75%'
+                                    },
+                                    layout:{
+                                        align: 'left',
+                                        // pack: 'center',
+                                        type: 'vbox'
+                                    },
+                                    items:[
+                                        // haveAB,
+                                        {
+                                            xtype: 'combo',
+                                            name: 'm_haveAB',
+                                            fieldLabel: '有无AB角',
+                                            store: haveABList,
+                                            emptyText:'-请选择-',
+                                            queryMode: 'local',
+                                            displayField: 'name',
+                                            editable:false,
+                                            valueField: 'abbr',
+                                            width: 150,
+                                        },
+                                        {
+                                            xtype: 'combo',
+                                            name: 'n_haveAB',
+                                            id:'n_haveAB',
+                                            fieldLabel: '有无AB角',
+                                            store: haveABList,
+                                            queryMode: 'local',
+                                            displayField: 'name',
+                                            editable:false,
+                                            valueField: 'abbr',
+                                            width: 150,
+                                            //默认第一个值
+                                            listeners: {
+                                                //下拉框默认返回的第一个值
+                                                render: function (combo) {//渲染
+                                                    console.log("log----",combo)
+                                                    combo.getStore().on("load", function (s, r, o) {
+                                                        combo.setValue(r[0].get('name'));//第一个值
+                                                    });
+                                                }
+                                            }
+                                        },
+                                        {
+                                            xtype: 'combo',
+                                            name: 'p_haveAB',
+                                            fieldLabel: '有无AB角',
+                                            store: haveABList,
+                                            queryMode: 'local',
+                                            displayField: 'name',
+                                            editable:false,
+                                            valueField: 'abbr',
+                                            width: 150,
+                                        }
+                                    ]
+                                }
+
+                            ]
+                        },
+                    ]},
+
+
+                // {
+                //     xtype: 'textarea',
+                //     name:'desc',
+                //     fieldLabel: '备注',
+                // }
             ],
-            viewConfig : {
-                plugins : {
-                    ptype : "gridviewdragdrop",
-                    dragText : "可用鼠标拖拽进行上下排序"
-                }
-            },
-            plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
-                clicksToEdit : 1
-            })],
-            selType : 'rowmodel'
+            buttons:[{
+                text:'保存',
+                handler : function(btn) { // 按钮响应函数
+                    Ext.Msg.show({
+                        title: '操作确认',
+                        message: '添加新的规则，选择“是”、“否”确认？',
+                        buttons: Ext.Msg.YESNO,
+                        icon: Ext.Msg.QUESTION,
+                        fn: function (btn) {
+                            console.log("btn:----",btn)
+                            // console.log("operatorName:----",Ext.getCmp('formMain').getForm().findField('projectName').getValue())
+                            // console.log("projectid:----",Ext.getCmp('formMain').getForm().findField('projectName').value)
+                            if (btn === 'yes') {
+                                Ext.getCmp('new_condition_form').getForm().submit({
+                                    url: 'project/match/newPanel.do', //新版添加规则
+                                    method: 'POST',
+                                    //submitEmptyText : false,
+                                    success: function (response) {
+                                        //var message =Ext.decode(response.responseText).showmessage;
+                                        Ext.MessageBox.alert("提示", "保存成功");
+                                    },
+                                    failure: function (response) {
+                                        //var message =Ext.decode(response.responseText).showmessage;
+                                        Ext.MessageBox.alert("提示", "保存失败");
+                                    }
+                                })
+                            }
+                        }
+                    })
+                },
+            },{
+                text:'取消'
+            }]
         });
 
-        var grid2 = Ext.create("Ext.grid.Panel", {
-            id : 'old_addDataGrid',
-            region:'north',
-            // height:300,
-            store : {
-                fields :[]
+        var old_condition_form = new Ext.form.Panel({
+            // title: '添加约束条件',
+            // margin:'10 10 10 10',
+            id: 'old_condition_form',
+            width:'95%',
+            bodyStyle: 'text-align:center;padding:20px 10px 0px 5px',
+            buttonAlign:'left',
+            defaults: {
+                // border:false,
+                labelWidth:70,
+                labelAlign:'right',
+                width:'95%'
             },
-            //bbar:,
-            width:1800,
-            // flex:1,
-            // tbar:toolbar,
+            // height:700,
+            baseCls : 'my-panel-no-border',  //去掉边框
+            //居中
+            layout: {
+                align: 'left',
+                pack: 'center',
+                type: 'vbox'
+            },
+            items: [
+                {
+                    xtype: 'fieldset',
+                    title: '约束条件',
+                    layout: 'form',
+                    defaults: {anchor: '95%'},
+                    style: 'margin-left: 5px;padding-left: 5px;',
+                    width:700,
+                    bodyStyle:'text-align:center;margin-top:5px;',
+                    // 第一列中的表项
+                    // style:"margin-top:50px;",
+                    fieldDefaults:{
+                        labelAlign:'right',
+                        labelWidth:80,
+                    },
+                    items:[
+                        {
+                            layout: {
+                                align: 'left',
+                                // pack: 'center',
+                                type: 'hbox'
+                            },
+                            defaults: {
+                                border:false,
+                                labelWidth:70,
+                                labelAlign:'right',
+                            },
+                            baseCls : 'my-panel-no-border',  //去掉边框
+                            items:[
+                                {
+                                    flex:1,
+                                    defaults: {
+                                        border:false,
+                                        labelWidth:70,
+                                        labelAlign:'right',
+                                        width:'75%'
+                                    },
+                                    layout:{
+                                        align: 'left',
+                                        // pack: 'center',
+                                        type: 'vbox'
+                                    },
+                                    items:[
+                                        {
+                                            xtype: 'textfield',
+                                            fieldLabel: 'm',
+                                            name: 'm',
+                                        },
+                                        {
+                                            xtype: 'textfield',
+                                            fieldLabel: 'n',
+                                            name: 'n',
+                                        },
+                                        {
+                                            xtype: 'textfield',
+                                            fieldLabel: 'a',
+                                            name: 'a',
+                                        },{
+                                            xtype: 'textfield',
+                                            fieldLabel: 'b',
+                                            name: 'b',
 
-            columns : [
-                {
-                    dataIndex : 'format_each_name',
-                    text : '格式名称',
-                    width : 110,
-                    id:'old_typename',
-                    // flex:0.4
-                },
-                {
-                    // name : '操作',
-                    // flex:1,
-                    width : 110,
-                    text : '约束条件',
-                    renderer:function(value, cellmeta){
-                        return "<INPUT type='button' value='添 加' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
-                    }
-                },{
-                    dataIndex : 'format_con',
-                    text : '条件',
-                    width : 600,
-                    id:'old_condition',
-                    // flex:1.5,
-                    editor:{xtype : 'textfield', allowBlank : false}
-                }
+                                        },
+                                        {
+                                            xtype: 'textfield',
+                                            fieldLabel: 'p',
+                                            name: 'p',
+
+                                        },
+                                    ]
+                                },
+
+                            ]
+                        },
+                    ]},
+
+
+                // {
+                //     xtype: 'textarea',
+                //     name:'desc',
+                //     fieldLabel: '备注',
+                // }
             ],
-            viewConfig : {
-                plugins : {
-                    ptype : "gridviewdragdrop",
-                    dragText : "可用鼠标拖拽进行上下排序"
-                }
-            },
-            plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
-                clicksToEdit : 1
-            })],
-            selType : 'rowmodel'
+            buttons:[{
+                text:'保存',
+                handler : function(btn) { // 按钮响应函数
+                    Ext.Msg.show({
+                        title: '操作确认',
+                        message: '添加新的规则，选择“是”、“否”确认？',
+                        buttons: Ext.Msg.YESNO,
+                        icon: Ext.Msg.QUESTION,
+                        fn: function (btn) {
+                            console.log("btn:----",btn)
+                            // console.log("operatorName:----",Ext.getCmp('formMain').getForm().findField('projectName').getValue())
+                            // console.log("projectid:----",Ext.getCmp('formMain').getForm().findField('projectName').value)
+                            if (btn === 'yes') {
+                                Ext.getCmp('new_condition_form').getForm().submit({
+                                    url: 'project/match/newPanel.do', //新版添加规则
+                                    method: 'POST',
+                                    //submitEmptyText : false,
+                                    success: function (response) {
+                                        //var message =Ext.decode(response.responseText).showmessage;
+                                        Ext.MessageBox.alert("提示", "保存成功");
+                                    },
+                                    failure: function (response) {
+                                        //var message =Ext.decode(response.responseText).showmessage;
+                                        Ext.MessageBox.alert("提示", "保存失败");
+                                    }
+                                })
+                            }
+                        }
+                    })
+                },
+            },{
+                text:'取消'
+            }]
         });
 
-        var condition_form_ab = Ext.create('project.form.abform');
-        var condition_form_m = Ext.create('project.form.mform');
-        var condition_form_n = Ext.create('project.form.nform');
-        var condition_form_mn = Ext.create('project.form.mnform');
-        var condition_form_mnp = Ext.create('project.form.mnpform');
 
-        //产品右侧
-        // var condition_form_m = new Ext.form.Panel({
-        //     // title: '添加约束条件',
-        //     // margin:'10 10 10 10',
-        //     id: 'condition_form_m',
-        //     // autoHeight: true,
-        //     // autoWidth: true,
-        //     // layout: 'form',
-        //     // border: true,
-        //     width:'95%',
-        //     bodyStyle: 'text-align:center;padding:20px 10px 0px 5px',
-        //     buttonAlign:'center',
-        //     defaults: {
-        //         // border:false,
-        //         labelWidth:70,
-        //         labelAlign:'right',
-        //         width:'95%'
-        //     },
-        //     hidden:true,
-        //
-        //     // height:700,
-        //     baseCls : 'my-panel-no-border',  //去掉边框
-        //     //居中
-        //     layout: {
-        //         align: 'left',
-        //         pack: 'center',
-        //         type: 'vbox'
-        //     },
-        //     items: [
-        //         {
-        //             xtype: 'fieldset',
-        //             title: 'm的约束条件',
-        //             layout: 'form',
-        //             defaults: {anchor: '95%'},
-        //             style: 'margin-left: 5px;padding-left: 5px;',
-        //             width:500,
-        //             bodyStyle:'text-align:center;margin-top:5px;',
-        //             // 第一列中的表项
-        //             // style:"margin-top:50px;",
-        //             fieldDefaults:{
-        //                 labelAlign:'right',
-        //                 labelWidth:80,
-        //             },
-        //             items:[
-        //                 {
-        //                     layout: {
-        //                         align: 'left',
-        //                         // pack: 'center',
-        //                         type: 'hbox'
-        //                     },
-        //                     defaults: {
-        //                         border:false,
-        //                         labelWidth:70,
-        //                         labelAlign:'right',
-        //                     },
-        //                     items:[
-        //                         {
-        //                             flex:0.6,
-        //                             defaults: {
-        //                                 border:false,
-        //                                 labelWidth:70,
-        //                                 labelAlign:'right',
-        //                                 width:'65%'
-        //                             },
-        //                             layout:{
-        //                                 align: 'left',
-        //                                 // pack: 'center',
-        //                                 type: 'vbox'
-        //                             },
-        //                             items:[
-        //                                 {
-        //                                     xtype: 'textfield',
-        //                                     name:'greaterAndequal',
-        //                                     fieldLabel: '大于等于',
-        //                                 },
-        //                                 {
-        //                                     xtype: 'textfield',
-        //                                     name:'lessAndequal',
-        //                                     fieldLabel: '小于等于',
-        //                                 },
-        //                                 {
-        //                                     xtype: 'textfield',
-        //                                     name:'equal',
-        //                                     fieldLabel: '等于',
-        //                                 }
-        //                             ]
-        //                         },
-        //                         {
-        //                             flex:0.6,
-        //                             defaults: {
-        //                                 border:false,
-        //                                 labelWidth:70,
-        //                                 labelAlign:'right',
-        //                                 width:'65%'
-        //                             },
-        //                             layout:{
-        //                                 align: 'left',
-        //                                 // pack: 'center',
-        //                                 type: 'vbox'
-        //                             },
-        //                             items:[
-        //                                 {
-        //                                     xtype: 'textfield',
-        //                                     name:'greater',
-        //                                     fieldLabel: '大于',
-        //                                 },
-        //                                 {
-        //                                     xtype: 'textfield',
-        //                                     name:'less',
-        //                                     fieldLabel: '小于',
-        //                                 },
-        //                             ]
-        //                         },
-        //                         // {
-        //                         //     flex:1,
-        //                         //     defaults: {
-        //                         //         border:false,
-        //                         //         labelWidth:70,
-        //                         //         labelAlign:'right',
-        //                         //         width:'95%'
-        //                         //     },
-        //                         //     layout:{
-        //                         //         align: 'left',
-        //                         //         // pack: 'center',
-        //                         //         type: 'vbox'
-        //                         //     },
-        //                         //     items:[
-        //                         //         {
-        //                         //             xtype: 'textfield',
-        //                         //             name:'bigger',
-        //                         //             fieldLabel: '大于等于',
-        //                         //         },
-        //                         //         {
-        //                         //             xtype: 'textfield',
-        //                         //             name:'bigger',
-        //                         //             fieldLabel: '大于等于',
-        //                         //         },
-        //                         //         {
-        //                         //             xtype: 'textfield',
-        //                         //             name:'bigger',
-        //                         //             fieldLabel: '大于等于',
-        //                         //         }
-        //                         //     ]
-        //                         // }
-        //                     ]
-        //                 },
-        //             ]},
-        //
-        //         {
-        //             xtype: 'fieldset',
-        //             title: 'b的约束条件',
-        //             layout: 'form',
-        //             defaults: {anchor: '95%'},
-        //             style: 'margin-left: 5px;padding-left: 5px;',
-        //             width:500,
-        //             bodyStyle:'text-align:center;margin-top:5px;',
-        //             // 第一列中的表项
-        //             // style:"margin-top:50px;",
-        //             fieldDefaults:{
-        //                 labelAlign:'right',
-        //                 labelWidth:80,
-        //             },
-        //             items:[
-        //                 {
-        //                     layout: {
-        //                         align: 'left',
-        //                         // pack: 'center',
-        //                         type: 'hbox'
-        //                     },
-        //                     defaults: {
-        //                         border:false,
-        //                         labelWidth:70,
-        //                         labelAlign:'right',
-        //                     },
-        //                     items:[
-        //                         {
-        //                             flex:1,
-        //                             defaults: {
-        //                                 border:false,
-        //                                 labelWidth:70,
-        //                                 labelAlign:'right',
-        //                                 width:'65%'
-        //                             },
-        //                             layout:{
-        //                                 align: 'left',
-        //                                 // pack: 'center',
-        //                                 type: 'vbox'
-        //                             },
-        //                             items:[
-        //                                 {
-        //                                     xtype: 'textfield',
-        //                                     name:'greaterAndequal',
-        //                                     fieldLabel: '大于等于',
-        //                                 },
-        //                                 {
-        //                                     xtype: 'textfield',
-        //                                     name:'lessAndequal',
-        //                                     fieldLabel: '小于等于',
-        //                                 },
-        //                                 {
-        //                                     xtype: 'textfield',
-        //                                     name:'equal',
-        //                                     fieldLabel: '等于',
-        //                                 }
-        //                             ]
-        //                         },
-        //                         {
-        //                             flex:1,
-        //                             defaults: {
-        //                                 border:false,
-        //                                 labelWidth:70,
-        //                                 labelAlign:'right',
-        //                                 width:'65%'
-        //                             },
-        //                             layout:{
-        //                                 align: 'left',
-        //                                 // pack: 'center',
-        //                                 type: 'vbox'
-        //                             },
-        //                             items:[
-        //                                 {
-        //                                     xtype: 'textfield',
-        //                                     name:'greater',
-        //                                     fieldLabel: '大于',
-        //                                 },
-        //                                 {
-        //                                     xtype: 'textfield',
-        //                                     name:'less',
-        //                                     fieldLabel: '小于',
-        //                                 },
-        //                             ]
-        //                         },
-        //                     ]
-        //                 },
-        //             ]},
-        //
-        //
-        //         // {
-        //         //     xtype: 'textarea',
-        //         //     name:'desc',
-        //         //     fieldLabel: '备注',
-        //         // }
-        //     ],
-        //     buttons:[{
-        //         text:'保存'
-        //     },{
-        //         text:'取消'
-        //     }]
-        // });
         var grid_pro_condition = Ext.create("Ext.panel.Panel", {
             id : 'grid_pro_condition',
             // region:'north',
@@ -827,123 +766,47 @@ Ext.define('oldpanel.add_oldpanel_rules', {
             modal:true,//模态窗口，背景窗口不可编辑
         });
 
-        //窗口关闭响应事件
-        // win_condition.on('close',function(){
-        //     var items=grid_pro_condition.items;
-        //     console.log("items-------",items)
-        //     grid_pro_condition.removeAll();
-        //     // var items=Ext.getCmp('grid_pro_condition').items;
-        //     // Ext.getCmp('grid_pro_condition').remove(items.items[0]);
-        // })
-
-
         //产品
         var product_panel = Ext.create('Ext.panel.Panel',{
-            layout:{
-                type:'hbox',
-                align:'stretch'
-            },
+            // layout:{
+            //     type:'vbox',
+            //     align:'stretch'
+            // },
+            region:'West',
             tbar:toolbar,
             items:[
-                grid,
+                // grid,
+                product_condition_form,
             ]
         });
 
         //产品
         var old_panel = Ext.create('Ext.panel.Panel',{
-            layout:{
-                type:'hbox',
-                align:'stretch'
-            },
+            // layout:{
+            //     type:'vbox',
+            //     align:'stretch'
+            // },
+            region:'center',
             tbar:toolbar_old,
             items:[
-                grid2,
+                // grid2,
+                old_condition_form,
             ]
         });
 
         //产品和旧板panel
         var hole_panel = Ext.create('Ext.panel.Panel',{
-            layout:{
-                type:'vbox',
-                align:'stretch'
-            },
+            // layout:{
+            //     type:'vbox',
+            //     align:'stretch'
+            // },
+            layout:'hbox',//左右上下布局
             // width:800,
-
             items:[
-
-                //     {
-                //     xtype:'tbtext',
-                //     style: 'background-color: #99bce8',
-                //     text:'<h2>产品品名格式:</h2>',
-                // },
                 product_panel,
-                // {
-                //     xtype:'tbtext',
-                //     style: 'background-color: #99bce8',
-                //     text:'<h2>旧板品名格式:</h2>',
-                // },
                 old_panel,
-
-
-
             ]
         });
-
-        //添加cell单击事件
-        grid.addListener('cellclick', cellclick);
-        function cellclick(grid, rowIndex, columnIndex, e) {
-            if (rowIndex < 0) {
-                return;
-            }
-            var fieldName = Ext.getCmp('product_addDataGrid').columns[columnIndex].text;
-            console.log("列名：",fieldName)
-            if (fieldName == "约束条件") {
-
-                var form_con=Ext.getCmp("grid_pro_condition");
-                form_con.removeAll();
-
-                //设置监听事件getSelectionModel().getSelection()
-                var sm = Ext.getCmp('product_addDataGrid').getSelectionModel();
-                var materialArr = sm.getSelection();
-
-                var format_each_name = e.data.format_each_name
-                console.log("选择记录：",e.data.format_each_name);
-                //判断格式名称，若为W（产品类型）和无，则无约束条件。
-                // format_each_nameconsole.log(typeArr.includes("WPE"))
-                if(format_each_name == '无' || product_typeArr.includes(format_each_name)){
-                    Ext.MessageBox.alert("提示", "没有约束条件");
-                }
-                else if(format_each_name == 'n'){
-
-                    form_con.add(condition_form_n);
-                    form_con.doLayout();  //动态添加items
-
-                    // Ext.getCmp('win_condition').show();
-                    win_condition.show();
-                    // condition_form_ab.setHidden(false);
-                    // grid_pro_condition.addItem(condition_form_ab);
-                }
-                else if(format_each_name == 'm'){
-                    form_con.add(condition_form_m);
-                    form_con.doLayout();  //动态添加items
-
-                    // Ext.getCmp('win_condition').show();
-                    win_condition.show();
-                }else if(format_each_name == 'a+b' || format_each_name == 'aXb' ||format_each_name == 'bXa'){
-                    form_con.add(condition_form_ab);
-                    form_con.doLayout();  //动态添加items
-                    win_condition.show();
-                }else if(format_each_name == 'm+n'){
-                    form_con.add(condition_form_mn);
-                    form_con.doLayout();  //动态添加items
-                    win_condition.show();
-                }else if(format_each_name == 'm+n+p'){
-                    form_con.add(condition_form_mnp);
-                    form_con.doLayout();  //动态添加items
-                    win_condition.show();
-                }
-            }
-        }
 
         // this.dockedItems = [toolbar,
         //     //toobar,
