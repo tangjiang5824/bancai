@@ -401,7 +401,7 @@ Ext.define('oldpanel.add_oldpanel_rules', {
             id: 'product_condition_form',
             width:'95%',
             bodyStyle: 'text-align:center;padding:20px 10px 0px 5px',
-            buttonAlign:'left',
+            buttonAlign:'right',
             defaults: {
                 // border:false,
                 labelWidth:70,
@@ -602,7 +602,7 @@ Ext.define('oldpanel.add_oldpanel_rules', {
             id: 'old_condition_form',
             width:'95%',
             bodyStyle: 'text-align:center;padding:20px 10px 0px 5px',
-            buttonAlign:'left',
+            buttonAlign:'right',
             defaults: {
                 // border:false,
                 labelWidth:70,
@@ -652,7 +652,7 @@ Ext.define('oldpanel.add_oldpanel_rules', {
                                         border:false,
                                         labelWidth:70,
                                         labelAlign:'right',
-                                        width:'75%'
+                                        width:'95%'
                                     },
                                     layout:{
                                         align: 'left',
@@ -687,7 +687,68 @@ Ext.define('oldpanel.add_oldpanel_rules', {
 
                                         },
                                     ]
-                                },
+                                },{
+                                    flex:.3,
+                                    defaults: {
+                                        border:false,
+                                        labelWidth:70,
+                                        labelAlign:'right',
+                                        width:'75%'
+                                    },
+                                    layout:{
+                                        align: 'left',
+                                        // pack: 'center',
+                                        type: 'vbox'
+                                    },
+                                    items:[
+                                        // haveAB,
+                                        {
+                                            xtype: 'combo',
+                                            name: 'm1_haveAB',
+                                            fieldLabel: '有无AB角',
+                                            store: haveABList,
+                                            emptyText:'-请选择-',
+                                            queryMode: 'local',
+                                            displayField: 'name',
+                                            editable:false,
+                                            valueField: 'abbr',
+                                            width: 150,
+                                        },
+                                        {
+                                            xtype: 'combo',
+                                            name: 'n1_haveAB',
+                                            id:'n1_haveAB',
+                                            fieldLabel: '有无AB角',
+                                            store: haveABList,
+                                            queryMode: 'local',
+                                            displayField: 'name',
+                                            editable:false,
+                                            valueField: 'abbr',
+                                            width: 150,
+                                            //默认第一个值
+                                            listeners: {
+                                                //下拉框默认返回的第一个值
+                                                render: function (combo) {//渲染
+                                                    console.log("log----",combo)
+                                                    combo.getStore().on("load", function (s, r, o) {
+                                                        combo.setValue(r[0].get('name'));//第一个值
+                                                    });
+                                                }
+                                            }
+                                        },
+                                        {
+                                            xtype: 'combo',
+                                            name: 'p1_haveAB',
+                                            fieldLabel: '有无AB角',
+                                            store: haveABList,
+                                            queryMode: 'local',
+                                            displayField: 'name',
+                                            editable:false,
+                                            valueField: 'abbr',
+                                            width: 150,
+                                        }
+                                    ]
+                                }
 
                             ]
                         },
