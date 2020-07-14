@@ -25,6 +25,32 @@ Ext.define('oldpanel.add_oldpanel_rules', {
         var oldPanel_typeArr = [];
         //var materialtype="1";
 
+        var s_product = new Array();
+        var s_old = new Array();
+
+        //是否完全匹配
+        var matchList = Ext.create('Ext.data.Store', {
+            fields: ['abbr', 'name'],
+            data : [
+                {"abbr":"0", "name":"完全匹配"},
+                {"abbr":"1", "name":"非完全匹配"},
+            ]
+        });
+        var matchChoose = Ext.create('Ext.form.ComboBox', {
+            fieldLabel: '是否完全匹配',
+            id: 'matchChoose',
+            name: 'matchChoose',
+            store: matchList,
+            queryMode: 'local',
+            displayField: 'name',
+            editable:false,
+            valueField: 'abbr',
+            margin: '0 40 0 0',
+            width: 170,
+            labelWidth: 80,
+            renderTo: Ext.getBody(),
+        });
+
         var toolbar_top = Ext.create('Ext.toolbar.Toolbar', {
             dock : "bottom",
             id : "toolbar4",
@@ -32,49 +58,53 @@ Ext.define('oldpanel.add_oldpanel_rules', {
                 //marginLeft: '900px'
                 layout: 'right'
             },
-            items : [{
+            items : [
+                {
+                    xtype: 'textfield',
+                    fieldLabel: '优先级',
+                    name: 'priority',
+                    id:'priority',
+                    width: 250,
+                    labelWidth: 45,
+                    margin : '0 40 0 0',
+                },
+                matchChoose,
+                {
                 xtype : 'button',
                 iconAlign : 'center',
                 iconCls : 'rukuicon ',
                 text : '添加规则',
                 // region:'center',
                 bodyStyle: 'background:#fff;',
-                handler : function() {
-                    //保存规则
-                    //产品表格
-                    var pro_select = Ext.getCmp('product_addDataGrid').getStore()
-                        .getData();
-                    var s_pro = new Array();
-                    pro_select.each(function(rec) {
-                        s_pro.push(JSON.stringify(rec.data));
-                    });
-                    console.log("产品------------",s_pro);
-                    //产品格式Id
-                    var pro_format_id = Ext.getCmp('product_format').getValue();
-                    console.log("Id------------",pro_format_id);
+                    handler : function(btn) { // 按钮响应函数
+                        var oldpanelFormatId = Ext.getCmp("oldpanel_format").getValue();
+                        var productFormatId = Ext.getCmp("product_format").getValue();
+                        var priority = Ext.getCmp("priority").getValue();
+                        var isCompleteMatch = Ext.getCmp("matchChoose").getValue();
 
-                    //获取数据
-                    // Ext.Ajax.request({
-                    //     url : 'material/updateprojectmateriallist.do', //原材料入库
-                    //     method:'POST',
-                    //     //submitEmptyText : false,
-                    //     params : {
-                    //         s : "[" + s + "]",//存储选择领料的数量
-                    //         materialList : "[" + materialList + "]",
-                    //     },
-                    //     success : function(response) {
-                    //         //var message =Ext.decode(response.responseText).showmessage;
-                    //         Ext.MessageBox.alert("提示","保存成功" );
-                    //         //刷新页面
-                    //         MaterialList.reload();
-                    //
-                    //     },
-                    //     failure : function(response) {
-                    //         //var message =Ext.decode(response.responseText).showmessage;
-                    //         Ext.MessageBox.alert("提示","保存失败" );
-                    //     }
-                    // });
-                }
+                        Ext.Ajax.request({
+                            // url : 'material/addData.do', //添加匹配规则
+                            method:'POST',
+                            //submitEmptyText : false,
+                            params : {
+                                priority:priority,
+                                isCompleteMatch:isCompleteMatch,
+                                oldpanelFormatId:oldpanelFormatId,
+                                productFormatId:productFormatId,
+                                s_product : "[" + s_product + "]",
+                                s_old:"[" + s_old + "]"
+                            },
+                            success : function(response) {
+                                //var message =Ext.decode(response.responseText).showmessage;
+                                Ext.MessageBox.alert("提示","添加成功" );
+                            },
+                            failure : function(response) {
+                                //var message =Ext.decode(response.responseText).showmessage;
+                                Ext.MessageBox.alert("提示","添加失败" );
+                            }
+                        });
+                    },
+
             }]
         });
 
@@ -264,58 +294,58 @@ Ext.define('oldpanel.add_oldpanel_rules', {
             width: 180,
             labelWidth: 60,
             renderTo: Ext.getBody(),
-            listeners:{
-                //    typeStore
-                select: function(combo, record, index) {
-
-                    //将产品查询store放到数组中
-                    var records = ProductTypeStore.data.items;
-                    var records_len = records.length;
-                    //循环
-                    for(var i=0;i<records_len;i++){
-                        var rec = records[i];
-                        var typename = rec.data.oldpanelTypeName;
-                        oldPanel_typeArr.push(typename)
-                    }
-
-                    //选中后
-                    var select = record[0].data;
-                    var id = select.id;//type对应的id
-                    console.log(id)
-                    var projectId = 'productTypeId';
-                    var tableListStore2 = Ext.create('Ext.data.Store',{
-                        fields : [ 'buildingName'],
-                        proxy : {
-                            type : 'ajax',
-                            //通用接口，material/findAllbyTableNameAndOnlyOneCondition.do传入表名，属性及属性值
-                            url : 'match/findOldpanelFormatList.do?oldpanelTypeId='+id,//根据项目id查询对应的楼栋名
-                            // params : {
-                            //     productTypeId:id,
-                            // },
-                            reader : {
-                                type : 'json',
-                                rootProperty: 'oldpanelFormatList',
-                            }
-                        },
-                        autoLoad : true,
-                        // listeners:{
-                        //     load:function () {
-                        //         Ext.getCmp('buildingName').setValue("");
-                        //     }
-                        // }
-                    });
-
-                    //product_format,下拉框重新加载数据
-                    oldpanel_format.setStore(tableListStore2);
-
-                    //grid store重载
-                    Ext.getCmp('product_addDataGrid').getStore().removeAll();
-
-                    // Ext.getCmp('product_addDataGrid').getStore().loadData(data,
-                    //     true);
-
-                }
-            }
+            // listeners:{
+            //     //    typeStore
+            //     select: function(combo, record, index) {
+            //
+            //         //将产品查询store放到数组中
+            //         var records = ProductTypeStore.data.items;
+            //         var records_len = records.length;
+            //         //循环
+            //         for(var i=0;i<records_len;i++){
+            //             var rec = records[i];
+            //             var typename = rec.data.oldpanelTypeName;
+            //             oldPanel_typeArr.push(typename)
+            //         }
+            //
+            //         //选中后
+            //         var select = record[0].data;
+            //         var id = select.id;//type对应的id
+            //         console.log(id)
+            //         var projectId = 'productTypeId';
+            //         var tableListStore2 = Ext.create('Ext.data.Store',{
+            //             fields : [ 'buildingName'],
+            //             proxy : {
+            //                 type : 'ajax',
+            //                 //通用接口，material/findAllbyTableNameAndOnlyOneCondition.do传入表名，属性及属性值
+            //                 url : 'match/findOldpanelFormatList.do?oldpanelTypeId='+id,//根据项目id查询对应的楼栋名
+            //                 // params : {
+            //                 //     productTypeId:id,
+            //                 // },
+            //                 reader : {
+            //                     type : 'json',
+            //                     rootProperty: 'oldpanelFormatList',
+            //                 }
+            //             },
+            //             autoLoad : true,
+            //             // listeners:{
+            //             //     load:function () {
+            //             //         Ext.getCmp('buildingName').setValue("");
+            //             //     }
+            //             // }
+            //         });
+            //
+            //         //product_format,下拉框重新加载数据
+            //         oldpanel_format.setStore(tableListStore2);
+            //
+            //         //grid store重载
+            //         Ext.getCmp('product_addDataGrid').getStore().removeAll();
+            //
+            //         // Ext.getCmp('product_addDataGrid').getStore().loadData(data,
+            //         //     true);
+            //
+            //     }
+            // }
         });
         var oldpanel_format = Ext.create('Ext.form.ComboBox', {
             fieldLabel: '格式',
@@ -329,30 +359,30 @@ Ext.define('oldpanel.add_oldpanel_rules', {
             width: 180,
             labelWidth: 35,
             renderTo: Ext.getBody(),
-            listeners:{
-                //    typeStore
-                select: function(combo, record, index) {
-
-                    //grid store重载
-                    Ext.getCmp('old_addDataGrid').getStore().removeAll();
-
-                    // var type = product_format.value; //id值
-                    var oldpanelFormat = record[0].data.oldpanelFormat;
-                    //按空格切分
-                    var arr = oldpanelFormat.split(' ');
-                    console.log("arr================>",arr[0])
-
-                    data = [];
-                    //循环
-                    Ext.each(arr,function (typeName,index,self) {
-                        // console.log("typeName................",typeName);
-                        data.push({'format_each_name' : typeName})
-                    }),
-
-                        Ext.getCmp('old_addDataGrid').getStore().loadData(data,
-                            true);
-                }
-            }
+            // listeners:{
+            //     //    typeStore
+            //     select: function(combo, record, index) {
+            //
+            //         //grid store重载
+            //         Ext.getCmp('old_addDataGrid').getStore().removeAll();
+            //
+            //         // var type = product_format.value; //id值
+            //         var oldpanelFormat = record[0].data.oldpanelFormat;
+            //         //按空格切分
+            //         var arr = oldpanelFormat.split(' ');
+            //         console.log("arr================>",arr[0])
+            //
+            //         data = [];
+            //         //循环
+            //         Ext.each(arr,function (typeName,index,self) {
+            //             // console.log("typeName................",typeName);
+            //             data.push({'format_each_name' : typeName})
+            //         }),
+            //
+            //             Ext.getCmp('old_addDataGrid').getStore().loadData(data,
+            //                 true);
+            //     }
+            // }
         });
 
 
@@ -462,28 +492,31 @@ Ext.define('oldpanel.add_oldpanel_rules', {
                                         {
                                             xtype: 'textfield',
                                             fieldLabel: 'm',
-                                            name: 'm',
+                                            name: 'mValueP',
+                                            id:'mValueP'
                                         },
                                         {
                                             xtype: 'textfield',
                                             fieldLabel: 'n',
-                                            name: 'n',
+                                            name: 'nValueP',
+                                            id:'nValueP'
                                         },
                                         {
                                             xtype: 'textfield',
                                             fieldLabel: 'p',
-                                            name: 'p',
-
+                                            name: 'pValueP',
+                                            id:'pValueP'
                                         },
                                         {
                                             xtype: 'textfield',
                                             fieldLabel: 'a',
-                                            name: 'a',
+                                            name: 'aValueP',
+                                            id:'aValueP'
                                         },{
                                             xtype: 'textfield',
                                             fieldLabel: 'b',
-                                            name: 'b',
-
+                                            name: 'bValueP',
+                                            id:'bValueP'
                                         }
                                     ]
                                 },
@@ -504,7 +537,8 @@ Ext.define('oldpanel.add_oldpanel_rules', {
                                         // haveAB,
                                         {
                                             xtype: 'combo',
-                                            name: 'm_haveAB',
+                                            name: 'mAngleP',
+                                            id:'mAngleP',
                                             fieldLabel: '有无AB角',
                                             store: haveABList,
                                             emptyText:'-请选择-',
@@ -516,8 +550,8 @@ Ext.define('oldpanel.add_oldpanel_rules', {
                                         },
                                         {
                                             xtype: 'combo',
-                                            name: 'n_haveAB',
-                                            id:'n_haveAB',
+                                            name: 'nAngleP',
+                                            id:'nAngleP',
                                             fieldLabel: '有无AB角',
                                             store: haveABList,
                                             queryMode: 'local',
@@ -538,7 +572,8 @@ Ext.define('oldpanel.add_oldpanel_rules', {
                                         },
                                         {
                                             xtype: 'combo',
-                                            name: 'p_haveAB',
+                                            name: 'pAngleP',
+                                            id:'pAngleP',
                                             fieldLabel: '有无AB角',
                                             store: haveABList,
                                             queryMode: 'local',
@@ -553,43 +588,16 @@ Ext.define('oldpanel.add_oldpanel_rules', {
                             ]
                         },
                     ]},
-
-
-                // {
-                //     xtype: 'textarea',
-                //     name:'desc',
-                //     fieldLabel: '备注',
-                // }
             ],
             buttons:[{
                 text:'保存',
                 handler : function(btn) { // 按钮响应函数
-                    Ext.Msg.show({
-                        title: '操作确认',
-                        message: '添加新的规则，选择“是”、“否”确认？',
-                        buttons: Ext.Msg.YESNO,
-                        icon: Ext.Msg.QUESTION,
-                        fn: function (btn) {
-                            console.log("btn:----",btn)
-                            // console.log("operatorName:----",Ext.getCmp('formMain').getForm().findField('projectName').getValue())
-                            // console.log("projectid:----",Ext.getCmp('formMain').getForm().findField('projectName').value)
-                            if (btn === 'yes') {
-                                Ext.getCmp('new_condition_form').getForm().submit({
-                                    url: 'project/match/newPanel.do', //新版添加规则
-                                    method: 'POST',
-                                    //submitEmptyText : false,
-                                    success: function (response) {
-                                        //var message =Ext.decode(response.responseText).showmessage;
-                                        Ext.MessageBox.alert("提示", "保存成功");
-                                    },
-                                    failure: function (response) {
-                                        //var message =Ext.decode(response.responseText).showmessage;
-                                        Ext.MessageBox.alert("提示", "保存失败");
-                                    }
-                                })
-                            }
-                        }
-                    })
+                    // 保存表单数据
+                    var f1 = Ext.getCmp("product_condition_form").getValues();
+                    console.log("f1------------",f1)
+                    // var productFormatId = Ext.getCmp("product_format").getValue();
+                    s_product.push(JSON.stringify(f1));
+                    console.log("s------------",s_product)
                 },
             },{
                 text:'取消'
@@ -663,29 +671,32 @@ Ext.define('oldpanel.add_oldpanel_rules', {
                                         {
                                             xtype: 'textfield',
                                             fieldLabel: 'm',
-                                            name: 'm',
+                                            name: 'mValueO',
+                                            id:'mValueO'
                                         },
                                         {
                                             xtype: 'textfield',
                                             fieldLabel: 'n',
-                                            name: 'n',
+                                            name: 'nValueO',
+                                            id:'nValueO'
+                                        },{
+                                            xtype: 'textfield',
+                                            fieldLabel: 'p',
+                                            name: 'pValueO',
+                                            id:'pValueO'
                                         },
                                         {
                                             xtype: 'textfield',
                                             fieldLabel: 'a',
-                                            name: 'a',
+                                            name: 'aValueO',
+                                            id:'aValueO'
                                         },{
                                             xtype: 'textfield',
                                             fieldLabel: 'b',
-                                            name: 'b',
-
+                                            name: 'bValueO',
+                                            id:'bValueO'
                                         },
-                                        {
-                                            xtype: 'textfield',
-                                            fieldLabel: 'p',
-                                            name: 'p',
 
-                                        },
                                     ]
                                 },{
                                     flex:.3,
@@ -704,7 +715,8 @@ Ext.define('oldpanel.add_oldpanel_rules', {
                                         // haveAB,
                                         {
                                             xtype: 'combo',
-                                            name: 'm1_haveAB',
+                                            name: 'mAngleO',
+                                            id:'mAngleO',
                                             fieldLabel: '有无AB角',
                                             store: haveABList,
                                             emptyText:'-请选择-',
@@ -716,8 +728,8 @@ Ext.define('oldpanel.add_oldpanel_rules', {
                                         },
                                         {
                                             xtype: 'combo',
-                                            name: 'n1_haveAB',
-                                            id:'n1_haveAB',
+                                            name: 'nAngleO',
+                                            id:'nAngleO',
                                             fieldLabel: '有无AB角',
                                             store: haveABList,
                                             queryMode: 'local',
@@ -738,7 +750,8 @@ Ext.define('oldpanel.add_oldpanel_rules', {
                                         },
                                         {
                                             xtype: 'combo',
-                                            name: 'p1_haveAB',
+                                            name: 'pAngleO',
+                                            id:'pAngleO',
                                             fieldLabel: '有无AB角',
                                             store: haveABList,
                                             queryMode: 'local',
@@ -764,32 +777,12 @@ Ext.define('oldpanel.add_oldpanel_rules', {
             buttons:[{
                 text:'保存',
                 handler : function(btn) { // 按钮响应函数
-                    Ext.Msg.show({
-                        title: '操作确认',
-                        message: '添加新的规则，选择“是”、“否”确认？',
-                        buttons: Ext.Msg.YESNO,
-                        icon: Ext.Msg.QUESTION,
-                        fn: function (btn) {
-                            console.log("btn:----",btn)
-                            // console.log("operatorName:----",Ext.getCmp('formMain').getForm().findField('projectName').getValue())
-                            // console.log("projectid:----",Ext.getCmp('formMain').getForm().findField('projectName').value)
-                            if (btn === 'yes') {
-                                Ext.getCmp('new_condition_form').getForm().submit({
-                                    url: 'project/match/newPanel.do', //新版添加规则
-                                    method: 'POST',
-                                    //submitEmptyText : false,
-                                    success: function (response) {
-                                        //var message =Ext.decode(response.responseText).showmessage;
-                                        Ext.MessageBox.alert("提示", "保存成功");
-                                    },
-                                    failure: function (response) {
-                                        //var message =Ext.decode(response.responseText).showmessage;
-                                        Ext.MessageBox.alert("提示", "保存失败");
-                                    }
-                                })
-                            }
-                        }
-                    })
+                    // 保存表单数据
+                    var f2 = Ext.getCmp("old_condition_form").getValues();
+                    console.log("f1------------",f2)
+                    // var oldpanelFormatId = Ext.getCmp("oldpanel_format").getValue();
+                    s_old.push(JSON.stringify(f2));
+                    console.log("s------------",s_old)
                 },
             },{
                 text:'取消'
