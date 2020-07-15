@@ -240,9 +240,9 @@ public class AllExcelService extends BaseService {
 				result.setErrorCode(2);
 				return result;
 			}
-			String sql_addLogDetail = "insert into oldpanel_logdetail (oldpanelId,count,oldpanellogId,oldpanelstoreId) values (?,?,?,?)";
+			String sql_addLogDetail = "insert into oldpanel_logdetail (oldpanelId,count,oldpanellogId,oldpanelstoreId,isrollback) values (?,?,?,?,?)";
 			boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLogDetail,String.valueOf(oldpanelId[0]),
-					count,String.valueOf(oldpanellogId),String.valueOf(oldpanelId[1]));
+					count,String.valueOf(oldpanellogId),String.valueOf(oldpanelId[1]),"0");
 			if (!is_log_right) {
 				result.success = false;
 				result.setErrorCode(2);
