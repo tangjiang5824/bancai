@@ -42,6 +42,7 @@ public class MatchRulesController {
     private MatchRulesService matchRulesService;
 
     Logger log = Logger.getLogger(MatchRulesController.class);
+    private static String isPureNumber = "^-?[0-9]+";
 
     /*
      * 查询所有的产品类型
@@ -118,29 +119,55 @@ public class MatchRulesController {
     /*
      * 新增旧板匹配规则
      * */
-//    @RequestMapping(value = "/match/addOldpanelMatchRules.do")
-//    public boolean addOldpanelMatchRules(String productFormatId,String oldpanelFormatId,String priority,String isCompleteMatch,
-//                                         String mValue,String mPAng,String nPAng,String pPAng,
-//                                         String mOAng,String nOAng,String pOAng, HttpSession session) throws JSONException {
-//        try {
-//            String userId = (String)session.getAttribute("userid");
-//            Date date=new Date();
-//            SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//
-//            int oldpanelMatchRulesId = matchRulesService.addOldpanelMatchRules(pCon1,pCon2,pCon3,pCon4,productFormatId,
-//                    oRan1,oRan2,oRan3,oRan4,oldpanelFormatId,priority,isCompleteMatch);
-//            String sql_addLog = "insert into oldpanel_match_ruleslog (oldpanelMatchRulesId,type,time,userId) values (?,?,?,?)";
-//            boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLog,String.valueOf(oldpanelMatchRulesId)
-//                    ,"0",simpleDateFormat.format(date),userId);
-//            if(!is_log_right)
-//                return false;
-//        } catch (Exception e) {
-//            return false;
-//        }
-//        return true;
-//    }
+    @RequestMapping(value = "/match/addOldpanelMatchRules.do")
+    public boolean addOldpanelMatchRules(String productFormatId,String oldpanelFormatId,String priority,String isCompleteMatch,
+                                         String s_product,String s_old, HttpSession session) throws JSONException {
+        try {
+            if(!priority.matches(isPureNumber))
+                return false;
+            if((isCompleteMatch==null)||isCompleteMatch.equals(""))
+                return false;
+            String userId = (String)session.getAttribute("userid");
+            Date date=new Date();
+            SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            JSONArray jsonArrayP = new JSONArray(s_product);
+            JSONObject jsonTempP = jsonArrayP.getJSONObject(0);
+            String mValueP = (jsonTempP.get("mValueP")+"").trim();
+            String nValueP = (jsonTempP.get("nValueP")+"").trim();
+            String pValueP = (jsonTempP.get("pValueP")+"").trim();
+            String aValueP = (jsonTempP.get("aValueP")+"").trim();
+            String bValueP = (jsonTempP.get("bValueP")+"").trim();
+            String mAngleP = (jsonTempP.get("mAngleP")+"").trim();
+            String nAngleP = (jsonTempP.get("nAngleP")+"").trim();
+            String pAngleP = (jsonTempP.get("pAngleP")+"").trim();
+            String suffixP = (jsonTempP.get("suffixP")+"").trim();
+            JSONArray jsonArrayO = new JSONArray(s_old);
+            JSONObject jsonTempO = jsonArrayO.getJSONObject(0);
+            String mValueO = (jsonTempO.get("mValueO")+"").trim();
+            String nValueO = (jsonTempO.get("nValueO")+"").trim();
+            String pValueO = (jsonTempO.get("pValueO")+"").trim();
+            String aValueO = (jsonTempO.get("aValueO")+"").trim();
+            String bValueO = (jsonTempO.get("bValueO")+"").trim();
+            String mAngleO = (jsonTempO.get("mAngleO")+"").trim();
+            String nAngleO = (jsonTempO.get("nAngleO")+"").trim();
+            String pAngleO = (jsonTempO.get("pAngleO")+"").trim();
+            String suffixO = (jsonTempO.get("suffixO")+"").trim();
+            int oldpanelMatchRulesId = matchRulesService.addOldpanelMatchRules(productFormatId,oldpanelFormatId,priority,isCompleteMatch
+                    ,mValueP,nValueP,pValueP,aValueP,bValueP,mAngleP,nAngleP,pAngleP,suffixP
+                    ,mValueO,nValueO,pValueO,aValueO,bValueO,mAngleO,nAngleO,pAngleO,suffixO);
+            String sql_addLog = "insert into oldpanel_match_ruleslog (oldpanelMatchRulesId,type,time,userId) values (?,?,?,?)";
+            boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLog,String.valueOf(oldpanelMatchRulesId)
+                    ,"0",simpleDateFormat.format(date),userId);
+            if(!is_log_right)
+                return false;
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
 
 
 
-
+//[{"mValueP":">200&<400","nValueP":"<=150","pValueP":"","aValueP":">150","bValueP":"","mAngleP":"1","nAngleP":"0","pAngleP":"","suffixP":"#LA","id":"extModel254-1"}]
+//[{"mValueO":"20&100","nValueO":"10&50","pValueO":"","aValueO":"0&0","bValueO":"0&0","mAngleO":"2","nAngleO":"0","pAngleO":"","suffixO":"#LA","id":"extModel254-1"}]
 }

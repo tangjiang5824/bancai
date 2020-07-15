@@ -209,6 +209,11 @@ public class test02 {
 //        System.out.println(ss.substring(2));
 //        System.out.println(ss.split("%")[0].split("-").length);
 
+//        DataList list = queryService.query("select * from oldpanel_info where id=15");
+//        int a = 0;
+//        if(list.get(0).get("pValue")!=null)
+//            a = Integer.parseInt(list.get(0).get("pValue").toString());
+//        System.out.println(a);
     }
 
     private String IgnoreSuffix(String a){

@@ -32,12 +32,142 @@ public class MatchRulesService extends BaseService {
      * 添加旧板匹配规则
      * */
     @Transactional
-    public int addOldpanelMatchRules(String pCon1,String pCon2,String pCon3,String pCon4, String productFormatId,
-                                        String oRan1,String oRan2,String oRan3,String oRan4, String oldpanelFormatId,
-                                        String priority, String isCompleteMatch) {
+    public int addOldpanelMatchRules(String productFormatId,String oldpanelFormatId,String priority,String isCompleteMatch
+            ,String mValueP,String nValueP,String pValueP,String aValueP,String bValueP,String mAngleP,String nAngleP,String pAngleP,String suffixP
+            ,String mValueO,String nValueO,String pValueO,String aValueO,String bValueO,String mAngleO,String nAngleO,String pAngleO,String suffixO) {
+        String productFormat = queryService.query("select * from product_format where id=?",productFormatId).get(0).get("productFormat").toString();
+        System.out.println(productFormat);
+        String oldpanelFormat = queryService.query("select * from oldpanel_format where id=?",oldpanelFormatId).get(0).get("oldpanelFormat").toString();
+        System.out.println(oldpanelFormat);
+        String[] pCon = new String[]{"","","",""};
+        String[] oRan = new String[]{"","","",""};
+        for (int i = 0; i < productFormat.length(); i++) {
+            switch (productFormat.charAt(i)){
+                case '0':
+                case '1':
+                    break;
+                case '2':
+                    if((mValueP!=null)&&(!mValueP.equals("")))
+                        pCon[i]=pCon[i]+mValueP;
+                    break;
+                case '3':
+                    if((nValueP!=null)&&(!nValueP.equals("")))
+                        pCon[i]=pCon[i]+nValueP;
+                    break;
+                case '4':
+                case '9':
+                    if((aValueP!=null)&&(!aValueP.equals("")))
+                        pCon[i]=pCon[i]+aValueP;
+                    pCon[i] = pCon[i]+"%";
+                    if((bValueP!=null)&&(!bValueP.equals("")))
+                        pCon[i]=pCon[i]+bValueP;
+                    break;
+                case '5':
+                    if((bValueP!=null)&&(!bValueP.equals("")))
+                        pCon[i]=pCon[i]+bValueP;
+                    pCon[i] = pCon[i]+"%";
+                    if((aValueP!=null)&&(!aValueP.equals("")))
+                        pCon[i]=pCon[i]+aValueP;
+                case '6':
+                    if((mValueP!=null)&&(!mValueP.equals("")))
+                        pCon[i]=pCon[i]+mValueP;
+                    if((mAngleP!=null)&&(!mAngleP.equals("")))
+                        pCon[i]=pCon[i]+"#"+mAngleP;
+                    pCon[i] = pCon[i]+"%";
+                    if((nValueP!=null)&&(!nValueP.equals("")))
+                        pCon[i]=pCon[i]+nValueP;
+                    if((nAngleP!=null)&&(!nAngleP.equals("")))
+                        pCon[i]=pCon[i]+"#"+nAngleP;
+                    break;
+                case '8':
+                    if((mValueP!=null)&&(!mValueP.equals("")))
+                        pCon[i]=pCon[i]+mValueP;
+                    if((mAngleP!=null)&&(!mAngleP.equals("")))
+                        pCon[i]=pCon[i]+"#"+mAngleP;
+                    pCon[i] = pCon[i]+"%";
+                    if((nValueP!=null)&&(!nValueP.equals("")))
+                        pCon[i]=pCon[i]+nValueP;
+                    if((nAngleP!=null)&&(!nAngleP.equals("")))
+                        pCon[i]=pCon[i]+"#"+nAngleP;
+                    pCon[i] = pCon[i]+"%";
+                    if((pValueP!=null)&&(!pValueP.equals("")))
+                        pCon[i]=pCon[i]+pValueP;
+                    if((pAngleP!=null)&&(!pAngleP.equals("")))
+                        pCon[i]=pCon[i]+"#"+pAngleP;
+                    break;
+                case '7':
+                    if((suffixP!=null)&&(!suffixP.equals("")))
+                        pCon[i]=pCon[i]+suffixP;
+                    break;
+                default:
+                    break;
+            }
+        }
+        for (int i = 0; i < oldpanelFormat.length(); i++) {
+            switch (oldpanelFormat.charAt(i)){
+                case '0':
+                case '1':
+                    break;
+                case '2':
+                    if((mValueO!=null)&&(!mValueO.equals("")))
+                        oRan[i]=oRan[i]+mValueO;
+                    break;
+                case '3':
+                    if((nValueO!=null)&&(!nValueO.equals("")))
+                        oRan[i]=oRan[i]+nValueO;
+                    break;
+                case '4':
+                case '9':
+                    if((aValueO!=null)&&(!aValueO.equals("")))
+                        oRan[i]=oRan[i]+aValueO;
+                    oRan[i] = oRan[i]+"%";
+                    if((bValueO!=null)&&(!bValueO.equals("")))
+                        oRan[i]=oRan[i]+bValueO;
+                    break;
+                case '5':
+                    if((bValueO!=null)&&(!bValueO.equals("")))
+                        oRan[i]=oRan[i]+bValueO;
+                    oRan[i] = oRan[i]+"%";
+                    if((aValueO!=null)&&(!aValueO.equals("")))
+                        oRan[i]=oRan[i]+aValueO;
+                case '6':
+                    if((mValueO!=null)&&(!mValueO.equals("")))
+                        oRan[i]=oRan[i]+mValueO;
+                    if((mAngleO!=null)&&(!mAngleO.equals("")))
+                        oRan[i]=oRan[i]+"#"+mAngleO;
+                    oRan[i] = oRan[i]+"%";
+                    if((nValueO!=null)&&(!nValueO.equals("")))
+                        oRan[i]=oRan[i]+nValueO;
+                    if((nAngleO!=null)&&(!nAngleO.equals("")))
+                        oRan[i]=oRan[i]+"#"+nAngleO;
+                    break;
+                case '8':
+                    if((mValueO!=null)&&(!mValueO.equals("")))
+                        oRan[i]=oRan[i]+mValueO;
+                    if((mAngleO!=null)&&(!mAngleO.equals("")))
+                        oRan[i]=oRan[i]+"#"+mAngleO;
+                    oRan[i] = oRan[i]+"%";
+                    if((nValueO!=null)&&(!nValueO.equals("")))
+                        oRan[i]=oRan[i]+nValueO;
+                    if((nAngleO!=null)&&(!nAngleO.equals("")))
+                        oRan[i]=oRan[i]+"#"+nAngleO;
+                    oRan[i] = oRan[i]+"%";
+                    if((pValueO!=null)&&(!pValueO.equals("")))
+                        oRan[i]=oRan[i]+pValueO;
+                    if((pAngleO!=null)&&(!pAngleO.equals("")))
+                        oRan[i]=oRan[i]+"#"+pAngleO;
+                    break;
+                case '7':
+                    if((suffixO!=null)&&(!suffixO.equals("")))
+                        oRan[i]=oRan[i]+suffixO;
+                    break;
+                default:
+                    break;
+            }
+        }
         return insertProjectService.insertDataToTable("insert into oldpanel_match_rules (productFormatId,oldpanelFormatId," +
                 "pCon1,pCon2,pCon3,pCon4,oRan1,oRan2,oRan3,oRan4,priority,isCompleteMatch,isValid) values (?,?,?,?,?,?,?,?,?,?,?,?,?)"
-                ,productFormatId,oldpanelFormatId,pCon1,pCon2,pCon3,pCon4,oRan1,oRan2,oRan3,oRan4,priority,isCompleteMatch,"1");
+                ,productFormatId,oldpanelFormatId,pCon[0],pCon[1],pCon[2],pCon[3],oRan[0],oRan[1],oRan[2],oRan[3],priority,isCompleteMatch,"1");
     }
 
 
