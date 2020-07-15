@@ -355,12 +355,18 @@ Ext.define("menu.MenuRole_bc0", {
 							leaf : true
 						},
 						{
-						text : '查看旧版基础信息',
-						id : 'oldpanel.query_Ocatergory_baseInfo',
-						leaf : true
-					},{
 							text : '添加旧板匹配规则',
 							id : 'oldpanel.add_oldpanel_rules',
+							leaf : true
+						},
+						{
+							text : '添加旧板格式',
+							id : 'oldpanel.oldpanel_Format_Input',
+							leaf : true
+						},
+						{
+							text : '查看旧版基础信息',
+							id : 'oldpanel.query_Ocatergory_baseInfo',
 							leaf : true
 						}
 					]

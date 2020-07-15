@@ -1,4 +1,4 @@
-Ext.define('oldpanel.oldpanel_Basic_Info_Input_copy', {
+Ext.define('oldpanel.oldpanel_Format_Input', {
     extend : 'Ext.panel.Panel',
     region : 'center',
     layout : "fit",
