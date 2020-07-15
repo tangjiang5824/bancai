@@ -7,7 +7,12 @@ Ext.define("menu.MenuRole_bc0", {
 	store : {
 		root : {
 			expanded : true,
-			children : [ {
+
+			children : [{
+				text : '仓库管理',
+				expanded : true,
+				children : [
+						{
 				text : '旧板管理',
 				expanded : true,
 				children : [
@@ -24,11 +29,13 @@ Ext.define("menu.MenuRole_bc0", {
 					text : '旧板批量入库',
 					id : 'oldpanel.old_Upload_Data',
 					leaf : true
-				} ,{
-					text : '旧板出库',
-					id : 'oldpanel.oldpanel_Outbound',
-					leaf : true
-				},{
+				} ,
+				// 	{
+				// 	text : '旧板出库',
+				// 	id : 'oldpanel.oldpanel_Outbound',
+				// 	leaf : true
+				// },
+					{
 					text : '旧板库存查询',
 					id : 'oldpanel.Old_Query_Data',
 					leaf : true
@@ -38,7 +45,7 @@ Ext.define("menu.MenuRole_bc0", {
 					leaf : true
 				}, {
 					text : '旧板出入库记录查询',
-					id : 'oldpanel.oldpanel_Query_Records',
+					id : 'oldpanel.oldpanel_Outbound',//'oldpanel.oldpanel_Query_Records',
 					leaf : true
 				}, {
 					text : '旧板出入库记录统计',
@@ -58,11 +65,12 @@ Ext.define("menu.MenuRole_bc0", {
 					text : '原材料入库',
 					id : 'material.material_Inbound',
 					leaf : true
-				} ,{
-					text : '原材料出库',
-					id : 'material.material_Outbound',
-					leaf : true
-				},
+				} ,
+				// 	{
+				// 	text : '原材料出库',
+				// 	id : 'material.material_Outbound',
+				// 	leaf : true
+				// },
 					{
 					text : '原材料批量入库',
 					id : 'material.material_Upload_Data',
@@ -78,7 +86,7 @@ Ext.define("menu.MenuRole_bc0", {
 					leaf : true
 				}, {
 					text : '原材料出入库记录查询',
-					id : 'material.material_Query_Records',
+					id : 'material.material_Outbound',//'material.material_Query_Records',
 					leaf : true
 				}, {
 					text : '原材料出入库记录统计',
@@ -186,7 +194,8 @@ Ext.define("menu.MenuRole_bc0", {
 					id : 'product.product_Statistics_Records',
 					leaf : true
 				}]
-			},
+			}
+		]},
 			// 	{
 			// 	text : '产品管理',
 			// 	expanded : true,
@@ -282,20 +291,21 @@ Ext.define("menu.MenuRole_bc0", {
 						leaf : true
 					}
 				]
-			},{
-				text : '财务管理',
-				expanded : true,
-				children : [ {
-					text : '成本查询',
-					id : 'finance.Query_cost',
-					leaf : true
-				} , {
-					text : '成本统计',
-					id : 'finance.statistics_cost',
-					leaf : true
-				} ,
-				]
 			},
+			// 	{
+			// 	text : '财务管理',
+			// 	expanded : true,
+			// 	children : [ {
+			// 		text : '成本查询',
+			// 		id : 'finance.Query_cost',
+			// 		leaf : true
+			// 	} , {
+			// 		text : '成本统计',
+			// 		id : 'finance.statistics_cost',
+			// 		leaf : true
+			// 	} ,
+			// 	]
+			// },
 				{
 				text : '基础信息管理',
 				expanded : true,

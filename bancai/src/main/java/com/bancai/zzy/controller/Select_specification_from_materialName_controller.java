@@ -251,10 +251,7 @@ public class Select_specification_from_materialName_controller {
 			thisLimit=Integer.parseInt(limit);
 			thisStart=(thisPage-1)*thisLimit;
 		}
-		//String tableName = "oldpanel_log";
-//		System.out.println(startWidth);
-//		System.out.println(endWidth);
-//
+
 		mysqlcondition c=new mysqlcondition();
 
 		if (null!=type&&type.length() != 0) {
@@ -564,13 +561,13 @@ public class Select_specification_from_materialName_controller {
 		if(tableName.contains("oldpanel"))
 		{
 			if (oldpanelType.length() != 0) {
-				c.and(new mysqlcondition("oldpanelType", "=", oldpanelType));
+				c.and(new mysqlcondition("oldpanelTypeName", "=", oldpanelType));
 			}
 		}
 		if(tableName.contains("product")||tableName.contains("process"))
 		{
 			if (productType.length() != 0) {
-				c.and(new mysqlcondition("productType", "=", productType));
+				c.and(new mysqlcondition("productTypeName", "=", productType));
 			}
 		}
 		if (warehouseName.length() != 0) {

@@ -93,7 +93,7 @@ Ext.define('product.product_Query_Records',{
                                 operator : Ext.getCmp('operator').getValue(),//获取操作员名
                                 startTime:Ext.getCmp('startTime').getValue(),
                                 endTime:Ext.getCmp('endTime').getValue(),
-                                type:0
+                                type:''
                             }
                         });
                     }
@@ -122,7 +122,7 @@ Ext.define('product.product_Query_Records',{
                     startTime:Ext.getCmp('startTime').getValue(),
                     endTime:Ext.getCmp('endTime').getValue(),
                     tableName:tableName,
-                    type:0
+                    type:''
                 }
             },
             listeners : {
@@ -134,7 +134,7 @@ Ext.define('product.product_Query_Records',{
                         startTime:Ext.getCmp('startTime').getValue(),
                         endTime:Ext.getCmp('endTime').getValue(),
                         tableName:tableName,
-                        type:0
+                        type:''
                         // projectId:Ext.getCmp('projectName').getValue(),
                     });
                 }
@@ -218,7 +218,7 @@ Ext.define('product.product_Query_Records',{
                                             params:{
                                                 operator:operator,  //回滚操作人
                                                 oldpanellogId:oldpanel_logId,
-                                                type:0,  //撤销出库1
+                                                type:'',  //撤销出库1
                                                 whichStore:whichStore,
                                             },
                                             success:function (response) {
