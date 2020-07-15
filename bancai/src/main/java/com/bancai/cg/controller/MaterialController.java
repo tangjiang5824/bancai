@@ -52,9 +52,21 @@ public class MaterialController {
     @RequestMapping(value = "/material/insertIntoMaterialType.do")
     @Transactional
     public boolean insertToMaterialType(String s) throws JSONException {
-        List<MaterialInfo> list =JSONArray.parseArray(s,MaterialInfo.class);
+        List<MaterialInfo_trans> list =JSONArray.parseArray(s,MaterialInfo_trans.class);
         for (int i = 0; i <list.size() ; i++) {
-            materialinfodao.save(list.get(i));
+            MaterialInfo_trans info_trans=list.get(i);
+            MaterialInfo info=new MaterialInfo();
+            info.setOrientation(info_trans.getOrientation());
+            info.setnValue(info_trans.getNValue());
+            info.setmValue(info_trans.getMValue());
+            info.setpValue(info_trans.getPValue());
+            info.setaValue(info_trans.getAValue());
+            info.setbValue(info_trans.getBValue());
+            info.setInventoryUnit(info_trans.getInventoryUnit());
+            info.setMaterialName(info_trans.getMaterialName());
+            info.setUnitWeight(info_trans.getUnitWeight());
+            info.setTypeId(materialTypedao.findById(info_trans.getTypeId()).orElse(null));
+            materialinfodao.save(info);
         }
         return true;
     }
