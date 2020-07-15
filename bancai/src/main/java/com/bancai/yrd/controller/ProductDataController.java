@@ -48,8 +48,16 @@ public class ProductDataController {
      * 新增产品品名格式
      * */
     @RequestMapping(value = "/product/addFormat.do")
-    public boolean productAddFormat(String productTypeId, String productFormat, HttpSession session) throws JSONException {
+    public boolean productAddFormat(String s, HttpSession session) throws JSONException {
         try {
+            JSONArray jsonArray = new JSONArray(s);
+            JSONObject jsonTemp = jsonArray.getJSONObject(0);
+            String productTypeId=jsonTemp.get("productTypeId")+"";
+            String format1=jsonTemp.get("format1")+"";
+            String format2=jsonTemp.get("format2")+"";
+            String format3=jsonTemp.get("format3")+"";
+            String format4=jsonTemp.get("format4")+"";
+            String productFormat = format1+format2+format3+format4;
             int formatId = productDataService.productAddNewFormat(productTypeId, productFormat);
             if (formatId == 0) {
                 return false;//已经存在

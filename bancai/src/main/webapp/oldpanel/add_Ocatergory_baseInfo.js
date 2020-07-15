@@ -32,6 +32,7 @@ Ext.define('oldpanel.add_Ocatergory_baseInfo', {
                     var data = [{
                         'oldpanelTypeName' : '',
                         'description' : '',
+                        'classificationId':'',
                     }];
                     //Ext.getCmp('addDataGrid')返回定义的对象
                     Ext.getCmp('addDataGrid').getStore().loadData(data,
@@ -93,12 +94,44 @@ Ext.define('oldpanel.add_Ocatergory_baseInfo', {
                 }
             }]
         });
+
+        var oldpanelTypeListStore = Ext.create('Ext.data.Store',{
+            fields : [ 'typeName'],
+            proxy : {
+                type : 'ajax',
+                url : '/material/findAllBytableName.do?tableName=classification',
+                reader : {
+                    type : 'json',
+                    rootProperty: 'classification',
+                },
+            },
+            autoLoad : true
+        });
+        var oldpanelTypeList=Ext.create('Ext.form.ComboBox',{
+            // fieldLabel : '原材料分类',
+            // labelWidth : 80,
+            // width : 230,
+            // margin: '0 10 0 40',
+            id :  'classificationId',
+            name : 'classificationId',
+            matchFieldWidth: true,
+            emptyText : "--请选择--",
+            displayField: 'classificationName',
+            forceSelection: true,
+            valueField: 'classificationId',
+            editable : false,
+            triggerAction: 'all',
+            selectOnFocus:true,
+            store: oldpanelTypeListStore,
+        });
+
+
         var grid = Ext.create("Ext.grid.Panel", {
             id : 'addDataGrid',
             dockedItems : [toolbar2],
             store : {
                 //fields: ['旧板名称', '长','类型','宽','数量','库存单位','仓库编号','存放位置','重量']
-                fields: ['oldpanelTypeName','description']
+                fields: ['oldpanelTypeName','description','classificationId']
             },
             columns : [
 
@@ -119,6 +152,21 @@ Ext.define('oldpanel.add_Ocatergory_baseInfo', {
                     editor : {// 文本字段
                         xtype : 'textfield',
                         allowBlank : false
+                    }
+                },{
+                    dataIndex : 'classificationId',
+                    name : '分类',
+                    text : '分类',
+                    flex :.6,
+                    //width : 110,
+                    editor:oldpanelTypeList,renderer:function(value, cellmeta, record){
+                        var index = oldpanelTypeListStore.find(oldpanelTypeList.valueField,value);
+                        var ehrRecord = oldpanelTypeListStore.getAt(index);
+                        var returnvalue = "";
+                        if (ehrRecord) {
+                            returnvalue = ehrRecord.get('classificationName');
+                        }
+                        return returnvalue;
                     }
                 }
             ],

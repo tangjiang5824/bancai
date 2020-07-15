@@ -47,8 +47,16 @@ public class Oldpanel_Data_Controller {
      * 新增旧板品名格式
      * */
     @RequestMapping(value = "/oldpanel/addFormat.do")
-    public boolean oldpanelAddFormat(String oldpanelTypeId, String oldpanelFormat, HttpSession session) throws JSONException {
+    public boolean oldpanelAddFormat(String s, HttpSession session) throws JSONException {
         try {
+            JSONArray jsonArray = new JSONArray(s);
+            JSONObject jsonTemp = jsonArray.getJSONObject(0);
+            String oldpanelTypeId=jsonTemp.get("oldpanelTypeId")+"";
+            String format1=jsonTemp.get("format1")+"";
+            String format2=jsonTemp.get("format2")+"";
+            String format3=jsonTemp.get("format3")+"";
+            String format4=jsonTemp.get("format4")+"";
+            String oldpanelFormat = format1+format2+format3+format4;
             int formatId = y_Upload_Data_Service.oldpanelAddNewFormat(oldpanelTypeId, oldpanelFormat);
             if (formatId == 0) {
                 return false;//已经存在
