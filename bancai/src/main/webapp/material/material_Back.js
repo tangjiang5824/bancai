@@ -163,24 +163,22 @@ Ext.define('material.material_Back', {
             valueField: 'id',
             editable : false,
             store: MaterialNameList,
-            listeners:{
-                //
-                select: function(combo, record, index) {
-                    var type = MaterialTypeList.rawValue;
-                    //选中后
-                    var select = record[0].data;
-                    console.log("select=========",select)
-                    var specification = select.specification;
-                    var width = select.width;
-                    var inventoryUnit = select.inventoryUnit;
-                    var description = select.description;
-
-                    //设置其他的值
-                    Ext.getCmp("specification").setValue(specification);//开始时间
-                    Ext.getCmp("width").setValue(width);//开始时间
-                    Ext.getCmp("stockUnit").setValue(inventoryUnit);//开始时间
-                }
-            }
+            // listeners:{
+            //     select: function(combo, record, index) {
+            //         var type = MaterialTypeList.rawValue;
+            //         //选中后
+            //         var select = record[0].data;
+            //         console.log("select=========",select)
+            //         var specification = select.specification;
+            //         var width = select.width;
+            //         var inventoryUnit = select.inventoryUnit;
+            //         var description = select.description;
+            //         //设置其他的值
+            //         Ext.getCmp("specification").setValue(specification);//开始时间
+            //         Ext.getCmp("width").setValue(width);//开始时间
+            //         Ext.getCmp("stockUnit").setValue(inventoryUnit);//开始时间
+            //     }
+            // }
 
         });
 
@@ -207,55 +205,56 @@ Ext.define('material.material_Back', {
             hiddenName:'warehouseName',
             matchFieldWidth: false,
             emptyText : "--请选择--",
-            displayField: 'warehousename',
+            displayField: 'warehouseName',
             valueField: 'id',
             // value:'101',
             editable : false,
             store: storeNameList,
-            listeners:{
-                select: function(combo, record, index) {
-                    var type = MaterialTypeList.rawValue;
-                    //console.log(MaterialTypeList.rawValue)//选择的值
-                    console.log(MaterialTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
-                    //选中后
-                    var select = record[0].data;
-                    var warehouseNo = select.warehouseNo;
-                    console.log(warehouseNo)
 
-                    //重新加载行选项
-                    var locationNameList_row = Ext.create('Ext.data.Store',{
-                        id:'locationNameList_row',
-                        fields : ['rowNum'],
-                        proxy : {
-                            type : 'ajax',
-                            url : 'material/findStorePosition.do?warehouseNo='+warehouseNo,
-                            reader : {
-                                type : 'json',
-                                rootProperty: 'rowNum',
-                            }
-                        },
-                        autoLoad : true
-                    });
-                    speificLocation_row.setStore(locationNameList_row);
-
-                    //重新加载列选项
-                    var locationNameList_col = Ext.create('Ext.data.Store',{
-                        id:'locationNameList_col',
-                        fields : [ 'columnNum'],
-                        proxy : {
-                            type : 'ajax',
-                            url : 'material/findStorePosition.do?warehouseNo='+warehouseNo,
-                            reader : {
-                                type : 'json',
-                                rootProperty: 'columnNum',
-                            }
-                        },
-                        autoLoad : true
-                    });
-                    speificLocation_col.setStore(locationNameList_col);
-
-                }
-            }
+            // listeners:{
+            //     select: function(combo, record, index) {
+            //         var type = MaterialTypeList.rawValue;
+            //         //console.log(MaterialTypeList.rawValue)//选择的值
+            //         console.log(MaterialTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
+            //         //选中后
+            //         var select = record[0].data;
+            //         var warehouseNo = select.warehouseNo;
+            //         console.log(warehouseNo)
+            //
+            //         //重新加载行选项
+            //         var locationNameList_row = Ext.create('Ext.data.Store',{
+            //             id:'locationNameList_row',
+            //             fields : ['rowNum'],
+            //             proxy : {
+            //                 type : 'ajax',
+            //                 url : 'material/findStorePosition.do?warehouseNo='+warehouseNo,
+            //                 reader : {
+            //                     type : 'json',
+            //                     rootProperty: 'rowNum',
+            //                 }
+            //             },
+            //             autoLoad : true
+            //         });
+            //         speificLocation_row.setStore(locationNameList_row);
+            //
+            //         //重新加载列选项
+            //         var locationNameList_col = Ext.create('Ext.data.Store',{
+            //             id:'locationNameList_col',
+            //             fields : [ 'columnNum'],
+            //             proxy : {
+            //                 type : 'ajax',
+            //                 url : 'material/findStorePosition.do?warehouseNo='+warehouseNo,
+            //                 reader : {
+            //                     type : 'json',
+            //                     rootProperty: 'columnNum',
+            //                 }
+            //             },
+            //             autoLoad : true
+            //         });
+            //         speificLocation_col.setStore(locationNameList_col);
+            //
+            //     }
+            // }
         });
 
         //仓库存放位置--行
@@ -394,31 +393,31 @@ Ext.define('material.material_Back', {
                                     blankText  : "退库人姓名不能为空"
                                 }
                         ]}]},
-                    {
-                        xtype: 'container',
-                        layout:'column',
-                        items:[{
-                            xtype: 'container',
-                            columnWidth:.6,
-                            layout: 'form',
-                            height:40,
-                            border:true,
-                            items:[{
-                                xtype: 'datefield',
-                                margin: '0 10 0 0',
-                                fieldLabel: '退库时间',
-                                id: 'backTime',
-                                labelWidth : 60,
-                                width : 180,
-                                height:80,
-                                name: 'backTime',
-                                value: "",
-                                format : 'Y-m-d',
-                                editable : false,
-                                matchFieldWidth: true,
-                                style:"margin-top:50px;",
-                            }
-                            ]}]},
+                    // {
+                    //     xtype: 'container',
+                    //     layout:'column',
+                    //     items:[{
+                    //         xtype: 'container',
+                    //         columnWidth:.6,
+                    //         layout: 'form',
+                    //         height:40,
+                    //         border:true,
+                    //         items:[{
+                    //             xtype: 'datefield',
+                    //             margin: '0 10 0 0',
+                    //             fieldLabel: '退库时间',
+                    //             id: 'backTime',
+                    //             labelWidth : 60,
+                    //             width : 180,
+                    //             height:80,
+                    //             name: 'backTime',
+                    //             value: "",
+                    //             format : 'Y-m-d',
+                    //             editable : false,
+                    //             matchFieldWidth: true,
+                    //             style:"margin-top:50px;",
+                    //         }
+                    //         ]}]},
 
                     ]
             }, {
@@ -461,37 +460,37 @@ Ext.define('material.material_Back', {
                     projectList,
                     buildingName,
                     MaterialTypeList,
-                    {
-                        xtype: 'textfield',
-                        margin: '0 10 0 40',
-                        fieldLabel: '规格',
-                        id: 'specification',
-                        width: 140,
-                        labelWidth: 30,
-                        name: 'specification',
-                        value: "",
-                        allowBlank:false,
-                    },
-                    {
-                        xtype: 'textfield',
-                        margin: '0 10 0 40',
-                        fieldLabel: '宽',
-                        id: 'width',
-                        labelWidth : 50,
-                        width : 180,
-                        name: 'width',
-                        value: "",
-                    },
-                    {
-                        xtype: 'textfield',
-                        // margin: '0 10 0 0',
-                        fieldLabel: ' 库存单位',
-                        id: 'stockUnit',
-                        width: 230,
-                        labelWidth: 70,
-                        name: 'stockUnit',
-                        value: "",
-                    },
+                    // {
+                    //     xtype: 'textfield',
+                    //     margin: '0 10 0 40',
+                    //     fieldLabel: '规格',
+                    //     id: 'specification',
+                    //     width: 140,
+                    //     labelWidth: 30,
+                    //     name: 'specification',
+                    //     value: "",
+                    //     allowBlank:false,
+                    // },
+                    // {
+                    //     xtype: 'textfield',
+                    //     margin: '0 10 0 40',
+                    //     fieldLabel: '宽',
+                    //     id: 'width',
+                    //     labelWidth : 50,
+                    //     width : 180,
+                    //     name: 'width',
+                    //     value: "",
+                    // },
+                    // {
+                    //     xtype: 'textfield',
+                    //     // margin: '0 10 0 0',
+                    //     fieldLabel: ' 库存单位',
+                    //     id: 'stockUnit',
+                    //     width: 230,
+                    //     labelWidth: 70,
+                    //     name: 'stockUnit',
+                    //     value: "",
+                    // },
                     // {
                     //     xtype: 'textfield',
                     //     margin: '0 10 0 40',
