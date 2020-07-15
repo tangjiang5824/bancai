@@ -61,7 +61,7 @@ public class MaterialController {
 
     @RequestMapping(value = "/material/findmaterialinfobycondition.do")
     @Transactional
-    public String findMaterialInfo(String materialName,Integer width,String specification,Double unitWeight,String inventoryUnit,String page,String start,String limit){
+    public String findMaterialInfo(String materialName,String specification,Double unitWeight,String inventoryUnit,String page,String start,String limit){
 
         Specification<MaterialInfo> spec = new Specification<MaterialInfo>() {
             @Override
@@ -69,8 +69,8 @@ public class MaterialController {
                  List<Predicate> condition=new ArrayList<>();
                 if(materialName!=null&&materialName.trim().length()!=0)
                     condition.add(criteriaBuilder.equal(root.get("materialName").as(String.class),materialName));
-                if(width!=null)
-                    condition.add(criteriaBuilder.equal(root.get("width").as(Integer.class),width));
+//                if(width!=null)
+//                    condition.add(criteriaBuilder.equal(root.get("width").as(Integer.class),width));
                 if(unitWeight!=null)
                     condition.add(criteriaBuilder.equal(root.get("unitWeight").as(Double.class),unitWeight));
                 if(specification!=null&&specification.trim().length()!=0)
@@ -285,7 +285,7 @@ public class MaterialController {
     }
 
     @RequestMapping("/project/match/newPanel.do")
-    public boolean addNewPanelRule(Integer productId,Integer materialTypeId,String count, String m,String n, String a,String b, String p, String condition1, String condition2, String upWidth, String orientation){
+    public boolean addNewPanelRule(Integer productformatId,Integer materialTypeId,String count, String m,String n, String a,String b, String p, String condition1, String condition2, String upWidth, String orientation){
         NewpanelRules rule=new NewpanelRules();
         if(count.trim().length()==0) {
             count=null;
@@ -340,7 +340,7 @@ public class MaterialController {
         }else {
             JPAObjectUtil.removeSpace(orientation);
         }
-        rule.setProductId(productId);
+        rule.setProductformatId(productformatId);
         rule.setMaterialTypeId(materialTypedao.findById(materialTypeId).orElse(null));
         try {
             rule.setCount(Double.parseDouble(count));

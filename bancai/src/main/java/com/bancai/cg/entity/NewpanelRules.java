@@ -7,7 +7,7 @@ import java.util.Objects;
 @Table(name = "newpanel_rules")
 public class NewpanelRules {
     private Integer id;
-    private Integer productId;
+    private Integer productformatId;
     private MaterialType materialTypeId;
     private Double count;
     private String countValue;
@@ -23,6 +23,14 @@ public class NewpanelRules {
     private String condition2;
     private String upWidth;
     private String orientation;
+
+    public Integer getProductformatId() {
+        return productformatId;
+    }
+
+    public void setProductformatId(Integer productformatId) {
+        this.productformatId = productformatId;
+    }
 
     public String getOrientation() {
         return orientation;
@@ -60,14 +68,6 @@ public class NewpanelRules {
     }
 
 
-    @Column(name = "productId", nullable = true)
-    public Integer getProductId() {
-        return productId;
-    }
-
-    public void setProductId(Integer productId) {
-        this.productId = productId;
-    }
 
     @ManyToOne(targetEntity = MaterialType.class)
     @JoinColumn(name = "materialTypeId",referencedColumnName = "id")

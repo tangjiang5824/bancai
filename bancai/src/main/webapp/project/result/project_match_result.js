@@ -3,7 +3,23 @@ Ext.define('project.result.project_match_result',{
     region: 'center',
     layout:'fit',
     title: '项目总览',
+    autoLoad:{
+        scripts:true
+    },
     initComponent: function(){
+
+        //原件类型：枚举类型
+        Ext.define('product.model.originType', {
+            statics: { // 关键s
+                0: { value: '0', name: '未匹配' },
+                1: { value: '1', name: '退库成品' },
+                2: { value: '2', name: '预加工半产品' },
+                3: { value: '3', name: '旧板' },
+                4: { value: '4', name: '原材料新板' },
+                9: { value: '5', name: '未匹配成功' },
+            }
+        });
+
         /*
          * *合并单元格的函数，合并表格内所有连续的具有相同值的单元格。调用方法示例：
          * *store.on("load",function(){gridSpan(grid,"row","[FbillNumber],[FbillDate],[FAudit],[FAuditDate],[FSure],[FSureDate]","FbillNumber");});
@@ -272,8 +288,8 @@ Ext.define('project.result.project_match_result',{
                     handler: function(){
                         project_match_Store.load({
                             params : {
-                                projectId:'1',
-                                buildingId:'',
+                                projectId:Ext.getCmp("projectName").getValue(),
+                                buildingId:Ext.getCmp("buildingName").getValue(),
                             }
                         });
                     }
@@ -312,11 +328,11 @@ Ext.define('project.result.project_match_result',{
         //新板匹配结果
         var project_match_Store = Ext.create('Ext.data.Store',{
             id: 'project_match_Store',
-            autoLoad: true,
+            // autoLoad: true,
             fields: [],
             pageSize: itemsPerPage, // items per page
             proxy:{
-                url : "project/queryNewPanelMatchResult.do",//通用接口
+                url : "project/findProjectMatchResult.do",//通用接口
                 type: 'ajax',
                 reader:{
                     type : 'json',
@@ -326,15 +342,17 @@ Ext.define('project.result.project_match_result',{
                 params:{
                     start: 0,
                     limit: itemsPerPage,
-                    projectId:'1',
-                    buildingId:'',
+                    // projectId:'1',
+                    // buildingId:'',
                 }
             },
             listeners : {
                 beforeload : function(store, operation, eOpts) {
                     store.getProxy().setExtraParams({
-                        projectId:'1',
-                        buildingId:'',
+                        // projectId:'1',
+                        // buildingId:'',
+                        projectId:Ext.getCmp("projectName").getValue(),
+                        buildingId:Ext.getCmp("buildingName").getValue(),
                     });
                 }
             }
@@ -349,8 +367,30 @@ Ext.define('project.result.project_match_result',{
                 editable:true
             },
             columns : [
-                { text: '原件', dataIndex: 'madeBy', flex :1.2,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '使用数量', dataIndex: 'count', flex :1,editor:{xtype : 'textfield', allowBlank : false} },
+                { text: '原件', dataIndex: 'madeBy', flex :1.2,
+                    renderer: function (value) {
+                        return product.model.originType[value].name; // key-value
+                    },
+                },
+                { text: '使用数量', dataIndex: 'count', flex :1 },
+                {
+                    text : '匹配详细信息',
+                    flex :1 ,
+                    renderer:function(value, cellmeta){
+                        return "<INPUT type='button' value='查看' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
+                    }
+                    // header : "匹配详细信息",
+                    // dataIndex : "",
+                    // menuDisabled : true,
+                    // sortable : false,
+                    // width : 100,
+                    // renderer : function (value, cellmeta, record, rowIndex, columnIndex, store) {
+                    //     //获取物流单号
+                    //     var id= record.data["xxx"];
+                    //     console.log("record======",record)
+                    //     return "<div><a href='project/result/newpanel_material_match_result'>查看</a></div>"
+                    // }
+                },
             ],
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 3
@@ -384,6 +424,54 @@ Ext.define('project.result.project_match_result',{
                 }
             }
         });
+
+
+        //添加cell单击事件
+        grid.addListener('cellclick', cellclick);
+        function cellclick(grid, rowIndex, columnIndex, e) {
+            if (rowIndex < 0) {
+                return;
+            }
+            var fieldName = Ext.getCmp('material_Query_Data_Main').columns[columnIndex].text;
+            var sm = Ext.getCmp('material_Query_Data_Main').getSelectionModel();
+            console.log(" e.data===========", e.data.madeBy)
+            var madeBy = e.data.madeBy;
+            if (fieldName == "匹配详细信息") {
+
+                console.log(" 点击查看===========")
+                if(madeBy==3){
+                    console.log(" -----------  ")
+                    window.location = "project/result/newpanel_material_match_result.js"
+                    //旧板
+                    //     root :
+                    //         {text : '旧板入库', id : 'oldpanel.oldpanel_Inbound',}
+                        // {
+                        //     id : 'project.result.newpanel_material_match_result'
+                        // }
+                    }
+
+                //设置监听事件getSelectionModel().getSelection()
+                // var sm = Ext.getCmp('material_Query_Data_Main').getSelectionModel();
+                // var materialArr = sm.getSelection();
+                // var re = Ext.getCmp('material_Query_Data_Main').getSelectionModel();
+                // console.log("qqqqqqqqqqqq:",re.data);
+
+
+                // 根据出入库0/1，决定弹出框表格列名
+                // var col = specific_data_grid_outbound.columns[1];
+                // if (opType == 1) {
+                //     col.setText("出库数量");
+                // }
+                // if (opType == 2) {
+                //     col.setText("退库数量");
+                // } else {
+                //     col.setText("入库数量");
+                // }
+
+
+            }
+
+        }
 
         this.items = [grid];
         this.callParent(arguments);

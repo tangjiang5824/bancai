@@ -299,11 +299,15 @@ Ext.define('project.result.newpanel_material_match_result',{
                     margin: '0 0 0 15',
                     layout: 'right',
                     handler: function(){
+                        // var Id = Ext.getCmp("positionName").getValue();
+                        // var projectName = Ext.getCmp("projectName").rawValue;
+                        // console.log("Id-----------",Id)
+                        // console.log("projectName-----------",projectName)
                         newpanelMaterial_Store.load({
                             params : {
-                                projectId:'1',
-                                buildingId:'1',
-                                buildingpositionId:'1',
+                                projectId:Ext.getCmp("projectName").getValue(),
+                                buildingId:Ext.getCmp("buildingName").getValue(),
+                                buildingpositionId:Ext.getCmp("positionName").getValue(),
                             }
                         });
                     }
@@ -356,17 +360,17 @@ Ext.define('project.result.newpanel_material_match_result',{
                 params:{
                     start: 0,
                     limit: itemsPerPage,
-                    projectId:'1',
-                    buildingId:'1',
-                    buildingpositionId:'1',
+                    // projectId:'1',
+                    // buildingId:'1',
+                    // buildingpositionId:'1',
                 }
             },
             listeners : {
                 beforeload : function(store, operation, eOpts) {
                     store.getProxy().setExtraParams({
-                        projectId:'1',
-                        buildingId:'1',
-                        buildingpositionId:'1',
+                        projectId:Ext.getCmp("projectName").getValue(),
+                        buildingId:Ext.getCmp("buildingName").getValue(),
+                        buildingpositionId:Ext.getCmp("positionName").getValue(),
                     });
                 }
             }
@@ -426,18 +430,22 @@ Ext.define('project.result.newpanel_material_match_result',{
 
 
         var mergeCells = function(grid,cols){
-            console.log("test------------",document.getElementById(grid.getId()+"-body").firstChild.lastChild.getElementsByTagName('tr'))
             // var arrayTr=document.getElementById(grid.getId()+"-body").firstChild.firstChild.firstChild.getElementsByTagName('tr');
             var  arrayTr = document.getElementById(grid.getId()+"-body").firstChild.lastChild.getElementsByTagName('tr')
             var trCount = arrayTr.length;
             var arrayTd;
             var td;
 
+            console.log("arrayTr------------",arrayTr)
+            console.log("trCount------------",trCount)
+
             //定义合并函数
             var merge = function(rowspanObj,removeObjs){
                 if(rowspanObj.rowspan != 1){
                     arrayTd =arrayTr[rowspanObj.tr].getElementsByTagName("td"); //合并行
+
                     td=arrayTd[rowspanObj.td-1];
+                    console.log("td------------",td)
                     td.rowSpan=rowspanObj.rowspan;
                     td.vAlign="middle";
                     Ext.each(removeObjs,function(obj){ //隐身被合并的单元格
