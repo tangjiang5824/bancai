@@ -77,7 +77,7 @@ public class MaterialController {
 
     @RequestMapping(value = "/material/findmaterialinfobycondition.do")
     @Transactional
-    public String findMaterialInfo(String materialName,String specification,Double unitWeight,String inventoryUnit,String page,String start,String limit){
+    public String findMaterialInfo(String materialName,Integer typeId,Double unitWeight,String inventoryUnit,String page,String start,String limit){
 
         Specification<MaterialInfo> spec = new Specification<MaterialInfo>() {
             @Override
@@ -87,10 +87,12 @@ public class MaterialController {
                     condition.add(criteriaBuilder.equal(root.get("materialName").as(String.class),materialName));
 //                if(width!=null)
 //                    condition.add(criteriaBuilder.equal(root.get("width").as(Integer.class),width));
+                if(typeId!=null){
+                    condition.add(criteriaBuilder.equal(root.join("typeId").get("id"),typeId));
+                }
                 if(unitWeight!=null)
                     condition.add(criteriaBuilder.equal(root.get("unitWeight").as(Double.class),unitWeight));
-                if(specification!=null&&specification.trim().length()!=0)
-                    condition.add(criteriaBuilder.equal(root.get("specification").as(String.class),specification));
+
                 if(inventoryUnit!=null&&inventoryUnit.trim().length()!=0)
                     condition.add(criteriaBuilder.equal(root.get("inventoryUnit").as(String.class),inventoryUnit));
                 return criteriaBuilder.and(condition.toArray(new Predicate[condition.size()]));
@@ -101,7 +103,16 @@ public class MaterialController {
         Page<MaterialInfo> page1=materialinfodao.findAll(spec,pageable);
         List<MaterialInfo> list= page1.getContent();
     //    JSONArray array=new JSONArray(Arrays.asList(list));
-        return JPAObjectUtil.transListForString(list,"material_info");
+        List<Map> rlist=new ArrayList<>();
+        for (int i=0;i<list.size();i++){
+            Map<String,Object> map=JSONObject.parseObject(JSONObject.toJSONString(list.get(i)), HashMap.class);
+            map.put("typeName",list.get(i).getTypeId().getTypeName());
+            rlist.add(map);
+        }
+        JSONObject object=new JSONObject();
+        object.put("totalCount",list.size());
+        object.put("material_info",rlist);
+        return object.toJSONString();
     }
 
     /*
