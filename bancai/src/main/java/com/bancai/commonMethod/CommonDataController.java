@@ -45,14 +45,30 @@ public class CommonDataController {
 
 
     /*修改数据*/
-
+    //Status 0 2 删除
     @RequestMapping(value = "/data/EditCellById.do")
-    public boolean EditDataById(String tableName,String field , String value,String id){
-
-        String sql = "update "+tableName+" set "+field +"="+value +" where id ="+id;
-        int i = jo.update(sql);
-        if(i == 0){
-            return false;
+    public boolean EditDataById(String tableName,String field , String value,String id,String type){
+       String sql;
+        if(type.equals("delete")){
+            sql="delete from "+ tableName +" where  id= ?";
+            int i = jo.update(sql,id);
+            if(i == 0){
+                return false;
+            }
+        }else {
+            if(id.matches("^[1-9][0-9]*")){
+                sql = "update "+tableName+" set "+field +"= ? where id =?";
+                int i = jo.update(sql,value,id);
+                if(i == 0){
+                    return false;
+                }
+            }else {
+                sql="insert into "+tableName+"("+field +") values (?) ";
+                int i = jo.update(sql,value);
+                if(i == 0){
+                    return false;
+                }
+            }
         }
         return true;
     }
