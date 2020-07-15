@@ -150,49 +150,7 @@ public class Select_specification_from_materialName_controller {
 		return wr;
 	}
 
-	/*
-	 * 返回项目整体匹配结果
-	 * */
-	@RequestMapping(value="/project/findProjectMatchResult.do")
-	public WebResponse findProjectMatchResult(String start, String limit,String page) throws ParseException {
-		//log.debug(startWidth+" "+endWidth);
-		String tableName = "designlist";
-		int thisPage=1;
-		int thisStart=0;
-		int thisLimit=25;
-		if(null==page||page.equals("")){
-			thisPage=1;
-		}else {
-			thisPage=Integer.parseInt(page);
-		}
-		if(null==start||start.equals("")||null==limit||limit.equals("")){
-			thisStart=0;
-			thisLimit=25;
-		}else {
-			thisLimit=Integer.parseInt(limit);
-			thisStart=(thisPage-1)*thisLimit;
-		}
-		//String tableName = "oldpanel_log";
-//		System.out.println(startWidth);
-//		System.out.println(endWidth);
-//
-		mysqlcondition c=new mysqlcondition();
 
-//		if (null!=type&&type.length() != 0) {
-//			c.and(new mysqlcondition("type", "=", type));
-//		}
-//		if (null!=startTime&&startTime.length() != 0) {
-//			c.and(new mysqlcondition("time", ">=", startTime));
-//		}
-//		if (null!=endTime&&endTime.length() != 0) {
-//			c.and(new mysqlcondition("time", "<=", endTime));
-//		}
-//		if (null!=operator&&operator.length() != 0) {
-//			c.and(new mysqlcondition("operator", "=", operator));
-//		}
-		WebResponse wr=queryAllService.queryDataPage(thisStart, thisLimit, c, tableName);
-		return wr;
-	}
 
 //	/*
 //	 * 查询出入库记录
@@ -520,6 +478,37 @@ public class Select_specification_from_materialName_controller {
 			c.and(new mysqlcondition("financeLeader", "=", pickTime));
 		}
 		WebResponse wr=queryAllService.queryDataPage(start, limit, c, tableName);
+		return wr;
+	}
+	/*
+	 * 返回项目整体匹配结果
+	 * */
+	@RequestMapping(value="/project/findProjectMatchResult.do")
+	public WebResponse findProjectMatchResult(String start, String limit,String page,String projectId,String buildingId) throws ParseException {
+		String tableName = "projectMatchResult";
+		int thisPage=1;
+		int thisStart=0;
+		int thisLimit=25;
+		if(null==page||page.equals("")){
+			thisPage=1;
+		}else {
+			thisPage=Integer.parseInt(page);
+		}
+		if(null==start||start.equals("")||null==limit||limit.equals("")){
+			thisStart=0;
+			thisLimit=25;
+		}else {
+			thisLimit=Integer.parseInt(limit);
+			thisStart=(thisPage-1)*thisLimit;
+		}
+		mysqlcondition c=new mysqlcondition();
+		if (projectId.length() != 0) {
+			c.and(new mysqlcondition("projectId", "=", projectId));
+		}
+		if (buildingId.length() != 0) {
+			c.and(new mysqlcondition("buildingId", "=", buildingId));
+		}
+		WebResponse wr=queryAllService.queryDataPage(thisStart, thisLimit, c, tableName);
 		return wr;
 	}
 	//查询旧板匹配结果

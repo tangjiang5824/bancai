@@ -38,18 +38,18 @@ public class new_panel_match {
         for (int i=0;i<design_list.size();i++){
             Designlist designlist=design_list.get(i);
             ProductInfo productInfo = productInfodao.findById(designlist.getProductId()).orElse(null);
-            List<NewpanelRules> rules=newpanelrulesdao.findAllByProductId(productInfo.getId());
-            String type=productInfo.getProductType().getClassification().getClassificationName();
+            List<NewpanelRules> rules=newpanelrulesdao.findAllByProductformatId(productInfo.getProductFormatId().getId());
+            String type=productInfo.getProductFormatId().getProducttype().getClassification().getClassificationName();
             List<List<Object>> list = JPAObjectUtil.NewPanelMatch(productInfo, type, rules);
             for (int j=0;j<list.size();j++){
                 MaterialInfo info=(MaterialInfo) list.get(j).get(0);
                 mysqlcondition condition=new mysqlcondition();
                 if(info.getTypeId()!=null) condition.and(new mysqlcondition("typeId","=",info.getTypeId().getId()));
-                if(info.getnValue()!=null) condition.and(new mysqlcondition("nValue","=",info.getnValue()));
-                if(info.getmValue()!=null) condition.and(new mysqlcondition("mValue","=",info.getmValue()));
-                if(info.getpValue()!=null) condition.and(new mysqlcondition("pValue","=",info.getpValue()));
-                if(info.getaValue()!=null) condition.and(new mysqlcondition("aValue","=",info.getaValue()));
-                if(info.getbValue()!=null) condition.and(new mysqlcondition("bValue","=",info.getbValue()));
+                if(info.getnValue()!=null&&info.getnValue()!=0) condition.and(new mysqlcondition("nValue","=",info.getnValue()));
+                if(info.getmValue()!=null&&info.getmValue()!=0) condition.and(new mysqlcondition("mValue","=",info.getmValue()));
+                if(info.getpValue()!=null&&info.getpValue()!=0) condition.and(new mysqlcondition("pValue","=",info.getpValue()));
+                if(info.getaValue()!=null&&info.getaValue()!=0) condition.and(new mysqlcondition("aValue","=",info.getaValue()));
+                if(info.getbValue()!=null&&info.getbValue()!=0) condition.and(new mysqlcondition("bValue","=",info.getbValue()));
                 if(info.getOrientation()!=null) condition.and(new mysqlcondition("orientation","=",info.getOrientation()));
                 DataList dataList=insertProjectService.findObjectId("material_info",condition);
                 if(dataList.size()==0) {
@@ -71,6 +71,8 @@ public class new_panel_match {
 
     @RequestMapping("/material/cg/test")
     public void test() throws ScriptException {
-        match();
+       // match();
+        String sql="insert into preprocess_store (productId,totalArea) values(?,?)";
+        insertProjectService.insertIntoTableBySQL(sql,"1",null);
     }
 }

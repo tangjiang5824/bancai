@@ -30,8 +30,16 @@ Ext.define('material.add_Mcatergory_baseInfo', {
                 handler : function() {
                     //fields: ['品号', '品名','规格','库存单位','仓库编号','数量','成本','存放位置']
                     var data = [{
+                        'materialName':'',
+                        'typeId':'',
+                        'aValue':'',
+                        'bValue':'',
+                        'mValue':'',
+                        'nValue':'',
+                        'pValue':'',
+                        'orientation':'',
+                        'inventoryUnit':'',
                         'description' : '',
-                        'materialTypeName' : '',
 
                     }];
                     //Ext.getCmp('addDataGrid')返回定义的对象
@@ -100,6 +108,37 @@ Ext.define('material.add_Mcatergory_baseInfo', {
                 }
             }]
         });
+
+        var materialTypeListStore = Ext.create('Ext.data.Store',{
+            fields : [ 'typeName'],
+            proxy : {
+                type : 'ajax',
+                url : '/material/findAllBytableName.do?tableName=material_type',
+                reader : {
+                    type : 'json',
+                    rootProperty: 'material_type',
+                },
+            },
+            autoLoad : true
+        });
+        var materialTypeList=Ext.create('Ext.form.ComboBox',{
+            // fieldLabel : '原材料分类',
+            // labelWidth : 80,
+            // width : 230,
+            // margin: '0 10 0 40',
+            id :  'typeId',
+            name : 'typeId',
+            matchFieldWidth: true,
+            emptyText : "--请选择--",
+            displayField: 'typeName',
+            forceSelection: true,
+            valueField: 'id',
+            editable : false,
+            triggerAction: 'all',
+            selectOnFocus:true,
+            store: materialTypeListStore,
+        });
+
         var grid = Ext.create("Ext.grid.Panel", {
             id : 'addDataGrid',
             dockedItems : [toolbar2],
@@ -113,61 +152,89 @@ Ext.define('material.add_Mcatergory_baseInfo', {
                     name : '原材料品名',
                     text : '原材料品名',
                     //width : 110,
+                    flex :1,
                     editor : {// 文本字段
                         xtype : 'textfield',
                         allowBlank : false,
                     }
                 },
+                // {
+                //     dataIndex : 'width',
+                //     name : '宽',
+                //     text : '宽',
+                //     //width : 110,
+                //     editor : {// 文本字段
+                //         xtype : 'textfield',
+                //         allowBlank : false
+                //     }
+                // },
+                // {
+                //     dataIndex : 'specification',
+                //     name : '规格',
+                //     text : '规格/m',
+                //     //width : 110,
+                //     editor : {// 文本字段
+                //         xtype : 'textfield',
+                //         allowBlank : false,
+                //     }
+                // },
+                // {
+                //     dataIndex : 'unitWeight',
+                //     name : '单重',
+                //     text : '单重',
+                //     //width : 110,
+                //     editor : {// 文本字段
+                //         xtype : 'textfield',
+                //         allowBlank : false,
+                //     }
+                // },
+                // {
+                //     dataIndex : 'inventoryUnit',
+                //     name : '库存单位',
+                //     text : '库存单位',
+                //     //width : 110,
+                //     editor : {// 文本字段
+                //         xtype : 'textfield',
+                //         allowBlank : false,
+                //     }
+                // },
+                // {
+                //     dataIndex : 'description',
+                //     name : '描述',
+                //     text : '描述',
+                //     //width : 110,
+                //     editor : {// 文本字段
+                //         xtype : 'textfield',
+                //         allowBlank : false,
+                //     }
+                // },
+
                 {
-                    dataIndex : 'width',
-                    name : '宽',
-                    text : '宽',
-                    //width : 110,
-                    editor : {// 文本字段
-                        xtype : 'textfield',
-                        allowBlank : false
+                    dataIndex : 'typeId',
+                    text : '原材料类型',
+                    flex :.6,
+                    editor:materialTypeList,renderer:function(value, cellmeta, record){
+                        var index = materialTypeListStore.find(materialTypeList.valueField,value);
+                        var ehrRecord = materialTypeListStore.getAt(index);
+                        var returnvalue = "";
+                        if (ehrRecord) {
+                            returnvalue = ehrRecord.get('typeName');
+                        }
+                        return returnvalue;
                     }
+
                 },
-                {
-                    dataIndex : 'specification',
-                    name : '规格',
-                    text : '规格/m',
-                    //width : 110,
-                    editor : {// 文本字段
-                        xtype : 'textfield',
-                        allowBlank : false,
-                    }
-                },
-                {
-                    dataIndex : 'unitWeight',
-                    name : '单重',
-                    text : '单重',
-                    //width : 110,
-                    editor : {// 文本字段
-                        xtype : 'textfield',
-                        allowBlank : false,
-                    }
-                },
-                {
-                    dataIndex : 'inventoryUnit',
-                    name : '库存单位',
-                    text : '库存单位',
-                    //width : 110,
-                    editor : {// 文本字段
-                        xtype : 'textfield',
-                        allowBlank : false,
-                    }
-                },
-                {
-                    dataIndex : 'description',
-                    name : '描述',
-                    text : '描述',
-                    //width : 110,
-                    editor : {// 文本字段
-                        xtype : 'textfield',
-                        allowBlank : false,
-                    }
-                },
+                // {dataIndex : 'unitArea', text : '单面积', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                // {dataIndex : 'unitWeight', text : '单重', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                //{dataIndex : 'warehouseName', text : '仓库名称', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'aValue', text : 'a值', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'bValue', text : 'b值', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'mValue', text : 'm值', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'nValue', text : 'n值', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'pValue', text : 'p值', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'orientation', text : '方向', flex :.6, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'inventoryUnit', text : '库存单位', flex :.6, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'description', text : '备注', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
             ],
             viewConfig : {
                 plugins : {

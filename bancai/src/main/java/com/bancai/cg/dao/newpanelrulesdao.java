@@ -7,5 +7,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import java.util.List;
 
 public interface newpanelrulesdao extends JpaRepository<NewpanelRules,Integer>, JpaSpecificationExecutor<NewpanelRules> {
-    public List<NewpanelRules> findAllByProductId(int productId);
+    public List<NewpanelRules> findAllByProductformatId(int productformatId);
+
+   // public List<NewpanelRules> findAllBy
 }

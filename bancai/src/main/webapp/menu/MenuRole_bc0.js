@@ -252,32 +252,36 @@ Ext.define("menu.MenuRole_bc0", {
 						id : 'project.result.newpanel_material_match_result',//project.import_planList
 						leaf : true
 					} ,
+				// 	{
+				// 		text : '生产材料单查询',
+				// 		id : 'project.product_produce_list',//project.import_planList
+				// 		leaf : true
+				// 	} ,
+				// 	{
+				// 	text : '项目旧板材料清单',
+				// 	id : 'project.oldpanel_material_list',
+				// 	leaf : true
+				// } , {
+				// 	text : '项目新板材料清单',
+				// 	id : 'project.newpanel_material_list',
+				// 	leaf : true
+				// } , {
+				// 	text : '项目生产材料单',
+				// 	id : 'project.project_plan_list',
+				// 	leaf : true
+				// },
 					{
-						text : '生产材料单查询',
-						id : 'project.product_produce_list',//project.import_planList
+						text : '项目产品工单',
+						id : '',
 						leaf : true
-					} ,
+
+					},
 					{
-					text : '项目旧板材料清单',
-					id : 'project.oldpanel_material_list',
-					leaf : true
-				} , {
-					text : '项目新板材料清单',
-					id : 'project.newpanel_material_list',
-					leaf : true
-				} , {
-					text : '项目生产材料单',
-					id : 'project.project_plan_list',
-					leaf : true
-				}, {
-					text : '项目领料单',
-					id : 'project.project_material_picklist',
-					leaf : true
-				}, {
-					text : '项目产品工单',
-					id : '',
-					leaf : true
-				}]
+						text : '项目领料单',
+						id : 'project.project_material_picklist',
+						leaf : true
+					}
+				]
 			},{
 				text : '财务管理',
 				expanded : true,
