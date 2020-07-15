@@ -38,8 +38,8 @@ Ext.define('product.product_Query_Data',{
             name : 'storePosition',
             matchFieldWidth: false,
             emptyText : "--请选择--",
-            displayField: 'warehousename',
-            valueField: 'warehousename',
+            displayField: 'warehouseName',
+            valueField: 'warehouseName',
             editable : false,
             store: storeNameList,
         });
@@ -65,7 +65,7 @@ Ext.define('product.product_Query_Data',{
             matchFieldWidth: false,
             emptyText : "--请选择--",
             displayField: 'productTypeName',
-            valueField: 'id',
+            valueField: 'productTypeName',
             editable : false,
             store: productNameList,
             listeners:{
@@ -122,7 +122,7 @@ Ext.define('product.product_Query_Data',{
                                 minCount : Ext.getCmp('minCount').getValue(),
                                 maxCount : Ext.getCmp('maxCount').getValue(),
 
-                                productTypeId:Ext.getCmp('productType').getValue(),
+                                productType:Ext.getCmp('productType').getValue(),
 
                                 warehouseName:Ext.getCmp('storePosition').rawValue,
                                 tableName:tableName,
@@ -137,13 +137,13 @@ Ext.define('product.product_Query_Data',{
 
         //自动将读取到的数据返回到页面中
         var uploadRecordsStore = Ext.create('Ext.data.Store',{
-            id: 'uploadRecordsStore',
+            //id: 'uploadRecordsStore',
             autoLoad: true,
             fields: [],
             pageSize: itemsPerPage, // items per page
             proxy:{
                 //url:"hisExcelList.do",
-                url : "product/queryData.do",
+                url : "oldpanel/query_data.do",
                 type: 'ajax',
                 method:'POST',
                 reader:{
@@ -163,7 +163,7 @@ Ext.define('product.product_Query_Data',{
                         minCount : Ext.getCmp('minCount').getValue(),
                         maxCount : Ext.getCmp('maxCount').getValue(),
 
-                        productTypeId:Ext.getCmp('productType').getValue(),
+                        productType:Ext.getCmp('productType').getValue(),
 
                         warehouseName:Ext.getCmp('storePosition').rawValue,
                         tableName:tableName,
@@ -176,7 +176,7 @@ Ext.define('product.product_Query_Data',{
         });
 
         var grid = Ext.create('Ext.grid.Panel',{
-            id: 'uploadRecordsMain',
+            //id: 'uploadRecordsMain',
             store: uploadRecordsStore,
             viewConfig : {
                 enableTextSelection : true
@@ -184,7 +184,8 @@ Ext.define('product.product_Query_Data',{
             //readOnly:true,
             columns : [
 
-                {dataIndex : 'productName', text : '预加工半成品名称', flex :1, },
+                {dataIndex : 'productName', text : '产品名称', flex :2, },
+                {dataIndex : 'productTypeName', text : '产品类型', flex :1, },
                 //{dataIndex : 'classificationName', text : '分类', flex :1, },
                 {text: '分类', dataIndex: 'classificationId', flex :1,
                     //枚举，1：出库，0：入库
@@ -195,8 +196,8 @@ Ext.define('product.product_Query_Data',{
                 },
 
                 {dataIndex : 'inventoryUnit', text : '库存单位', flex :1, },
-                {dataIndex : 'countUse', text : '可用数量', flex :1, },
-                {dataIndex : 'countStore', text : '库存数量', flex :1, },
+                {dataIndex : 'count', text : '数量', flex :1, },
+                //{dataIndex : 'countStore', text : '库存数量', flex :1, },
                 {dataIndex : 'warehouseName', text : '仓库名称', flex :1, },
                 {dataIndex : 'unitArea', text : '单面积', flex :1,},
                 {dataIndex : 'unitWeight', text : '单重', flex :1,},

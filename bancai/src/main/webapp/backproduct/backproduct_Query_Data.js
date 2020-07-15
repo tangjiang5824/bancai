@@ -37,8 +37,8 @@ Ext.define('backproduct.backproduct_Query_Data',{
             name : 'storePosition',
             matchFieldWidth: false,
             emptyText : "--请选择--",
-            displayField: 'warehousename',
-            valueField: 'warehousename',
+            displayField: 'warehouseName',
+            valueField: 'warehouseName',
             editable : false,
             store: storeNameList,
         });
@@ -63,7 +63,7 @@ Ext.define('backproduct.backproduct_Query_Data',{
             matchFieldWidth: false,
             emptyText : "--请选择--",
             displayField: 'productTypeName',
-            valueField: 'id',
+            valueField: 'productTypeName',
             editable : false,
             store: productNameList,
             listeners:{
@@ -244,7 +244,7 @@ Ext.define('backproduct.backproduct_Query_Data',{
 
         //自动将读取到的数据返回到页面中
         var uploadRecordsStore = Ext.create('Ext.data.Store',{
-            id: 'uploadRecordsStore',
+            //id: 'uploadRecordsStore',
             autoLoad: true,
             fields: [],
             pageSize: itemsPerPage, // items per page
@@ -293,6 +293,7 @@ Ext.define('backproduct.backproduct_Query_Data',{
             //readOnly:true,
             columns : [
                 {dataIndex : 'productName', text : '预加工半成品名称', flex :1, },
+                {dataIndex : 'productTypeName', text : '产品类型', flex :1, },
                 //{dataIndex : 'classificationName', text : '分类', flex :1, },
                 {text: '分类', dataIndex: 'classificationId', flex :1,
                     //枚举，1：出库，0：入库

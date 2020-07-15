@@ -17,15 +17,15 @@ Ext.define('oldpanel.oldpanel_Basic_Info_Input', {
 
     initComponent : function() {
         var me = this;
-        Ext.define('Soims.model.application.ApplicationState', {
-            statics: { // 关键
-                0: { value: '0', name: '墙板' },
-                1: { value: '1', name: '梁板' },
-                2: { value: '2', name: 'K板' },
-                3: { value: '3', name: '异型' },
-                //
-            }
-        });
+        // Ext.define('Soims.model.application.ApplicationState', {
+        //     statics: { // 关键
+        //         0: { value: '0', name: '墙板' },
+        //         1: { value: '1', name: '梁板' },
+        //         2: { value: '2', name: 'K板' },
+        //         3: { value: '3', name: '异型' },
+        //         //
+        //     }
+        // });
         var projectNameListStore = Ext.create('Ext.data.Store',{
             fields : [ 'projectName'],
             proxy : {
@@ -52,28 +52,28 @@ Ext.define('oldpanel.oldpanel_Basic_Info_Input', {
             },
             autoLoad : true
         });
-        var classificationList = Ext.create('Ext.form.ComboBox',{
-            fieldLabel : '分类',
-            labelWidth : 30,
-            width : 230,
-            margin: '0 10 0 10',
-            id :  'classification',
-            name : 'classification',
-            matchFieldWidth: false,
-            emptyText : "--请选择--",
-            displayField: 'classificationName',
-            valueField: 'classificationId',
-            editable : false,
-            store: classificationListStore,
-            listeners:{
-                select: function(combo, record, index) {
-
-                    console.log(classificationList.getValue());// MaterialTypeList.getValue()获得选择的类型
-                    //console.log(record[0].data.materialName);
-                }
-            }
-
-        });
+        // var classificationList = Ext.create('Ext.form.ComboBox',{
+        //     fieldLabel : '分类',
+        //     labelWidth : 30,
+        //     width : 230,
+        //     margin: '0 10 0 10',
+        //     id :  'classification',
+        //     name : 'classification',
+        //     matchFieldWidth: false,
+        //     emptyText : "--请选择--",
+        //     displayField: 'classificationName',
+        //     valueField: 'classificationId',
+        //     editable : false,
+        //     store: classificationListStore,
+        //     listeners:{
+        //         select: function(combo, record, index) {
+        //
+        //             console.log(classificationList.getValue());// MaterialTypeList.getValue()获得选择的类型
+        //             //console.log(record[0].data.materialName);
+        //         }
+        //     }
+        //
+        // });
         var projectNameList = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '项目名',
             labelWidth : 60,
@@ -355,7 +355,7 @@ Ext.define('oldpanel.oldpanel_Basic_Info_Input', {
                 {xtype: 'textfield', fieldLabel: '旧板品名', id: 'oldpanelName', width: 300, labelWidth: 60,
                     //margin: '0 10 0 40',
                     name: 'oldpanelNo', value: ""},
-                classificationList,
+                //classificationList,
 
                 {xtype: 'textfield', fieldLabel: '库存单位', id: 'inventoryUnit', width: 220, labelWidth: 60,
                     //margin: '0 10 0 40',
@@ -385,7 +385,7 @@ Ext.define('oldpanel.oldpanel_Basic_Info_Input', {
                     iconCls : 'rukuicon ',
                     text : '添加',
                     handler: function(){
-                        var classificationId = Ext.getCmp('classification').getValue();
+                        //var classificationId = Ext.getCmp('classification').getValue();
                         var oldpanelName = Ext.getCmp('oldpanelName').getValue();
                         var inventoryUnit = Ext.getCmp('inventoryUnit').getValue();
                         //var number = Ext.getCmp('number').getValue();
@@ -397,7 +397,7 @@ Ext.define('oldpanel.oldpanel_Basic_Info_Input', {
                             //'projectName':projectName,
                             //'buildingName':buildingName,
                             'unitWeight' : unitWeight,
-                            'classificationId':classificationId,
+                            //'classificationId':classificationId,
                             'unitArea' : unitArea,
                             //'warehouseName':warehouseName,
                             'remark' : remark,
@@ -484,20 +484,21 @@ Ext.define('oldpanel.oldpanel_Basic_Info_Input', {
             //dockedItems : [toolbar2],
             store : {
                 fields: [//'projectName','buildingName',
-                    'oldpanelName','classificationId','inventoryUnit','unitArea',
+                    'oldpanelName',//'classificationId',
+                    'inventoryUnit','unitArea',
                     'unitWeight','remark']
             },
 
             columns : [
 
                 {dataIndex : 'oldpanelName', text : '旧板名称', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
-                {text: '分类', dataIndex: 'classificationId', flex :1,
-                    //枚举，1：出库，0：入库
-                    renderer: function (value) {
-                        return Soims.model.application.ApplicationState[value].name; // key-value
-                    },
-                    editor:{xtype : 'textfield', allowBlank : false}
-                },
+                // {text: '分类', dataIndex: 'classificationId', flex :1,
+                //     //枚举，1：出库，0：入库
+                //     renderer: function (value) {
+                //         return Soims.model.application.ApplicationState[value].name; // key-value
+                //     },
+                //     editor:{xtype : 'textfield', allowBlank : false}
+                // },
                 {dataIndex : 'inventoryUnit', text : '库存单位', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'unitArea', text : '单面积', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'unitWeight', text : '单重', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},

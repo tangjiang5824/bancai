@@ -64,7 +64,7 @@ Ext.define('oldpanel.Old_Query_Data',{
             matchFieldWidth: false,
             emptyText : "--请选择--",
             displayField: 'oldpanelTypeName',
-            valueField: 'oldpanelType',
+            valueField: 'oldpanelTypeName',
             editable : false,
             store: oldPanelNameList,
             listeners:{

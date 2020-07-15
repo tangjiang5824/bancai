@@ -273,7 +273,7 @@ public class ProjectController {
      * @throws IOException
      */
     @RequestMapping(value="/material/findStoreInfo.do")
-    public WebResponse findStoreInfo(String materialName,String specification,String count_min,String count_max,String warehouseName,String page, String start, String limit,String tableName)  {
+    public WebResponse findStoreInfo(String materialName,String count_min,String count_max,String warehouseName,String page, String start, String limit,String tableName)  {
         int thisPage=1;
         int thisStart=0;
         int thisLimit=25;
@@ -297,9 +297,7 @@ public class ProjectController {
         if (null!=materialName&&materialName.length() != 0) {
             c.and(new mysqlcondition("materialName", "=", materialName));
         }
-        if (null!=specification&&specification.length() != 0) {
-            c.and(new mysqlcondition("specification", "=", specification));
-        }
+
         if (null!=count_min&&count_min.length() != 0) {
             c.and(new mysqlcondition("count", ">=", count_min));
         }
