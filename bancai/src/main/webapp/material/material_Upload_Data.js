@@ -73,8 +73,8 @@ Ext.define('material' +
 
                 {
                     dataIndex : 'materialName',
-                    name : '品名',
-                    text : '品名',
+                    name : '原材料品名',
+                    text : '原材料品名',
                     //width : 110,
                     flex :1,
                     editor : {// 文本字段
@@ -83,29 +83,19 @@ Ext.define('material' +
                     },
                     //defaultValue:"2333",
                 },
-                {
-                    dataIndex : 'specification',
-                    text : '规格',
-                    //width : 110,
-                    flex :1,
-                    editor : {// 文本字段
-                        xtype : 'textfield',
-                        allowBlank : false,
-                    }
-                },
-                {
-                    dataIndex : 'inventoryUnit',
-                    text : '库存单位',
-                    //width : 110,
-                    flex :1,
-                    editor : {// 文本字段
-                        id : 'isNullCmb',
-                        xtype : 'textfield',
-                        allowBlank : true
 
-                    }
-
-                },{
+                // {
+                //     dataIndex : 'inventoryUnit',
+                //     text : '库存单位',
+                //     //width : 110,
+                //     flex :1,
+                //     editor : {// 文本字段
+                //         id : 'isNullCmb',
+                //         xtype : 'textfield',
+                //         allowBlank : true
+                //     }
+                // },
+                {
                     dataIndex : 'unitWeight',
                     name : '单重',
                     text : '单重',
@@ -149,28 +139,7 @@ Ext.define('material' +
                         allowBlank : true
                     }
                 },
-                {
-                    dataIndex : 'rowNo',
-                    name : '行',
-                    text : '位置-行',
-                    //width : 160,
-                    flex :1,
-                    editor : {
-                        xtype : 'textfield',
-                        allowBlank : true
-                    }
-                },
-                {
-                    dataIndex : 'columNo',
-                    name : '列',
-                    text : '位置-列',
-                    //width : 160,
-                    flex :1,
-                    editor : {
-                        xtype : 'textfield',
-                        allowBlank : true
-                    }
-                }
+                //
             ],
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 3

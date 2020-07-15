@@ -42,57 +42,7 @@ Ext.define('material.material_Outbound',{
             }
         });
 
-        //原材料类型
-        var MaterialNameList = Ext.create('Ext.data.Store',{
-            fields : [ 'materialName'],
-            proxy : {
-                type : 'ajax',
-                url : 'material/materialType.do',
-                reader : {
-                    type : 'json',
-                    rootProperty: 'typeList',
-                }
-            },
-            autoLoad : true
-        });
-        var MaterialTypeList = Ext.create('Ext.form.ComboBox',{
-            fieldLabel : '原材料类型',
-            labelWidth : 70,
-            width : 230,
-            id :  'materialName',
-            name : 'materialName',
-            matchFieldWidth: false,
-            emptyText : "--请选择--",
-            displayField: 'materialTypeName',
-            valueField: 'materialType',
-            editable : true,
-            store: MaterialNameList,
-            listeners:{
-                select: function(combo, record, index) {
-                    var type = MaterialTypeList.rawValue;
-                    var L2 = Ext.getCmp('length2');
-                    var W2 = Ext.getCmp('width2');
-                    var chang2 = Ext.getCmp('长2');
-                    var kuan2 = Ext.getCmp('宽2');
-                    if(type=='IC'){
-                        //该类型为1000X200类型
-                        L2.setHidden(false);
-                        W2.setHidden(false);
-                        chang2.setHidden(false);
-                        kuan2.setHidden(false);
-                    }else{
-                        L2.setHidden(true);
-                        W2.setHidden(true);
-                        chang2.setHidden(true);
-                        kuan2.setHidden(true);
-                    }
-                    //console.log(MaterialTypeList.rawValue)//选择的值
-                    console.log(MaterialTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
-                    //console.log(record[0].data.materialName);
-                }
-            }
 
-        });
         var toolbar_ttop = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
             items: [
@@ -109,7 +59,7 @@ Ext.define('material.material_Outbound',{
         var toolbar = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
             items: [
-                // MaterialTypeList,
+
                 {
                     xtype: 'textfield',
                     margin : '0 40 0 0',
@@ -132,12 +82,12 @@ Ext.define('material.material_Outbound',{
                     editable : true,
                     //value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
                 },
-                MaterialTypeList,
+                // MaterialTypeList,
                 {
                     xtype : 'button',
                     text: '入库查询',
                     width: 80,
-                    margin: '0 0 0 40',
+                    margin: '0 40 0 0',
                     layout: 'right',
                     handler: function(){
                         material_inBoundRecords_Store.load({
@@ -264,7 +214,7 @@ Ext.define('material.material_Outbound',{
             dock : "top",
             id:'toolbar_pop',
             items: [
-                // MaterialTypeList,
+
                 {
                     //保存logid的值
                     xtype: 'tbtext',

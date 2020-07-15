@@ -35,14 +35,15 @@ Ext.define('material.material_Inbound', {
                 },
                 fields : ['id','materialName']
             },
-            //字段拼接
-            listeners:{
-                load:function(store,records){
-                    for(var i=0;i<records.length;i++){
-                        records[i].set('material_name',records[i].get('materialName')+"(规格:"+records[i].get('specification')+")");
-                    }
-                }
-            },
+
+            // //字段拼接
+            // listeners:{
+            //     load:function(store,records){
+            //         for(var i=0;i<records.length;i++){
+            //             records[i].set('material_name',records[i].get('materialName')+"(规格:"+records[i].get('specification')+")");
+            //         }
+            //     }
+            // },
 
 
             autoLoad : true
@@ -57,7 +58,7 @@ Ext.define('material.material_Inbound', {
             matchFieldWidth: true,
             allowBlank:false,
             emptyText : "--请选择--",
-            displayField: 'material_name',
+            displayField: 'materialName',
             valueField: 'id',
             triggerAction: 'all',
             editable : false,
@@ -69,10 +70,14 @@ Ext.define('material.material_Inbound', {
                     //下拉框选择的一条记录，所有信息
                     var rec = record[0].data
                     console.log("record=====================",rec)
-                    Ext.getCmp("specification").setValue(rec.specification)//setText(pro['planLeader']);//计划负责人
-                    Ext.getCmp("width").setValue(rec.width);//生产负责人
-                    Ext.getCmp("unit_weight").setValue(rec.unit_weight);//采购负责人
-                    Ext.getCmp("inventory_unit").setValue(rec.inventory_unit);//财务负责人
+                    Ext.getCmp("mValue").setValue(rec.mValue)//setText(pro['planLeader']);//计划负责人
+                    Ext.getCmp("nValue").setValue(rec.nValue);//生产负责人
+                    Ext.getCmp("aValue").setValue(rec.aValue);//采购负责人
+                    Ext.getCmp("bValue").setValue(rec.bValue);//采购负责人
+                    Ext.getCmp("pValue").setValue(rec.pValue)//setText(pro['planLeader']);//计划负责人
+                    Ext.getCmp("orientation").setValue(rec.orientation);//生产负责人
+                    Ext.getCmp("inventoryUnit").setValue(rec.inventoryUnit);//财务负责人
+
                 }
 
                 // select: function(combo, record, index) {
@@ -123,7 +128,7 @@ Ext.define('material.material_Inbound', {
             name : 'storePosition',
             matchFieldWidth: true,
             emptyText : "--请选择--",
-            displayField: 'warehousename',
+            displayField: 'warehouseName',
             valueField: 'id',
             editable : false,
             store: storeNameList,
@@ -226,22 +231,11 @@ Ext.define('material.material_Inbound', {
                 {
                     xtype: 'textfield',
                     margin: '0 10 0 40',
-                    fieldLabel: '数量',
-                    id: 'count',
+                    fieldLabel: 'm值',
+                    id: 'mValue',
                     width: 140,
                     labelWidth: 30,
-                    name: 'count',
-                    value: "",
-                },
-
-                {
-                    xtype: 'textfield',
-                    margin: '0 10 0 40',
-                    fieldLabel: '规格',
-                    id: 'specification',
-                    width: 140,
-                    labelWidth: 30,
-                    name: 'specification',
+                    name: 'mValue',
                     value: "",
                     allowBlank:false,
                     hidden:true,
@@ -249,37 +243,81 @@ Ext.define('material.material_Inbound', {
                 {
                     xtype: 'textfield',
                     margin: '0 10 0 40',
-                    fieldLabel: '宽',
-                    id: 'width',
+                    fieldLabel: 'n值',
+                    id: 'nValue',
                     labelWidth : 50,
                     width : 180,
-                    name: 'width',
+                    name: 'nValue',
                     value: "",
                     hidden:true,
                 },
-                // {
-                //     xtype: 'textfield',
-                //     margin: '0 10 0 40',
-                //     fieldLabel: '长2',
-                //     hidden:true,//隐藏
-                //     id: 'length2',
-                //     width: 140,
-                //     labelWidth: 40,
-                //     name: 'length2',
-                //     value: "",
-                //     allowBlank : true,
-                // },
+                {
+                    xtype: 'textfield',
+                    margin: '0 10 0 40',
+                    fieldLabel: 'a值',
+                    hidden:true,//隐藏
+                    id: 'aValue',
+                    width: 140,
+                    labelWidth: 40,
+                    name: 'aValue',
+                    value: "",
+                    allowBlank : true,
+
+                },
                 //
                 {
                     xtype: 'textfield',
                     margin: '0 10 0 40',
-                    fieldLabel: '单重',
-                    id: 'unit_weight',
+                    fieldLabel: 'b值',
+                    id: 'bValue',
                     width: 180,
                     labelWidth: 30,
-                    name: 'unit_weight',
+                    name: 'bValue',
                     value: "",
                     hidden:true,
+                },
+                {
+                    xtype: 'textfield',
+                    margin: '0 10 0 40',
+                    fieldLabel: 'p值',
+                    id: 'pValue',
+                    width: 180,
+                    labelWidth: 30,
+                    name: 'pValue',
+                    value: "",
+                    hidden:true,
+                },
+                {
+                    xtype: 'textfield',
+                    margin: '0 10 0 40',
+                    fieldLabel: '方向',
+                    id: 'orientation',
+                    width: 180,
+                    labelWidth: 30,
+                    name: 'orientation',
+                    value: "",
+                    hidden:true,
+                },
+                {
+                    xtype: 'textfield',
+                    // margin: '0 10 0 0',
+                    fieldLabel: ' 库存单位',
+                    id: 'inventoryUnit',
+                    width: 230,
+                    labelWidth: 70,
+                    name: 'inventoryUnit',
+                    value: "",
+                    hidden:true,
+                },
+                {
+                    xtype: 'textfield',
+                    margin: '0 10 0 40',
+                    fieldLabel: '数量',
+                    id: 'count',
+                    width: 140,
+                    labelWidth: 30,
+                    name: 'count',
+                    value: "",
                 },
                 {
                     xtype: 'textfield',
@@ -297,17 +335,7 @@ Ext.define('material.material_Inbound', {
         var toolbar1 = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
             items: [
-                {
-                    xtype: 'textfield',
-                    // margin: '0 10 0 0',
-                    fieldLabel: ' 库存单位',
-                    id: 'inventory_unit',
-                    width: 230,
-                    labelWidth: 70,
-                    name: 'inventory_unit',
-                    value: "",
-                    hidden:true,
-                },
+
                 // {
                 //     xtype: 'textfield',
                 //     margin: '0 10 0 40',
@@ -353,13 +381,18 @@ Ext.define('material.material_Inbound', {
                     handler: function(){
                         console.log("原材料名：",Ext.getCmp('materialName').rawValue);
                         console.log("原材料id：",Ext.getCmp('materialName').value)
+
                         // var operator = Ext.getCmp('operator').value;
                         var materialId = Ext.getCmp('materialName').value;
                         var materialName = Ext.getCmp('materialName').rawValue;
-                        var specification = Ext.getCmp('specification').getValue();
-                        var width = Ext.getCmp('width').getValue();
-                        var unit_weight = Ext.getCmp('unit_weight').getValue();
-                        var inventory_unit = Ext.getCmp('inventory_unit').getValue();
+                        var mValue = Ext.getCmp('mValue').getValue();
+                        var nValue = Ext.getCmp('nValue').getValue();
+                        var aValue = Ext.getCmp('aValue').getValue();
+                        var bValue = Ext.getCmp('bValue').getValue();
+                        var pValue = Ext.getCmp('pValue').getValue();
+                        var orientation = Ext.getCmp('orientation').getValue();
+
+                        var inventoryUnit = Ext.getCmp('inventoryUnit').getValue();
 
                         var totalWeight = Ext.getCmp('totalWeight').getValue();
                         var count = Ext.getCmp('count').getValue();
@@ -376,10 +409,14 @@ Ext.define('material.material_Inbound', {
                         data = [{
                             'materialId' : materialId,
                             'materialName' : materialName,
-                            'specification' : specification,
-                            'width' : width,
-                            'inventory_unit' : inventory_unit,
-                            'unit_weight' : unit_weight,
+                            'mValue':mValue,
+                            'nValue' : nValue,
+                            'aValue' : aValue,
+                            'bValue':bValue,
+                            'pValue' : pValue,
+                            'orientation':orientation,
+                            'inventoryUnit' : inventoryUnit,
+
                             'totalWeight' : totalWeight,
                             'count' : count,
                             'warehouseName' : warehouseName,
@@ -560,41 +597,21 @@ Ext.define('material.material_Inbound', {
                     },
                     //defaultValue:"2333",
                 },
+                {dataIndex : 'aValue', text : 'a值', flex :.6, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'bValue', text : 'b值', flex :.6, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'mValue', text : 'm值', flex :.6, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'nValue', text : 'n值', flex :.6, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'pValue', text : 'p值', flex :.6, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'orientation', text : '方向', flex :.6, editor : {xtype : 'textfield', allowBlank : false,}},
+
                 {
-                    dataIndex : 'specification',
-                    text : '规格',
-                    //width : 110,
-                    editor : {// 文本字段
-                        xtype : 'textfield',
-                        allowBlank : false,
-                    }
-                },
-                {
-                    dataIndex : 'width',
-                    text : '宽',
-                    //width : 110,
-                    editor : {// 文本字段
-                        xtype : 'textfield',
-                        allowBlank : false,
-                    }
-                },
-                {
-                    dataIndex : 'inventory_unit',
+                    dataIndex : 'inventoryUnit',
                     text : '库存单位',
                     //width : 110,
                     editor : {// 文本字段
                         id : 'isNullCmb',
                         xtype : 'textfield',
                         allowBlank : true
-                    }
-                },{
-                    dataIndex : 'unit_weight',
-                    name : 'unit_weight',
-                    text : '单重',
-                    //width : 160,
-                    editor : {
-                        xtype : 'textfield',
-                        allowBlank : false
                     }
                 },{
                     dataIndex : 'totalWeight',

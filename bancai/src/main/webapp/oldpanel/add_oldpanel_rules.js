@@ -32,8 +32,8 @@ Ext.define('oldpanel.add_oldpanel_rules', {
         var matchList = Ext.create('Ext.data.Store', {
             fields: ['abbr', 'name'],
             data : [
-                {"abbr":"0", "name":"完全匹配"},
-                {"abbr":"1", "name":"非完全匹配"},
+                {"abbr":"1", "name":"完全匹配"},
+                {"abbr":"0", "name":"非完全匹配"},
             ]
         });
         var matchChoose = Ext.create('Ext.form.ComboBox', {
@@ -83,7 +83,7 @@ Ext.define('oldpanel.add_oldpanel_rules', {
                         var isCompleteMatch = Ext.getCmp("matchChoose").getValue();
 
                         Ext.Ajax.request({
-                            // url : 'material/addData.do', //添加匹配规则
+                            url : 'match/addOldpanelMatchRules.do', //添加匹配规则
                             method:'POST',
                             //submitEmptyText : false,
                             params : {
@@ -95,6 +95,7 @@ Ext.define('oldpanel.add_oldpanel_rules', {
                                 s_old:"[" + s_old + "]"
                             },
                             success : function(response) {
+                                console.log("response=======",response)
                                 //var message =Ext.decode(response.responseText).showmessage;
                                 Ext.MessageBox.alert("提示","添加成功" );
                             },
@@ -521,8 +522,8 @@ Ext.define('oldpanel.add_oldpanel_rules', {
                                         {
                                             xtype: 'textfield',
                                             fieldLabel: '后缀',
-                                            name: 'productSuffix',
-                                            id:'productSuffix'
+                                            name: 'suffixP',
+                                            id:'suffixP'
                                         },
                                     ]
                                 },
@@ -705,8 +706,8 @@ Ext.define('oldpanel.add_oldpanel_rules', {
                                         {
                                             xtype: 'textfield',
                                             fieldLabel: '后缀',
-                                            name: 'oldpanelSuffix',
-                                            id:'oldpanelSuffix'
+                                            name: 'suffixO',
+                                            id:'suffixO'
                                         },
 
                                     ]

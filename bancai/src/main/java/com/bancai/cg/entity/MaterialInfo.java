@@ -22,7 +22,7 @@ public class MaterialInfo {
     private Set<MaterialStore> materialStores =new HashSet<>();
     private Set<MaterialLogdetail> materialLogdetails =new HashSet<>();
 
-    @ManyToOne(targetEntity = MaterialType.class,fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = MaterialType.class)
     @JoinColumn(name = "typeId",referencedColumnName = "id")
     public MaterialType getTypeId() {
         return typeId;
