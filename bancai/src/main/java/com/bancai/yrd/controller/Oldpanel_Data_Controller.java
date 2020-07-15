@@ -78,8 +78,8 @@ public class Oldpanel_Data_Controller {
             String userId = (String)session.getAttribute("userid");
             Date date=new Date();
             SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String sql_addLog = "insert into oldpanellog (type,userId,time) values(?,?,?)";
-            int oldpanellogId= insertProjectService.insertDataToTable(sql_addLog,"6",userId,simpleDateFormat.format(date));
+            String sql_addLog = "insert into oldpanel_log (type,userId,time,isrollback) values(?,?,?,?)";
+            int oldpanellogId= insertProjectService.insertDataToTable(sql_addLog,"6",userId,simpleDateFormat.format(date),"0");
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonTemp = jsonArray.getJSONObject(i);
                 System.out.println("第" + i + "个---" + jsonTemp);
@@ -94,9 +94,9 @@ public class Oldpanel_Data_Controller {
                 if(oldpanelId==0){
                     return false;//已经存在这种旧板
                 }
-                String sql_addLogDetail="insert into oldpanellogdetail (oldpanellogId,oldpanelId) values (?,?)";
+                String sql_addLogDetail="insert into oldpanel_logdetail (oldpanellogId,oldpanelId,isrollback) values (?,?,?)";
                 boolean is_log_right= insertProjectService.insertIntoTableBySQL(sql_addLogDetail,
-                        String.valueOf(oldpanellogId),String.valueOf(oldpanelId));
+                        String.valueOf(oldpanellogId),String.valueOf(oldpanelId),"0");
                 if(!is_log_right){
                     return false;
                 }
@@ -145,8 +145,8 @@ public class Oldpanel_Data_Controller {
         String userId = (String)session.getAttribute("userid");
         Date date=new Date();
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String sql_addLog = "insert into oldpanel_log (type,userId,time,operator) values(?,?,?,?)";
-        String sql_backLog = "insert into oldpanel_log (type,userId,time,projectId,buildingId,operator) values(?,?,?,?,?,?)";
+        String sql_addLog = "insert into oldpanel_log (type,userId,time,operator,isrollback) values(?,?,?,?,?)";
+        String sql_backLog = "insert into oldpanel_log (type,userId,time,projectId,buildingId,operator,isrollback) values(?,?,?,?,?,?,?)";
 //        JSONObject jsonBack = jsonArray.getJSONObject(0);
 //        String projectId;
 //        String buildingId;
@@ -159,9 +159,11 @@ public class Oldpanel_Data_Controller {
 //        }
         int oldpanellogId;
         if(projectId.equals("-1")&&buildingId.equals("-1")){
-            oldpanellogId= insertProjectService.insertDataToTable(sql_addLog,"0",userId,simpleDateFormat.format(date),operator);
+            oldpanellogId= insertProjectService.insertDataToTable(sql_addLog,"0",userId,simpleDateFormat.format(date)
+                    ,operator,"0");
         } else {
-            oldpanellogId= insertProjectService.insertDataToTable(sql_backLog,"2",userId,simpleDateFormat.format(date),projectId,buildingId,operator);
+            oldpanellogId= insertProjectService.insertDataToTable(sql_backLog,"2",userId,simpleDateFormat.format(date)
+                    ,projectId,buildingId,operator,"0");
         }
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonTemp = jsonArray.getJSONObject(i);
@@ -175,9 +177,9 @@ public class Oldpanel_Data_Controller {
             if(oldpanelId[0]==0){
                 return false;
             }
-            String sql_addLogDetail="insert into oldpanel_logdetail (oldpanelId,count,oldpanellogId,oldpanelstoreId) values (?,?,?,?)";
+            String sql_addLogDetail="insert into oldpanel_logdetail (oldpanelId,count,oldpanellogId,oldpanelstoreId,isrollback) values (?,?,?,?,?)";
             boolean is_log_right= insertProjectService.insertIntoTableBySQL(sql_addLogDetail,String.valueOf(oldpanelId[0]),
-                    count,String.valueOf(oldpanellogId),String.valueOf(oldpanelId[1]));
+                    count,String.valueOf(oldpanellogId),String.valueOf(oldpanelId[1]),"0");
             if(!is_log_right){
                 return false;
             }
@@ -210,8 +212,9 @@ public class Oldpanel_Data_Controller {
         String userId = (String) session.getAttribute("userid");
         Date date=new Date();
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String sql_addLog = "insert into oldpanel_log (type,userId,time,operator) values(?,?,?,?)";
-        int oldpanellogId= insertProjectService.insertDataToTable(sql_addLog,"0",userId,simpleDateFormat.format(date),operator);
+        String sql_addLog = "insert into oldpanel_log (type,userId,time,operator,isrollback) values(?,?,?,?,?)";
+        int oldpanellogId= insertProjectService.insertDataToTable(sql_addLog,"0",userId,simpleDateFormat.format(date)
+                ,operator,"0");
         try {
             UploadDataResult result = allExcelService.uploadOldpanelExcelData(uploadFile.getInputStream(),userId,String.valueOf(oldpanellogId));
             response.put("value",result.dataList);

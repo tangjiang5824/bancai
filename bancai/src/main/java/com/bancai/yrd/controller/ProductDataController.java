@@ -79,8 +79,8 @@ public class ProductDataController {
             String userId = (String) session.getAttribute("userid");
             Date date = new Date();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String sql_addLog = "insert into product_log (type,userId,time) values(?,?,?)";
-            int productlogId = insertProjectService.insertDataToTable(sql_addLog, "6", userId, simpleDateFormat.format(date));
+            String sql_addLog = "insert into product_log (type,userId,time,isrollback) values(?,?,?,?)";
+            int productlogId = insertProjectService.insertDataToTable(sql_addLog, "6", userId, simpleDateFormat.format(date),"0");
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonTemp = jsonArray.getJSONObject(i);
                 System.out.println("第" + i + "个---" + jsonTemp);
@@ -95,9 +95,9 @@ public class ProductDataController {
                 if (productId == 0) {
                     return false;//已经存在
                 }
-                String sql_addLogDetail = "insert into product_logdetail (productlogId,productId) values (?,?)";
+                String sql_addLogDetail = "insert into product_logdetail (productlogId,productId,isrollback) values (?,?,?)";
                 boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLogDetail,
-                        String.valueOf(productlogId), String.valueOf(productId));
+                        String.valueOf(productlogId), String.valueOf(productId),"0");
                 if (!is_log_right) {
                     return false;
                 }

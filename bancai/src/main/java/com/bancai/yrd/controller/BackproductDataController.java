@@ -50,25 +50,25 @@ public class BackproductDataController {
     public boolean backproductAddData(String s, String projectId, String buildingId, String operator, HttpSession session) {
         JSONArray jsonArray = new JSONArray(s);
         String userId = (String) session.getAttribute("userid");
-//        String userId ="1";
         Date date = new Date();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String sql_backLog = "insert into backproduct_log (type,userId,time,projectId,buildingId,operator) values(?,?,?,?,?,?)";
-        int backproductlogId = insertProjectService.insertDataToTable(sql_backLog, "2", userId, simpleDateFormat.format(date), projectId, buildingId, operator);
+        String sql_backLog = "insert into backproduct_log (type,userId,time,projectId,buildingId,operator,isrollback) values(?,?,?,?,?,?,?)";
+        int backproductlogId = insertProjectService.insertDataToTable(sql_backLog, "2", userId, simpleDateFormat.format(date)
+                , projectId, buildingId, operator,"0");
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonTemp = jsonArray.getJSONObject(i);
             //获得第i条数据的各个属性值
             System.out.println("第" + i + "个:userid=" + userId + "---" + jsonTemp);
-            String productName = (jsonTemp.get("productName") + "").toUpperCase();
+            String productName = (jsonTemp.get("productName") + "").toUpperCase().trim();
             String warehouseName = jsonTemp.get("warehouseName") + "";
             String count = jsonTemp.get("count") + "";
             int[] productId = backproductDataService.backProduct(productName, warehouseName, count);
             if (productId[0] == 0) {
                 return false;
             }
-            String sql_addLogDetail = "insert into backproduct_logdetail (productId,count,backproductlogId,backproductstoreId) values (?,?,?,?)";
+            String sql_addLogDetail = "insert into backproduct_logdetail (productId,count,backproductlogId,backproductstoreId,isrollback) values (?,?,?,?,?)";
             boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLogDetail, String.valueOf(productId[0]),
-                    count, String.valueOf(backproductlogId),String.valueOf(productId[1]));
+                    count, String.valueOf(backproductlogId),String.valueOf(productId[1]),"0");
             if (!is_log_right) {
                 return false;
             }

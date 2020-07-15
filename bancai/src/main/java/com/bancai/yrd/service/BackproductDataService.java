@@ -43,10 +43,19 @@ public class BackproductDataService extends BaseService{
 
     private int backproductSaveData(String[] info, String warehouseName, String count){
         //id,unitWeight,unitArea
-//        if(Double.parseDouble(info[1])!=0)
-        info[1] = String.valueOf(Double.parseDouble(info[1])*Integer.parseInt(count));
-//        if(Double.parseDouble(info[2])!=0)
-        info[2] = String.valueOf(Double.parseDouble(info[2])*Integer.parseInt(count));
+        int con = 0;
+        if((info[1]!=null)&&(!info[1].equals("")))
+            info[1] = String.valueOf(Double.parseDouble(info[1])*Integer.parseInt(count));
+        else {
+            info[1] = null;
+            con += 1;
+        }
+        if((info[2]!=null)&&(!info[2].equals("")))
+            info[2] = String.valueOf(Double.parseDouble(info[2])*Integer.parseInt(count));
+        else {
+            info[2]=null;
+            con += 10;
+        }
         String sql = "select * from backproduct_store where productId=? and warehouseName=?";
         DataList queryList = queryService.query(sql,info[0],warehouseName);
         if(queryList.isEmpty()){
@@ -54,10 +63,23 @@ public class BackproductDataService extends BaseService{
                             "(productId,countUse,countStore,warehouseName,totalArea,totalWeight) values (?,?,?,?,?,?)",
                     info[0],count,count,warehouseName,info[2], info[1]);
         } else {
-            String sql2 = "update backproduct_store set countUse=countUse+"+count+
-                    ",countStore=countStore+"+count+",totalArea=totalArea+"+ info[2] +
-                    ",totalWeight=totalWeight+"+info[1]+
-                    " where id="+queryList.get(0).get("id").toString();
+            String sql2 = "update backproduct_store set countUse=countUse+" + count + ",countStore=countStore+" + count;
+
+            switch (con) {
+                case 0:
+                    sql2 = sql2 + ",totalArea=totalArea+" + info[2] + ",totalWeight=totalWeight+" + info[1];
+                    break;
+                case 1:
+                    sql2 = sql2 + ",totalArea=totalArea+" + info[2];
+                    break;
+                case 10:
+                    sql2 = sql2 + ",totalWeight=totalWeight+" + info[1];
+                    break;
+                case 11:
+                default:
+                    break;
+            }
+            sql2 = sql2 + " where id=" + queryList.get(0).get("id").toString();
             jo.update(sql2);
             return Integer.parseInt(queryList.get(0).get("id").toString());
         }

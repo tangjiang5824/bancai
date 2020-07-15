@@ -48,26 +48,26 @@ public class PreprocessDataController {
     @RequestMapping(value = "/preprocess/addData.do")
     public boolean preprocessAddData(String s, String operator, HttpSession session) {
         JSONArray jsonArray = new JSONArray(s);
-//        String userId = (String) session.getAttribute("userid");
-        String userId ="1";
+        String userId = (String) session.getAttribute("userid");
         Date date = new Date();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String sql_backLog = "insert into preprocess_log (type,userId,time,operator) values(?,?,?,?)";
-        int preprocesslogId = insertProjectService.insertDataToTable(sql_backLog, "0", userId, simpleDateFormat.format(date), operator);
+        String sql_backLog = "insert into preprocess_log (type,userId,time,operator,isrollback) values(?,?,?,?,?)";
+        int preprocesslogId = insertProjectService.insertDataToTable(sql_backLog, "0", userId, simpleDateFormat.format(date)
+                , operator, "0");
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonTemp = jsonArray.getJSONObject(i);
             //获得第i条数据的各个属性值
             System.out.println("第" + i + "个:userid=" + userId + "---" + jsonTemp);
-            String productName = (jsonTemp.get("productName") + "").toUpperCase();
+            String productName = (jsonTemp.get("productName") + "").toUpperCase().trim();
             String warehouseName = jsonTemp.get("warehouseName") + "";
             String count = jsonTemp.get("count") + "";
             int[] productId = preprocessDataService.preprocessInbound(productName, warehouseName, count);
             if (productId[0] == 0) {
                 return false;
             }
-            String sql_addLogDetail = "insert into preprocess_logdetail (productId,count,preprocesslogId,preprocessstoreId) values (?,?,?,?)";
+            String sql_addLogDetail = "insert into preprocess_logdetail (productId,count,preprocesslogId,preprocessstoreId,isrollback) values (?,?,?,?,?)";
             boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLogDetail, String.valueOf(productId[0]),
-                    count, String.valueOf(preprocesslogId), String.valueOf(productId[1]));
+                    count, String.valueOf(preprocesslogId), String.valueOf(productId[1]),"0");
             if (!is_log_right) {
                 return false;
             }
