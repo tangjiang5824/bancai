@@ -42,8 +42,8 @@ Ext.define('material.add_Mcatergory_baseInfo', {
                         'description' : '',
 
                     }];
-                    //Ext.getCmp('addDataGrid')返回定义的对象
-                    Ext.getCmp('addDataGrid').getStore().loadData(data,
+                    //Ext.getCmp('addMaterialBasicGrid')返回定义的对象
+                    Ext.getCmp('addMaterialBasicGrid').getStore().loadData(data,
                         true);
 
                 }
@@ -57,7 +57,7 @@ Ext.define('material.add_Mcatergory_baseInfo', {
                 handler : function() {
                     // 取出grid的字段名字段类型
                     //var userid="<%=session.getAttribute('userid')%>";
-                    var select = Ext.getCmp('addDataGrid').getStore()
+                    var select = Ext.getCmp('addMaterialBasicGrid').getStore()
                         .getData();
                     var s = new Array();
                     select.each(function(rec) {
@@ -140,7 +140,7 @@ Ext.define('material.add_Mcatergory_baseInfo', {
         });
 
         var grid = Ext.create("Ext.grid.Panel", {
-            id : 'addDataGrid',
+            id : 'addMaterialBasicGrid',
             dockedItems : [toolbar2],
             store : {
                 //fields: ['旧板名称', '长','类型','宽','数量','库存单位','仓库编号','存放位置','重量']
@@ -213,6 +213,7 @@ Ext.define('material.add_Mcatergory_baseInfo', {
                     dataIndex : 'typeId',
                     text : '原材料类型',
                     flex :.6,
+                    allowBlank:false,
                     editor:materialTypeList,renderer:function(value, cellmeta, record){
                         var index = materialTypeListStore.find(materialTypeList.valueField,value);
                         var ehrRecord = materialTypeListStore.getAt(index);
@@ -235,6 +236,13 @@ Ext.define('material.add_Mcatergory_baseInfo', {
                 {dataIndex : 'orientation', text : '方向', flex :.6, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'inventoryUnit', text : '库存单位', flex :.6, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'description', text : '备注', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {
+                    // name : '操作',
+                    text : '操作',
+                    renderer:function(value, cellmeta){
+                        return "<INPUT type='button' value='删 除' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
+                    }
+                }
             ],
             viewConfig : {
                 plugins : {
@@ -247,6 +255,52 @@ Ext.define('material.add_Mcatergory_baseInfo', {
             })],
             selType : 'rowmodel'
         });
+
+
+        //添加cell单击事件
+        grid.addListener('cellclick', cellclick);
+        function cellclick(grid, rowIndex, columnIndex, e) {
+            if (rowIndex < 0) {
+                return;
+            }
+            var fieldName = Ext.getCmp('addMaterialBasicGrid').columns[columnIndex].text;
+
+            console.log("列名：",fieldName)
+            if (fieldName == "操作") {
+                //设置监听事件getSelectionModel().getSelection()
+                var sm = Ext.getCmp('addMaterialBasicGrid').getSelectionModel();
+                var materialArr = sm.getSelection();
+                if (materialArr.length != 0) {
+                    Ext.Msg.confirm("提示", "共选中" + materialArr.length + "条数据，是否确认删除？", function (btn) {
+                        if (btn == 'yes') {
+                            //先删除后台再删除前台
+                            //ajax 删除后台数据 成功则删除前台数据；失败则不删除前台数据
+
+                            //Extjs 4.x 删除
+                            Ext.getCmp('addMaterialBasicGrid').getStore().remove(materialArr);
+                        } else {
+                            return;
+                        }
+                    });
+                } else {
+                    //Ext.Msg.confirm("提示", "无选中数据");
+                    Ext.Msg.alert("提示", "无选中数据");
+                }
+            }
+
+
+            console.log("rowIndex:",rowIndex)
+            console.log("columnIndex:",columnIndex)
+            // var record = grid.getStore().getAt(rowIndex);
+            // var id = record.get('id');
+            // var fieldName = grid.getColumnModel().getDataIndex(columnIndex);
+            // if (fieldName == "c_reply") {
+            //     Ext.Msg.alert('c_reply', rowIndex + "  -  " + id);
+            // }else if (fieldName == "c_agree") {
+            //     Ext.Msg.alert('c_agree', rowIndex + "  -  " + id);
+            // }
+
+        }
 
         this.dockedItems = [ grid];//toolbar2,
         //this.items = [ me.grid ];

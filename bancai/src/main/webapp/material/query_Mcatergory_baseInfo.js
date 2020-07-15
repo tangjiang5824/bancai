@@ -32,13 +32,9 @@ Ext.define('material.query_Mcatergory_baseInfo',{
             listeners : {
                 beforeload : function(store, operation, eOpts) {
                     store.getProxy().setExtraParams({
-                        //materialCatergory:Ext.getCmp('materialCatergory').getValue(),
-                        // tableName:tableName,
                         materialName:Ext.getCmp('materialName').getValue(),//获取显示字段
-                        specification:Ext.getCmp('specification').getValue(),
-                        width:Ext.getCmp('width').getValue(),
-                        unitWeight:Ext.getCmp('unitWeight').getValue(),
-                        inventoryUnit:Ext.getCmp('inventoryUnit').getValue(),
+                        typeId:Ext.getCmp('typeId').getValue(),
+
                     });
                 }
             }
@@ -56,6 +52,33 @@ Ext.define('material.query_Mcatergory_baseInfo',{
                 ]
         });
 
+        var materialTypeListStore = Ext.create('Ext.data.Store',{
+            fields : [ 'typeName'],
+            proxy : {
+                type : 'ajax',
+                url : '/material/findAllBytableName.do?tableName=material_type',
+                reader : {
+                    type : 'json',
+                    rootProperty: 'material_type',
+                },
+            },
+            autoLoad : true
+        });
+        var materialTypeList=Ext.create('Ext.form.ComboBox',{
+            fieldLabel : '原材料类型',
+            labelWidth : 70,
+            width : 230,
+            margin: '0 10 0 40',
+            id :  'typeId',
+            name : 'typeId',
+            matchFieldWidth: false,
+            emptyText : "--请选择--",
+            displayField: 'typeName',
+            valueField: 'id',
+            editable : false,
+            store: materialTypeListStore,
+        });
+
         var toolbar = Ext.create('Ext.toolbar.Toolbar',{
             // border:false,
             items: [
@@ -70,66 +93,32 @@ Ext.define('material.query_Mcatergory_baseInfo',{
                     value:"",
                     labelStyle:"font-size:'12px';"
                 },
-                {
-                    xtype: 'textfield',
-                    margin : '0 10 0 40',
-                    fieldLabel: '宽',
-                    id :'width',
-                    width: 130,
-                    labelWidth: 20,
-                    name: 'width',
-                    value:"",
-                },
-                {
-                    xtype: 'textfield',
-                    margin : '0 10 0 40',
-                    fieldLabel: '规格',
-                    id :'specification',
-                    width: 130,
-                    labelWidth: 30,
-                    name: 'specification',
-                    value:"",
-                },
-                {
-                    xtype: 'textfield',
-                    margin : '0 10 0 40',
-                    fieldLabel: '单重',
-                    id :'unitWeight',
-                    width: 130,
-                    labelWidth: 30,
-                    name: 'unitWeight',
-                    value:"",
-                },
-                {
-                    xtype: 'textfield',
-                    margin : '0 10 0 40',
-                    fieldLabel: '库存单位',
-                    id :'inventoryUnit',
-                    width: 130,
-                    labelWidth: 60,
-                    name: 'inventoryUnit',
-                    value:"",
-                },
+                materialTypeList,
+                //
+                // {
+                //     xtype: 'textfield',
+                //     margin : '0 10 0 40',
+                //     fieldLabel: '库存单位',
+                //     id :'inventoryUnit',
+                //     width: 130,
+                //     labelWidth: 60,
+                //     name: 'inventoryUnit',
+                //     value:"",
+                // },
                 {
                     xtype : 'button',
                     text: '查询',
-                    iconCls:'right-button',
-                    width: 80,
-                    margin: '0 0 0 15',
+                    // iconCls:'right-button',
+                    width: 60,
+                    margin: '0 0 0 40',
                     layout: 'right',
                     handler: function(){
                         //
                         materialInfo_Store.load({
                             params : {
-                                //proNum : Ext.getCmp('proNum').getValue(),
-                                // startWidth : Ext.getCmp('startWidth').getValue(),
-                                // endTWidth : Ext.getCmp('endWidth').getValue(),
-                                // materialName:Ext.getCmp('materialName').getValue(),//获取id  Ext.getCmp('materialName').rawValue
                                 materialName:Ext.getCmp('materialName').getValue(),//获取显示字段
-                                specification:Ext.getCmp('specification').getValue(),
-                                width:Ext.getCmp('width').getValue(),
-                                unitWeight:Ext.getCmp('unitWeight').getValue(),
-                                inventoryUnit:Ext.getCmp('inventoryUnit').getValue(),
+                                typeId:Ext.getCmp('typeId').getValue(),
+
                             }
                         });
                     }
@@ -155,7 +144,6 @@ Ext.define('material.query_Mcatergory_baseInfo',{
                 { text: '单重',  dataIndex: 'unitWeight' ,flex :1},
                 { text: '库存单位',  dataIndex: 'inventoryUnit' ,flex :1},
                 { text: '描述',  dataIndex: 'description' ,flex :1},
-
 
             ],
 

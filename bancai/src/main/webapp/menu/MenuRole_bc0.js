@@ -303,21 +303,26 @@ Ext.define("menu.MenuRole_bc0", {
 					text : '原材料种类管理',
 					//leaf : true
 					expanded : true,
-					children : [{
-						text : '添加新的类型',
+					children : [
+						{
+							text : '原材料类型',
+							id : 'material.add_Mtype_baseInfo',
+							leaf : true
+						},{
+						text : '添加原材料基础信息',
 						id : 'material.add_Mcatergory_baseInfo',
 						leaf : true
 					},{
 						text : '查看原材料类型',
 						id : 'material.query_Mcatergory_baseInfo',
 						leaf : true
-					},{
-
-						text : '添加原材料基础信息',
-						id : 'material.material_Basic_Info_Input',
-
-						leaf : true
-					},{
+					},
+					// 	{
+					// 	text : '添加原材料基础信息',
+					// 	id : 'material.material_Basic_Info_Input',
+					// 	leaf : true
+					// },
+						{
 
 						text : '添加新板匹配规则',
 						id : 'material.add_material_rules',
