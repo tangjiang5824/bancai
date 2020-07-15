@@ -517,7 +517,13 @@ Ext.define('oldpanel.add_oldpanel_rules', {
                                             fieldLabel: 'b',
                                             name: 'bValueP',
                                             id:'bValueP'
-                                        }
+                                        },
+                                        {
+                                            xtype: 'textfield',
+                                            fieldLabel: '后缀',
+                                            name: 'productSuffix',
+                                            id:'productSuffix'
+                                        },
                                     ]
                                 },
                                 {
@@ -696,9 +702,16 @@ Ext.define('oldpanel.add_oldpanel_rules', {
                                             name: 'bValueO',
                                             id:'bValueO'
                                         },
+                                        {
+                                            xtype: 'textfield',
+                                            fieldLabel: '后缀',
+                                            name: 'oldpanelSuffix',
+                                            id:'oldpanelSuffix'
+                                        },
 
                                     ]
-                                },{
+                                },
+                                {
                                     flex:.3,
                                     defaults: {
                                         border:false,

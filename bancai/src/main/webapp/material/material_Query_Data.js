@@ -321,6 +321,7 @@ Ext.define('material.material_Query_Data',{
                 validateedit : function(editor, e) {
                     var field=e.field
                     var id=e.record.data.id
+                    if(id)
                     Ext.Ajax.request({
                         url:"data/EditCellById.do",  //EditDataById.do
                         params:{

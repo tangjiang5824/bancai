@@ -460,8 +460,9 @@ public class ProjectController {
             jsonObject=jsonArray.getJSONObject(i);
             String oldpanelTypeName = jsonObject.get("oldpanelTypeName")+"";
             String description = jsonObject.get("description")+"";
-            String sql ="insert into oldpaneltype (oldpanelTypeName,description) values(?,?)";
-            boolean flag= insertProjectService.insertIntoTableBySQL(sql,oldpanelTypeName,description);
+            String classificationId = jsonObject.get("classificationId")+"";
+            String sql ="insert into oldpaneltype (oldpanelTypeName,description,classificationId) values(?,?,?)";
+            boolean flag= insertProjectService.insertIntoTableBySQL(sql,oldpanelTypeName,description,classificationId);
             if(!flag){
                 return  false;
             }
