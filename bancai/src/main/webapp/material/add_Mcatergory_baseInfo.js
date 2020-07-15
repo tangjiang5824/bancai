@@ -87,20 +87,7 @@ Ext.define('material.add_Mcatergory_baseInfo', {
                         },
                         success : function(response) {
                             Ext.MessageBox.alert("提示", "录入成功！");
-
-                            // me.close();
-//									var obj = Ext.decode(response.responseText);
-//									if (obj) {
-//
-//										Ext.MessageBox.alert("提示", "保存成功！");
-//										me.close();
-//
-//									} else {
-//										// 数据库约束，返回值有问题
-//										Ext.MessageBox.alert("提示", "保存失败！");
-//
-//									}
-
+                            Ext.getCmp("addMaterialBasicGrid").getStore().removeAll();
                         },
                         failure : function(response) {
                             Ext.MessageBox.alert("提示", "录入失败！");

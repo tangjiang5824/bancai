@@ -121,7 +121,57 @@ Ext.define('material.add_Mtype_baseInfo', {
             dockedItems : [toolbar2],
             store : MtypeStore,
             columns : [
-                 {dataIndex : 'typeName', text : '原材料类型', width :300, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'typeName', text : '原材料类型', width :300, editor : {xtype : 'textfield', allowBlank : false,}},
+                {
+                    xtype:'actioncolumn',
+                    text : '删除操作',
+                    width:100,
+                    style:"text-align:center;",
+                    items: [
+                        //删除按钮
+                        {
+                            icon: 'extjs/imgs/delete.png',
+                            tooltip: 'Delete',
+                            style:"margin-right:20px;",
+                            handler: function(grid, rowIndex, colIndex) {
+                                var rec = grid.getStore().getAt(rowIndex);
+                                console.log("删除--------：",rec.data.typeName)
+                                console.log("删除--------：",rec.data.id)
+                                //类型id
+                                var typeId = rec.data.id;
+                                //弹框提醒
+                                Ext.Msg.show({
+                                    title: '操作确认',
+                                    message: '将删除数据，选择“是”否确认？',
+                                    buttons: Ext.Msg.YESNO,
+                                    icon: Ext.Msg.QUESTION,
+                                    fn: function (btn) {
+                                        if (btn === 'yes') {
+                                            Ext.Ajax.request({
+                                                url:"data/EditCellById.do",  //EditDataById.do
+                                                params:{
+                                                    type:'delete',
+                                                    tableName:tableName,
+                                                    field:'typeName',
+                                                    value:rec.data.typeName,
+                                                    id:typeId
+                                                },
+                                                success:function (response) {
+                                                    Ext.MessageBox.alert("提示", "删除成功!");
+                                                    Ext.getCmp('addTypeGrid').getStore().remove(rec);
+                                                },
+                                                failure : function(response){
+                                                    Ext.MessageBox.alert("提示", "删除失败!");
+                                                }
+                                            })
+                                        }
+                                    }
+                                });
+                                // alert("Terminate " + rec.get('firstname'));
+                            }
+                        }]
+
+                }
                  ],
             viewConfig : {
                 plugins : {
@@ -132,7 +182,35 @@ Ext.define('material.add_Mtype_baseInfo', {
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 1
             })],
-            selType : 'rowmodel'
+            selType : 'rowmodel',
+            listeners: {
+                //监听修改
+                validateedit: function (editor, e) {
+                    var id=e.record.data.id
+                    //修改的字段
+                    var field=e.field;
+                    //修改的值
+                    var newV = e.value;
+                    Ext.Ajax.request({
+                        url:"data/EditCellById.do",  //EditDataById.do
+                        params:{
+                            type:'edit',
+                            tableName:tableName,
+                            field:field,
+                            value:newV,
+                            id:id
+                        },
+                        success:function (response) {
+                            Ext.MessageBox.alert("提示","修改成功" );
+                            //重新加载
+                            Ext.getCmp('addTypeGrid').getStore().load();
+                        },
+                        failure:function (response) {
+                            Ext.MessageBox.alert("提示","修改失败" );
+                        }
+                    })
+                }
+            }
         });
 
         this.dockedItems = [ grid];//toolbar2,
