@@ -118,27 +118,28 @@ public class MatchRulesController {
     /*
      * 新增旧板匹配规则
      * */
-    @RequestMapping(value = "/match/addOldpanelMatchRules.do")
-    public boolean addOldpanelMatchRules(String pCon1,String pCon2,String pCon3,String pCon4, String productFormatId,
-                                         String oRan1,String oRan2,String oRan3,String oRan4, String oldpanelFormatId,
-                                         String priority, String isCompleteMatch, HttpSession session) throws JSONException {
-        try {
-            String userId = (String)session.getAttribute("userid");
-            Date date=new Date();
-            SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            int oldpanelMatchRulesId = matchRulesService.addOldpanelMatchRules(pCon1,pCon2,pCon3,pCon4,productFormatId,
-                    oRan1,oRan2,oRan3,oRan4,oldpanelFormatId,priority,isCompleteMatch);
-            String sql_addLog = "insert into oldpanel_match_ruleslog (oldpanelMatchRulesId,type,time,userId) values (?,?,?,?)";
-            boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLog,String.valueOf(oldpanelMatchRulesId)
-                    ,"0",simpleDateFormat.format(date),userId);
-            if(!is_log_right)
-                return false;
-        } catch (Exception e) {
-            return false;
-        }
-        return true;
-    }
-    
+//    @RequestMapping(value = "/match/addOldpanelMatchRules.do")
+//    public boolean addOldpanelMatchRules(String productFormatId,String oldpanelFormatId,String priority,String isCompleteMatch,
+//                                         String mValue,String mPAng,String nPAng,String pPAng,
+//                                         String mOAng,String nOAng,String pOAng, HttpSession session) throws JSONException {
+//        try {
+//            String userId = (String)session.getAttribute("userid");
+//            Date date=new Date();
+//            SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//
+//            int oldpanelMatchRulesId = matchRulesService.addOldpanelMatchRules(pCon1,pCon2,pCon3,pCon4,productFormatId,
+//                    oRan1,oRan2,oRan3,oRan4,oldpanelFormatId,priority,isCompleteMatch);
+//            String sql_addLog = "insert into oldpanel_match_ruleslog (oldpanelMatchRulesId,type,time,userId) values (?,?,?,?)";
+//            boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLog,String.valueOf(oldpanelMatchRulesId)
+//                    ,"0",simpleDateFormat.format(date),userId);
+//            if(!is_log_right)
+//                return false;
+//        } catch (Exception e) {
+//            return false;
+//        }
+//        return true;
+//    }
+
 
 
 

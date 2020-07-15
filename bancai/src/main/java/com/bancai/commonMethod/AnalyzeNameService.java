@@ -16,6 +16,8 @@ import java.util.Arrays;
 @Service
 public class AnalyzeNameService extends BaseService {
     private Logger log = Logger.getLogger(AnalyzeNameService.class);
+    private static String isPureWord = "^[A-Za-z]+$";
+    private static String isPureNumber = "^-?[0-9]+";
     @Autowired
     private TableService tableService;
     @Autowired
@@ -38,28 +40,26 @@ public class AnalyzeNameService extends BaseService {
     public String[] analyzeOldpanelName(String oldpanelName){
         oldpanelName = oldpanelName.trim().toUpperCase();
         System.out.println("analyzeOldpanelName==="+oldpanelName);
-        String isPureNumber = "^-?[0-9]+";
-        String isPureWord = "^[A-Za-z]+$";
         String[] sOName = oldpanelName.split("\\s+");
         DataList typeList = getTypeByOldpanelName(oldpanelName.split("-")[0]);
         if(typeList.size()==0)
             return null;
-        String oldpanelTypeId = typeList.get(0).get("oldpanelType").toString();
+        String oldpanelTypeId = typeList.get(0).get("id").toString();
         String classificationId = typeList.get(0).get("classificationId").toString();
         String oldpanelTypeName = typeList.get(0).get("oldpanelTypeName").toString();
         StringBuilder formatBuilder = new StringBuilder();
-        String m = "0";
-        String n = "0";
-        String p = "0";
-        String a = "0";
-        String b = "0";
-        int mAngle = 0;
-        int nAngle = 0;
-        int pAngle = 0;
+        String m = null;
+        String n = null;
+        String p = null;
+        String a = null;
+        String b = null;
+        String mAngle = null;
+        String nAngle = null;
+        String pAngle = null;
         StringBuilder suffixBuilder = new StringBuilder();
         int conM = 0;
         for (int i = 0; i < 4; i++) {
-            if(i>=(sOName.length-1)){
+            if(i>=(sOName.length)){
                 formatBuilder.append("0");
             } else if(sOName[i].equals(oldpanelTypeName)){
                 formatBuilder.append("1");
@@ -91,20 +91,20 @@ public class AnalyzeNameService extends BaseService {
                         n = sOName[i].split("\\+")[1];
                         if(m.contains("A")){
                             m = m.substring(0,m.length()-1);
-                            mAngle = 1;
+                            mAngle = "1";
                         } else if(p.contains("B")){
                             m = m.substring(0,m.length()-1);
-                            mAngle = 2;
+                            mAngle = "2";
                         } else
-                            mAngle = 0;
+                            mAngle = "0";
                         if(n.contains("A")){
                             n = n.substring(0,n.length()-1);
-                            nAngle = 1;
+                            nAngle = "1";
                         } else if(n.contains("B")){
                             n = n.substring(0,n.length()-1);
-                            nAngle = 2;
+                            nAngle = "2";
                         } else
-                            nAngle = 0;
+                            nAngle = "0";
                         formatBuilder.append("6");
                         break;
                     case 2:
@@ -112,29 +112,29 @@ public class AnalyzeNameService extends BaseService {
                         n = sOName[i].split("\\+")[1];
                         if(m.contains("A")){
                             m = m.substring(0,m.length()-1);
-                            mAngle = 1;
+                            mAngle = "1";
                         } else if(p.contains("B")){
                             m = m.substring(0,m.length()-1);
-                            mAngle = 2;
+                            mAngle = "2";
                         } else
-                            mAngle = 0;
+                            mAngle = "0";
                         if(n.contains("A")){
                             n = n.substring(0,n.length()-1);
-                            nAngle = 1;
+                            nAngle = "1";
                         } else if(n.contains("B")){
                             n = n.substring(0,n.length()-1);
-                            nAngle = 2;
+                            nAngle = "2";
                         } else
-                            nAngle = 0;
+                            nAngle = "0";
                         p = sOName[i].split("\\+")[2];
                         if(p.contains("A")){
                             p = p.substring(0,p.length()-1);
-                            pAngle = 1;
+                            pAngle = "1";
                         } else if(p.contains("B")){
                             p = p.substring(0,p.length()-1);
-                            pAngle = 2;
+                            pAngle = "2";
                         } else
-                            pAngle = 0;
+                            pAngle = "0";
                         formatBuilder.append("8");
                         break;
                     case 3:
@@ -153,9 +153,7 @@ public class AnalyzeNameService extends BaseService {
 
         }
         String format = formatBuilder.toString() + "";
-        String suffix = suffixBuilder.toString() + "";
-        if(!suffix.isEmpty())
-            suffix = suffix.substring(0,suffix.length()-1);
+        String suffix = (suffixBuilder.toString() + "").trim();
         if((format.contains("3"))&&(n.equals(SetLengthAndWidth(m,n)[0]))){
             String temp = m + n;
             n = temp.substring(0, temp.length()-n.length());
@@ -165,9 +163,9 @@ public class AnalyzeNameService extends BaseService {
             format = format.replace("l","2");
         }
         System.out.println("AnaResult======="+ Arrays.toString(new String[]{oldpanelName,format,oldpanelTypeId,classificationId,
-                m,n,p,a,b, String.valueOf(mAngle),String.valueOf(nAngle),String.valueOf(pAngle),suffix,oldpanelTypeName}));
+                m,n,p,a,b,mAngle,nAngle,pAngle,suffix,oldpanelTypeName}));
         return new String[]{format,oldpanelTypeId,classificationId,m,n,p,a,b,
-                String.valueOf(mAngle),String.valueOf(nAngle),String.valueOf(pAngle),suffix,oldpanelTypeName};
+               mAngle,nAngle,pAngle,suffix,oldpanelTypeName};
     }
 
 
@@ -184,13 +182,12 @@ public class AnalyzeNameService extends BaseService {
      */
     @Transactional
     public DataList getTypeByOldpanelName(String oldpanelName){
-        String isPureWord = "^[A-Za-z]+$";
         String oldpanelTypeName = "";
         String[] sOName = oldpanelName.split("\\s+");
         DataList list = new DataList();
-        for (int i = 0; i < 4; i++) {
-            if(sOName[i].substring(i,i+1).matches(isPureWord)){
-                oldpanelTypeName = sOName[i];
+        for (String s : sOName) {
+            if (s.substring(0, 1).matches(isPureWord)) {
+                oldpanelTypeName = s;
                 break;
             }
         }
@@ -204,13 +201,12 @@ public class AnalyzeNameService extends BaseService {
      */
     @Transactional
     public DataList getTypeByProductName(String productName){
-        String isPureWord = "^[A-Za-z]+$";
         String productTypeName = "";
         String[] sPName = productName.split("\\s+");
         DataList list = new DataList();
-        for (int i = 0; i < 4; i++) {
-            if(sPName[i].substring(i,i+1).matches(isPureWord)){
-                productTypeName = sPName[i];
+        for (String s : sPName) {
+            if (s.substring(0, 1).matches(isPureWord)) {
+                productTypeName = s;
                 break;
             }
         }
@@ -235,8 +231,8 @@ public class AnalyzeNameService extends BaseService {
      * 根据类型（旧板、产品）和品名判断info是否存在，返回id或0
      */
     @Transactional
-    public int isInfoExist(String tablename, String panelName) {
-        String sql = "select id from "+tablename+"_info where "+tablename+"Name=?";
+    public int isInfoExist(String tableName, String panelName) {
+        String sql = "select id from "+tableName+"_info where "+tableName+"Name=?";
         DataList dataList = queryService.query(sql,panelName);
         if(dataList.isEmpty())
             return 0;
@@ -246,14 +242,19 @@ public class AnalyzeNameService extends BaseService {
      * 根据类型（旧板、产品）和品名判断info是否存在，返回id,unitWeight,unitArea
      */
     @Transactional
-    public String[] isInfoExistBackUnit(String tablename, String panelName) {
-        String sql = "select * from "+tablename+"_info where "+tablename+"Name=?";
+    public String[] isInfoExistBackUnit(String tableName, String panelName) {
+        String sql = "select * from "+tableName+"_info where "+tableName+"Name=?";
         DataList dataList = queryService.query(sql,panelName);
         if(dataList.isEmpty())
             return null;
-        return new String[]{dataList.get(0).get("id").toString(),
-                dataList.get(0).get("unitWeight").toString(),
-                dataList.get(0).get("unitArea").toString()};
+        String id = dataList.get(0).get("id").toString();
+        String unitWeight = null;
+        String unitArea = null;
+        if(dataList.get(0).get("unitWeight")!=null)
+            unitWeight = dataList.get(0).get("unitWeight").toString();
+        if(dataList.get(0).get("unitArea")!=null)
+            unitArea = dataList.get(0).get("unitArea").toString();
+        return new String[]{id,unitWeight,unitArea};
     }
     /**
      * 根据产品类型名获取类型ID
@@ -292,8 +293,6 @@ public class AnalyzeNameService extends BaseService {
     public String[] analyzeProductName(String productName){
         productName = productName.trim().toUpperCase();
         System.out.println("analyzeProductName==="+productName);
-        String isPureNumber = "^-?[0-9]+";
-        String isPureWord = "^[A-Za-z]+$";
         String[] sPName = productName.split("-")[0].split("\\s+");
         String igSuffix;
         if(productName.split("-").length>1)
@@ -307,18 +306,18 @@ public class AnalyzeNameService extends BaseService {
         String classificationId = typeList.get(0).get("classificationId").toString();
         String productTypeName = typeList.get(0).get("productTypeName").toString();
         StringBuilder formatBuilder = new StringBuilder();
-        String m = "0";
-        String n = "0";
-        String p = "0";
-        String a = "0";
-        String b = "0";
-        int mAngle = 0;
-        int nAngle = 0;
-        int pAngle = 0;
+        String m = null;
+        String n = null;
+        String p = null;
+        String a = null;
+        String b = null;
+        String mAngle = null;
+        String nAngle = null;
+        String pAngle = null;
         StringBuilder suffixBuilder = new StringBuilder();
         int conM = 0;
         for (int i = 0; i < 4; i++) {
-            if(i>=(sPName.length-1)){
+            if(i>=(sPName.length)){
                 formatBuilder.append("0");
             } else if(sPName[i].equals(productTypeName)){
                 formatBuilder.append("1");
@@ -350,20 +349,20 @@ public class AnalyzeNameService extends BaseService {
                         n = sPName[i].split("\\+")[1];
                         if(m.contains("A")){
                             m = m.substring(0,m.length()-1);
-                            mAngle = 1;
-                        } else if(p.contains("B")){
+                            mAngle = "1";
+                        } else if(m.contains("B")){
                             m = m.substring(0,m.length()-1);
-                            mAngle = 2;
+                            mAngle = "2";
                         } else
-                            mAngle = 0;
+                            mAngle = "0";
                         if(n.contains("A")){
                             n = n.substring(0,n.length()-1);
-                            nAngle = 1;
+                            nAngle = "1";
                         } else if(n.contains("B")){
                             n = n.substring(0,n.length()-1);
-                            nAngle = 2;
+                            nAngle = "2";
                         } else
-                            nAngle = 0;
+                            nAngle = "0";
                         formatBuilder.append("6");
                         break;
                     case 2:
@@ -371,29 +370,29 @@ public class AnalyzeNameService extends BaseService {
                         n = sPName[i].split("\\+")[1];
                         if(m.contains("A")){
                             m = m.substring(0,m.length()-1);
-                            mAngle = 1;
+                            mAngle = "1";
                         } else if(p.contains("B")){
                             m = m.substring(0,m.length()-1);
-                            mAngle = 2;
+                            mAngle = "2";
                         } else
-                            mAngle = 0;
+                            mAngle = "0";
                         if(n.contains("A")){
                             n = n.substring(0,n.length()-1);
-                            nAngle = 1;
+                            nAngle = "1";
                         } else if(n.contains("B")){
                             n = n.substring(0,n.length()-1);
-                            nAngle = 2;
+                            nAngle = "2";
                         } else
-                            nAngle = 0;
+                            nAngle = "0";
                         p = sPName[i].split("\\+")[2];
                         if(p.contains("A")){
                             p = p.substring(0,p.length()-1);
-                            pAngle = 1;
+                            pAngle = "1";
                         } else if(p.contains("B")){
                             p = p.substring(0,p.length()-1);
-                            pAngle = 2;
+                            pAngle = "2";
                         } else
-                            pAngle = 0;
+                            pAngle = "0";
                         formatBuilder.append("8");
                         break;
                     case 3:
@@ -412,9 +411,7 @@ public class AnalyzeNameService extends BaseService {
 
         }
         String format = formatBuilder.toString() + "";
-        String suffix = suffixBuilder.toString() + "";
-        if(!suffix.isEmpty())
-            suffix = suffix.substring(0,suffix.length()-1);
+        String suffix = (suffixBuilder.toString() + "").trim();
         if((format.contains("3"))&&(n.equals(SetLengthAndWidth(m,n)[0]))){
             String temp = m + n;
             n = temp.substring(0, temp.length()-n.length());
@@ -424,9 +421,9 @@ public class AnalyzeNameService extends BaseService {
             format = format.replace("l","2");
         }
         System.out.println("AnaResult======="+ Arrays.toString(new String[]{productName,format,productTypeId,classificationId,
-                m,n,p,a,b, String.valueOf(mAngle),String.valueOf(nAngle),String.valueOf(pAngle),suffix,igSuffix,productTypeName}));
+                m,n,p,a,b, mAngle,nAngle,pAngle,suffix,igSuffix,productTypeName}));
         return new String[]{format,productTypeId,classificationId,m,n,p,a,b,
-                String.valueOf(mAngle),String.valueOf(nAngle),String.valueOf(pAngle),suffix,igSuffix,productTypeName};
+                mAngle,nAngle,pAngle,suffix,igSuffix,productTypeName};
     }
 
 

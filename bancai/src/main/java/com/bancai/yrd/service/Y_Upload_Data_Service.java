@@ -84,18 +84,18 @@ public class Y_Upload_Data_Service extends BaseService {
             return 0;
         String productFormatId = formatList.get(0).get("id").toString();
         //返回String[]{format,oldpanelTypeId,classificationId,m,n,p,a,b,mAngle,nAngle,pAngle,suffix,oldpanelTypeName};
-        String sql = "insert into oldpanel_info (oldpanelName,classificationId,inventoryUnit,unitWeight,unitArea,remark," +
-                "oldpanelFormatId,oldpanelType,mValue,nValue,pValue,aValue,bValue,mAngle,nAngle,pAngle,suffix,userId) " +
-                "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-        String[] t = {oldpanelName,analyzeOldpanelName[2],inventoryUnit,
+        String sql = "insert into oldpanel_info (oldpanelName,inventoryUnit,unitWeight,unitArea,remark," +
+                "oldpanelFormatId,mValue,nValue,pValue,aValue,bValue,mAngle,nAngle,pAngle,suffix,userId) " +
+                "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        String[] t = {oldpanelName,inventoryUnit,
                 String.valueOf(unitWeight),String.valueOf(unitArea),remark,
-                productFormatId,analyzeOldpanelName[1],analyzeOldpanelName[3],
+                productFormatId,analyzeOldpanelName[3],
                 analyzeOldpanelName[4],analyzeOldpanelName[5],analyzeOldpanelName[6],analyzeOldpanelName[7],
                 analyzeOldpanelName[8],analyzeOldpanelName[9],analyzeOldpanelName[10],analyzeOldpanelName[11],userId};
         System.out.println("SaveInfo======="+Arrays.toString(t));
-        return insertProjectService.insertDataToTable(sql,oldpanelName,analyzeOldpanelName[2],inventoryUnit,
+        return insertProjectService.insertDataToTable(sql,oldpanelName,inventoryUnit,
                 String.valueOf(unitWeight),String.valueOf(unitArea),remark,
-                productFormatId,analyzeOldpanelName[1],analyzeOldpanelName[3],
+                productFormatId,analyzeOldpanelName[3],
                 analyzeOldpanelName[4],analyzeOldpanelName[5],analyzeOldpanelName[6],analyzeOldpanelName[7],
                 analyzeOldpanelName[8],analyzeOldpanelName[9],analyzeOldpanelName[10],analyzeOldpanelName[11],userId);
     }

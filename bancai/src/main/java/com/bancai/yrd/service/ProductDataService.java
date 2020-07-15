@@ -80,11 +80,11 @@ public class ProductDataService extends BaseService{
         if(!unitArea.equals(""))
             unitArea = String.valueOf(Double.parseDouble(unitArea));
         else
-            unitArea = "0";
+            unitArea = null;
         if(!unitWeight.equals(""))
             unitWeight = String.valueOf(Double.parseDouble(unitWeight));
         else
-            unitWeight = "0";
+            unitWeight = null;
         String[] analyzeProductName = AnalyzeNameService.analyzeProductName(productName);
         if(analyzeProductName==null)
             return 0;
@@ -94,17 +94,17 @@ public class ProductDataService extends BaseService{
             return 0;
         String productFormatId = formatList.get(0).get("id").toString();
         //返回String[]{format,productTypeId,classificationId,m,n,p,a,b,mAngle,nAngle,pAngle,suffix,igSuffix,productTypeName};
-        String sql = "insert into product_info (productName,classificationId,inventoryUnit,unitWeight,unitArea,remark," +
-                "productFormatId,productType,mValue,nValue,pValue,aValue,bValue,mAngle,nAngle,pAngle,suffix,ignoredSuffix,userId) " +
-                "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-        String[] t = {productName,analyzeProductName[2],inventoryUnit,
-                unitWeight,unitArea,remark, productFormatId,analyzeProductName[1],
+        String sql = "insert into product_info (productName,inventoryUnit,unitWeight,unitArea,remark," +
+                "productFormatId,mValue,nValue,pValue,aValue,bValue,mAngle,nAngle,pAngle,suffix,ignoredSuffix,userId) " +
+                "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        String[] t = {productName,inventoryUnit,
+                unitWeight,unitArea,remark, productFormatId,
                 analyzeProductName[3], analyzeProductName[4],analyzeProductName[5],
                 analyzeProductName[6],analyzeProductName[7],analyzeProductName[8],analyzeProductName[9],
                 analyzeProductName[10],analyzeProductName[11],analyzeProductName[12],userId};
         System.out.println("SaveInfo======="+Arrays.toString(t));
-        return insertProjectService.insertDataToTable(sql,productName,analyzeProductName[2],inventoryUnit,
-                unitWeight,unitArea,remark, productFormatId,analyzeProductName[1],
+        return insertProjectService.insertDataToTable(sql,productName,inventoryUnit,
+                unitWeight,unitArea,remark, productFormatId,
                 analyzeProductName[3], analyzeProductName[4],analyzeProductName[5],
                 analyzeProductName[6],analyzeProductName[7],analyzeProductName[8],analyzeProductName[9],
                 analyzeProductName[10],analyzeProductName[11],analyzeProductName[12],userId);
@@ -127,22 +127,41 @@ public class ProductDataService extends BaseService{
 
     private int productSaveData(String[] info, String warehouseName, String count){
         //id,unitWeight,unitArea
-        info[1] = String.valueOf(Double.parseDouble(info[1])*Integer.parseInt(count));
-        info[2] = String.valueOf(Double.parseDouble(info[2])*Integer.parseInt(count));
+        int con = 0;
+        if((info[1]!=null)&&(!info[1].equals("")))
+            info[1] = String.valueOf(Double.parseDouble(info[1])*Integer.parseInt(count));
+        else
+            con += 1;
+        if((info[2]!=null)&&(!info[2].equals("")))
+            info[2] = String.valueOf(Double.parseDouble(info[2])*Integer.parseInt(count));
+        else
+            con += 10;
         String sql = "select * from product_store where productId=? and warehouseName=?";
         DataList queryList = queryService.query(sql,info[0],warehouseName);
         if(queryList.isEmpty()){
             return insertProjectService.insertDataToTable("insert into product_store " +
-                            "(productId,countUse,countStore,warehouseName,totalArea,totalWeight) values (?,?,?,?,?,?)",
-                    info[0],count,count,warehouseName,info[2], info[1]);
+                            "(productId,count,warehouseName,totalArea,totalWeight) values (?,?,?,?,?)",
+                    info[0],count,warehouseName,info[2], info[1]);
         } else {
-            String productstoreId = queryList.get(0).get("id").toString();
-            String sql2 = "update product_store set countUse=countUse+"+count+
-                    ",countStore=countStore+"+count+",totalArea=totalArea+"+ info[2] +
-                    ",totalWeight=totalWeight+"+info[1]+
-                    " where id="+queryList.get(0).get("id").toString();
+            String sql2 = "update product_store set count=count+" + count;
+
+            switch (con) {
+                case 0:
+                    sql2 = sql2 + ",totalArea=totalArea+" + info[2] + ",totalWeight=totalWeight+" + info[1];
+                    break;
+                case 1:
+                    sql2 = sql2 + ",totalArea=totalArea+" + info[2];
+                    break;
+                case 10:
+                    sql2 = sql2 + ",totalWeight=totalWeight+" + info[1];
+                    break;
+                case 11:
+                default:
+                    break;
+            }
+            sql2 = sql2 + " where id=" + queryList.get(0).get("id").toString();
             jo.update(sql2);
-            return Integer.parseInt(productstoreId);
+            return Integer.parseInt(queryList.get(0).get("id").toString());
         }
     }
 
