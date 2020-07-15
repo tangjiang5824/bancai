@@ -294,58 +294,58 @@ Ext.define('oldpanel.add_oldpanel_rules', {
             width: 180,
             labelWidth: 60,
             renderTo: Ext.getBody(),
-            // listeners:{
-            //     //    typeStore
-            //     select: function(combo, record, index) {
-            //
-            //         //将产品查询store放到数组中
-            //         var records = ProductTypeStore.data.items;
-            //         var records_len = records.length;
-            //         //循环
-            //         for(var i=0;i<records_len;i++){
-            //             var rec = records[i];
-            //             var typename = rec.data.oldpanelTypeName;
-            //             oldPanel_typeArr.push(typename)
-            //         }
-            //
-            //         //选中后
-            //         var select = record[0].data;
-            //         var id = select.id;//type对应的id
-            //         console.log(id)
-            //         var projectId = 'productTypeId';
-            //         var tableListStore2 = Ext.create('Ext.data.Store',{
-            //             fields : [ 'buildingName'],
-            //             proxy : {
-            //                 type : 'ajax',
-            //                 //通用接口，material/findAllbyTableNameAndOnlyOneCondition.do传入表名，属性及属性值
-            //                 url : 'match/findOldpanelFormatList.do?oldpanelTypeId='+id,//根据项目id查询对应的楼栋名
-            //                 // params : {
-            //                 //     productTypeId:id,
-            //                 // },
-            //                 reader : {
-            //                     type : 'json',
-            //                     rootProperty: 'oldpanelFormatList',
-            //                 }
-            //             },
-            //             autoLoad : true,
-            //             // listeners:{
-            //             //     load:function () {
-            //             //         Ext.getCmp('buildingName').setValue("");
-            //             //     }
-            //             // }
-            //         });
-            //
-            //         //product_format,下拉框重新加载数据
-            //         oldpanel_format.setStore(tableListStore2);
-            //
-            //         //grid store重载
-            //         Ext.getCmp('product_addDataGrid').getStore().removeAll();
-            //
-            //         // Ext.getCmp('product_addDataGrid').getStore().loadData(data,
-            //         //     true);
-            //
-            //     }
-            // }
+            listeners:{
+                //    typeStore
+                select: function(combo, record, index) {
+
+                    //将产品查询store放到数组中
+                    var records = ProductTypeStore.data.items;
+                    var records_len = records.length;
+                    //循环
+                    for(var i=0;i<records_len;i++){
+                        var rec = records[i];
+                        var typename = rec.data.oldpanelTypeName;
+                        oldPanel_typeArr.push(typename)
+                    }
+
+                    //选中后
+                    var select = record[0].data;
+                    var id = select.id;//type对应的id
+                    console.log(id)
+                    var projectId = 'productTypeId';
+                    var tableListStore2 = Ext.create('Ext.data.Store',{
+                        fields : [ 'buildingName'],
+                        proxy : {
+                            type : 'ajax',
+                            //通用接口，material/findAllbyTableNameAndOnlyOneCondition.do传入表名，属性及属性值
+                            url : 'match/findOldpanelFormatList.do?oldpanelTypeId='+id,//根据项目id查询对应的楼栋名
+                            // params : {
+                            //     productTypeId:id,
+                            // },
+                            reader : {
+                                type : 'json',
+                                rootProperty: 'oldpanelFormatList',
+                            }
+                        },
+                        autoLoad : true,
+                        // listeners:{
+                        //     load:function () {
+                        //         Ext.getCmp('buildingName').setValue("");
+                        //     }
+                        // }
+                    });
+
+                    //product_format,下拉框重新加载数据
+                    oldpanel_format.setStore(tableListStore2);
+
+                    //grid store重载
+                    Ext.getCmp('product_addDataGrid').getStore().removeAll();
+
+                    // Ext.getCmp('product_addDataGrid').getStore().loadData(data,
+                    //     true);
+
+                }
+            }
         });
         var oldpanel_format = Ext.create('Ext.form.ComboBox', {
             fieldLabel: '格式',
