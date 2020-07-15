@@ -62,7 +62,9 @@ Ext.define('material.add_Mcatergory_baseInfo', {
                     var s = new Array();
                     select.each(function(rec) {
                         //delete rec.data.id;
+                        delete rec.data.id;
                         s.push(JSON.stringify(rec.data));
+
                         //alert(JSON.stringify(rec.data));//获得表格中的数据
                     });
                     //alert(s);//数组s存放表格中的数据，每条数据以json格式存放
