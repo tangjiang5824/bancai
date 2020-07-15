@@ -71,6 +71,10 @@ public class MaterialController {
         return true;
     }
 
+    //public boolean
+
+
+
     @RequestMapping(value = "/material/findmaterialinfobycondition.do")
     @Transactional
     public String findMaterialInfo(String materialName,String specification,Double unitWeight,String inventoryUnit,String page,String start,String limit){
