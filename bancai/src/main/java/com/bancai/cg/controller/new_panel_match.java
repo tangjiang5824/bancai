@@ -71,8 +71,6 @@ public class new_panel_match {
 
     @RequestMapping("/material/cg/test")
     public void test() throws ScriptException {
-       // match();
-        String sql="insert into preprocess_store (productId,totalArea) values(?,?)";
-        insertProjectService.insertIntoTableBySQL(sql,"1",null);
+       match();
     }
 }
