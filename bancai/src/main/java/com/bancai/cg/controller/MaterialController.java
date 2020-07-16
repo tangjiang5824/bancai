@@ -122,7 +122,7 @@ public class MaterialController {
      * */
     @RequestMapping(value="/material/addData.do")
     @Transactional
-    public boolean addMaterialData(String s, String tableName,String operator, HttpSession session) throws Exception {
+    public boolean addMaterialData(String s,String operator, HttpSession session) throws Exception {
 
         JSONArray jsonArray =JSONArray.parseArray(s);
         String userId = (String)session.getAttribute("userid");

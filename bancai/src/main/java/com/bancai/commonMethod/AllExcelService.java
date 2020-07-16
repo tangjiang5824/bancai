@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DecimalFormat;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -119,6 +120,9 @@ public class AllExcelService extends BaseService {
 				if(null!=dataList.get(i).get("totalWeight")){
 					totalWeight=Double.parseDouble(dataList.get(i).get("totalWeight")+"");
 					store.setTotalWeight(totalWeight);
+					if(count!=null){
+						dataList.get(i).put("unitWeight",new DecimalFormat("0.00").format(totalWeight/count));
+					}
 				}
 				String description=null;
 				if(null!=dataList.get(i).get("description")){

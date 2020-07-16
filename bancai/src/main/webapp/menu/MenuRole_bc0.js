@@ -344,10 +344,16 @@ Ext.define("menu.MenuRole_bc0", {
 					text : '旧版种类管理',
 					//leaf : true
 					expanded : true,
-					children : [{
-						text : '添加新的类型',
-						id : 'oldpanel.add_Ocatergory_baseInfo',
-						leaf : true
+					children : [
+						// {
+						// 	text : '添加新的类型',
+						// 	id : 'oldpanel.add_Ocatergory_baseInfo',
+						// 	leaf : true
+						// },
+						{
+							text : '旧板类型',
+							id : 'oldpanel.add_Otype_baseInfo',
+							leaf : true
 						},
 						{
 							text : '旧板基础信息录入',
@@ -374,11 +380,18 @@ Ext.define("menu.MenuRole_bc0", {
 					text : '产品种类管理',
 					//leaf : true
 					expanded : true,
-					children : [{
-						text : '添加新的类型',
-						id : 'product.add_Pcatergory_baseInfo',
-						leaf : true
-					},{
+					children : [
+						// {
+						// 	text : '添加新的类型',
+						// 	id : 'product.add_Pcatergory_baseInfo',
+						// 	leaf : true
+						// },
+						{
+							text : '产品类型',
+							id : 'product.add_Ptype_baseInfo',
+							leaf : true
+						},
+						{
 						text : '查看产品基础信息',
 						id : 'product.query_Pcatergory_baseInfo',//
 						leaf : true
@@ -386,6 +399,10 @@ Ext.define("menu.MenuRole_bc0", {
 							text : '添加产品基础信息',
 							id : 'product.product_Basic_Info_Input',
 							leaf : true
+					},{
+						text : '添加产品格式',
+						id : 'product.product_Format_Input',
+						leaf : true
 					},
 					{
 						text: 'scscscscscscscsc',

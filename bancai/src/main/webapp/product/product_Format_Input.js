@@ -1,8 +1,8 @@
-Ext.define('oldpanel.oldpanel_Format_Input', {
+Ext.define('product.product_Format_Input', {
     extend : 'Ext.panel.Panel',
     region : 'center',
     layout : "fit",
-    title : '添加旧板格式',
+    title : '添加产品格式',
     // reloadPage : function() {
     //     var p = Ext.getCmp('functionPanel');
     //     p.removeAll();
@@ -30,101 +30,41 @@ Ext.define('oldpanel.oldpanel_Format_Input', {
                 //
             }
         });
-        //仓库编号
-        var storeNameList = Ext.create('Ext.data.Store',{
-            fields : [ 'warehouseName'],
-            proxy : {
-                type : 'ajax',
-                url : 'material/findStore.do', //查询所有的仓库编号
-                reader : {
-                    type : 'json',
-                    rootProperty: 'StoreName',
-                }
-            },
-            autoLoad : true
-        });
-        var storePosition = Ext.create('Ext.form.ComboBox',{
-            fieldLabel : '仓库名',
-            labelWidth : 50,
-            width : 200,
-            margin: '0 10 0 20',
-            id :  'storePosition',
-            name : 'storePosition',
-            matchFieldWidth: false,
-            emptyText : "--请选择--",
-            displayField: 'warehouseName',
-            valueField: 'warehouseName',
-            editable : false,
-            store: storeNameList,
-        });
 
-        var oldpanelTypeListStore = Ext.create('Ext.data.Store',{
-            fields : [ 'oldpanelTypeName'],
+        var productNameList = Ext.create('Ext.data.Store',{
+            fields : [ 'productTypeName'],
             proxy : {
                 type : 'ajax',
-                url : 'oldpanel/oldpanelType.do',
+                url : 'material/findAllBytableName.do?tableName=producttype',
                 reader : {
                     type : 'json',
-                    rootProperty: 'typeList',
+                    rootProperty: 'producttype',
                 }
             },
             autoLoad : true
         });
-        var oldpanelTypeList = Ext.create('Ext.form.ComboBox',{
-            fieldLabel : '旧板类型',
+        var productTypeList = Ext.create('Ext.form.ComboBox',{
+            fieldLabel : '产品类型',
             labelWidth : 70,
             width : 230,
-            id :  'oldpanelType',
-            name : 'oldpanelType',
+            id :  'productType',
+            name : 'productType',
             matchFieldWidth: false,
             emptyText : "--请选择--",
-            displayField: 'oldpanelTypeName',
-            valueField: 'id',
+            displayField: 'productTypeName',
+            valueField: 'productTypeName',
             editable : false,
-            store: oldpanelTypeListStore,
+            store: productNameList,
             listeners:{
                 select: function(combo, record, index) {
 
-                    console.log(oldpanelTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
+                    console.log(productTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
                     //console.log(record[0].data.materialName);
                 }
             }
 
         });
 
-        var classificationListStore = Ext.create('Ext.data.Store',{
-            fields : [ 'classificationName'],
-            proxy : {
-                type : 'ajax',
-                url : '/material/findAllBytableName.do?tableName=classification',
-                reader : {
-                    type : 'json',
-                    rootProperty: 'classification',
-                },
-            },
-            autoLoad : true
-        });
-        var classificationList = Ext.create('Ext.form.ComboBox',{
-            fieldLabel : '分类',
-            labelWidth : 70,
-            width : 230,
-            id :  'classification',
-            name : 'classification',
-            matchFieldWidth: false,
-            emptyText : "--请选择--",
-            displayField: 'classificationName',
-            valueField: 'classificationId',
-            editable : false,
-            store: classificationListStore,
-            listeners:{
-                select: function(combo, record, index) {
-
-                    console.log(classificationList.getValue());// MaterialTypeList.getValue()获得选择的类型
-                    //console.log(record[0].data.materialName);
-                }
-            }
-
-        });
         var format1store = Ext.create('Ext.data.Store', {
             fields: ['abbr', 'name'],
             data : [
@@ -240,7 +180,7 @@ Ext.define('oldpanel.oldpanel_Format_Input', {
         var toolbar2 = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
             items: [
-                oldpanelTypeList,
+                productTypeList,
                 format1,
                 format2,
                 format3,
@@ -251,9 +191,9 @@ Ext.define('oldpanel.oldpanel_Format_Input', {
                     iconCls : 'rukuicon ',
                     text : '添加',
                     handler: function(){
-                        console.log("123zzy123"+Ext.getCmp('oldpanelType').getValue());
-                        var oldpanelTypeName = Ext.getCmp('oldpanelType').rawValue;
-                        var oldpanelTypeId = Ext.getCmp('oldpanelType').getValue();
+                        console.log("123zzy123"+Ext.getCmp('productType').getValue());
+                        var productTypeName = Ext.getCmp('productType').rawValue;
+                        var productTypeId = Ext.getCmp('productType').getValue();
                         var format1Name = Ext.getCmp('oldpanel_basic_info_format1').rawValue;
                         var format2Name = Ext.getCmp('oldpanel_basic_info_format2').rawValue;
                         var format3Name = Ext.getCmp('oldpanel_basic_info_format3').rawValue;
@@ -263,8 +203,8 @@ Ext.define('oldpanel.oldpanel_Format_Input', {
                         var format3 = Ext.getCmp('oldpanel_basic_info_format3').getValue();
                         var format4 = Ext.getCmp('oldpanel_basic_info_format4').getValue();
                         var data = [{
-                            'oldpanelTypeName' : oldpanelTypeName,
-                            'oldpanelTypeId' : oldpanelTypeId,
+                            'productTypeName' : productTypeName,
+                            'productTypeId' : productTypeId,
                             'format1' : format1,
                             'format2' : format2,
                             'format3' : format3,
@@ -279,7 +219,7 @@ Ext.define('oldpanel.oldpanel_Format_Input', {
                         // console.log(Ext.getCmp('length').getValue());
                         // console.log(Ext.getCmp('cost').getValue());
                         //若品名未填则添加失败
-                        if (oldpanelTypeId != '') {
+                        if (productTypeId != '') {
                             Ext.getCmp('addDataGrid').getStore().loadData(data, true);
                             //清除框里的数据
                             // Ext.getCmp('oldpanelName').setValue('');
@@ -346,7 +286,7 @@ Ext.define('oldpanel.oldpanel_Format_Input', {
                     //获得当前操作时间
                     //var sTime=Ext.Date.format(Ext.getCmp('startTime').getValue(), 'Y-m-d H:i:s');
                     Ext.Ajax.request({
-                        url : 'oldpanel/addFormat.do', //旧板入库
+                        url : 'product/addFormat.do', //旧板入库
                         method:'POST',
                         //submitEmptyText : false,
                         params : {
@@ -384,7 +324,7 @@ Ext.define('oldpanel.oldpanel_Format_Input', {
             //dockedItems : [toolbar2],
             store : {
                 // fields: ['材料名','品号', '长',"；类型","宽",'规格','库存单位','仓库编号','数量','成本','存放位置']
-                fields: ['oldpanelName','warehouseName','count']
+                //fields: ['productTypeName','productTypeId','count']
             },
 
             columns : [
@@ -399,7 +339,7 @@ Ext.define('oldpanel.oldpanel_Format_Input', {
                 //     }
                 // },
                 //{dataIndex : 'oldpanelTypeId', text : '旧板类型Id', flex :1,},
-                {dataIndex : 'oldpanelTypeName', text : '旧板类型', flex :1,},
+                {dataIndex : 'productTypeName', text : '旧板类型', flex :1,},
                 {dataIndex : 'format1Name', text : '旧板格式1', flex :1,},
                 {dataIndex : 'format2Name', text : '旧板格式2', flex :1,},
                 {dataIndex : 'format3Name', text : '旧板格式3', flex :1,},
