@@ -93,6 +93,93 @@ Ext.define('material.add_material_rules', {
         });
 
 
+        var ProductTypeStore = Ext.create('Ext.data.Store',{
+            fields : [ 'projectName'],
+            proxy : {
+                type : 'ajax',
+                url : 'match/findProductTypeList.do',
+
+                reader : {
+                    type : 'json',
+                    rootProperty: 'productTypeList',
+                }
+            },
+            autoLoad : true
+        });
+        //
+        var product_type = Ext.create('Ext.form.ComboBox', {
+            fieldLabel: '产品类型',
+            name: 'product_type',
+            id: 'product_type',
+            store: ProductTypeStore,
+            queryMode: 'local',
+            displayField: 'productTypeName',
+            valueField: 'id',
+            margin : '0 20 0 40',
+            width: 180,
+            labelWidth: 60,
+            renderTo: Ext.getBody(),
+            listeners:{
+                //    typeStore
+                select: function(combo, record, index) {
+
+                    //将产品查询store放到数组中
+                    var records = ProductTypeStore.data.items;
+
+                    //选中后
+                    var select = record[0].data;
+                    var id = select.id;//type对应的id
+                    console.log('------------------id',id)
+
+                    // var type = component1.value; //id值
+                    // var typeName = component1.rawValue; //id值
+                    //    store中的数据添加类型
+                    // data = [{
+                    //     '格式名称' : typeName,
+                    // }];
+
+                    //表名
+                    // var tableName = 'building';
+                    //属性名
+                    var projectId = 'productTypeId';
+                    var tableListStore2 = Ext.create('Ext.data.Store',{
+                        fields : [ 'buildingName'],
+                        proxy : {
+                            type : 'ajax',
+                            //通用接口，material/findAllbyTableNameAndOnlyOneCondition.do传入表名，属性及属性值
+                            url : 'match/findProductFormatList.do?productTypeId='+id,//根据项目id查询对应的楼栋名
+                            // params : {
+                            //     productTypeId:id,
+                            // },
+                            reader : {
+                                type : 'json',
+                                rootProperty: 'productFormatList',
+                            }
+                        },
+                        autoLoad : true,
+
+                    });
+                    //product_format,下拉框重新加载数据
+                    product_format.setStore(tableListStore2);
+
+                }
+            }
+        });
+        var product_format = Ext.create('Ext.form.ComboBox', {
+            fieldLabel: '格式',
+            id:'productformatId',
+            name: 'productformatId',
+            store: '',
+            queryMode: 'local',
+            displayField: 'productFormat',
+            valueField: 'id',
+            margin : '0 20 0 40',
+            width: 180,
+            labelWidth: 35,
+            renderTo: Ext.getBody(),
+        });
+
+
         //产品的toolbar
         var toolbar = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
@@ -193,7 +280,24 @@ Ext.define('material.add_material_rules', {
                                         type: 'vbox'
                                     },
                                     items:[
-                                        productNameList,
+                                        // productNameList,
+                                        product_type
+                                    ]
+                                },{
+                                    flex:1,
+                                    defaults: {
+                                        border:false,
+                                        labelWidth:70,
+                                        labelAlign:'right',
+                                        width:'95%'
+                                    },
+                                    layout:{
+                                        align: 'left',
+                                        // pack: 'center',
+                                        type: 'vbox'
+                                    },
+                                    items:[
+                                        product_format
                                     ]
                                 },
                             ]
@@ -285,7 +389,7 @@ Ext.define('material.add_material_rules', {
                                         },
                                         {
                                             xtype: 'textfield',
-                                            fieldLabel: '起源',
+                                            fieldLabel: '方向',
                                             name: 'orientation',
                                         },
                                         {
