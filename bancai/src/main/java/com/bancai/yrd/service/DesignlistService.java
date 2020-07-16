@@ -1,5 +1,6 @@
 package com.bancai.yrd.service;
 
+import com.bancai.cg.controller.new_panel_match;
 import com.bancai.cg.service.InsertProjectService;
 import com.bancai.commonMethod.AnalyzeNameService;
 import com.bancai.commonMethod.PanelMatchService;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.bancai.service.BaseService;
 
+import javax.script.ScriptException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -33,18 +35,19 @@ public class DesignlistService extends BaseService{
     private PanelMatchService panelMatchService;
     @Autowired
     private ProductDataService productDataService;
+    @Autowired
+    private new_panel_match new_panel_match;
 
     /**
      * 设计清单解析
      */
     @Transactional
     public UploadDataResult uploadDesignlist(InputStream inputStream, String userId, String projectId, String buildingId,
-                                             String buildingpositionId) throws IOException {
+                                             String buildingpositionId) throws IOException, ScriptException {
         UploadDataResult result = new UploadDataResult();
 
         Excel excel = new Excel(inputStream);
         DataList dataList = excel.readExcelContent();
-        Map<String, ArrayList<String>> map = new HashMap<>();
         for (DataRow dataRow : dataList) {
             String productName = dataRow.get("productName").toString().trim().toUpperCase();
             String position = dataRow.get("position").toString();
@@ -59,25 +62,14 @@ public class DesignlistService extends BaseService{
                 result.dataList = dataList;
                 return result;
             }
-            productName = String.valueOf(productId) + "N" + productName;
-            //productName形如 15N100 B 200  即  idNproductName
             setDesignlistOrigin(projectId,buildingId,buildingpositionId,String.valueOf(productId),position,0,0);
-            if (map.containsKey(productName)) {
-                ArrayList<String> a = new ArrayList<>();
-                a = map.get(productName);
-                a.add(position);
-                map.put(productName, a);
-            } else {
-                ArrayList<String> a = new ArrayList<>();
-                a.add(position);
-                map.put(productName, a);
-            }
         }
-        map = panelMatchService.matchBackProduct(map,projectId,buildingId,buildingpositionId);
-        map = panelMatchService.matchPreprocess(map,projectId,buildingId,buildingpositionId);
-        map = panelMatchService.matchOldpanel(map,projectId,buildingId,buildingpositionId);
-//            map = matchMaterial(map);
-        result.success = panelMatchService.matchError(map,projectId,buildingId,buildingpositionId);
+
+        panelMatchService.matchBackProduct(projectId,buildingId,buildingpositionId);
+        panelMatchService.matchPreprocess(projectId,buildingId,buildingpositionId);
+        panelMatchService.matchOldpanel(projectId,buildingId,buildingpositionId);
+        new_panel_match.match();
+        result.success = panelMatchService.matchError(projectId,buildingId,buildingpositionId);
         result.dataList = dataList;
         return result;
     }

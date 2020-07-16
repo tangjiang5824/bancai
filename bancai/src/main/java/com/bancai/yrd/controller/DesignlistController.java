@@ -43,7 +43,7 @@ public class DesignlistController {
             response.put("value",result.dataList);
             response.put("totalCount", result.dataList.size());
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             response.setSuccess(false);
             response.setErrorCode(1000); //未知错误
