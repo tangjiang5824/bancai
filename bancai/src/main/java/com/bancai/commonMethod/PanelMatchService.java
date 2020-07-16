@@ -249,7 +249,7 @@ public class PanelMatchService extends BaseService{
                 if(!isProductFitCondition(productFormat,pCon,productInfo))
                     continue;
                 String oldpanelFormatId = rulesRow.get("oldpanelFormatId").toString();
-                String iscompleteMatch = rulesRow.get("iscompleteMatch").toString();
+                String iscompleteMatch = rulesRow.get("isCompleteMatch").toString();
                 DataList oldpanelList = new DataList();
                 oldpanelList = queryService.query("SELECT oldpanel_info.mValue AS mValue,oldpanel_info.nValue AS nValue,oldpanel_info.pValue AS pValue," +
                         "oldpanel_info.aValue AS aValue,oldpanel_info.bValue AS bValue,oldpanel_info.mAngle AS mAngle,oldpanel_info.nAngle AS nAngle,oldpanel_info.pAngle AS pAngle," +
