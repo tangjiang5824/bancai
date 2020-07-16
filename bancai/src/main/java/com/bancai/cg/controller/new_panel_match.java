@@ -33,7 +33,7 @@ public class new_panel_match {
     private Logger log = Logger.getLogger(new_panel_match.class);
 
     @Transactional
-    public void match() throws ScriptException {
+    public  void match() throws ScriptException {
         List<Designlist> design_list =designlistdao.findAllByMadeBy(0);
         for (int i=0;i<design_list.size();i++){
             Designlist designlist=design_list.get(i);
