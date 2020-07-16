@@ -95,7 +95,7 @@ Ext.define('oldpanel.add_Ocatergory_baseInfo', {
             }]
         });
 
-        var oldpanelTypeListStore = Ext.create('Ext.data.Store',{
+        var classificationListStore = Ext.create('Ext.data.Store',{
             fields : [ 'typeName'],
             proxy : {
                 type : 'ajax',
@@ -107,7 +107,7 @@ Ext.define('oldpanel.add_Ocatergory_baseInfo', {
             },
             autoLoad : true
         });
-        var oldpanelTypeList=Ext.create('Ext.form.ComboBox',{
+        var classificationList=Ext.create('Ext.form.ComboBox',{
             // fieldLabel : '原材料分类',
             // labelWidth : 80,
             // width : 230,
@@ -122,7 +122,7 @@ Ext.define('oldpanel.add_Ocatergory_baseInfo', {
             editable : false,
             triggerAction: 'all',
             selectOnFocus:true,
-            store: oldpanelTypeListStore,
+            store: classificationListStore,
         });
 
 
@@ -159,9 +159,9 @@ Ext.define('oldpanel.add_Ocatergory_baseInfo', {
                     text : '分类',
                     flex :.6,
                     //width : 110,
-                    editor:oldpanelTypeList,renderer:function(value, cellmeta, record){
-                        var index = oldpanelTypeListStore.find(oldpanelTypeList.valueField,value);
-                        var ehrRecord = oldpanelTypeListStore.getAt(index);
+                    editor:classificationList,renderer:function(value, cellmeta, record){
+                        var index = classificationListStore.find(classificationList.valueField,value);
+                        var ehrRecord = classificationListStore.getAt(index);
                         var returnvalue = "";
                         if (ehrRecord) {
                             returnvalue = ehrRecord.get('classificationName');
