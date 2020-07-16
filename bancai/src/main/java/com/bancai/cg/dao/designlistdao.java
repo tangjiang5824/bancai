@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import java.util.List;
 
 public interface designlistdao extends JpaRepository<Designlist,Integer>, JpaSpecificationExecutor<Designlist> {
-    public List<Designlist> findAllByMadeBy(int madeBy);
+    public List<Designlist> findAllByMadeByAndProjectIdAndBuildingIdAndBuildingpositionId(int madeBy,int projectId,int buildingId,int buildingpositionId);
 }
