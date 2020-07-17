@@ -37,9 +37,9 @@ Ext.define('oldpanel.oldpanel_Outbound',{
         //操作类型：枚举类型
         Ext.define('oldpanel.oepration.state', {
             statics: { // 关键
-                0: { value: '0', name: '未回滚' },
-                null: { value: '0', name: '未回滚' },
-                1: { value: '1', name: '已回滚' },
+                0: { value: '0', name: '未撤销' },
+                null: { value: '0', name: '未撤销' },
+                1: { value: '1', name: '已撤销' },
             }
         });
 
@@ -175,7 +175,7 @@ Ext.define('oldpanel.oldpanel_Outbound',{
                 {
                     xtype: 'textfield',
                     margin : '0 40 0 0',
-                    fieldLabel: '回滚人',
+                    fieldLabel: '撤销人',
                     id :'operator_back',
                     width: 150,
                     labelWidth: 50,
@@ -185,7 +185,7 @@ Ext.define('oldpanel.oldpanel_Outbound',{
                 {
                     xtype : 'datefield',
                     margin : '0 40 0 0',
-                    fieldLabel : '回滚时间',
+                    fieldLabel : '撤销时间',
                     width : 180,
                     labelWidth : 60,
                     id : "backTime",
@@ -197,7 +197,7 @@ Ext.define('oldpanel.oldpanel_Outbound',{
 
                 {
                     xtype : 'button',
-                    text: '回滚所有记录',
+                    text: '撤销所有记录',
                     width: 100,
                     margin: '0 0 0 40',
                     layout: 'right',
@@ -208,7 +208,7 @@ Ext.define('oldpanel.oldpanel_Outbound',{
                         if (is_rollback != 1){
                             Ext.Msg.show({
                                 title: '操作确认',
-                                message: '将回滚数据，选择“是”否确认？',
+                                message: '将撤销数据，选择“是”否确认？',
                                 buttons: Ext.Msg.YESNO,
                                 icon: Ext.Msg.QUESTION,
                                 fn: function (btn) {
@@ -216,20 +216,20 @@ Ext.define('oldpanel.oldpanel_Outbound',{
                                         Ext.Ajax.request({
                                             url:"oldpanel/backOldpanelStore.do",  //入库记录撤销
                                             params:{
-                                                operator:operator,  //回滚操作人
+                                                operator:operator,  //撤销操作人
                                                 oldpanellogId:oldpanel_logId,
                                                 type:0,  //撤销出库1
                                                 whichStore:whichStore,
                                             },
                                             success:function (response) {
                                                 //console.log(response.responseText);
-                                                Ext.MessageBox.alert("提示", "回滚成功!");
+                                                Ext.MessageBox.alert("提示", "撤销成功!");
                                                 //location="javascript:location.reload()";
                                                 oldpanel_inBoundRecords_Store.load();
                                                 //oldpanel_Query_Records_specific_data_grid.close();
                                             },
                                             failure : function(response){
-                                                Ext.MessageBox.alert("提示", "回滚失败!");
+                                                Ext.MessageBox.alert("提示", "撤销失败!");
                                             }
                                         })
                                     }
@@ -238,7 +238,7 @@ Ext.define('oldpanel.oldpanel_Outbound',{
 
                         }
                         else{
-                            Ext.Msg.alert('错误', '该条记录已回滚！')
+                            Ext.Msg.alert('错误', '该条记录已撤销！')
                         }
                     }
                 }
@@ -300,7 +300,7 @@ Ext.define('oldpanel.oldpanel_Outbound',{
 
         var oldpanel_Query_Records_win_showoldpanelData = Ext.create('Ext.window.Window', {
             // id:'oldpanel_Query_Records_win_showoldpanelData',
-            title: '原材料出入库记录回滚',
+            title: '旧板出入库记录撤销',
             height: 500,
             width: 650,
             layout: 'fit',
@@ -358,7 +358,7 @@ Ext.define('oldpanel.oldpanel_Outbound',{
                         return "<INPUT type='button' value='查看' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
                     }
                 },
-                {   text: '记录是否回滚',
+                {   text: '记录是否撤销',
                     dataIndex: 'isrollback',
                     flex :1 ,
                     //defaultValue:0,

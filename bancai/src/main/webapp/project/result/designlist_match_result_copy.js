@@ -1,9 +1,14 @@
-Ext.define('project.result.newpanel_material_match_result',{
+Ext.define('project.result.designlist_match_result',{
     extend:'Ext.panel.Panel',
     region: 'center',
     layout:'fit',
-    title: '新板匹配结果',
+    title: '产品匹配结果查询',
     initComponent: function(){
+
+        var itemsPerPage = 50;
+        //var tableName="material";
+        //var materialType=
+
         /*
          * *合并单元格的函数，合并表格内所有连续的具有相同值的单元格。调用方法示例：
          * *store.on("load",function(){gridSpan(grid,"row","[FbillNumber],[FbillDate],[FAudit],[FAuditDate],[FSure],[FSureDate]","FbillNumber");});
@@ -166,9 +171,18 @@ Ext.define('project.result.newpanel_material_match_result',{
 
         };
 
-        var itemsPerPage = 50;
-        //var tableName="material";
-        //var materialType="1";
+        //原件类型：枚举类型
+        Ext.define('product.model.originType', {
+            statics: { // 关键s
+                0: { value: '0', name: '未匹配' },
+                1: { value: '1', name: '退库成品' },
+                2: { value: '2', name: '预加工半产品' },
+                3: { value: '3', name: '旧板' },
+                4: { value: '4', name: '原材料新板' },
+                9: { value: '5', name: '未匹配成功' },
+            }
+        });
+
         var projectListStore = Ext.create('Ext.data.Store',{
             fields : [ "项目名称","id"],
             proxy : {
@@ -366,6 +380,13 @@ Ext.define('project.result.newpanel_material_match_result',{
                 }
             },
             listeners : {
+                //字段拼接
+                load:function(store,records){
+                    for(var i=0;i<records.length;i++){
+                        records[i].set('productName_Des',records[i].get('productName')+" &nbsp;&nbsp;&nbsp;&nbsp;(序号:"+records[i].get('designlistId')+","+product.model.originType[records[i].get('madeBy')].name+")");
+                    }
+                },
+
                 beforeload : function(store, operation, eOpts) {
                     store.getProxy().setExtraParams({
                         projectId:Ext.getCmp("projectName").getValue(),
@@ -385,12 +406,18 @@ Ext.define('project.result.newpanel_material_match_result',{
                 editable:true
             },
             columns : [
-                { text: '项目名', dataIndex: 'projectName', flex :1.2,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '楼栋名', dataIndex: 'buildingName', flex :0.8 ,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '位置', dataIndex: 'positionName',flex :0.2, editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '产品名', dataIndex: 'productName', flex :1,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '原材料名', dataIndex: 'materialName', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '原材料数量', dataIndex: 'materialCount', flex :1,editor:{xtype : 'textfield', allowBlank : false} },
+                // { text: '项目名', dataIndex: 'projectName', flex :1.2,},
+                // { text: '楼栋名', dataIndex: 'buildingName', flex :0.8 },
+                // { text: '位置', dataIndex: 'positionName',flex :0.2, },
+                // { text: 'designlistId', dataIndex: 'designlistId',flex :0.2}, //,hidden:true
+                { text: '产品名', dataIndex: 'productName_Des', flex :1},
+                // { text: '原件', dataIndex: 'madeBy', flex :1.2,
+                //     renderer: function (value) {
+                //         return product.model.originType[value].name; // key-value
+                //     },
+                // },
+                { text: '材料名', dataIndex: 'materialName', flex :1 },
+                { text: '材料数量', dataIndex: 'materialCount', flex :1},
             ],
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 3
@@ -428,281 +455,12 @@ Ext.define('project.result.newpanel_material_match_result',{
         this.items = [grid];
         this.callParent(arguments);
 
-
-        var mergeCells = function(grid,cols){
-            // var arrayTr=document.getElementById(grid.getId()+"-body").firstChild.firstChild.firstChild.getElementsByTagName('tr');
-            var  arrayTr = document.getElementById(grid.getId()+"-body").firstChild.lastChild.getElementsByTagName('tr')
-            var trCount = arrayTr.length;
-            var arrayTd;
-            var td;
-
-            console.log("arrayTr------------",arrayTr)
-            console.log("trCount------------",trCount)
-
-            //定义合并函数
-            var merge = function(rowspanObj,removeObjs){
-                if(rowspanObj.rowspan != 1){
-                    arrayTd =arrayTr[rowspanObj.tr].getElementsByTagName("td"); //合并行
-
-                    td=arrayTd[rowspanObj.td-1];
-                    console.log("td------------",td)
-                    td.rowSpan=rowspanObj.rowspan;
-                    td.vAlign="middle";
-                    Ext.each(removeObjs,function(obj){ //隐身被合并的单元格
-                        arrayTd =arrayTr[obj.tr].getElementsByTagName("td");
-                        arrayTd[obj.td-1].style.display='none';
-                    });
-                }
-            };
-            var rowspanObj = {}; //要进行跨列操作的td对象{tr:1,td:2,rowspan:5}
-            var removeObjs = []; //要进行删除的td对象[{tr:2,td:2},{tr:3,td:2}]
-            var col;
-
-            //逐列去操作tr
-            Ext.each(cols,function(colIndex){
-                var rowspan = 1;
-                var divHtml = null;//单元格内的数值
-                for(var i=1;i<trCount;i++){  //i=0表示表头等没用的行
-                    arrayTd = arrayTr[i].getElementsByTagName("td");
-                    var cold=0;
-
-                    col=colIndex+cold;//跳过RowNumber列和check列
-                    if(!divHtml){
-                        divHtml = arrayTd[col-1].innerHTML;
-                        rowspanObj = {tr:i,td:col,rowspan:rowspan}
-                    }else{
-                        var cellText = arrayTd[col-1].innerHTML;
-                        //新的单元格
-                        var addf=function(){
-                            rowspanObj["rowspan"] = rowspanObj["rowspan"]+1;
-                            removeObjs.push({tr:i,td:col});
-                            if(i==trCount-1)
-                                merge(rowspanObj,removeObjs);//执行合并函数
-                        };
-                        //合并
-                        var mergef=function(){
-                            merge(rowspanObj,removeObjs);//执行合并函数
-                            divHtml = cellText;
-                            rowspanObj = {tr:i,td:col,rowspan:rowspan}
-                            removeObjs = [];
-                        };
-                        if(cellText == divHtml){
-
-                            //跳过第一列，不需要判断前一列的合并情况
-                            if(colIndex!=cols[0]){
-                                var leftDisplay=arrayTd[col-2].style.display;//判断左边单元格值是否已display
-                                if(leftDisplay=='none')
-                                    addf();
-                                else
-                                    mergef();
-                            }else
-                                addf();
-
-                        }else
-                            mergef();
-                    }
-                }
-            });
-        };
-
-        /**
-         * 合并Grid的数据列
-         * @param grid {Ext.Grid.Panel} 需要合并的Grid
-         * @param colIndexArray {Array} 需要合并列的Index(序号)数组；从0开始计数，序号也包含。
-         * @param isAllSome {Boolean} 是否2个tr的colIndexArray必须完成一样才能进行合并。true：完成一样；false：不完全一样
-         */
-        //合并
-        function mergeGrid(grid, colIndexArray, isAllSome) {
-            isAllSome = isAllSome == undefined ? true : isAllSome; // 默认为true
-            // 1.是否含有数据
-            // var gridView = document.getElementById(grid.getView().getId() + '-body');
-            // if (gridView == null) {
-            //     return;
-            // }
-
-            // 2.获取Grid的所有tr
-            var trArray = [];
-            // if (grid.layout.type == 'table') { // 若是table部署方式，获取的tr方式如下
-            //     trArray = gridView.childNodes;
-            // } else {
-            //     trArray = gridView.getElementsByTagName('tr');
-            // }
-            trArray = document.getElementById(grid.getId()+"-body").firstChild.lastChild.getElementsByTagName('tr');
-            console.log('trArray================',trArray)
-
-            // 3.进行合并操作
-            if (isAllSome) { // 3.1 全部列合并：只有相邻tr所指定的td都相同才会进行合并
-                var lastTr = trArray[0]; // 指向第一行
-                // 1)遍历grid的tr，从第二个数据行开始
-                for (var i = 1, trLength = trArray.length; i < trLength; i++) {
-                    var thisTr = trArray[i];
-                    var isPass = true; // 是否验证通过
-                    // 2)遍历需要合并的列
-                    for (var j = 0, colArrayLength = colIndexArray.length; j < colArrayLength; j++) {
-                        var colIndex = colIndexArray[j];
-                        // 3)比较2个td的列是否匹配，若不匹配，就把last指向当前列
-                        if (lastTr.childNodes[colIndex].innerText != thisTr.childNodes[colIndex].innerText) {
-                            lastTr = thisTr;
-                            isPass = false;
-                            break;
-                        }
-                    }
-
-                    // 4)若colIndexArray验证通过，就把当前行合并到'合并行'
-                    if (isPass) {
-                        for (var j = 0, colArrayLength = colIndexArray.length; j < colArrayLength; j++) {
-                            var colIndex = colIndexArray[j];
-                            // 5)设置合并行的td rowspan属性
-                            if (lastTr.childNodes[colIndex].hasAttribute('rowspan')) {
-                                var rowspan = lastTr.childNodes[colIndex].getAttribute('rowspan') - 0;
-                                rowspan++;
-                                lastTr.childNodes[colIndex].setAttribute('rowspan', rowspan);
-                            } else {
-                                lastTr.childNodes[colIndex].setAttribute('rowspan', '2');
-                            }
-                            // lastTr.childNodes[colIndex].style['text-align'] = 'center';; // 水平居中
-                            lastTr.childNodes[colIndex].style['vertical-align'] = 'middle';// 纵向居中
-
-                            thisTr.childNodes[colIndex].style.display = 'none';
-                        }
-                    }
-                }
-            } else { // 3.2 逐个列合并：每个列在前面列合并的前提下可分别合并
-                // 1)遍历列的序号数组
-                for (var i = 0, colArrayLength = colIndexArray.length; i < colArrayLength; i++) {
-                    var colIndex = colIndexArray[i];
-                    var lastTr = trArray[0]; // 合并tr，默认为第一行数据
-                    // 2)遍历grid的tr，从第二个数据行开始
-                    for (var j = 1, trLength = trArray.length; j < trLength; j++) {
-                        var thisTr = trArray[j];
-                        // 3)2个tr的td内容一样
-                        if (lastTr.childNodes[colIndex].innerText == thisTr.childNodes[colIndex].innerText) {
-                            // 4)若前面的td未合并，后面的td都不进行合并操作
-                            if (i > 0 && thisTr.childNodes[colIndexArray[i - 1]].style.display != 'none') {
-                                lastTr = thisTr;
-                                continue;
-                            } else {
-                                // 5)符合条件合并td
-                                if (lastTr.childNodes[colIndex].hasAttribute('rowspan')) {
-                                    var rowspan = lastTr.childNodes[colIndex].getAttribute('rowspan') - 0;
-                                    rowspan++;
-                                    lastTr.childNodes[colIndex].setAttribute('rowspan', rowspan);
-                                } else {
-                                    lastTr.childNodes[colIndex].setAttribute('rowspan', '2');
-                                }
-                                // lastTr.childNodes[colIndex].style['text-align'] = 'center';; // 水平居中
-                                lastTr.childNodes[colIndex].style['vertical-align'] = 'middle';
-                                ; // 纵向居中
-
-
-                                thisTr.childNodes[colIndex].style.display = 'none'; // 当前行隐藏
-                            }
-                        } else {
-                            // 5)2个tr的td内容不一样
-                            lastTr = thisTr;
-                        }
-                    }
-                }
-            }
-        }
-
-
-        // function gridSpan(grid, rowOrCol, borderStyle){
-        //     var array1 = new Array();
-        //     var count1 = 0;
-        //     var count2 = 0;
-        //     var index1 = 0;
-        //     var index2 = 0;
-        //     var aRow = undefined;
-        //     var preValue = undefined;
-        //     var firstSameCell = 0;
-        //     var allRecs = grid.getStore().getRange();
-        //
-        //     if(rowOrCol == 'row'){
-        //         count1 = grid.columns.length;
-        //         count2 = grid.getStore().getCount();
-        //     } else {
-        //         count1 = grid.getStore().getCount();
-        //         count2 = grid.columns.length;
-        //     }
-        //
-        //     for(i = 0; i < count1; i++){
-        //         preValue = undefined;
-        //         firstSameCell = 0;
-        //         array1[i] = new Array();
-        //         for(j = 0; j < count2; j++){
-        //             if(rowOrCol == 'row'){
-        //                 index1 = j;
-        //                 index2 = i;
-        //             } else {
-        //                 index1 = i;
-        //                 index2 = j;
-        //             }
-        //             var colName = grid.columns[index2].dataIndex;
-        //             if(allRecs[index1].get(colName) == preValue){
-        //                 allRecs[index1].set(colName, ' ');
-        //                 array1[i].push(j);
-        //                 if(j == count2 - 1){
-        //                     var index = firstSameCell + Math.round((j + 1 - firstSameCell) / 2 - 1);
-        //                     if(rowOrCol == 'row'){
-        //                         allRecs[index].set(colName, preValue);
-        //                     } else {
-        //                         allRecs[index1].set(grid.getColumnModel().getColumnId(index), preValue);
-        //                     }
-        //                 }
-        //             } else {
-        //                 if(j != 0){
-        //                     var index = firstSameCell + Math.round((j + 1 - firstSameCell) / 2 - 1);
-        //                     if(rowOrCol == 'row'){
-        //                         allRecs[index].set(colName, preValue);
-        //                     } else {
-        //                         allRecs[index1].set(grid.getColumnModel().getColumnId(index), preValue);
-        //                     }
-        //                 }
-        //                 firstSameCell = j;
-        //                 preValue = allRecs[index1].get(colName);
-        //                 allRecs[index1].set(colName, ' ');
-        //                 if(j == count2 - 1){
-        //                     allRecs[index1].set(colName, preValue);
-        //                 }
-        //             }
-        //         }
-        //     }
-        //     grid.getStore().commitChanges();
-        //
-        //     //添加所有分隔线
-        //     for(i = 0; i < grid.getStore().getCount(); i ++){
-        //         for(j = 0; j < grid.columns.length; j ++){
-        //             // aRow = grid.getView().getCell(i,j);
-        //             aRow = Ext.get(grid.view.getNode(i)).query('td')[j]; //获取某一单元格
-        //             aRow.style.borderTop = borderStyle;
-        //             aRow.style.borderLeft = borderStyle;
-        //         }
-        //     }
-        //
-        //     //去除合并的单元格的分隔线
-        //     for(i = 0; i < array1.length; i++){
-        //         for(j = 0; j < array1[i].length; j++){
-        //             if(rowOrCol == 'row'){
-        //                 // aRow = grid.getView().getCell(array1[i][j],i);
-        //                 aRow = Ext.get(grid.view.getNode(array1[i][j])).query('td')[i]; //获取某一单元格
-        //                 aRow.style.borderTop = 'none';
-        //             } else {
-        //                 aRow = grid.getView().getCell(i, array1[i][j]);
-        //                 aRow.style.borderLeft = 'none';
-        //             }
-        //         }
-        //     }
-        // };
-
-
         // ==>监听load , 执行合并单元格
         var gridp = Ext.getCmp('material_Query_Data_Main');
         Ext.getCmp('material_Query_Data_Main').getStore().on('load', function () {
-            // mergeGrid(gridp,[0,1,2,3],true);
-            // mergeCells(Ext.getCmp('material_Query_Data_Main'),[1,2,3]);
-            gridSpan(gridp,"row","[projectName],[buildingName],[positionName]");  //，以designId分组（为同一个产品的所有组成材料）
-            // gridSpan(gridp,"row","1px solid #8080FF");
+
+            gridSpan(gridp,"row","[productName_Des]");  //，以designId分组（为同一个产品的所有组成材料）
+
         });
 
     }

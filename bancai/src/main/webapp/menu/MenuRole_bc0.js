@@ -56,21 +56,21 @@ Ext.define("menu.MenuRole_bc0", {
 				text : '原材料管理',
 				expanded : true,
 				children : [
-					{
-					text : '原材料领料',
-					id : 'material.material_Receive',
-					leaf : true
-				},
+				// 	{
+				// 	text : '原材料领料',
+				// 	id : 'material.material_Receive',
+				// 	leaf : true
+				// },
 					{
 					text : '原材料入库',
 					id : 'material.material_Inbound',
 					leaf : true
 				} ,
-				// 	{
-				// 	text : '原材料出库',
-				// 	id : 'material.material_Outbound',
-				// 	leaf : true
-				// },
+					{
+					text : '原材料出库',
+					id : 'material.material_Outbound',
+					leaf : true
+				},
 					{
 					text : '原材料批量入库',
 					id : 'material.material_Upload_Data',
@@ -86,7 +86,7 @@ Ext.define("menu.MenuRole_bc0", {
 					leaf : true
 				}, {
 					text : '原材料出入库记录查询',
-					id : 'material.material_Outbound',//'material.material_Query_Records',
+					id : 'material.material_Query_Records',//'material.material_Query_Records',
 					leaf : true
 				}, {
 					text : '原材料出入库记录统计',
@@ -242,6 +242,11 @@ Ext.define("menu.MenuRole_bc0", {
 						leaf : true
 					},
 					{
+						text : '项目匹配结果查询',
+						id : 'project.result.designlist_match_result',//project.import_planList
+						leaf : true
+					},
+					{
 						text : '成品退库匹配结果查询',
 						id : 'project.Query_Backproduct_Match_Result',//project.import_planList
 						leaf : true
@@ -281,7 +286,7 @@ Ext.define("menu.MenuRole_bc0", {
 				// },
 					{
 						text : '项目产品工单',
-						id : '',
+						id : 'project.project_worksheet',
 						leaf : true
 
 					},

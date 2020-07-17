@@ -51,7 +51,7 @@ Ext.define('material.material_Inbound', {
         });
         var MaterialTypeList = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '原材料品名',
-            labelWidth : 70,
+            labelWidth : 80,
             width : 270,
             id :  'materialName',
             name : 'materialName',
@@ -397,7 +397,7 @@ Ext.define('material.material_Inbound', {
                         var totalWeight = Ext.getCmp('totalWeight').getValue();
                         var count = Ext.getCmp('count').getValue();
                         //存放位置，行列
-                        var warehouseName = Ext.getCmp('storePosition').getValue();
+                        var warehouseName = Ext.getCmp('storePosition').rawValue;
                         // var row = Ext.getCmp('speificLocation_row').getValue();
                         // var col = Ext.getCmp('speificLocation_col').getValue();
 
@@ -579,10 +579,6 @@ Ext.define('material.material_Inbound', {
                     name : '原材料ID',
                     text : '原材料ID',
                     hidden:true,  //隐藏
-                    editor : {// 文本字段
-                        xtype : 'textfield',
-                        allowBlank : true
-                    },
                     //defaultValue:"2333",
                 },
                 {
@@ -591,58 +587,39 @@ Ext.define('material.material_Inbound', {
                     text : '原材料名称',
                     //width : 110,
                     value:'99',
-                    editor : {// 文本字段
-                        xtype : 'textfield',
-                        allowBlank : true
-                    },
                     //defaultValue:"2333",
                 },
-                {dataIndex : 'aValue', text : 'a值', flex :.6, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'bValue', text : 'b值', flex :.6, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'mValue', text : 'm值', flex :.6, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'nValue', text : 'n值', flex :.6, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'pValue', text : 'p值', flex :.6, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'orientation', text : '方向', flex :.6, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'aValue', text : 'a值', flex :.6, },
+                {dataIndex : 'bValue', text : 'b值', flex :.6, },
+                {dataIndex : 'mValue', text : 'm值', flex :.6,},
+                {dataIndex : 'nValue', text : 'n值', flex :.6, },
+                {dataIndex : 'pValue', text : 'p值', flex :.6, },
+                {dataIndex : 'orientation', text : '方向', flex :.6, },
 
                 {
                     dataIndex : 'inventoryUnit',
                     text : '库存单位',
                     //width : 110,
-                    editor : {// 文本字段
-                        id : 'isNullCmb',
-                        xtype : 'textfield',
-                        allowBlank : true
-                    }
                 },{
                     dataIndex : 'totalWeight',
                     name : 'totalWeight',
                     text : '总重',
                     //width : 160,
-                    editor : {
-                        xtype : 'textfield',
-                        allowBlank : false
-                    }
+                    editor : {xtype : 'textfield', allowBlank : false,}
                 },
                 {
                     dataIndex : 'count',
                     name : 'count',
                     text : '数量',
                     //width : 160,
-                    editor : {
-                        xtype : 'textfield',
-                        allowBlank : false
-                    }
-
+                    editor : {xtype : 'textfield', allowBlank : false,}
                 },
                 {
                     dataIndex : 'warehouseName',
                     name : 'warehouseName',
                     text : '仓库名称',
                     //width : 130,
-                    editor : {// 文本字段
-                        xtype : 'textfield',
-                        allowBlank : true
-                    }
+
                 },
                 // {
                 //     dataIndex : '行',
