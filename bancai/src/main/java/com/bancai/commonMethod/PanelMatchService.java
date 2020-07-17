@@ -32,7 +32,32 @@ public class PanelMatchService extends BaseService{
     @Autowired
     private ProductDataService productDataService;
 
-
+    /**
+     * 找到设计清单中等待匹配的产品，返回map
+     */
+    @Transactional
+    public Map<String,ArrayList<String>>findMatchMap(String projectId, String buildingId, String buildingpositionId){
+        String sql = "select * from designlist where projectId=? and buildingId=? and buildingpositionId=? and madeBy=0";
+        DataList findMatchList = queryService.query(sql,projectId,buildingId,buildingpositionId);
+        Map<String,ArrayList<String>> map = new HashMap<>();
+        if(findMatchList.isEmpty())
+            return map;
+        for (DataRow dataRow : findMatchList) {
+            String position = dataRow.get("position").toString();
+            String productId = dataRow.get("productId").toString();
+            if (map.containsKey(productId)) {
+                ArrayList<String> a = new ArrayList<>();
+                a = map.get(productId);
+                a.add(position);
+                map.put(productId, a);
+            } else {
+                ArrayList<String> a = new ArrayList<>();
+                a.add(position);
+                map.put(productId, a);
+            }
+        }
+        return map;
+    }
 
     /**
      * 插入设计清单，返回清单id
@@ -64,15 +89,14 @@ public class PanelMatchService extends BaseService{
      * 退库成品匹配
      */
     @Transactional
-    public Map<String,ArrayList<String>> matchBackProduct(Map<String,ArrayList<String>> map,
-                                                          String projectId, String buildingId, String buildingpositionId){
+    public void matchBackProduct(String projectId, String buildingId, String buildingpositionId){
+        Map<String,ArrayList<String>> map = findMatchMap(projectId,buildingId,buildingpositionId);
         Iterator iterator = map.keySet().iterator();
         while (iterator.hasNext()) {
-            String key = iterator.next().toString();
-            ArrayList<String> value = map.get(key);
-            String productId = key.split("N")[0];
-            String productName = key.substring(productId.length()+1);
-            System.out.println("Backmatch="+productName+"===productId="+productId+"===position="+value);
+            String productId = iterator.next().toString();
+            ArrayList<String> value = map.get(productId);
+//            String productName = key.substring(productId.length()+1);
+            System.out.println("Backmatch=productId="+productId+"===position="+value);
             //匹配列表
             DataList backproductList = queryService.query("select * from backproduct_store where productId=? and countUse>0"
                     ,productId);
@@ -114,7 +138,6 @@ public class PanelMatchService extends BaseService{
 
 //        String[] analyzeProductName = AnalyzeNameService.analyzeProductName(productName);
         //String[]{format,productType,m,n,a,b,mnAngle,suffix,igSuffix,productTypeName}
-        return map;
 
     }
 
@@ -131,15 +154,15 @@ public class PanelMatchService extends BaseService{
      * 预加工半成品匹配
      */
     @Transactional
-    public Map<String,ArrayList<String>> matchPreprocess(Map<String,ArrayList<String>> map,
-                                                          String projectId, String buildingId, String buildingpositionId){
+    public void matchPreprocess(String projectId, String buildingId, String buildingpositionId){
+        Map<String,ArrayList<String>> map = findMatchMap(projectId,buildingId,buildingpositionId);
         Iterator iterator = map.keySet().iterator();
         while (iterator.hasNext()) {
-            String key = iterator.next().toString();
-            ArrayList<String> value = map.get(key);
-            String productId = key.split("N")[0];
-            String productName = key.substring(productId.length()+1);
-            System.out.println("Prematch="+productName+"===productId="+productId+"===position="+value);
+            String productId = iterator.next().toString();
+            ArrayList<String> value = map.get(productId);
+//            String productId = key.split("N")[0];
+//            String productName = key.substring(productId.length()+1);
+            System.out.println("Prematch===productId="+productId+"===position="+value);
             //匹配列表
             DataList preprocessList = queryService.query("select * from preprocess_store where productId=? and countUse>0"
                     ,productId);
@@ -180,7 +203,6 @@ public class PanelMatchService extends BaseService{
         }
 //        String[] analyzeProductName = AnalyzeNameService.analyzeProductName(productName);
         //String[]{format,productType,m,n,a,b,mnAngle,suffix,igSuffix,productTypeName}
-        return map;
 
     }
     /**
@@ -195,15 +217,15 @@ public class PanelMatchService extends BaseService{
      * 旧板匹配
      */
     @Transactional
-    public Map<String,ArrayList<String>> matchOldpanel(Map<String,ArrayList<String>> map,
-                                                       String projectId, String buildingId, String buildingpositionId){
+    public void matchOldpanel(String projectId, String buildingId, String buildingpositionId){
+        Map<String,ArrayList<String>> map = findMatchMap(projectId,buildingId,buildingpositionId);
         Iterator iterator = map.keySet().iterator();
         while (iterator.hasNext()) {
-            String key = iterator.next().toString();
-            ArrayList<String> value = map.get(key);
-            String productId = key.split("N")[0];
-            String productName = key.substring(productId.length()+1);
-            System.out.println("Oldmatch="+productName+"===productId="+productId+"===position="+value);
+            String productId = iterator.next().toString();
+            ArrayList<String> value = map.get(productId);
+//            String productId = key.split("N")[0];
+//            String productName = key.substring(productId.length()+1);
+            System.out.println("Oldmatch===productId="+productId+"===position="+value);
 
             int num = value.size();
             DataRow productInfo = queryService.query("SELECT * FROM product_info LEFT JOIN " +
@@ -227,7 +249,7 @@ public class PanelMatchService extends BaseService{
                 if(!isProductFitCondition(productFormat,pCon,productInfo))
                     continue;
                 String oldpanelFormatId = rulesRow.get("oldpanelFormatId").toString();
-                String iscompleteMatch = rulesRow.get("iscompleteMatch").toString();
+                String iscompleteMatch = rulesRow.get("isCompleteMatch").toString();
                 DataList oldpanelList = new DataList();
                 oldpanelList = queryService.query("SELECT oldpanel_info.mValue AS mValue,oldpanel_info.nValue AS nValue,oldpanel_info.pValue AS pValue," +
                         "oldpanel_info.aValue AS aValue,oldpanel_info.bValue AS bValue,oldpanel_info.mAngle AS mAngle,oldpanel_info.nAngle AS nAngle,oldpanel_info.pAngle AS pAngle," +
@@ -286,7 +308,6 @@ public class PanelMatchService extends BaseService{
         }
 //        String[] analyzeProductName = AnalyzeNameService.analyzeProductName(productName);
         //String[]{format,productType,m,n,a,b,mnAngle,suffix,igSuffix,productTypeName}
-        return map;
     }
 
     /**
@@ -299,35 +320,13 @@ public class PanelMatchService extends BaseService{
                 , String.valueOf(designlistId), String.valueOf(oldpanelId),iscompleteMatch);
     }
 
-//    /**
-//     * 原材料新板匹配
-//     */
-//    @Transactional
-//    public Map<String,ArrayList<String>> matchMaterial(Map<String,ArrayList<String>> map){
-//        DataList matchList = new DataList();
-//        String[] analyzeProductName = AnalyzeNameService.analyzeProductName(productName);
-//        //String[]{format,productType,m,n,a,b,mnAngle,suffix,igSuffix,productTypeName}
-//
-//        return map;
-//    }
+
 
     @Transactional
-    public boolean matchError(Map<String,ArrayList<String>> map, String projectId, String buildingId, String buildingpositionId){
-        Iterator iterator = map.keySet().iterator();
-        while (iterator.hasNext()) {
-            String key = iterator.next().toString();
-            ArrayList<String> value = map.get(key);
-            String productId = key.split("N")[0];
-            String productName = key.substring(productId.length() + 1, key.length());
-            System.out.println("Errmatch==="+productName+"===productId="+productId+"===position="+value);
-            while (value.size()>0){
-                String position = value.get(value.size()-1);
-                int designlistId = insertProjectService.insertDataToTable("insert into designlist " +
-                        "(projectId,buildingId,buildingpositionId,productId,position,madeBy,processStatus) values " +
-                        "(?,?,?,?,?,?,?)", projectId, buildingId, buildingpositionId, productId, position, "9", "0");
-                value.remove(value.size()-1);
-            }
-        }
+    public boolean matchError(String projectId, String buildingId, String buildingpositionId){
+        String sql = "update designlist set madeBy=9 where madeBy=0 and projectId="+projectId+
+                " and buildingId="+buildingId+" and buildingpositionId="+buildingpositionId;
+        jo.update(sql);
         return true;
     }
 

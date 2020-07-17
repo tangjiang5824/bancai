@@ -33,8 +33,8 @@ public class new_panel_match {
     private Logger log = Logger.getLogger(new_panel_match.class);
 
     @Transactional
-    public void match() throws ScriptException {
-        List<Designlist> design_list =designlistdao.findAllByMadeBy(0);
+    public  void match( int projectId, int buildingId, int buildingpositionId) throws ScriptException {
+        List<Designlist> design_list =designlistdao.findAllByMadeByAndProjectIdAndBuildingIdAndBuildingpositionId(0,projectId,buildingId,buildingpositionId);
         for (int i=0;i<design_list.size();i++){
             Designlist designlist=design_list.get(i);
             ProductInfo productInfo = productInfodao.findById(designlist.getProductId()).orElse(null);
@@ -54,16 +54,19 @@ public class new_panel_match {
                 DataList dataList=insertProjectService.findObjectId("material_info",condition);
                 if(dataList.size()==0) {
                     log.error("没有找到对应的原材料id 设计清单id"+designlist.getId()+"  产品id "+productInfo.getId());
-
+                }else {
+                    //info=materialinfodao.findById(Integer.parseInt(dataList.get(0).get("id")+"")).orElse(null);
+                    Newpanelmateriallist newpanelmateriallist = new Newpanelmateriallist();
+                    newpanelmateriallist.setDesignlistId(designlist.getId());
+                    newpanelmateriallist.setMaterialId(Integer.parseInt(dataList.get(0).get("id") + ""));
+                    newpanelmateriallist.setMaterialCount(Double.parseDouble(list.get(j).get(1).toString()));
+                    newpanelmateriallist.setMaterialName(dataList.get(0).get("materialName") + "");
+                    newpanelmatchresultdao.save(newpanelmateriallist);
+                    designlist.setMadeBy(4);
+                    designlistdao.save(designlist);
                 }
-                //info=materialinfodao.findById(Integer.parseInt(dataList.get(0).get("id")+"")).orElse(null);
-                Newpanelmateriallist newpanelmateriallist=new Newpanelmateriallist();
-                newpanelmateriallist.setDesignlistId(designlist.getId());
-                newpanelmateriallist.setMaterialId(Integer.parseInt(dataList.get(0).get("id")+""));
-                newpanelmateriallist.setMaterialCount(Double.parseDouble(list.get(j).get(1).toString()));
-                newpanelmateriallist.setMaterialName(dataList.get(0).get("materialName")+"");
-                newpanelmatchresultdao.save(newpanelmateriallist);
             }
+
         }
 
     }
@@ -71,8 +74,6 @@ public class new_panel_match {
 
     @RequestMapping("/material/cg/test")
     public void test() throws ScriptException {
-       // match();
-        String sql="insert into preprocess_store (productId,totalArea) values(?,?)";
-        insertProjectService.insertIntoTableBySQL(sql,"1",null);
+      // match();
     }
 }
