@@ -28,8 +28,9 @@ Ext.define('project.result.designlist_match_result',{
             var allRecs = grid.getStore().getRange();
             if(rowOrCol == "row"){
                 // count1 = grid.getColumnModel().getColumnCount();  //列数columns
+                if(grid.columns!=null)
                 count1 = grid.columns.length;
-                console.log("luuuuu:"+count1);
+                //console.log("luuuuu:"+count1);
                 count2 = grid.getStore().getCount();  //行数(纪录数)
             } else {
                 count1 = grid.getStore().getCount();

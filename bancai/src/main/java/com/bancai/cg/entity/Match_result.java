@@ -14,7 +14,7 @@ public class Match_result {
     private Integer designlistId;
     private Integer projectId;
     private Integer buildingId;
-    
+    private String name;
     private Integer matchId;
     private Double count;
     private Integer isCompleteMatch;
