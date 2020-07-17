@@ -351,7 +351,7 @@ Ext.define('oldpanel.oldpanel_Back', {
                 {
                     xtype: 'textfield',
                     margin: '0 20 0 0',
-                    fieldLabel: ' 入库人',
+                    fieldLabel: ' 退库人',
                     id: 'operator',
                     width: 150,
                     labelWidth: 45,
