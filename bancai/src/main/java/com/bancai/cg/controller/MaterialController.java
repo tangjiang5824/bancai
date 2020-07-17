@@ -44,7 +44,7 @@ public class MaterialController {
     @Autowired
     private materialTypedao materialTypedao;
     @Autowired
-    private newpanelrulesdao newpanelrulesdao;
+    private MaterialMatchRulesRepository materialMatchRulesRepository;
 
 
     //向materialtype原材料类型表插入
@@ -313,7 +313,7 @@ public class MaterialController {
 
     @RequestMapping("/project/match/newPanel.do")
     public boolean addNewPanelRule(Integer productformatId,Integer materialTypeId,String count, String m,String n, String a,String b, String p, String condition1, String condition2, String upWidth, String orientation){
-        NewpanelRules rule=new NewpanelRules();
+        MaterialMatchRules rule=new MaterialMatchRules();
         if(count.trim().length()==0) {
             count=null;
         }else {
@@ -395,7 +395,7 @@ public class MaterialController {
         rule.setCondition2(condition2);
         rule.setUpWidth(upWidth);
         rule.setOrientation(orientation);
-        newpanelrulesdao.save(rule);
+        materialMatchRulesRepository.save(rule);
         return  true;
     }
 

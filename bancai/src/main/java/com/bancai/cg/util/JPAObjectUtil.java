@@ -2,8 +2,7 @@ package com.bancai.cg.util;
 
 import com.alibaba.fastjson.JSONObject;
 import com.bancai.cg.entity.MaterialInfo;
-import com.bancai.cg.entity.NewpanelRules;
-import com.bancai.cg.entity.Newpanelmateriallist;
+import com.bancai.cg.entity.MaterialMatchRules;
 import com.bancai.cg.entity.ProductInfo;
 
 import javax.script.ScriptEngine;
@@ -24,9 +23,9 @@ public class JPAObjectUtil {
         object.put(tableName,rslist);
         return object.toJSONString();
     }
-    public static List<List<Object>> NewPanelMatch(ProductInfo productInfo,String classification_name,List<NewpanelRules> rules) throws ScriptException {
+    public static List<List<Object>> NewPanelMatch(ProductInfo productInfo,String classification_name,List<MaterialMatchRules> rules) throws ScriptException {
         List<List<Object>> list=new ArrayList<>();
-        for(NewpanelRules rule:rules){
+        for(MaterialMatchRules rule:rules){
             boolean flag=false;
             if(rule.getCondition1()!=null){
                 String[] c1=rule.getCondition1().split(",");
@@ -181,7 +180,7 @@ public class JPAObjectUtil {
         return list;
     }
 
-    private static MaterialInfo getValue(NewpanelRules rule, MaterialInfo material, ProductInfo productInfo,String type) throws ScriptException {
+    private static MaterialInfo getValue(MaterialMatchRules rule, MaterialInfo material, ProductInfo productInfo,String type) throws ScriptException {
        if(type.equals("m")){
            if(rule.getmValue()!=null&&rule.getmValue().trim().length()!=0){
                String match=rule.getmValue();

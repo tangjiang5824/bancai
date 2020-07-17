@@ -22,13 +22,16 @@ public class new_panel_match {
     @Autowired
     private productInfodao productInfodao;
     @Autowired
-    private newpanelrulesdao newpanelrulesdao;
+    private MaterialMatchRulesRepository materialMatchRulesRepository;
+    @Autowired
+    private MaterialMatchResultRepository materialMatchResultRepository;
     @Autowired
     private InsertProjectService insertProjectService;
     @Autowired
     private materialinfodao materialinfodao;
     @Autowired
-    private newpanelmatchresultdao newpanelmatchresultdao;
+    private matchresultdao matchresultdao;
+
 
     private Logger log = Logger.getLogger(new_panel_match.class);
 
@@ -38,7 +41,7 @@ public class new_panel_match {
         for (int i=0;i<design_list.size();i++){
             Designlist designlist=design_list.get(i);
             ProductInfo productInfo = productInfodao.findById(designlist.getProductId()).orElse(null);
-            List<NewpanelRules> rules=newpanelrulesdao.findAllByProductformatId(productInfo.getProductFormatId().getId());
+            List<MaterialMatchRules> rules=materialMatchRulesRepository.findAllByProductformatId(productInfo.getProductFormatId().getId());
             String type=productInfo.getProductFormatId().getProducttype().getClassification().getClassificationName();
             List<List<Object>> list = JPAObjectUtil.NewPanelMatch(productInfo, type, rules);
             for (int j=0;j<list.size();j++){
@@ -56,12 +59,13 @@ public class new_panel_match {
                     log.error("没有找到对应的原材料id 设计清单id"+designlist.getId()+"  产品id "+productInfo.getId());
                 }else {
                     //info=materialinfodao.findById(Integer.parseInt(dataList.get(0).get("id")+"")).orElse(null);
-                    Newpanelmateriallist newpanelmateriallist = new Newpanelmateriallist();
-                    newpanelmateriallist.setDesignlistId(designlist.getId());
-                    newpanelmateriallist.setMaterialId(Integer.parseInt(dataList.get(0).get("id") + ""));
-                    newpanelmateriallist.setMaterialCount(Double.parseDouble(list.get(j).get(1).toString()));
-                    newpanelmateriallist.setMaterialName(dataList.get(0).get("materialName") + "");
-                    newpanelmatchresultdao.save(newpanelmateriallist);
+                    Match_result match_result = new Match_result();
+                    match_result.setDesignlistId(designlist.getId());
+                    match_result.setMatchId(Integer.parseInt(dataList.get(0).get("id") + ""));
+                    match_result.setCount(Double.parseDouble(list.get(j).get(1).toString()));
+                   // match_result.setMaterialName(dataList.get(0).get("materialName") + "");
+                   // match_result.setOrigin("3");
+                    matchresultdao.save(match_result);
                     designlist.setMadeBy(4);
                     designlistdao.save(designlist);
                 }
