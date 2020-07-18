@@ -1,4 +1,4 @@
-Ext.define('project.Query_Backproduct_Match_Result',{
+Ext.define('project.result.Query_Backproduct_Match_Result',{
     extend:'Ext.panel.Panel',
     region: 'center',
     layout:'fit',

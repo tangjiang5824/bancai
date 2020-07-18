@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bancai.db.mysqlcondition;
 
 import javax.script.ScriptException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -22,25 +23,48 @@ public class new_panel_match {
     @Autowired
     private productInfodao productInfodao;
     @Autowired
-    private newpanelrulesdao newpanelrulesdao;
+    private MaterialMatchRulesRepository materialMatchRulesRepository;
+    @Autowired
+    private MaterialMatchResultRepository materialMatchResultRepository;
     @Autowired
     private InsertProjectService insertProjectService;
     @Autowired
     private materialinfodao materialinfodao;
     @Autowired
-    private newpanelmatchresultdao newpanelmatchresultdao;
+    private matchresultdao matchresultdao;
+
 
     private Logger log = Logger.getLogger(new_panel_match.class);
 
     @Transactional
     public  void match( int projectId, int buildingId, int buildingpositionId) throws ScriptException {
-        List<Designlist> design_list =designlistdao.findAllByMadeByAndProjectIdAndBuildingIdAndBuildingpositionId(0,projectId,buildingId,buildingpositionId);
+        List<Designlist> design_list =designlistdao.findAllByMadeByAndProjectIdAndBuildingIdAndBuildingpositionIdOrderByProductId(0,projectId,buildingId,buildingpositionId);
+        int pre_productId=0;
+        List<Match_result> pre_results=null;
         for (int i=0;i<design_list.size();i++){
             Designlist designlist=design_list.get(i);
+            //如果出现相同的productId 则无需匹配，直接返回上次的结果
+            if(designlist.getProductId()==pre_productId){
+                for(Match_result match_result:pre_results){
+                    Match_result newrs=new Match_result();
+                    newrs.setIsCompleteMatch(1);
+                    newrs.setDesignlistId(designlist.getId());
+                    newrs.setName(match_result.getName());
+                    newrs.setCount(match_result.getCount());
+                    newrs.setMatchId(match_result.getMatchId());
+                    matchresultdao.save(newrs);
+                }
+                designlist.setMadeBy(4);
+                designlistdao.save(designlist);
+                continue;
+            }
             ProductInfo productInfo = productInfodao.findById(designlist.getProductId()).orElse(null);
-            List<NewpanelRules> rules=newpanelrulesdao.findAllByProductformatId(productInfo.getProductFormatId().getId());
+            List<MaterialMatchRules> rules=materialMatchRulesRepository.findAllByProductformatId(productInfo.getProductFormatId().getId());
             String type=productInfo.getProductFormatId().getProducttype().getClassification().getClassificationName();
             List<List<Object>> list = JPAObjectUtil.NewPanelMatch(productInfo, type, rules);
+            boolean flag=true;
+            //如果出现没有找到产品原材料，则不插入产品的原材料；
+            List<Match_result> isrollbacklist=new ArrayList<>();
             for (int j=0;j<list.size();j++){
                 MaterialInfo info=(MaterialInfo) list.get(j).get(0);
                 mysqlcondition condition=new mysqlcondition();
@@ -54,18 +78,31 @@ public class new_panel_match {
                 DataList dataList=insertProjectService.findObjectId("material_info",condition);
                 if(dataList.size()==0) {
                     log.error("没有找到对应的原材料id 设计清单id"+designlist.getId()+"  产品id "+productInfo.getId());
+                    flag=false;
+                    break;
                 }else {
                     //info=materialinfodao.findById(Integer.parseInt(dataList.get(0).get("id")+"")).orElse(null);
-                    Newpanelmateriallist newpanelmateriallist = new Newpanelmateriallist();
-                    newpanelmateriallist.setDesignlistId(designlist.getId());
-                    newpanelmateriallist.setMaterialId(Integer.parseInt(dataList.get(0).get("id") + ""));
-                    newpanelmateriallist.setMaterialCount(Double.parseDouble(list.get(j).get(1).toString()));
-                    newpanelmateriallist.setMaterialName(dataList.get(0).get("materialName") + "");
-                    newpanelmatchresultdao.save(newpanelmateriallist);
-                    designlist.setMadeBy(4);
-                    designlistdao.save(designlist);
+                    Match_result match_result = new Match_result();
+                    match_result.setDesignlistId(designlist.getId());
+                    match_result.setMatchId(Integer.parseInt(dataList.get(0).get("id") + ""));
+                    match_result.setCount(Double.parseDouble(list.get(j).get(1).toString()));
+                   // match_result.setMaterialName(dataList.get(0).get("materialName") + "");
+                    match_result.setName(dataList.get(0).get("materialName") + "");
+                    match_result.setIsCompleteMatch(1);
+                   // match_result.setOrigin("3");
+                    isrollbacklist.add(match_result);
                 }
             }
+            if(flag) {
+                for(Match_result match_result:isrollbacklist){
+                    matchresultdao.save(match_result);
+                }
+                pre_productId=designlist.getProductId();
+                pre_results=isrollbacklist;
+                designlist.setMadeBy(4);
+                designlistdao.save(designlist);
+            }
+
 
         }
 

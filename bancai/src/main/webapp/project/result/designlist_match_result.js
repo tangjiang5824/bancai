@@ -1,24 +1,13 @@
-Ext.define('project.result.project_match_result',{
+Ext.define('project.result.designlist_match_result',{
     extend:'Ext.panel.Panel',
     region: 'center',
     layout:'fit',
-    title: '项目总览',
-    autoLoad:{
-        scripts:true
-    },
+    title: '产品匹配结果查询',
     initComponent: function(){
 
-        //原件类型：枚举类型
-        Ext.define('product.model.originType', {
-            statics: { // 关键s
-                0: { value: '0', name: '未匹配' },
-                1: { value: '1', name: '退库成品' },
-                2: { value: '2', name: '预加工半产品' },
-                3: { value: '3', name: '旧板' },
-                4: { value: '4', name: '原材料新板' },
-                9: { value: '5', name: '未匹配成功' },
-            }
-        });
+        var itemsPerPage = 50;
+        //var tableName="material";
+        //var materialType=
 
         /*
          * *合并单元格的函数，合并表格内所有连续的具有相同值的单元格。调用方法示例：
@@ -39,13 +28,15 @@ Ext.define('project.result.project_match_result',{
             var allRecs = grid.getStore().getRange();
             if(rowOrCol == "row"){
                 // count1 = grid.getColumnModel().getColumnCount();  //列数columns
+                if(grid.columns!=null)
                 count1 = grid.columns.length;
-                // console.log("luuuuu:"+count1);
+                //console.log("luuuuu:"+count1);
                 count2 = grid.getStore().getCount();  //行数(纪录数)
             } else {
                 count1 = grid.getStore().getCount();
                 count2 = grid.columns.length;
             }
+            i=3;
             for(i = 0; i < count1; i++){
                 if(rowOrCol == "row"){
                     // var curColName = grid.getColumnModel().getDataIndex(i); //列名
@@ -84,7 +75,8 @@ Ext.define('project.result.project_match_result',{
                         allRecs[index1].set(colName, "");
                         array1[i].push(j);
                         if(j == count2 - 1){
-                            var index = firstSameCell + Math.round((j + 1 - firstSameCell) / 2 - 1);
+                            // var index = firstSameCell + Math.round((j + 1 - firstSameCell) / 2 - 1);
+                            var index = firstSameCell; //值显示的位置
                             if(rowOrCol == "row"){
                                 allRecs[index].set(colName, preValue);
                             } else {
@@ -93,7 +85,8 @@ Ext.define('project.result.project_match_result',{
                         }
                     } else {
                         if(j != 0){
-                            var index = firstSameCell + Math.round((j + 1 - firstSameCell) / 2 - 1);
+                            // var index = firstSameCell + Math.round((j + 1 - firstSameCell) / 2 - 1);
+                            var index = firstSameCell;//值显示的位置
                             if(rowOrCol == "row"){
                                 allRecs[index].set(colName, preValue);
                             } else {
@@ -110,81 +103,92 @@ Ext.define('project.result.project_match_result',{
 
                 }
             }
+
             grid.getStore().commitChanges();
 
             // 添加所有分隔线
-            var rCount = grid.getStore().getCount();
-            for(i = 0; i < rCount; i ++){
-                hRow = grid.getView().getRow(i);
-                hRow.style.border = "none";
-                //hRow.style.borderBottom= "none";
-                for(j = 0; j < grid.columns.length; j ++){
-                    console.log(Ext.get(grid.view.getNode(i)).query('td')[j]);
-                    // console.log(grid.getView());
-                    // console.log(grid.store.getAt(i,j).style.margin="0");
-                    console.log("loglog------------");
-                    // aRow = grid.getView().getCell(i,j);
-                    aRow = Ext.get(grid.view.getNode(i)).query('td')[j]; //获取某一单元格
+            // var rCount = grid.getStore().getCount();
+            // for(i = 0; i < rCount; i ++){
+            //     hRow = grid.getView().getRow(i);
+            //     hRow.style.border = "none";
+            //     //hRow.style.borderBottom= "none";
+            //     for(j = 0; j < grid.columns.length; j ++){
+            //         console.log(Ext.get(grid.view.getNode(i)).query('td')[j]);
+            //         // console.log(grid.getView());
+            //         // console.log(grid.store.getAt(i,j).style.margin="0");
+            //         console.log("loglog------------");
+            //         // aRow = grid.getView().getCell(i,j);
+            //         aRow = Ext.get(grid.view.getNode(i)).query('td')[j]; //获取某一单元格
+            //
+            //         aRow.style.margin="0";
+            //         aRow.style.padding="0";
+            //
+            //         if(i == 0){
+            //             aRow.style.borderTop = "none";
+            //             aRow.style.borderLeft = "1px solid #8db2e3";
+            //
+            //         }else if(i == rCount - 1){
+            //             aRow.style.borderTop = "1px solid #8db2e3";
+            //             aRow.style.borderLeft = "1px solid #8db2e3";
+            //             aRow.style.borderBottom = "1px solid #8db2e3";
+            //         }else{
+            //             aRow.style.borderTop = "1px solid #8db2e3";
+            //             aRow.style.borderLeft = "1px solid #8db2e3";
+            //         }
+            //         if(j == grid.columns.length-1)
+            //             aRow.style.borderRight = "1px solid #8db2e3";
+            //         if(i == rCount-1)
+            //             aRow.style.borderBottom = "1px solid #8db2e3";
+            //     }
+            // }
 
-                    aRow.style.margin="0";
-                    aRow.style.padding="0";
-
-                    if(i == 0){
-                        aRow.style.borderTop = "none";
-                        aRow.style.borderLeft = "1px solid #8db2e3";
-
-                    }else if(i == rCount - 1){
-                        aRow.style.borderTop = "1px solid #8db2e3";
-                        aRow.style.borderLeft = "1px solid #8db2e3";
-                        aRow.style.borderBottom = "1px solid #8db2e3";
-                    }else{
-                        aRow.style.borderTop = "1px solid #8db2e3";
-                        aRow.style.borderLeft = "1px solid #8db2e3";
-                    }
-                    if(j == grid.columns.length-1)
-                        aRow.style.borderRight = "1px solid #8db2e3";
-                    if(i == rCount-1)
-                        aRow.style.borderBottom = "1px solid #8db2e3";
-                }
-            }
             // 去除合并的单元格的分隔线
-            for(i = 0; i < array1.length; i++){
-                if(!Ext.isEmpty(array1[i])){
-                    for(j = 0; j < array1[i].length; j++){
-                        if(rowOrCol == "row"){
-                            aRow = Ext.get(grid.view.getNode(array1[i][j])).query('td')[i]; //获取某一单元格
-                            // aRow = grid.getView().getCell(array1[i][j],i);
-                            aRow.style.borderTop = "none";
+            // for(i = 0; i < array1.length; i++){
+            //     if(!Ext.isEmpty(array1[i])){
+            //         for(j = 0; j < array1[i].length; j++){
+            //             if(rowOrCol == "row"){
+            //                 aRow = Ext.get(grid.view.getNode(array1[i][j])).query('td')[i]; //获取某一单元格
+            //                 // aRow = grid.getView().getCell(array1[i][j],i);
+            //                 aRow.style.borderTop = "none";
+            //
+            //             } else {
+            //                 // aRow = grid.getView().getCell(i, array1[i][j]);
+            //                 aRow = Ext.get(grid.view.getNode(i)).query('td')[array1[i][j]];
+            //                 aRow.style.borderLeft = "none";
+            //             }
+            //         }
+            //     }
+            // }
 
-                        } else {
-                            // aRow = grid.getView().getCell(i, array1[i][j]);
-                            aRow = Ext.get(grid.view.getNode(i)).query('td')[array1[i][j]];
-                            aRow.style.borderLeft = "none";
-                        }
-                    }
-                }
-            }
-
-            for(i = 0; i < count1; i++){
-                if(rowOrCol == "row"){
-                    var curColName = grid.columns[i].dataIndex; //列名
-                    var curCol = "[" + curColName + "]";
-                    if(cols.indexOf(curCol) < 0)
-                        continue;
-                }
-
-                for(j = 0; j < count2; j++){
-                    // var hbcell = grid.getView().getCell(j,i);
-                    var hbcell = Ext.get(grid.view.getNode(j)).query('td')[i];
-                    hbcell.style.background="#FFF"; //改变合并列所有单元格背景为白色
-                }
-            }
+            // for(i = 0; i < count1; i++){
+            //     if(rowOrCol == "row"){
+            //         var curColName = grid.columns[i].dataIndex; //列名
+            //         var curCol = "[" + curColName + "]";
+            //         if(cols.indexOf(curCol) < 0)
+            //             continue;
+            //     }
+            //
+            //     for(j = 0; j < count2; j++){
+            //         // var hbcell = grid.getView().getCell(j,i);
+            //         var hbcell = Ext.get(grid.view.getNode(j)).query('td')[i];
+            //         hbcell.style.background="#FFF"; //改变合并列所有单元格背景为白色
+            //     }
+            // }
 
         };
 
-        var itemsPerPage = 50;
-        //var tableName="material";
-        //var materialType="1";
+        //原件类型：枚举类型
+        Ext.define('product.model.originType', {
+            statics: { // 关键s
+                0: { value: '0', name: '未匹配' },
+                1: { value: '1', name: '退库成品' },
+                2: { value: '2', name: '预加工半产品' },
+                3: { value: '3', name: '旧板' },
+                4: { value: '4', name: '原材料新板' },
+                9: { value: '5', name: '未匹配成功' },
+            }
+        });
+
         var projectListStore = Ext.create('Ext.data.Store',{
             fields : [ "项目名称","id"],
             proxy : {
@@ -273,12 +277,41 @@ Ext.define('project.result.project_match_result',{
             //store: tableListStore2,
         });
 
+        var buildingPositionStore = Ext.create('Ext.data.Store',{
+            fields : [ 'buildingPosition'],
+            proxy : {
+                type : 'ajax',
+                url : 'material/findAllBytableName.do?tableName=building_position',
+
+                reader : {
+                    type : 'json',
+                    rootProperty: 'building_position',
+                }
+            },
+            autoLoad : true
+        });
+        //楼栋位置
+        var buildingPositionList = Ext.create('Ext.form.ComboBox',{
+            fieldLabel : '位置',
+            labelWidth : 35,
+            width : 200,
+            id :  'positionName',
+            margin: '0 10 0 40',
+            name : 'positionName',
+            matchFieldWidth: true,
+            // emptyText : "--请选择项目--",
+            displayField: 'positionName',
+            valueField: 'id',
+            // typeAhead : true,
+            editable : true,
+            store: buildingPositionStore,
+        });
 
         var toobar = Ext.create('Ext.toolbar.Toolbar',{
             items: [
                 projectList,
                 buildingName,
-                // buildingPositionList,
+                buildingPositionList,
                 {
                     xtype : 'button',
                     text: '查询',
@@ -286,10 +319,15 @@ Ext.define('project.result.project_match_result',{
                     margin: '0 0 0 15',
                     layout: 'right',
                     handler: function(){
-                        project_match_Store.load({
+                        // var Id = Ext.getCmp("positionName").getValue();
+                        // var projectName = Ext.getCmp("projectName").rawValue;
+                        // console.log("Id-----------",Id)
+                        // console.log("projectName-----------",projectName)
+                        allpanel_Store.load({
                             params : {
                                 projectId:Ext.getCmp("projectName").getValue(),
                                 buildingId:Ext.getCmp("buildingName").getValue(),
+                                buildingpositionId:Ext.getCmp("positionName").getValue(),
                             }
                         });
                     }
@@ -325,14 +363,41 @@ Ext.define('project.result.project_match_result',{
             ]
         });
 
+
+
+        //表格分组，字段名
+        var myModel = Ext.define("filedInfo", {
+            extend : "Ext.data.Model",
+            fields : [ {
+                name : "productName_Des",
+                type : "string"
+            }, {
+                name : "materialName",
+                type : "string"
+            }, {
+                name : "materialCount",
+                type : "number"
+            }, {
+                name : "projectName",
+                type : "string"
+            }, {
+                name : "buildingName",
+                type : "string"
+            }, {
+                name : "positionName",
+                type : "string"
+            }
+            ]
+        });
+
         //新板匹配结果
-        var project_match_Store = Ext.create('Ext.data.Store',{
-            id: 'project_match_Store',
-            // autoLoad: true,
-            fields: [],
+        var allpanel_Store = Ext.create('Ext.data.Store',{
+            id: 'allpanel_Store',
+            autoLoad: true,
+            fields: ['productName_Des','materialName','materialCount'],
             pageSize: itemsPerPage, // items per page
             proxy:{
-                url : "project/findProjectMatchResult.do",//通用接口
+                url : "project/queryNewPanelMatchResult.do",//通用接口
                 type: 'ajax',
                 reader:{
                     type : 'json',
@@ -343,62 +408,66 @@ Ext.define('project.result.project_match_result',{
                     start: 0,
                     limit: itemsPerPage,
                     // projectId:'1',
-                    // buildingId:'',
+                    // buildingId:'1',
+                    // buildingpositionId:'1',
                 }
             },
+            model : "filedInfo",
+            groupField : "projectName",
             listeners : {
+                //字段拼接
+                load:function(store,records){
+                    for(var i=0;i<records.length;i++){
+                        records[i].set('productName_Des',records[i].get('productName')+" &nbsp;&nbsp;&nbsp;&nbsp;(序号:"+records[i].get('designlistId')+","+product.model.originType[records[i].get('madeBy')].name+")");
+                    }
+                },
+
                 beforeload : function(store, operation, eOpts) {
                     store.getProxy().setExtraParams({
-                        // projectId:'1',
-                        // buildingId:'',
                         projectId:Ext.getCmp("projectName").getValue(),
                         buildingId:Ext.getCmp("buildingName").getValue(),
+                        buildingpositionId:Ext.getCmp("positionName").getValue(),
                     });
                 }
             }
         });
 
-
         var grid = Ext.create('Ext.grid.Panel',{
-            id: 'material_Query_Data_Main',
-            store: project_match_Store,
+            id: 'all_match_result_dataGrid',
+            // model : "filedInfo",
+            store: allpanel_Store,
+            // groupField : "projectName",
             viewConfig : {
                 enableTextSelection : true,
                 editable:true
             },
             columns : [
-                { text: '原件', dataIndex: 'madeBy', flex :1.2,
-                    renderer: function (value) {
-                        return product.model.originType[value].name; // key-value
-                    },
-                },
-                { text: '使用数量', dataIndex: 'count', flex :1 },
-                {
-                    text : '匹配详细信息',
-                    flex :1 ,
-                    renderer:function(value, cellmeta){
-                        return "<INPUT type='button' value='查看' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
-                    }
-                    // header : "匹配详细信息",
-                    // dataIndex : "",
-                    // menuDisabled : true,
-                    // sortable : false,
-                    // width : 100,
-                    // renderer : function (value, cellmeta, record, rowIndex, columnIndex, store) {
-                    //     //获取物流单号
-                    //     var id= record.data["xxx"];
-                    //     console.log("record======",record)
-                    //     return "<div><a href='project/result/newpanel_material_match_result'>查看</a></div>"
-                    // }
-                },
+                { text: '项目名', dataIndex: 'projectName', flex :1.2,hidden:true},
+                { text: '楼栋名', dataIndex: 'buildingName', flex :0.8,hidden:true },
+                { text: '位置', dataIndex: 'positionName',flex :0.2, hidden:true},
+                // { text: 'designlistId', dataIndex: 'designlistId',flex :0.2}, //,hidden:true
+                { text: '产品名', dataIndex: 'productName_Des', flex :1},
+                // { text: '原件', dataIndex: 'madeBy', flex :1.2,
+                //     renderer: function (value) {
+                //         return product.model.originType[value].name; // key-value
+                //     },
+                // },
+                { text: '材料名', dataIndex: 'materialName', flex :1 },
+                { text: '材料数量', dataIndex: 'materialCount', flex :1},
             ],
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 3
             })],
             tbar: toobar,
+
+            features : [ {//定义表格特征
+                ftype : "groupingsummary",
+                hideGroupedHeader : true//隐藏当前分组的表头
+            } ],
+
             dockedItems: [{
                 xtype: 'pagingtoolbar',
-                store: project_match_Store,   // same store GridPanel is using
+                store: allpanel_Store,   // same store GridPanel is using
                 dock: 'bottom',
                 displayInfo: true,
                 displayMsg:'显示{0}-{1}条，共{2}条',
@@ -425,79 +494,15 @@ Ext.define('project.result.project_match_result',{
             }
         });
 
-
-        //添加cell单击事件
-        grid.addListener('cellclick', cellclick);
-        function cellclick(grid, rowIndex, columnIndex, e) {
-            if (rowIndex < 0) {
-                return;
-            }
-            var fieldName = Ext.getCmp('material_Query_Data_Main').columns[columnIndex].text;
-            var sm = Ext.getCmp('material_Query_Data_Main').getSelectionModel();
-            console.log(" e.data===========", e.data.madeBy)
-            var madeBy = e.data.madeBy;
-            if (fieldName == "匹配详细信息") {
-
-                console.log(" 点击查看===========")
-                //1:退库成品
-                if(madeBy==1){
-                    var p = Ext.getCmp('functionPanel');
-                    p.removeAll();
-                    cmp = Ext.create('project.result.Query_Backproduct_Match_Result');
-                    p.add(cmp);
-                }
-                //1:预加工半成品
-                else if(madeBy==2){
-                    var p = Ext.getCmp('functionPanel');
-                    p.removeAll();
-                    cmp = Ext.create('project.result.preProduct_material_match_result');
-                    p.add(cmp);
-                }
-                //3：旧板
-                else if(madeBy==3){
-                    var p = Ext.getCmp('functionPanel');
-                    p.removeAll();
-                    cmp = Ext.create('project.result.oldpanel_material_match_result');
-                    p.add(cmp);
-                }
-                //4.原材料新版
-                else if(madeBy==4){
-                        var p = Ext.getCmp('functionPanel');
-                        p.removeAll();
-                        cmp = Ext.create('project.result.newpanel_material_match_result');
-                        p.add(cmp);
-                }
-                //9和0：未匹配和匹配失败
-                else {
-                       //
-                }
-
-                //设置监听事件getSelectionModel().getSelection()
-                // var sm = Ext.getCmp('material_Query_Data_Main').getSelectionModel();
-                // var materialArr = sm.getSelection();
-                // var re = Ext.getCmp('material_Query_Data_Main').getSelectionModel();
-                // console.log("qqqqqqqqqqqq:",re.data);
-
-
-                // 根据出入库0/1，决定弹出框表格列名
-                // var col = specific_data_grid_outbound.columns[1];
-                // if (opType == 1) {
-                //     col.setText("出库数量");
-                // }
-                // if (opType == 2) {
-                //     col.setText("退库数量");
-                // } else {
-                //     col.setText("入库数量");
-                // }
-
-
-            }
-
-        }
-
         this.items = [grid];
         this.callParent(arguments);
 
+
+        // ==>监听load , 执行合并单元格
+        var gridp = Ext.getCmp('all_match_result_dataGrid');
+        Ext.getCmp('all_match_result_dataGrid').getStore().on('load', function () {
+            gridSpan(gridp,"row","[productName_Des]");  //，以designId分组（为同一个产品的所有组成材料）
+        });
 
     }
 
