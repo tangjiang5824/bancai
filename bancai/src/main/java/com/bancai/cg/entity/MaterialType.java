@@ -13,20 +13,18 @@ public class MaterialType {
     private Integer id;
     private String typeName;
     @OneToMany(mappedBy = "materialTypeId")
-    private Set<NewpanelRules> newpanelRulesSet=new HashSet<>();
+    private Set<MaterialMatchRules> materialMatchRules=new HashSet<>();
     @OneToMany(mappedBy = "typeId")
     private Set<MaterialInfo> materialInfos=new HashSet<>();
 
 
-    public Set<NewpanelRules> getNewpanelRulesSet() {
-        return newpanelRulesSet;
+    public Set<MaterialMatchRules> getMaterialMatchRules() {
+        return materialMatchRules;
     }
 
-    public void setNewpanelRulesSet(Set<NewpanelRules> newpanelRulesSet) {
-        this.newpanelRulesSet = newpanelRulesSet;
+    public void setMaterialMatchRules(Set<MaterialMatchRules> materialMatchRules) {
+        this.materialMatchRules = materialMatchRules;
     }
-
-
 
     public Set<MaterialInfo> getMaterialInfos() {
         return materialInfos;
