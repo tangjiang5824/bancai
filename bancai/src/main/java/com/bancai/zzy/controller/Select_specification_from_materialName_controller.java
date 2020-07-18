@@ -531,13 +531,13 @@ public class Select_specification_from_materialName_controller {
 	//查询新板匹配结果
 	@RequestMapping(value = "/project/queryNewPanelMatchResult.do")
 	public WebResponse queryNewPanelMatchResult(Integer start, Integer limit, String projectId,
-												   String buildingId,String buildingpositionId) throws ParseException {
+												   String buildingId,String buildingpositionId,String madeBy) throws ParseException {
 		if(null==start||start.equals("")) start=0;
 		if(null==limit||limit.equals("")) limit=50;
-		String tableName = "query_material_match_result";
-		String madeBy = "4";
+		String tableName = "query_match_result";
+		//String madeBy = "4";
 		mysqlcondition c=new mysqlcondition();
-		if (madeBy.length() != 0) {
+		if (madeBy!=null&&madeBy.length() != 0) {
 			c.and(new mysqlcondition("madeBy", "=", madeBy));
 		}
 		if (projectId.length() != 0) {

@@ -12,8 +12,8 @@ public class Match_result {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private Integer designlistId;
-    private Integer projectId;
-    private Integer buildingId;
+//    private Integer projectId;
+//    private Integer buildingId;
     private String name;
     private Integer matchId;
     private Double count;
