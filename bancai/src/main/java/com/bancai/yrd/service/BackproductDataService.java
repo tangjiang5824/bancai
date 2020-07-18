@@ -41,17 +41,18 @@ public class BackproductDataService extends BaseService{
         return new int[]{productId,backproductstoreId};
     }
 
-    private int backproductSaveData(String[] info, String warehouseName, String count){
+    private int backproductSaveData(String[] info, String warehouseName, String countNum){
         //id,unitWeight,unitArea
         int con = 0;
+        String count = String.valueOf(Double.parseDouble(countNum));
         if((info[1]!=null)&&(!info[1].equals("")))
-            info[1] = String.valueOf(Double.parseDouble(info[1])*Integer.parseInt(count));
+            info[1] = String.valueOf(Double.parseDouble(info[1])*Double.parseDouble(count));
         else {
             info[1] = null;
             con += 1;
         }
         if((info[2]!=null)&&(!info[2].equals("")))
-            info[2] = String.valueOf(Double.parseDouble(info[2])*Integer.parseInt(count));
+            info[2] = String.valueOf(Double.parseDouble(info[2])*Double.parseDouble(count));
         else {
             info[2]=null;
             con += 10;

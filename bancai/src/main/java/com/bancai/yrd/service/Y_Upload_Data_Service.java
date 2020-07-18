@@ -100,21 +100,22 @@ public class Y_Upload_Data_Service extends BaseService {
                 analyzeOldpanelName[8],analyzeOldpanelName[9],analyzeOldpanelName[10],analyzeOldpanelName[11],userId);
     }
 
-    private int oldpanelSaveData(String[] info, String warehouseName, String count){
+    private int oldpanelSaveData(String[] info, String warehouseName, String countNum){
         //id,unitWeight,unitArea
+        String count = String.valueOf(Double.parseDouble(countNum));
         String sql = "select * from oldpanel_store where oldpanelId=? and warehouseName=?";
         DataList queryList = queryService.query(sql,info[0],warehouseName);
         if(queryList.isEmpty()){
             return insertProjectService.insertDataToTable("insert into oldpanel_store " +
                     "(oldpanelId,countUse,countStore,warehouseName,totalArea,totalWeight) values (?,?,?,?,?,?)",
-                    info[0],count,count,warehouseName,String.valueOf(Double.parseDouble(info[2])*Integer.parseInt(count)),
-                    String.valueOf(Double.parseDouble(info[1])*Integer.parseInt(count)));
+                    info[0],count,count,warehouseName,String.valueOf(Double.parseDouble(info[2])*Double.parseDouble(count)),
+                    String.valueOf(Double.parseDouble(info[1])*Double.parseDouble(count)));
         } else {
             String oldpanelstoreId = queryList.get(0).get("id").toString();
             String sql2 = "update oldpanel_store set countUse=countUse+"+count+
                     ",countStore=countStore+"+count+",totalArea=totalArea+"+
-                    String.valueOf(Double.parseDouble(info[2]) * Integer.parseInt(count)) +
-                    ",totalWeight=totalWeight+"+String.valueOf(Double.parseDouble(info[1])*Integer.parseInt(count))+
+                    String.valueOf(Double.parseDouble(info[2]) * Double.parseDouble(count)) +
+                    ",totalWeight=totalWeight+"+String.valueOf(Double.parseDouble(info[1])*Double.parseDouble(count))+
                     " where id="+oldpanelstoreId;
             jo.update(sql2);
             return Integer.parseInt(oldpanelstoreId);

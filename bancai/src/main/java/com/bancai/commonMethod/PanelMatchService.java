@@ -86,6 +86,16 @@ public class PanelMatchService extends BaseService{
     }
 
     /**
+     * 插入匹配结果，返回id
+     */
+    @Transactional
+    public int insertMatchResult(int designlistId, int matchId, String isCompleteMatch) {
+        return insertProjectService.insertDataToTable("insert into match_result " +
+                "(designlistId,matchId,count,isCompleteMatch) values (?,?,?,?)",
+                String.valueOf(designlistId), String.valueOf(matchId),"1.0",isCompleteMatch);
+    }
+
+    /**
      * 退库成品匹配
      */
     @Transactional
@@ -104,12 +114,12 @@ public class PanelMatchService extends BaseService{
             if(!backproductList.isEmpty()) {
                 for (DataRow dataRow : backproductList) {
                     int backproductId = Integer.parseInt(dataRow.get("id").toString());
-                    int countUse = Integer.parseInt(dataRow.get("countUse").toString());
+                    double countUse = Double.parseDouble(dataRow.get("countUse").toString());
                     if (num > countUse) {
-                        while (countUse > 0) {
+                        while (countUse >= 1) {
                             String position = value.get(num - 1);
                             int designlistId = updateDesignlist(projectId, buildingId, position, 1);
-                            int resultId = insertBackProductMatchResult(designlistId,backproductId);
+                            int resultId = insertMatchResult(designlistId,backproductId,"1");
                             value.remove(num - 1);
                             num--;
                             countUse--;
@@ -120,7 +130,7 @@ public class PanelMatchService extends BaseService{
                         while (num > 0) {
                             String position = value.get(num - 1);
                             int designlistId = updateDesignlist(projectId, buildingId, position, 1);
-                            int resultId = insertBackProductMatchResult(designlistId,backproductId);
+                            int resultId = insertMatchResult(designlistId,backproductId,"1");
                             value.remove(num - 1);
                             num--;
                             countUse--;
@@ -141,14 +151,14 @@ public class PanelMatchService extends BaseService{
 
     }
 
-    /**
-     * 插入退库成品匹配结果，返回id
-     */
-    @Transactional
-    public int insertBackProductMatchResult(int designlistId, int backproductId) {
-        return insertProjectService.insertDataToTable("insert into backproduct_match_result " +
-                "(designlistId,backproductId) values (?,?)", String.valueOf(designlistId), String.valueOf(backproductId));
-    }
+//    /**
+//     * 插入退库成品匹配结果，返回id
+//     */
+//    @Transactional
+//    public int insertBackProductMatchResult(int designlistId, int backproductId) {
+//        return insertProjectService.insertDataToTable("insert into backproduct_match_result " +
+//                "(designlistId,backproductId) values (?,?)", String.valueOf(designlistId), String.valueOf(backproductId));
+//    }
 
     /**
      * 预加工半成品匹配
@@ -170,12 +180,12 @@ public class PanelMatchService extends BaseService{
             if(!preprocessList.isEmpty()) {
                 for (DataRow dataRow : preprocessList) {
                     int preprocessId = Integer.parseInt(dataRow.get("id").toString());
-                    int countUse = Integer.parseInt(dataRow.get("countUse").toString());
+                    double countUse = Double.parseDouble(dataRow.get("countUse").toString());
                     if (num > countUse) {
-                        while (countUse > 0) {
+                        while (countUse >= 1) {
                             String position = value.get(num - 1);
                             int designlistId = updateDesignlist(projectId, buildingId, position, 2);
-                            int resultId = insertPreprocessMatchResult(designlistId,preprocessId);
+                            int resultId = insertMatchResult(designlistId,preprocessId,"1");
                             value.remove(num - 1);
                             num--;
                             countUse--;
@@ -186,7 +196,7 @@ public class PanelMatchService extends BaseService{
                         while (num > 0) {
                             String position = value.get(num - 1);
                             int designlistId = updateDesignlist(projectId, buildingId, position, 2);
-                            int resultId = insertPreprocessMatchResult(designlistId,preprocessId);
+                            int resultId = insertMatchResult(designlistId,preprocessId,"1");
                             value.remove(num - 1);
                             num--;
                             countUse--;
@@ -205,14 +215,14 @@ public class PanelMatchService extends BaseService{
         //String[]{format,productType,m,n,a,b,mnAngle,suffix,igSuffix,productTypeName}
 
     }
-    /**
-     * 插入预加工半成品匹配结果，返回id
-     */
-    @Transactional
-    public int insertPreprocessMatchResult(int designlistId, int preprocessId) {
-        return insertProjectService.insertDataToTable("insert into preprocess_match_result " +
-                "(designlistId,preprocessId) values (?,?)", String.valueOf(designlistId), String.valueOf(preprocessId));
-    }
+//    /**
+//     * 插入预加工半成品匹配结果，返回id
+//     */
+//    @Transactional
+//    public int insertPreprocessMatchResult(int designlistId, int preprocessId) {
+//        return insertProjectService.insertDataToTable("insert into preprocess_match_result " +
+//                "(designlistId,preprocessId) values (?,?)", String.valueOf(designlistId), String.valueOf(preprocessId));
+//    }
     /**
      * 旧板匹配
      */
@@ -249,7 +259,7 @@ public class PanelMatchService extends BaseService{
                 if(!isProductFitCondition(productFormat,pCon,productInfo))
                     continue;
                 String oldpanelFormatId = rulesRow.get("oldpanelFormatId").toString();
-                String iscompleteMatch = rulesRow.get("isCompleteMatch").toString();
+                String isCompleteMatch = rulesRow.get("isCompleteMatch").toString();
                 DataList oldpanelList = new DataList();
                 oldpanelList = queryService.query("SELECT oldpanel_info.mValue AS mValue,oldpanel_info.nValue AS nValue,oldpanel_info.pValue AS pValue," +
                         "oldpanel_info.aValue AS aValue,oldpanel_info.bValue AS bValue,oldpanel_info.mAngle AS mAngle,oldpanel_info.nAngle AS nAngle,oldpanel_info.pAngle AS pAngle," +
@@ -276,12 +286,12 @@ public class PanelMatchService extends BaseService{
                     //匹配
                     System.out.println(oldpanelRow.toString());
                     int storeId = Integer.parseInt(oldpanelRow.get("id").toString());
-                    int countUse = Integer.parseInt(oldpanelRow.get("countUse").toString());
+                    double countUse = Double.parseDouble(oldpanelRow.get("countUse").toString());
                     if (num > countUse) {
-                        while (countUse > 0) {
+                        while (countUse >= 1) {
                             String position = value.get(num - 1);
                             int designlistId = updateDesignlist(projectId, buildingId, position, 3);
-                            int resultId = insertOldpanelMatchResult(designlistId,storeId,iscompleteMatch);
+                            int resultId = insertMatchResult(designlistId,storeId,isCompleteMatch);
                             value.remove(num - 1);
                             num--;
                             countUse--;
@@ -291,7 +301,7 @@ public class PanelMatchService extends BaseService{
                         while (num > 0) {
                             String position = value.get(num - 1);
                             int designlistId = updateDesignlist(projectId, buildingId, position, 3);
-                            int resultId = insertOldpanelMatchResult(designlistId,storeId,iscompleteMatch);
+                            int resultId = insertMatchResult(designlistId,storeId,isCompleteMatch);
                             value.remove(num - 1);
                             num--;
                             countUse--;
@@ -310,15 +320,15 @@ public class PanelMatchService extends BaseService{
         //String[]{format,productType,m,n,a,b,mnAngle,suffix,igSuffix,productTypeName}
     }
 
-    /**
-     * 插入旧板匹配结果，返回id
-     */
-    @Transactional
-    public int insertOldpanelMatchResult(int designlistId, int oldpanelId, String iscompleteMatch) {
-        return insertProjectService.insertDataToTable("insert into oldpanel_match_result " +
-                "(designlistId,oldpanelId,iscompleteMatch) values (?,?,?)"
-                , String.valueOf(designlistId), String.valueOf(oldpanelId),iscompleteMatch);
-    }
+//    /**
+//     * 插入旧板匹配结果，返回id
+//     */
+//    @Transactional
+//    public int insertOldpanelMatchResult(int designlistId, int oldpanelId, String iscompleteMatch) {
+//        return insertProjectService.insertDataToTable("insert into oldpanel_match_result " +
+//                "(designlistId,oldpanelId,iscompleteMatch) values (?,?,?)"
+//                , String.valueOf(designlistId), String.valueOf(oldpanelId),iscompleteMatch);
+//    }
 
 
 
@@ -755,7 +765,7 @@ public class PanelMatchService extends BaseService{
         return value == Integer.parseInt(singleCon);
     }
 
-    private void updateStoreCount(String storeName, int countUse, int id){
+    private void updateStoreCount(String storeName, double countUse, int id){
         jo.update("update "+storeName+"_store set countUse=" + countUse + " where id=" + id);
     }
 
