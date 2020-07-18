@@ -33,9 +33,9 @@ Ext.define('project.result.designlist_match_result',{
                 count2 = grid.getStore().getCount();  //行数(纪录数)
             } else {
                 count1 = grid.getStore().getCount();
-                // count2 = grid.columns.length;
-                count2 = 3;
+                count2 = grid.columns.length;
             }
+            i=3;
             for(i = 0; i < count1; i++){
                 if(rowOrCol == "row"){
                     // var curColName = grid.getColumnModel().getDataIndex(i); //列名
@@ -102,6 +102,7 @@ Ext.define('project.result.designlist_match_result',{
 
                 }
             }
+
             grid.getStore().commitChanges();
 
             // 添加所有分隔线
