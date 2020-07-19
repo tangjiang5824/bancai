@@ -2,9 +2,11 @@ package com.bancai.yrd.controller;
 
 import com.bancai.commonMethod.PanelMatchService;
 import com.bancai.commonMethod.QueryAllService;
+import com.bancai.domain.DataList;
 import com.bancai.yrd.service.DesignlistService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,6 +28,7 @@ public class DesignlistController {
     @Autowired
     private DesignlistService designlistService;
 
+    private static String isPureNumber = "^-?[0-9]+";
     Logger log=Logger.getLogger(DesignlistController.class);
 
     /*
@@ -52,6 +55,23 @@ public class DesignlistController {
         //net.sf.json.JSONObject json= net.sf.json.JSONObject.fromObject(response);
         return response;
     }
+
+    @RequestMapping("/department/addOrUpdateWorkerInfo.do")
+    public boolean addOrUpdateWorkerInfo(String id, String departmentId, String workerName,String tel){
+        workerName = workerName.trim();
+        tel = tel.trim();
+        boolean exist = false;
+        if(id.matches(isPureNumber)){
+            DataList list = queryService.query("select * from department_worker where id=?",id);
+            if(!list.isEmpty())
+                exist = true;
+        }
+        designlistService.saveDepartmentWorkerData(id,departmentId,workerName,tel,exist);
+        return true;
+    }
+
+
+
 
 
 }
