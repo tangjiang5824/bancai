@@ -89,10 +89,10 @@ public class PanelMatchService extends BaseService{
      * 插入匹配结果，返回id
      */
     @Transactional
-    public int insertMatchResult(int designlistId, int matchId, String isCompleteMatch) {
+    public int insertMatchResult(int designlistId, int matchId, String isCompleteMatch,String matchName) {
         return insertProjectService.insertDataToTable("insert into match_result " +
-                "(designlistId,matchId,count,isCompleteMatch) values (?,?,?,?)",
-                String.valueOf(designlistId), String.valueOf(matchId),"1.0",isCompleteMatch);
+                "(designlistId,matchId,count,isCompleteMatch,name) values (?,?,?,?,?)",
+                String.valueOf(designlistId), String.valueOf(matchId),"1.0",isCompleteMatch,matchName);
     }
 
     /**
@@ -108,18 +108,21 @@ public class PanelMatchService extends BaseService{
 //            String productName = key.substring(productId.length()+1);
             System.out.println("Backmatch=productId="+productId+"===position="+value);
             //匹配列表
-            DataList backproductList = queryService.query("select * from backproduct_store where productId=? and countUse>0"
-                    ,productId);
+            DataList backproductList = queryService.query("SELECT backproduct_store.id AS id,backproduct_store.productId AS productId," +
+                    "backproduct_store.countUse AS countUse,product_info.productName AS productName" +
+                    " FROM backproduct_store LEFT JOIN product_info ON (backproduct_store.productId=product_info.id) " +
+                    "WHERE backproduct_store.countUse>=1 AND backproduct_store.productId=?",productId);
             int num = value.size();
             if(!backproductList.isEmpty()) {
                 for (DataRow dataRow : backproductList) {
                     int backproductId = Integer.parseInt(dataRow.get("id").toString());
                     double countUse = Double.parseDouble(dataRow.get("countUse").toString());
+                    String matchName = dataRow.get("productName").toString();
                     if (num > countUse) {
                         while (countUse >= 1) {
                             String position = value.get(num - 1);
                             int designlistId = updateDesignlist(projectId, buildingId, position, 1);
-                            int resultId = insertMatchResult(designlistId,backproductId,"1");
+                            int resultId = insertMatchResult(designlistId,backproductId,"1",matchName);
                             value.remove(num - 1);
                             num--;
                             countUse--;
@@ -130,7 +133,7 @@ public class PanelMatchService extends BaseService{
                         while (num > 0) {
                             String position = value.get(num - 1);
                             int designlistId = updateDesignlist(projectId, buildingId, position, 1);
-                            int resultId = insertMatchResult(designlistId,backproductId,"1");
+                            int resultId = insertMatchResult(designlistId,backproductId,"1",matchName);
                             value.remove(num - 1);
                             num--;
                             countUse--;
@@ -174,18 +177,21 @@ public class PanelMatchService extends BaseService{
 //            String productName = key.substring(productId.length()+1);
             System.out.println("Prematch===productId="+productId+"===position="+value);
             //匹配列表
-            DataList preprocessList = queryService.query("select * from preprocess_store where productId=? and countUse>0"
-                    ,productId);
+            DataList preprocessList = queryService.query("SELECT preprocess_store.id AS id,preprocess_store.productId AS productId," +
+                            "preprocess_store.countUse AS countUse,product_info.productName AS productName" +
+                            " FROM preprocess_store LEFT JOIN product_info ON (preprocess_store.productId=product_info.id) " +
+                            "WHERE preprocess_store.countUse>=1 AND preprocess_store.productId=?",productId);
             int num = value.size();
             if(!preprocessList.isEmpty()) {
                 for (DataRow dataRow : preprocessList) {
                     int preprocessId = Integer.parseInt(dataRow.get("id").toString());
                     double countUse = Double.parseDouble(dataRow.get("countUse").toString());
+                    String matchName = dataRow.get("productName").toString();
                     if (num > countUse) {
                         while (countUse >= 1) {
                             String position = value.get(num - 1);
                             int designlistId = updateDesignlist(projectId, buildingId, position, 2);
-                            int resultId = insertMatchResult(designlistId,preprocessId,"1");
+                            int resultId = insertMatchResult(designlistId,preprocessId,"1",matchName);
                             value.remove(num - 1);
                             num--;
                             countUse--;
@@ -196,7 +202,7 @@ public class PanelMatchService extends BaseService{
                         while (num > 0) {
                             String position = value.get(num - 1);
                             int designlistId = updateDesignlist(projectId, buildingId, position, 2);
-                            int resultId = insertMatchResult(designlistId,preprocessId,"1");
+                            int resultId = insertMatchResult(designlistId,preprocessId,"1",matchName);
                             value.remove(num - 1);
                             num--;
                             countUse--;
@@ -261,7 +267,7 @@ public class PanelMatchService extends BaseService{
                 String oldpanelFormatId = rulesRow.get("oldpanelFormatId").toString();
                 String isCompleteMatch = rulesRow.get("isCompleteMatch").toString();
                 DataList oldpanelList = new DataList();
-                oldpanelList = queryService.query("SELECT oldpanel_info.mValue AS mValue,oldpanel_info.nValue AS nValue,oldpanel_info.pValue AS pValue," +
+                oldpanelList = queryService.query("SELECT oldpanel_info.oldpanelName AS oldpanelName,oldpanel_info.mValue AS mValue,oldpanel_info.nValue AS nValue,oldpanel_info.pValue AS pValue," +
                         "oldpanel_info.aValue AS aValue,oldpanel_info.bValue AS bValue,oldpanel_info.mAngle AS mAngle,oldpanel_info.nAngle AS nAngle,oldpanel_info.pAngle AS pAngle," +
                         "oldpanel_info.suffix AS suffix," +
                         "oldpanel_format.oldpanelTypeId AS oldpanelTypeId,oldpanel_format.oldpanelFormat AS oldpanelFormat,oldpanel_store.id AS id,oldpanel_store.countUse AS countUse " +
@@ -287,11 +293,12 @@ public class PanelMatchService extends BaseService{
                     System.out.println(oldpanelRow.toString());
                     int storeId = Integer.parseInt(oldpanelRow.get("id").toString());
                     double countUse = Double.parseDouble(oldpanelRow.get("countUse").toString());
+                    String matchName = oldpanelRow.get("oldpanelName").toString();
                     if (num > countUse) {
                         while (countUse >= 1) {
                             String position = value.get(num - 1);
                             int designlistId = updateDesignlist(projectId, buildingId, position, 3);
-                            int resultId = insertMatchResult(designlistId,storeId,isCompleteMatch);
+                            int resultId = insertMatchResult(designlistId,storeId,isCompleteMatch,matchName);
                             value.remove(num - 1);
                             num--;
                             countUse--;
@@ -301,7 +308,7 @@ public class PanelMatchService extends BaseService{
                         while (num > 0) {
                             String position = value.get(num - 1);
                             int designlistId = updateDesignlist(projectId, buildingId, position, 3);
-                            int resultId = insertMatchResult(designlistId,storeId,isCompleteMatch);
+                            int resultId = insertMatchResult(designlistId,storeId,isCompleteMatch,matchName);
                             value.remove(num - 1);
                             num--;
                             countUse--;
