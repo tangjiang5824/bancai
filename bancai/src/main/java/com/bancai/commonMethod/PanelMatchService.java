@@ -80,7 +80,7 @@ public class PanelMatchService extends BaseService{
         if(queryList.size()!=1)
             return 0;
         String designlistId = queryList.get(0).get("id").toString();
-        String sql2 = "update designlist set madeBy="+madeBy+" where id="+designlistId;
+        String sql2 = "update designlist set madeBy=\""+madeBy+"\" where id=\""+designlistId+"\"";
         jo.update(sql2);
         return Integer.parseInt(designlistId);
     }
@@ -341,8 +341,8 @@ public class PanelMatchService extends BaseService{
 
     @Transactional
     public boolean matchError(String projectId, String buildingId, String buildingpositionId){
-        String sql = "update designlist set madeBy=9 where madeBy=0 and projectId="+projectId+
-                " and buildingId="+buildingId+" and buildingpositionId="+buildingpositionId;
+        String sql = "update designlist set madeBy=9 where madeBy=0 and projectId=\""+projectId+
+                "\" and buildingId=\""+buildingId+"\" and buildingpositionId=\""+buildingpositionId+"\"";
         jo.update(sql);
         return true;
     }
@@ -773,7 +773,7 @@ public class PanelMatchService extends BaseService{
     }
 
     private void updateStoreCount(String storeName, double countUse, int id){
-        jo.update("update "+storeName+"_store set countUse=" + countUse + " where id=" + id);
+        jo.update("update "+storeName+"_store set countUse=\"" + countUse + "\" where id=\"" + id+"\"");
     }
 
 

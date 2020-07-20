@@ -66,6 +66,7 @@ public class DesignlistController {
             if(!list.isEmpty())
                 exist = true;
         }
+        System.out.println(id+"==="+departmentId+"==="+workerName+"==="+tel);
         designlistService.saveDepartmentWorkerData(id,departmentId,workerName,tel,exist);
         return true;
     }

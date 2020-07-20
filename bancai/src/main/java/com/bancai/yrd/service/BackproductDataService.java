@@ -64,23 +64,23 @@ public class BackproductDataService extends BaseService{
                             "(productId,countUse,countStore,warehouseName,totalArea,totalWeight) values (?,?,?,?,?,?)",
                     info[0],count,count,warehouseName,info[2], info[1]);
         } else {
-            String sql2 = "update backproduct_store set countUse=countUse+" + count + ",countStore=countStore+" + count;
+            String sql2 = "update backproduct_store set countUse=countUse+\"" + count + "\",countStore=countStore+\"" + count+"\"";
 
             switch (con) {
                 case 0:
-                    sql2 = sql2 + ",totalArea=totalArea+" + info[2] + ",totalWeight=totalWeight+" + info[1];
+                    sql2 = sql2 + ",totalArea=totalArea+\"" + info[2] + "\",totalWeight=totalWeight+\"" + info[1]+"\"";
                     break;
                 case 1:
-                    sql2 = sql2 + ",totalArea=totalArea+" + info[2];
+                    sql2 = sql2 + ",totalArea=totalArea+\"" + info[2]+"\"";
                     break;
                 case 10:
-                    sql2 = sql2 + ",totalWeight=totalWeight+" + info[1];
+                    sql2 = sql2 + ",totalWeight=totalWeight+\"" + info[1]+"\"";
                     break;
                 case 11:
                 default:
                     break;
             }
-            sql2 = sql2 + " where id=" + queryList.get(0).get("id").toString();
+            sql2 = sql2 + " where id=\"" + queryList.get(0).get("id").toString()+"\"";
             jo.update(sql2);
             return Integer.parseInt(queryList.get(0).get("id").toString());
         }
