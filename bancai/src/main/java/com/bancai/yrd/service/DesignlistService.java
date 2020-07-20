@@ -93,7 +93,7 @@ public class DesignlistService extends BaseService{
     @Transactional
     public void saveDepartmentWorkerData(String id, String departmentId, String workerName,String tel,boolean exist){
         if(exist){
-            String sql1 = "update department_worker set departmentId="+departmentId+",workerName="+workerName+",tel="+tel+" where id="+id;
+            String sql1 = "update department_worker set departmentId=\""+departmentId+"\",workerName=\""+workerName+"\",tel=\""+tel+"\" where id=\""+id+"\"";
             jo.update(sql1);
         }else {
             String sql2 = "insert into department_worker (departmentId,workerName,tel) values (?,?,?)";
