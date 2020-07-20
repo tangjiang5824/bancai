@@ -104,16 +104,16 @@ Ext.define('userManagement.department_worker', {
 
                     var workerName=Ext.getCmp("workerName").getValue();
                     var tel=Ext.getCmp("tel").getValue();
-                    var departmentName=Ext.getCmp("departmentList").getValue();//departmentId
+                    var departmentId=Ext.getCmp("departmentList").getValue();//departmentId
 
                     Ext.Ajax.request({
                         url:"department/addOrUpdateWorkerInfo.do",  //EditDataById.do
                         params:{
-                            id:id,
+                            id:'add001',//新增id为字符串
                             // s : "[" + s + "]",
                             workerName:workerName,
                             tel:tel,
-                            departmentName:departmentName
+                            departmentId:departmentId
                         },
                         success:function (response) {
                             Ext.MessageBox.alert("提示","保存成功" );
@@ -125,7 +125,36 @@ Ext.define('userManagement.department_worker', {
                         }
                     })
                 }
-            }]
+            },{
+                xtype : 'button',
+                text : '修改',
+                id : 'editUser',
+                handler : function() {
+                    var select = Ext.getCmp('addWorkerGrid').getSelectionModel().getSelection();
+
+                    //选择的记录id
+                    var userId = select[0].get('id');
+                    var workerName = select[0].get('workerName');
+                    var tel = select[0].get('tel');
+                    var departmentName = select[0].get('departmentName');
+                    var departmentId = select[0].get('departmentId');
+                    console.log('11111',select)
+                    if(select.length==0)
+                        Ext.Msg.alert('错误', '请选择要修改的数据');
+                    else
+                    {
+                        var edit = Ext.create('userManagement.userEdit',{
+                            //页面传参数
+                            userId:userId,
+                            workerName: workerName,
+                            tel:tel,
+                            departmentName:departmentName,
+                            departmentId:departmentId
+                        });
+                        edit.show();
+                    }
+                }}
+            ]
         });
 
         //职员信息
