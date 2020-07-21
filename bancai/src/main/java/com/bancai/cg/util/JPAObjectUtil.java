@@ -1,9 +1,8 @@
 package com.bancai.cg.util;
 
 import com.alibaba.fastjson.JSONObject;
-import com.bancai.cg.entity.MaterialInfo;
-import com.bancai.cg.entity.MaterialMatchRules;
-import com.bancai.cg.entity.ProductInfo;
+import com.bancai.cg.entity.*;
+import org.hibernate.Session;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -272,5 +271,41 @@ public class JPAObjectUtil {
     public static String removeSpace(String s){
         s=s.replace(" ","");
         return s;
+    }
+
+
+    public static boolean matchStoreByInfo(List<MaterialStore> stores, Double de_count, List<Match_result> isrollbacklist, Designlist designlist, String materialName, List<MaterialStore> list, Session session){
+        int k=0;
+        while (de_count>0){
+            if(stores==null||k>=stores.size()){
+                //log.error("仓库中 没有找到对应的原材料id 设计清单id"+designlist.getId()+"  产品id "+productInfo.getId());
+                return false;
+            }
+            MaterialStore store=stores.get(k++);
+            Match_result match_result = new Match_result();
+            match_result.setDesignlistId(designlist.getId());
+            match_result.setMatchId(store.getId());
+            match_result.setName(materialName);
+            match_result.setMadeBy(4);
+            match_result.setIsCompleteMatch(1);
+            if(store.getCountUse()>=de_count){
+                match_result.setCount(de_count);
+                // match_result.setMaterialName(dataList.get(0).get("materialName") + "");
+                // match_result.setOrigin("3");
+                store.setCountUse(store.getCountUse()-de_count);
+                session.evict(store);
+                de_count=0.0;
+            }else {
+                match_result.setCount(store.getCountUse());
+                de_count-=store.getCountUse();
+                store.setCountUse(0.0);
+                session.evict(store);
+            }
+            isrollbacklist.add(match_result);
+
+            list.add(store);
+          //  materialstoredao.save(store);
+        }
+        return true;
     }
 }

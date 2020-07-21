@@ -15,7 +15,10 @@ public class Match_result {
 //    private Integer projectId;
 //    private Integer buildingId;
     private String name;
+    private Integer madeBy;
     private Integer matchId;
     private Double count;
     private Integer isCompleteMatch;
+    private Integer workorderId;
+    private Integer storesrequisition;
 }

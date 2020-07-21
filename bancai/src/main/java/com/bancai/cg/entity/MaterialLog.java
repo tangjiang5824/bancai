@@ -14,7 +14,7 @@ public class MaterialLog {
     //上传id
     private Integer userId;
     private Timestamp time;
-    private String operator;
+    private Integer operator;
     //0可以回滚，1已回滚
     private Integer isrollback;
     private Building building;
@@ -89,14 +89,13 @@ public class MaterialLog {
         this.time = time;
     }
 
-    public String getOperator() {
+    public Integer getOperator() {
         return operator;
     }
 
-    public void setOperator(String operator) {
+    public void setOperator(Integer operator) {
         this.operator = operator;
     }
-
 
     public Integer getIsrollback() {
         return isrollback;

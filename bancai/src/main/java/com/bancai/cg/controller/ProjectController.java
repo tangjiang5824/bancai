@@ -748,6 +748,34 @@ public class ProjectController {
         //log.info(response);
     }
 
+    @RequestMapping("/project/workOrderDetialList.do")
+    public WebResponse find_Workorder_List(Integer start,Integer limit,Integer projectId,Integer buildingId,Integer buildingpositionId,Integer productMadeBy,Integer productId){
+
+        mysqlcondition c=new mysqlcondition();
+        if (null!=projectId) {
+            c.and(new mysqlcondition("projectId", "=", projectId));
+        }
+        if (null!=buildingId) {
+            c.and(new mysqlcondition("buildingId", "=", buildingId));
+        }
+        if (null!=buildingpositionId) {
+            c.and(new mysqlcondition("buildingpositionId", "=", buildingpositionId));
+        }
+        if (null!=productMadeBy) {
+            c.and(new mysqlcondition("productMadeBy", "=", productMadeBy));
+        }
+        if (null!=productId) {
+            c.and(new mysqlcondition("productId", "=", productId));
+        }
+        return queryAllService.queryDataPage(start, limit, c, "query_match_result");
+
+
+
+    }
+
+
+
+
 
 
 
