@@ -550,7 +550,7 @@ Ext.define('project.result.designlist_match_result',{
                 //字段拼接
                 load:function(store,records){
                     for(var i=0;i<records.length;i++){
-                        records[i].set('productName_Des',records[i].get('productName')+" &nbsp;&nbsp;&nbsp;&nbsp;(序号:"+records[i].get('designlistId')+","+product.model.originType[records[i].get('madeBy')].name+")");
+                        records[i].set('productName_Des',records[i].get('productName')+" &nbsp;&nbsp;&nbsp;&nbsp;(序号:"+records[i].get('designlistId')+","+product.model.originType[records[i].get('productMadeBy')].name+")");
                     }
                 },
 

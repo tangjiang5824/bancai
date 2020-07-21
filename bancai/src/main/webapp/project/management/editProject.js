@@ -91,19 +91,49 @@ Ext.define('project.management.editProject',{
                 }]
         });
 
+        //职员信息
+        var workerListStore = Ext.create('Ext.data.Store',{
+            fields : [ 'typeName'],
+            proxy : {
+                type : 'ajax',
+                url : '/material/findAllBytableName.do?tableName=department_worker',
+                reader : {
+                    type : 'json',
+                    rootProperty: 'department_worker',
+                },
+            },
+            autoLoad : true
+        });
+
         var toobar_2 = Ext.create('Ext.toolbar.Toolbar',{
             dock:'top',
             items: [
+                // {
+                //     xtype: 'textfield',
+                //     margin : '0 10 0 0',
+                //     fieldLabel: '项目负责人',
+                //     id :'projectLeader',
+                //     width: 180,
+                //     labelWidth: 80,
+                //     name: 'projectLeader',
+                //     value:"",
+                // },
                 {
-                    xtype: 'textfield',
-                    margin : '0 10 0 0',
-                    fieldLabel: '项目负责人',
-                    id :'projectLeader',
+                    fieldLabel : '项目负责人',
+                    xtype : 'combo',
+                    name : 'projectLeader',
+                    id : 'projectLeader',
+                    // disabled : true,
+                    // width:'95%',
+                    margin: '0 40 0 0',
                     width: 180,
                     labelWidth: 80,
-                    name: 'projectLeader',
-                    value:"",
-                },{
+                    store : workerListStore,
+                    displayField : 'workerName',
+                    valueField : 'id',
+                    editable : true,
+                },
+                {
                     xtype : 'button',
                     text: '查询',
                     iconCls:'right-button',
