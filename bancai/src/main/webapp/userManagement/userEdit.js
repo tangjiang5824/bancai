@@ -78,7 +78,7 @@ width : 380,
 							success : function(form, action) {
 								Ext.Msg.alert('消息', '更新成功！');
 								me.close();
-								Ext.getCmp('adminMain').store.load({
+								Ext.getCmp('addWorkerGrid').store.load({
 									params : {
 										start : 0,
 										limit : itemsPerPage

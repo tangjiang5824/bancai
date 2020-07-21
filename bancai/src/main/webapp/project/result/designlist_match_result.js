@@ -11,6 +11,10 @@ Ext.define('project.result.designlist_match_result',{
 
         var fieldValue = 'projectName';
 
+        var tableName = 'query_match_result';
+        var columnName = 'designlistId';
+        // var columnValue = me.designlistId;
+
         /*
          * *合并单元格的函数，合并表格内所有连续的具有相同值的单元格。调用方法示例：
          * *store.on("load",function(){gridSpan(grid,"row","[FbillNumber],[FbillDate],[FAudit],[FAuditDate],[FSure],[FSureDate]","FbillNumber");});
@@ -604,21 +608,68 @@ Ext.define('project.result.designlist_match_result',{
                 emptyMsg:'无数据'
             }],
             listeners: {
-                validateedit : function(editor, e) {
-                    var field=e.field
-                    var id=e.record.data.id
-                    Ext.Ajax.request({
-                        url:"data/EditCellById.do",  //EditDataById.do
-                        params:{
-                            tableName:tableName,
-                            field:field,
-                            value:e.value,
-                            id:id
-                        },
-                        success:function (response) {
-                            //console.log(response.responseText);
-                        }
-                    })
+                // validateedit : function(editor, e) {
+                //     var field=e.field
+                //     var id=e.record.data.id
+                //     Ext.Ajax.request({
+                //         url:"data/EditCellById.do",  //EditDataById.do
+                //         params:{
+                //             tableName:tableName,
+                //             field:field,
+                //             value:e.value,
+                //             id:id
+                //         },
+                //         success:function (response) {
+                //             //console.log(response.responseText);
+                //         }
+                //     })
+                // },
+
+                //双击表行响应事件
+                itemdblclick: function(me, record, item, index,rowModel){
+                    var select = record.data
+                    //项目id
+                    var projectId = select.id;//项目名对应的id
+
+                    console.log("iiiii-----------")
+                    console.log(record)
+
+                    // var select = Ext.getCmp('addWorkerGrid').getSelectionModel().getSelection();
+
+                    //选择的产品id
+                    var designlistId = record.get('designlistId');
+
+                    console.log('11111',designlistId)
+                    if(select.length==0)
+                        Ext.Msg.alert('错误', '请选择要修改的数据');
+                    else
+                    {
+                        // var projectMatch_List = Ext.create('Ext.data.Store',{
+                        //     //id,materialName,length,width,materialType,number
+                        //     fields:['buildingNo','buildingName','buildingLeader'],
+                        //     proxy : {
+                        //         type : 'ajax',
+                        //         url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName='+tableName+'&columnName='+columnName+'&columnValue='+designlistId,//获取同类型的原材料  +'&pickNum='+pickNum
+                        //         reader : {
+                        //             type : 'json',
+                        //             rootProperty: 'query_match_result',
+                        //         },
+                        //         // params:{
+                        //         //     materialName:materialName,
+                        //         //     // start: 0,
+                        //         //     // limit: itemsPerPage
+                        //         // }
+                        //     },
+                        //     autoLoad : true
+                        // });
+
+                        var edit = Ext.create('project.result.matchResultEdit',{
+                            //页面传参数
+                            designlistId:designlistId,
+                            // projectMatch_List:projectMatch_List,
+                        });
+                        edit.show();
+                    }
 
                 }
             }

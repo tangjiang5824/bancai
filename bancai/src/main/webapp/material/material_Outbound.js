@@ -55,21 +55,51 @@ Ext.define('material.material_Outbound',{
             ]
         });
 
+        //职员信息
+        var workerListStore = Ext.create('Ext.data.Store',{
+            fields : [ 'typeName'],
+            proxy : {
+                type : 'ajax',
+                url : '/material/findAllBytableName.do?tableName=department_worker',
+                reader : {
+                    type : 'json',
+                    rootProperty: 'department_worker',
+                },
+            },
+            autoLoad : true
+        });
+
         //长1 长2 宽1 宽2 库存单位
         var toolbar = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
             items: [
 
+                // {
+                //     xtype: 'textfield',
+                //     margin : '0 40 0 0',
+                //     fieldLabel: '入库人',
+                //     id :'operator',
+                //     width: 150,
+                //     labelWidth: 50,
+                //     name: 'operator',
+                //     value:"",
+                // },
                 {
-                    xtype: 'textfield',
-                    margin : '0 40 0 0',
-                    fieldLabel: '入库人',
-                    id :'operator',
+                    fieldLabel : '入库人',
+                    xtype : 'combo',
+                    name : 'operator',
+                    id : 'operator',
+                    // disabled : true,
+                    // width:'95%',
+                    margin: '0 40 0 0',
                     width: 150,
-                    labelWidth: 50,
-                    name: 'operator',
-                    value:"",
+                    labelWidth: 45,
+                    store : workerListStore,
+                    displayField : 'workerName',
+                    valueField : 'id',
+                    editable : true,
                 },
+
                 {
                     xtype : 'datefield',
                     margin : '0 40 0 0',

@@ -337,6 +337,20 @@ Ext.define('material.material_Back', {
             ]
         });
 
+        //职员信息
+        var workerListStore = Ext.create('Ext.data.Store',{
+            fields : [ 'typeName'],
+            proxy : {
+                type : 'ajax',
+                url : '/material/findAllBytableName.do?tableName=department_worker',
+                reader : {
+                    type : 'json',
+                    rootProperty: 'department_worker',
+                },
+            },
+            autoLoad : true
+        });
+
         var archive_form = new Ext.form.FormPanel({
             // title:'新建原材料退库表',
             id:'formMain',
@@ -380,18 +394,36 @@ Ext.define('material.material_Back', {
                         height:30,
                         border:true,
                         style:"margin-left:10px;",
-                        items:[{
-                                    xtype: 'textfield',
-                                    margin: '0 40 0 0',
-                                    fieldLabel: '退库人',
-                                    id: 'operator',
-                                    // width: 140,
-                                    // labelWidth: 50,
-                                    name: 'operator',
-                                    value: "",
-                                    allowBlank:false,
-                                    blankText  : "退库人姓名不能为空"
-                                }
+                        items:[
+                            // {
+                            //         xtype: 'textfield',
+                            //         margin: '0 40 0 0',
+                            //         fieldLabel: '退库人',
+                            //         id: 'operator',
+                            //         // width: 140,
+                            //         // labelWidth: 50,
+                            //         name: 'operator',
+                            //         value: "",
+                            //         allowBlank:false,
+                            //         blankText  : "退库人姓名不能为空"
+                            //     },
+                            {
+                                fieldLabel : '退库人',
+                                xtype : 'combo',
+                                name : 'operator',
+                                id : 'operator',
+                                // disabled : true,
+                                // width:'95%',
+                                margin: '0 40 0 0',
+                                width: 150,
+                                labelWidth: 45,
+                                store : workerListStore,
+                                displayField : 'workerName',
+                                valueField : 'id',
+                                editable : true,
+                                allowBlank:false,
+                                blankText  : "退库人姓名不能为空"
+                            },
                         ]}]},
                     // {
                     //     xtype: 'container',
