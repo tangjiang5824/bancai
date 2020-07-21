@@ -140,7 +140,7 @@ public class MatchRulesController {
             String mAngleP = (jsonTempP.get("mAngleP")+"").trim();
             String nAngleP = (jsonTempP.get("nAngleP")+"").trim();
             String pAngleP = (jsonTempP.get("pAngleP")+"").trim();
-            String suffixP = (jsonTempP.get("suffixP")+"").trim();
+            String suffixP = (jsonTempP.get("suffixP")+"").trim().toUpperCase();
             if(!mAngleP.matches(isPureNumber))
                 mAngleP = "0";
             if(!nAngleP.matches(isPureNumber))
@@ -157,7 +157,7 @@ public class MatchRulesController {
             String mAngleO = (jsonTempO.get("mAngleO")+"").trim();
             String nAngleO = (jsonTempO.get("nAngleO")+"").trim();
             String pAngleO = (jsonTempO.get("pAngleO")+"").trim();
-            String suffixO = (jsonTempO.get("suffixO")+"").trim();
+            String suffixO = (jsonTempO.get("suffixO")+"").trim().toUpperCase();
             if(!mAngleO.matches(isPureNumber))
                 mAngleO = "0";
             if(!nAngleO.matches(isPureNumber))
