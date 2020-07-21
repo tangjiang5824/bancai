@@ -7,6 +7,7 @@ Ext.define('project.project_worksheet',{
     initComponent: function(){
         var itemsPerPage = 50;
         var tableName_workorder="work_order_view";
+        var tableName_pro_specific = '';//某类产品的具体匹配信息
         //var materialType="1";
 
         //存放所选的原材料的具体规格
@@ -196,7 +197,7 @@ Ext.define('project.project_worksheet',{
                 },
                 reader : {
                     type : 'json',
-                    rootProperty: tableName_workorder,
+                    rootProperty: 'workOrderList',
                 },
             },
             autoLoad : true,
@@ -523,7 +524,8 @@ Ext.define('project.project_worksheet',{
                 }
 
                 ]
-        })
+        });
+
         var grid2=Ext.create('Ext.grid.Panel',{
             id : 'pickingMaterialGrid',
             store:pre_worksheetStore,
@@ -540,23 +542,50 @@ Ext.define('project.project_worksheet',{
             fields:['materialName','materialCount','countReceived','countNotReceived','countTemp'],
             proxy : {
                 type : 'ajax',
-                url : 'material/findAllBytableName.do?tableName='+tableName_workorder,
+                url : 'material/findAllBytableName.do?tableName='+tableName_pro_specific,
                 reader : {
                     type : 'json',
-                    rootProperty: tableName_workorder,
+                    rootProperty: tableName_pro_specific,
                 }
             },
             autoLoad : true
         });
 
+        var toolbar_specific = Ext.create('Ext.toolbar.Toolbar',{
+            items: [
+                {
+                    xtype: 'textfield',
+                    margin : '0 10 0 0',
+                    fieldLabel: '产品',
+                    id :'project_name',
+                    width: 200,
+                    labelWidth: 35,
+                    name: 'project_name',
+                    value:"",
+                    // border:'0 0 1 0',
+                }, {
+                    xtype: 'textfield',
+                    margin : '0 10 0 0',
+                    fieldLabel: '材料类型',
+                    id :'madeBy_specific',
+                    width: 200,
+                    labelWidth: 60,
+                    name: 'madeBy_specific',
+                    value:"",
+                    // border:'0 0 1 0',
+                    },
+            ]
+        })
+
         var grid_pro_specific=Ext.create('Ext.grid.Panel',{
             id : 'grid_pro_specific',
+            tbar:toolbar_specific,
             store:product_specificListStore,
             dock: 'bottom',
             columns:[
                 {
                     dataIndex:'材料名',
-                    text:'产品名',
+                    text:'材料名',
                     flex :1
                 },
                 { text: '主件类型', dataIndex: 'madeBy', flex :1.2,
@@ -572,7 +601,7 @@ Ext.define('project.project_worksheet',{
             ],
             // height:'100%',
             flex:1,
-            // tbar:toobar_right,
+
             selType:'checkboxmodel'
         });
 
