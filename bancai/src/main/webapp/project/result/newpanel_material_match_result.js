@@ -23,7 +23,8 @@ Ext.define('project.result.newpanel_material_match_result',{
             var allRecs = grid.getStore().getRange();
             if(rowOrCol == "row"){
                 // count1 = grid.getColumnModel().getColumnCount();  //列数columns
-                count1 = grid.columns.length;
+                if(grid.columns!=null)
+                    count1 = grid.columns.length;
                 // console.log("luuuuu:"+count1);
                 count2 = grid.getStore().getCount();  //行数(纪录数)
             } else {

@@ -246,26 +246,27 @@ Ext.define("menu.MenuRole_bc0", {
 						id : 'project.result.designlist_match_result',//project.import_planList
 						leaf : true
 					},
-					{
-						text : '成品退库匹配结果查询',
-						id : 'project.Query_Backproduct_Match_Result',//project.import_planList
-						leaf : true
-					} ,
-					{
-						text : '预加工半成品匹配结果查询',
-						id : 'project.result.preProduct_material_match_result',//project.import_planList
-						leaf : true
-					} ,
-					{
-						text : '旧板匹配结果查询',
-						id : 'project.result.oldpanel_material_match_result',//project.import_planList
-						leaf : true
-					} ,
-					{
-						text : '原材料匹配结果查询',
-						id : 'project.result.newpanel_material_match_result',//project.import_planList
-						leaf : true
-					} ,
+					// {
+					// 	text : '成品退库匹配结果查询',
+					// 	id : 'project.Query_Backproduct_Match_Result',//project.import_planList
+					// 	leaf : true
+					// } ,
+					// {
+					// 	text : '预加工半成品匹配结果查询',
+					// 	id : 'project.result.preProduct_material_match_result',//project.import_planList
+					// 	leaf : true
+					// } ,
+					// {
+					// 	text : '旧板匹配结果查询',
+					// 	id : 'project.result.oldpanel_material_match_result',//project.import_planList
+					// 	leaf : true
+					// } ,
+					// {
+					// 	text : '原材料匹配结果查询',
+					// 	id : 'project.result.newpanel_material_match_result',//project.import_planList
+					// 	leaf : true
+					// } ,
+
 				// 	{
 				// 		text : '生产材料单查询',
 				// 		id : 'project.product_produce_list',//project.import_planList
@@ -415,6 +416,21 @@ Ext.define("menu.MenuRole_bc0", {
 						leaf : true
 					}
 					]
+				},{
+					//
+					text : '部门职员管理',
+					expanded : true,
+					children : [ {
+						text : '职员信息',
+						id : 'userManagement.department_worker',
+						leaf : true
+					}
+						// , {
+						// 	text : '成本统计',
+						// 	id : 'finance.statistics_cost',
+						// 	leaf : true
+						// } ,
+						]
 				}
 				]
 			}

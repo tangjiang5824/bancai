@@ -144,17 +144,17 @@ public class ProductDataService extends BaseService{
                             "(productId,count,warehouseName,totalArea,totalWeight) values (?,?,?,?,?)",
                     info[0],count,warehouseName,info[2], info[1]);
         } else {
-            String sql2 = "update product_store set count=count+" + count;
+            String sql2 = "update product_store set count=count+\"" + count+"\"";
 
             switch (con) {
                 case 0:
-                    sql2 = sql2 + ",totalArea=totalArea+" + info[2] + ",totalWeight=totalWeight+" + info[1];
+                    sql2 = sql2 + ",totalArea=totalArea+\"" + info[2] + "\",totalWeight=totalWeight+\"" + info[1]+"\"";
                     break;
                 case 1:
-                    sql2 = sql2 + ",totalArea=totalArea+" + info[2];
+                    sql2 = sql2 + ",totalArea=totalArea+\"" + info[2]+"\"";
                     break;
                 case 10:
-                    sql2 = sql2 + ",totalWeight=totalWeight+" + info[1];
+                    sql2 = sql2 + ",totalWeight=totalWeight+\"" + info[1]+"\"";
                     break;
                 case 11:
                 default:

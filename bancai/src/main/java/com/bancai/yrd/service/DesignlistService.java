@@ -90,6 +90,35 @@ public class DesignlistService extends BaseService{
                 String.valueOf(madeBy), String.valueOf(processStatus));
     }
 
+    @Transactional
+    public void saveDepartmentWorkerData(String id, String departmentId, String workerName,String tel,boolean exist){
+        if(exist){
+            String sql1 = "update department_worker set departmentId=\""+departmentId+"\",workerName=\""+workerName+"\",tel=\""+tel+"\" where id=\""+id+"\"";
+            jo.update(sql1);
+        }else {
+            String sql2 = "insert into department_worker (departmentId,workerName,tel) values (?,?,?)";
+            insertProjectService.insertIntoTableBySQL(sql2,departmentId,workerName,tel);
+        }
+    }
+
+    /*
+     * 查询工单
+     * */
+    @Transactional
+    public DataList findWorkOrder(String projectId, String buildingId, String buildingpositionId){
+        StringBuilder sb = new StringBuilder("select * from work_order_view");
+        if((projectId!=null)&&(projectId.length()!=0)){
+            sb.append(" where projectId=\"").append(projectId).append("\"");
+            if((buildingId!=null)&&(buildingId.length()!=0))
+                sb.append(" and buildingId=\"").append(buildingId).append("\"");
+            if((buildingpositionId!=null)&&(buildingpositionId.length()!=0))
+                sb.append(" and buildingpositionId=\"").append(buildingpositionId).append("\"");
+        }
+        return queryService.query(sb.toString());
+    }
+
+    
+
 
 
 

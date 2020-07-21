@@ -35,6 +35,22 @@ public class MatchRulesService extends BaseService {
     public int addOldpanelMatchRules(String productFormatId,String oldpanelFormatId,String priority,String isCompleteMatch
             ,String mValueP,String nValueP,String pValueP,String aValueP,String bValueP,String mAngleP,String nAngleP,String pAngleP,String suffixP
             ,String mValueO,String nValueO,String pValueO,String aValueO,String bValueO,String mAngleO,String nAngleO,String pAngleO,String suffixO) {
+        return insertProjectService.insertDataToTable("insert into oldpanel_match_rules " +
+                        "(productFormatId,oldpanelFormatId,priority,isCompleteMatch,isValid," +
+                        "mConP,nConP,pConP,aConP,bConP,mAngleP,nAngleP,pAngleP,suffixP," +
+                        "mConO,nConO,pConO,aConO,bConO,mAngleO,nAngleO,pAngleO,suffixO) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+                ,productFormatId,oldpanelFormatId,priority,isCompleteMatch,"1"
+                ,mValueP,nValueP,pValueP,aValueP,bValueP,mAngleP,nAngleP,pAngleP,suffixP
+                ,mValueO,nValueO,pValueO,aValueO,bValueO,mAngleO,nAngleO,pAngleO,suffixO);
+
+
+
+    }
+
+    @Transactional
+    public int addOldpanelMatchRules1(String productFormatId,String oldpanelFormatId,String priority,String isCompleteMatch
+            ,String mValueP,String nValueP,String pValueP,String aValueP,String bValueP,String mAngleP,String nAngleP,String pAngleP,String suffixP
+            ,String mValueO,String nValueO,String pValueO,String aValueO,String bValueO,String mAngleO,String nAngleO,String pAngleO,String suffixO) {
         String productFormat = queryService.query("select * from product_format where id=?",productFormatId).get(0).get("productFormat").toString();
         System.out.println(productFormat);
         String oldpanelFormat = queryService.query("select * from oldpanel_format where id=?",oldpanelFormatId).get(0).get("oldpanelFormat").toString();

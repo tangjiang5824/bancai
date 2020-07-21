@@ -112,11 +112,11 @@ public class Y_Upload_Data_Service extends BaseService {
                     String.valueOf(Double.parseDouble(info[1])*Double.parseDouble(count)));
         } else {
             String oldpanelstoreId = queryList.get(0).get("id").toString();
-            String sql2 = "update oldpanel_store set countUse=countUse+"+count+
-                    ",countStore=countStore+"+count+",totalArea=totalArea+"+
+            String sql2 = "update oldpanel_store set countUse=countUse+\""+count+
+                    "\",countStore=countStore+\""+count+"\",totalArea=totalArea+\""+
                     String.valueOf(Double.parseDouble(info[2]) * Double.parseDouble(count)) +
-                    ",totalWeight=totalWeight+"+String.valueOf(Double.parseDouble(info[1])*Double.parseDouble(count))+
-                    " where id="+oldpanelstoreId;
+                    "\",totalWeight=totalWeight+\""+String.valueOf(Double.parseDouble(info[1])*Double.parseDouble(count))+
+                    "\" where id=\""+oldpanelstoreId+"\"";
             jo.update(sql2);
             return Integer.parseInt(oldpanelstoreId);
         }

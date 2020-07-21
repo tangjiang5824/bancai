@@ -214,6 +214,11 @@ public class test02 {
 //        if(list.get(0).get("pValue")!=null)
 //            a = Integer.parseInt(list.get(0).get("pValue").toString());
 //        System.out.println(a);
+        String ss = "aaaabbbbbb";
+        int a = 100;
+        String p = "-20&50";
+        ss=(a+Integer.parseInt(p.split("&")[0]))+ss+(a+Integer.parseInt(p.split("&")[1]));
+        System.out.println(ss);
     }
 
     private String IgnoreSuffix(String a){
