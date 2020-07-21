@@ -1,6 +1,7 @@
 package com.bancai.cg.controller;
 
 
+import com.bancai.cg.entity.WorkorderproductList;
 import com.bancai.cg.service.InsertProjectService;
 import com.bancai.cg.util.newPanelMatch;
 import com.bancai.commonMethod.QueryAllService;
@@ -748,6 +749,7 @@ public class ProjectController {
         //log.info(response);
     }
 
+    //查询产品对应的匹配详情
     @RequestMapping("/project/workOrderDetialList.do")
     public WebResponse find_Workorder_List(Integer start,Integer limit,Integer projectId,Integer buildingId,Integer buildingpositionId,Integer productMadeBy,Integer productId){
 
@@ -767,13 +769,64 @@ public class ProjectController {
         if (null!=productId) {
             c.and(new mysqlcondition("productId", "=", productId));
         }
-        return queryAllService.queryDataPage(start, limit, c, "query_match_result");
+            c.and(new mysqlcondition("processStatus", "=", 0));
+        WebResponse response =queryAllService.queryDataPage(start, limit, c, "query_match_result");
+        DataList dataList=(DataList) response.get("value");
+        Map<WorkorderproductList,Integer> map_list=new HashMap<>();
+        WorkorderproductList sublist=new WorkorderproductList();
+        for(int i=0;i<dataList.size();i++){
+            DataRow row=dataList.get(i);
+            if(sublist.getDesignlistId()==null){
+                sublist.setDesignlistId((Integer)row.get("designlistId"));
+              //  sublist.addId((Integer)row.get("designlistId"));
+            }
+         //   System.out.println(row.get("designlistId")!=sublist.getDesignlistId());
+            if(!Objects.equals(row.get("designlistId"),sublist.getDesignlistId())){
+                if(map_list.containsKey(sublist)){
+                    map_list.put(sublist,map_list.get(sublist)+1);
+                }else {
+                    map_list.put(sublist,1);
+                }
+                sublist=new WorkorderproductList();
+                sublist.setDesignlistId((Integer)row.get("designlistId"));
+               // sublist.addId((Integer)row.get("designlistId"));
+                sublist.addMap(row.get("name")+"",(Double) row.get("count"));
+            }else {
+                sublist.addMap(row.get("name")+"",(Double) row.get("count"));
+            }
+            if(i==dataList.size()-1){
+                if(map_list.containsKey(sublist)){
+                    map_list.put(sublist,map_list.get(sublist)+1);
+                }else {
+                    map_list.put(sublist,1);
+                }
+            }
+        }
+        List<Map<String,Object>> rslist=new ArrayList<>();
+        map_list.size();
+        int index=1;
+        for(Map.Entry<WorkorderproductList,Integer> entry:map_list.entrySet()){
+            WorkorderproductList list=entry.getKey();
+            Map<String,Double> submap=list.getMap();
+            Map<String,Object> rsmap=null;
+            for(Map.Entry<String,Double> subentry:submap.entrySet()){
+                rsmap=new HashMap<>();
+                rsmap.put("index",index);
+                rsmap.put("name",subentry.getKey());
+                rsmap.put("count",subentry.getValue());
+                rsmap.put("totalNumber",entry.getValue());
+                rslist.add(rsmap);
+            }
+            index++;
 
+        }
 
+        rslist.size();
+        response.put("value",rslist);
+
+        return response;
 
     }
-
-
 
 
 
