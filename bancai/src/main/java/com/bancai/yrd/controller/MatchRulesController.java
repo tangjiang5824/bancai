@@ -140,7 +140,13 @@ public class MatchRulesController {
             String mAngleP = (jsonTempP.get("mAngleP")+"").trim();
             String nAngleP = (jsonTempP.get("nAngleP")+"").trim();
             String pAngleP = (jsonTempP.get("pAngleP")+"").trim();
-            String suffixP = (jsonTempP.get("suffixP")+"").trim();
+            String suffixP = (jsonTempP.get("suffixP")+"").trim().toUpperCase();
+            if(!mAngleP.matches(isPureNumber))
+                mAngleP = "0";
+            if(!nAngleP.matches(isPureNumber))
+                nAngleP = "0";
+            if(!pAngleP.matches(isPureNumber))
+                pAngleP = "0";
             JSONArray jsonArrayO = new JSONArray(s_old);
             JSONObject jsonTempO = jsonArrayO.getJSONObject(0);
             String mValueO = (jsonTempO.get("mValueO")+"").trim();
@@ -151,7 +157,13 @@ public class MatchRulesController {
             String mAngleO = (jsonTempO.get("mAngleO")+"").trim();
             String nAngleO = (jsonTempO.get("nAngleO")+"").trim();
             String pAngleO = (jsonTempO.get("pAngleO")+"").trim();
-            String suffixO = (jsonTempO.get("suffixO")+"").trim();
+            String suffixO = (jsonTempO.get("suffixO")+"").trim().toUpperCase();
+            if(!mAngleO.matches(isPureNumber))
+                mAngleO = "0";
+            if(!nAngleO.matches(isPureNumber))
+                nAngleO = "0";
+            if(!pAngleO.matches(isPureNumber))
+                pAngleO = "0";
             int oldpanelMatchRulesId = matchRulesService.addOldpanelMatchRules(productFormatId,oldpanelFormatId,priority,isCompleteMatch
                     ,mValueP,nValueP,pValueP,aValueP,bValueP,mAngleP,nAngleP,pAngleP,suffixP
                     ,mValueO,nValueO,pValueO,aValueO,bValueO,mAngleO,nAngleO,pAngleO,suffixO);

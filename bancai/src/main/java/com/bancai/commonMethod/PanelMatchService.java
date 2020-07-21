@@ -260,24 +260,35 @@ public class PanelMatchService extends BaseService{
             DataList rulesList = new DataList();
             rulesList = queryService.query("select * from oldpanel_match_rules where productFormatId=? and isValid=1 order by priority asc",productFormatId);
             for (DataRow rulesRow : rulesList) {
-                String[] pCon = new String[]{rulesRow.get("pCon1").toString(),rulesRow.get("pCon2").toString(),
-                        rulesRow.get("pCon3").toString(),rulesRow.get("pCon4").toString()};
-                if(!isProductFitCondition(productFormat,pCon,productInfo))
+//                String[] pCon = new String[]{rulesRow.get("pCon1").toString(),rulesRow.get("pCon2").toString(),
+//                        rulesRow.get("pCon3").toString(),rulesRow.get("pCon4").toString()};
+                if(!isProductFitRule(productFormat,rulesRow,productInfo))
                     continue;
                 String oldpanelFormatId = rulesRow.get("oldpanelFormatId").toString();
+                String oldpanelFormat = queryService.query("select * from oldpanel_format where id=?",oldpanelFormatId).get(0).get("oldpanelFormat").toString();
                 String isCompleteMatch = rulesRow.get("isCompleteMatch").toString();
-                DataList oldpanelList = new DataList();
-                oldpanelList = queryService.query("SELECT oldpanel_info.oldpanelName AS oldpanelName,oldpanel_info.mValue AS mValue,oldpanel_info.nValue AS nValue,oldpanel_info.pValue AS pValue," +
+                String queryOldpanelFitRule = "SELECT oldpanel_info.oldpanelName AS oldpanelName,oldpanel_info.mValue AS mValue,oldpanel_info.nValue AS nValue,oldpanel_info.pValue AS pValue," +
                         "oldpanel_info.aValue AS aValue,oldpanel_info.bValue AS bValue,oldpanel_info.mAngle AS mAngle,oldpanel_info.nAngle AS nAngle,oldpanel_info.pAngle AS pAngle," +
-                        "oldpanel_info.suffix AS suffix," +
-                        "oldpanel_format.oldpanelTypeId AS oldpanelTypeId,oldpanel_format.oldpanelFormat AS oldpanelFormat,oldpanel_store.id AS id,oldpanel_store.countUse AS countUse " +
+                        "oldpanel_info.suffix AS suffix,oldpanel_store.id AS id,oldpanel_store.countUse AS countUse " +
                         "FROM oldpanel_store LEFT JOIN oldpanel_info ON (oldpanel_store.oldpanelId=oldpanel_info.id) " +
-                        "LEFT JOIN oldpanel_format ON (oldpanel_info.oldpanelFormatId=oldpanel_format.id) " +
-                        "WHERE oldpanel_store.countUse>0 AND oldpanel_info.oldpanelFormatId=?",oldpanelFormatId);
+                        "WHERE oldpanel_store.countUse>0 AND oldpanel_info.oldpanelFormatId=?";
+                queryOldpanelFitRule = oldpanelFitRuleSQL(queryOldpanelFitRule,rulesRow,productInfo,oldpanelFormat);
+                System.out.println(queryOldpanelFitRule);
+                DataList oldpanelList = new DataList();
+//                oldpanelList = queryService.query("SELECT oldpanel_info.oldpanelName AS oldpanelName,oldpanel_info.mValue AS mValue,oldpanel_info.nValue AS nValue,oldpanel_info.pValue AS pValue," +
+//                        "oldpanel_info.aValue AS aValue,oldpanel_info.bValue AS bValue,oldpanel_info.mAngle AS mAngle,oldpanel_info.nAngle AS nAngle,oldpanel_info.pAngle AS pAngle," +
+//                        "oldpanel_info.suffix AS suffix," +
+//                        "oldpanel_format.oldpanelTypeId AS oldpanelTypeId,oldpanel_format.oldpanelFormat AS oldpanelFormat,oldpanel_store.id AS id,oldpanel_store.countUse AS countUse " +
+//                        "FROM oldpanel_store LEFT JOIN oldpanel_info ON (oldpanel_store.oldpanelId=oldpanel_info.id) " +
+//                        "LEFT JOIN oldpanel_format ON (oldpanel_info.oldpanelFormatId=oldpanel_format.id) " +
+//                        "WHERE oldpanel_store.countUse>0 AND oldpanel_info.oldpanelFormatId=?",oldpanelFormatId);
+                oldpanelList = queryService.query(queryOldpanelFitRule,oldpanelFormatId);
+                if(oldpanelList.isEmpty())
+                    continue;
                 for (DataRow oldpanelRow : oldpanelList) {
-                    String[] oRan = new String[]{rulesRow.get("oRan1").toString(),rulesRow.get("oRan2").toString(),
-                            rulesRow.get("oRan3").toString(),rulesRow.get("oRan4").toString()};
-                    String oldpanelFormat = oldpanelRow.get("oldpanelFormat").toString();
+//                    String[] oRan = new String[]{rulesRow.get("oRan1").toString(),rulesRow.get("oRan2").toString(),
+//                            rulesRow.get("oRan3").toString(),rulesRow.get("oRan4").toString()};
+//                    String oldpanelFormat = oldpanelRow.get("oldpanelFormat").toString();
 //                    int mValueO = Integer.parseInt(oldpanelRow.get("mValue").toString());
 //                    int nValueO = Integer.parseInt(oldpanelRow.get("nValue").toString());
 //                    int pValueO = Integer.parseInt(oldpanelRow.get("pValue").toString());
@@ -287,8 +298,8 @@ public class PanelMatchService extends BaseService{
 //                    int nAngleO = Integer.parseInt(oldpanelRow.get("nAngle").toString());
 //                    int pAngleO = Integer.parseInt(oldpanelRow.get("pAngle").toString());
 //                    String suffixO = oldpanelRow.get("suffix").toString();
-                    if(!isOldpanelMatchRange(oldpanelFormat,oRan,oldpanelRow,productInfo))
-                        continue;
+//                    if(!isOldpanelMatchRange(oldpanelFormat,rulesRow,oldpanelRow,productInfo))
+//                        continue;
                     //匹配
                     System.out.println(oldpanelRow.toString());
                     int storeId = Integer.parseInt(oldpanelRow.get("id").toString());
@@ -347,9 +358,145 @@ public class PanelMatchService extends BaseService{
         return true;
     }
 
+    @Transactional
+    public String oldpanelFitRuleSQL(String queryOldpanelFitRule, DataRow rulesRow, DataRow productInfo,String oldpanelFormat){
+        int value;
+        String con = "";
+        StringBuilder queryOldpanelFitRuleBuilder = new StringBuilder(queryOldpanelFitRule);
+        for (int i = 0; i < oldpanelFormat.length(); i++) {
+            switch (oldpanelFormat.charAt(i)){
+                case '0':
+                case '1':
+                    break;
+                case '2':
+                    if((rulesRow.get("mConO")!=null)&&(rulesRow.get("mConO").toString().length()!=0)){
+                        con = rulesRow.get("mConO").toString();
+                        value = Integer.parseInt(productInfo.get("mValue").toString());
+                        queryOldpanelFitRuleBuilder.append(" AND oldpanel_info.mValue>=").append(value + Integer.parseInt(con.split("&")[0])).append(" AND oldpanel_info.mValue<=").append(value + Integer.parseInt(con.split("&")[1]));
+                    }
+                    break;
+                case '3':
+                    if((rulesRow.get("nConO")!=null)&&(rulesRow.get("nConO").toString().length()!=0)){
+                        con = rulesRow.get("nConO").toString();
+                        value = Integer.parseInt(productInfo.get("nValue").toString());
+                        queryOldpanelFitRuleBuilder.append(" AND oldpanel_info.nValue>=").append(value + Integer.parseInt(con.split("&")[0])).append(" AND oldpanel_info.nValue<=").append(value + Integer.parseInt(con.split("&")[1]));
+                    }
+                    break;
+                case '4':
+                case '5':
+                case '9':
+                    if((rulesRow.get("aConO")!=null)&&(rulesRow.get("aConO").toString().length()!=0)){
+                        con = rulesRow.get("aConO").toString();
+                        value = Integer.parseInt(productInfo.get("aValue").toString());
+                        queryOldpanelFitRuleBuilder.append(" AND oldpanel_info.aValue>=").append(value + Integer.parseInt(con.split("&")[0])).append(" AND oldpanel_info.aValue<=").append(value + Integer.parseInt(con.split("&")[1]));
+                    }
+                    if((rulesRow.get("bConO")!=null)&&(rulesRow.get("bConO").toString().length()!=0)){
+                        con = rulesRow.get("bConO").toString();
+                        value = Integer.parseInt(productInfo.get("bValue").toString());
+                        queryOldpanelFitRuleBuilder.append(" AND oldpanel_info.bValue>=").append(value + Integer.parseInt(con.split("&")[0])).append(" AND oldpanel_info.bValue<=").append(value + Integer.parseInt(con.split("&")[1]));
+                    }
+                    break;
+                case '8':
+                    if((rulesRow.get("pConO")!=null)&&(rulesRow.get("pConO").toString().length()!=0)){
+                        con = rulesRow.get("pConO").toString();
+                        value = Integer.parseInt(productInfo.get("pValue").toString());
+                        queryOldpanelFitRuleBuilder.append(" AND oldpanel_info.pValue>=").append(value + Integer.parseInt(con.split("&")[0])).append(" AND oldpanel_info.pValue<=").append(value + Integer.parseInt(con.split("&")[1]));
+                    }
+                    con = rulesRow.get("pAngleO").toString();
+                    queryOldpanelFitRuleBuilder.append(" AND pAngle=").append(con);
+                case '6':
+                    if((rulesRow.get("mConO")!=null)&&(rulesRow.get("mConO").toString().length()!=0)){
+                        con = rulesRow.get("mConO").toString();
+                        value = Integer.parseInt(productInfo.get("mValue").toString());
+                        queryOldpanelFitRuleBuilder.append(" AND oldpanel_info.mValue>=").append(value + Integer.parseInt(con.split("&")[0])).append(" AND oldpanel_info.mValue<=").append(value + Integer.parseInt(con.split("&")[1]));
+                    }
+                    con = rulesRow.get("mAngleO").toString();
+                    queryOldpanelFitRuleBuilder.append(" AND mAngle=").append(con);
+                    if((rulesRow.get("nConO")!=null)&&(rulesRow.get("nConO").toString().length()!=0)){
+                        con = rulesRow.get("nConO").toString();
+                        value = Integer.parseInt(productInfo.get("nValue").toString());
+                        queryOldpanelFitRuleBuilder.append(" AND oldpanel_info.nValue>=").append(value + Integer.parseInt(con.split("&")[0])).append(" AND oldpanel_info.nValue<=").append(value + Integer.parseInt(con.split("&")[1]));
+                    }
+                    con = rulesRow.get("nAngleO").toString();
+                    queryOldpanelFitRuleBuilder.append(" AND nAngle=").append(con);
+                    break;
+                case '7':
+                    if((rulesRow.get("suffixO")!=null)&&(rulesRow.get("suffixO").toString().length()!=0)){
+                        con = rulesRow.get("suffixO").toString();
+                        queryOldpanelFitRuleBuilder.append(" AND oldpanel_info.suffix=\"").append(con).append("\"");
+                    }
+                    break;
+            }
+        }
+        queryOldpanelFitRule = queryOldpanelFitRuleBuilder.toString();
+        return queryOldpanelFitRule;
+    }
 
-
-
+    @Transactional
+    public boolean isProductFitRule(String productFormat, DataRow rulesRow, DataRow productInfo){
+        for (int i = 0; i < productFormat.length(); i++) {
+            int aValueP;
+            int bValueP;
+            int mValueP;
+            int nValueP;
+            int pValueP;
+            int mAngleP;
+            int nAngleP;
+            int pAngleP;
+            String suffixP = "";
+            switch (productFormat.charAt(i)){
+                case '0':
+                case '1':
+                    break;
+                case '2':
+                    mValueP = Integer.parseInt(productInfo.get("mValue").toString());
+                    if(!isValueFit(mValueP,rulesRow.get("mConP").toString()))
+                        return false;
+                    break;
+                case '3':
+                    nValueP = Integer.parseInt(productInfo.get("nValue").toString());
+                    if(!isValueFit(nValueP,rulesRow.get("nConP").toString()))
+                        return false;
+                    break;
+                case '4':
+                case '5':
+                case '9':
+                    aValueP = Integer.parseInt(productInfo.get("aValue").toString());
+                    bValueP = Integer.parseInt(productInfo.get("bValue").toString());
+                    if((!isValueFit(aValueP,rulesRow.get("aConP").toString()))||(!isValueFit(bValueP,rulesRow.get("bConP").toString())))
+                        return false;
+                    break;
+                case '6':
+                    mValueP = Integer.parseInt(productInfo.get("mValue").toString());
+                    nValueP = Integer.parseInt(productInfo.get("nValue").toString());
+                    mAngleP = Integer.parseInt(productInfo.get("mAngle").toString());
+                    nAngleP = Integer.parseInt(productInfo.get("nAngle").toString());
+                    if((!isValueFit(mValueP,rulesRow.get("mConP").toString()))||(!isValueFit(nValueP,rulesRow.get("nConP").toString()))
+                            ||(!isAngleFit(mAngleP,rulesRow.get("mAngleP").toString()))||(!isAngleFit(nAngleP,rulesRow.get("nAngleP").toString())))
+                        return false;
+                    break;
+                case '7':
+                    if(productInfo.get("suffix")!=null)
+                        suffixP = productInfo.get("suffix").toString();
+                    if(!isSuffixFit(suffixP,rulesRow.get("suffixP").toString()))
+                        return false;
+                    break;
+                case '8':
+                    mValueP = Integer.parseInt(productInfo.get("mValue").toString());
+                    nValueP = Integer.parseInt(productInfo.get("nValue").toString());
+                    pValueP = Integer.parseInt(productInfo.get("pValue").toString());
+                    mAngleP = Integer.parseInt(productInfo.get("mAngle").toString());
+                    nAngleP = Integer.parseInt(productInfo.get("nAngle").toString());
+                    pAngleP = Integer.parseInt(productInfo.get("pAngle").toString());
+                    if((!isValueFit(mValueP,rulesRow.get("mConP").toString()))||(!isValueFit(nValueP,rulesRow.get("nConP").toString()))
+                            ||(!isValueFit(pValueP,rulesRow.get("pConP").toString()))||(!isAngleFit(pAngleP,rulesRow.get("pAngleP").toString()))
+                            ||(!isAngleFit(mAngleP,rulesRow.get("mAngleP").toString()))||(!isAngleFit(nAngleP,rulesRow.get("nAngleP").toString())))
+                        return false;
+                    break;
+            }
+        }
+        return true;
+    }
 
     @Transactional
     public boolean isOldpanelMatchRange(String oldpanelFormat, String[] oRan, DataRow oldpanelRow, DataRow productInfo){
@@ -533,6 +680,37 @@ public class PanelMatchService extends BaseService{
         }
         return true;
     }
+
+    private boolean isValueFit(int value, String con){
+        if((con!=null)&&(!con.equals(""))){
+            String[] smC = con.split("&");
+            for (String s : smC) {
+                char conm = s.charAt(0);//>,<,=
+                switch (conm) {
+                    case '>':
+                        if (!isValueGreaterThanCon(value,s.substring(1)))
+                            return false;
+                        break;
+                    case '<':
+                        if (!isValueLessThanCon(value,s.substring(1)))
+                            return false;
+                        break;
+                    case '=':
+                        if (!isValueEqualToCon(value,s.substring(1)))
+                            return false;
+                        break;
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean isAngleFit(int angle, String con){
+        if((con!=null)&&(!con.equals("")))
+            return angle==Integer.parseInt(con);
+        return true;
+    }
+
 
     private boolean isMValueFit(int mValue, String con){
         if((con!=null)&&(!con.equals(""))){
@@ -753,7 +931,7 @@ public class PanelMatchService extends BaseService{
     }
 
     private boolean isValueGreaterThanCon(int value, String singleCon){
-        if (!singleCon.substring(1, 2).matches(isPureNumber)) {//>=
+        if (!singleCon.substring(0,1).matches(isPureNumber)) {//>=
             return value >= Integer.parseInt(singleCon.substring(1));
         } else {
             return value > Integer.parseInt(singleCon);
@@ -761,7 +939,7 @@ public class PanelMatchService extends BaseService{
     }
 
     private boolean isValueLessThanCon(int value, String singleCon){
-        if (!singleCon.substring(1, 2).matches(isPureNumber)) {//>=
+        if (!singleCon.substring(0,1).matches(isPureNumber)) {//>=
             return value <= Integer.parseInt(singleCon.substring(1));
         } else {
             return value < Integer.parseInt(singleCon);

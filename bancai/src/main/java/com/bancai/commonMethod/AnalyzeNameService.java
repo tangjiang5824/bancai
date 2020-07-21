@@ -53,9 +53,9 @@ public class AnalyzeNameService extends BaseService {
         String p = null;
         String a = null;
         String b = null;
-        String mAngle = null;
-        String nAngle = null;
-        String pAngle = null;
+        String mAngle = "0";
+        String nAngle = "0";
+        String pAngle = "0";
         StringBuilder suffixBuilder = new StringBuilder();
         int conM = 0;
         for (int i = 0; i < 4; i++) {
@@ -311,9 +311,9 @@ public class AnalyzeNameService extends BaseService {
         String p = null;
         String a = null;
         String b = null;
-        String mAngle = null;
-        String nAngle = null;
-        String pAngle = null;
+        String mAngle = "0";
+        String nAngle = "0";
+        String pAngle = "0";
         StringBuilder suffixBuilder = new StringBuilder();
         int conM = 0;
         for (int i = 0; i < 4; i++) {
