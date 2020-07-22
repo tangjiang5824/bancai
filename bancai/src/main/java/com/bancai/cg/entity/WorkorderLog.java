@@ -12,9 +12,6 @@ public class WorkorderLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private Integer projectId;
-    private Integer buildingId;
-    private Integer buildingpositionId;
     private Integer operator;
     private Date time;
 

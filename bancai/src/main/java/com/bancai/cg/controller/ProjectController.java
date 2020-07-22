@@ -836,9 +836,6 @@ public class ProjectController {
     @Transactional
     public boolean createworkorder(Integer projectId,Integer buildingId,Integer buildingpositionId,String s,Integer operator){
         WorkorderLog log=new WorkorderLog();
-        log.setProjectId(projectId);
-        log.setBuildingId(buildingId);
-        log.setBuildingpositionId(buildingpositionId);
         log.setOperator(operator);
         log.setTime(new Date());
         workorderlogdao.save(log);
@@ -854,6 +851,9 @@ public class ProjectController {
             detail.setWorkorderlogId(log.getId());
             detail.setStatus(0);
             detail.setCount(count);
+            detail.setProjectId(Integer.parseInt(object.get("projectId")+""));
+            detail.setBuildingId(Integer.parseInt(object.get("buildingId")+""));
+            detail.setBuildingpositionId(Integer.parseInt(object.get("buildingId")+""));
             workorderdetaildao.save(detail);
             mysqlcondition c=new mysqlcondition();
             if (null!=projectId) {
