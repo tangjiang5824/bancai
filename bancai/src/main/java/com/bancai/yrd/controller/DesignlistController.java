@@ -100,6 +100,25 @@ public class DesignlistController {
         response.getWriter().close();
 
     }
+    /*
+     * 查询工单
+     * */
+    @RequestMapping("/order/queryWorkOrderLog.do")
+    public void queryWorkOrderLog(String projectId, String buildingId, String buildingpositionId,
+                               HttpServletResponse response) throws IOException, JSONException {
+        DataList workOrderLogList = designlistService.findWorkOrderLog(projectId, buildingId, buildingpositionId);
+        //写回前端
+        JSONObject object = new JSONObject();
+        JSONArray array = new JSONArray(workOrderLogList);
+        object.put("workOrderList", array);
+//        System.out.println("类型1：--"+array.getClass().getName().toString());
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html");
+        response.getWriter().write(object.toString());
+        response.getWriter().flush();
+        response.getWriter().close();
+
+    }
 
     /*
      * 新建领料单
