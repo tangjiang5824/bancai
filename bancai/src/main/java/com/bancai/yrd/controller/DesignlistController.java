@@ -110,7 +110,7 @@ public class DesignlistController {
         //写回前端
         JSONObject object = new JSONObject();
         JSONArray array = new JSONArray(workOrderLogList);
-        object.put("workOrderList", array);
+        object.put("workOrderLogList", array);
 //        System.out.println("类型1：--"+array.getClass().getName().toString());
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html");
