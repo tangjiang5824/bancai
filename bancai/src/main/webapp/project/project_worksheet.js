@@ -302,6 +302,25 @@ Ext.define('project.project_worksheet',{
                 }]
         });
 
+        //表格分组，字段名
+        var myModel = Ext.define("filedInfo", {
+            extend : "Ext.data.Model",
+            fields : [ {
+                name : "name",
+                type : "string"
+            },{
+                name : "count",
+                type : "number"
+            }, {
+                name : "totalNumber",
+                type : "number"
+            }, {
+                name : "index",
+                type : "number"
+            }
+            ]
+        });
+
 
         var grid1=Ext.create('Ext.grid.Panel',{
             id : 'PickingListGrid',
@@ -351,6 +370,7 @@ Ext.define('project.project_worksheet',{
                     var productMadeBy = select.madeBy;
 
                     var productName = select.productName;
+                    var pro_count = select.count;
                     console.log("选择---记录",select)
 
                     //查询某类产品具体的匹配信息，右侧界面
@@ -364,11 +384,14 @@ Ext.define('project.project_worksheet',{
                                 rootProperty: 'value',
                             }
                         },
-                        autoLoad : true
+                        autoLoad : true,
+                        model : "filedInfo",
+                        groupField : 'index',
                     });
 
                     Ext.getCmp("toolbar_specific").items.items[0].setValue(productName);//修改id为win_num的值，动态显示在窗口中
                     Ext.getCmp("toolbar_specific").items.items[1].setValue(productMadeBy);
+                    Ext.getCmp("toolbar_specific").items.items[2].setValue(pro_count);
                     grid_pro_specific.setStore(product_specificListStore);
                 }
             }
@@ -580,6 +603,18 @@ Ext.define('project.project_worksheet',{
                     editable : false,
                     disabled : true,//隐藏显示
                     // border:'0 0 1 0',
+                },{
+                    xtype: 'textfield',
+                    margin : '0 10 0 0',
+                    fieldLabel: '产品数量',
+                    id :'pro_count',
+                    width: 200,
+                    labelWidth: 60,
+                    name: 'pro_count',
+                    value:"",
+                    editable : false,
+                    disabled : true,//隐藏显示
+                    // border:'0 0 1 0',
                 },
             ]
         })
@@ -595,20 +630,33 @@ Ext.define('project.project_worksheet',{
                     text:'材料名',
                     flex :1
                 },
-                { text: '主件类型', dataIndex: 'materialMadeBy', flex :1.2,
-                    // renderer: function (value) {
-                    //     return product.model.originType[value].name; // key-value
-                    // },
-                },
+
                 {
                     dataIndex:'count',
                     text:'数量',
                     flex :1
                 },
+                // { text: '总数', dataIndex: 'totalNumber', flex :1.2,
+                //     // renderer: function (value) {
+                //     //     return product.model.originType[value].name; // key-value
+                //     // },
+                // },
+                {
+                    //分组依据
+                    dataIndex:'index',
+                    text:'index',
+                    flex :1,
+                    hidden:true
+                },
             ],
             // height:'100%',
             flex:1,
             // selType:'checkboxmodel' ,//每行的复选框
+            features : [ {//定义表格特征
+                ftype : "groupingsummary",
+                hideGroupedHeader : true,//隐藏当前分组的表头
+                groupHeaderTpl:'这类产品有(<b><font color=red>{[values.rows[0].data.totalNumber]}</font></b>)个',
+            } ],
         });
 
         var panel_show = Ext.create('Ext.panel.Panel',{

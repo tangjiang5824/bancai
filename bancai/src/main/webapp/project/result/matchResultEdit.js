@@ -511,6 +511,21 @@ Ext.define('project.result.matchResultEdit', {
 			]
 		});
 
+		//更新产品匹配信息
+		var toolbar_5 = Ext.create('Ext.toolbar.Toolbar', {
+			dock : "top",
+			id:'toolbar_5',
+			items: [
+				{
+					xtype : 'button',
+					iconAlign : 'center',
+					iconCls : 'rukuicon ',
+					text : '更新信息',
+				},
+			]
+		});
+
+
 		//弹出表格，楼栋信息表
 		var oneProject_match_grid=Ext.create('Ext.grid.Panel',{
 			id : 'oneProject_match_grid',
@@ -518,6 +533,7 @@ Ext.define('project.result.matchResultEdit', {
 			// store:me.projectMatch_List,//specificMaterialList，store1的数据固定projectMatch_List
 			store:projectMatch_List,
 			title:'匹配信息',
+			tbar:toolbar_5,
 			// dock: 'bottom',
 			// bbar:toolbar4,
 			columns:[
