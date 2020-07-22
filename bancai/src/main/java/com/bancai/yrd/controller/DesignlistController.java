@@ -134,12 +134,8 @@ public class DesignlistController {
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonTemp = jsonArray.getJSONObject(i);
                 System.out.println("第" + i + "个---" + jsonTemp);
-                String workOrderId=jsonTemp.get("workOrderId")+"";
-                DataList workOrderList = queryService.query("select * from work_order_detail where workorderlogId=?",workOrderId);
-                for (com.bancai.domain.DataRow dataRow : workOrderList) {
-                    String workOrderDetailId = dataRow.get("id").toString();
-                    designlistService.orderAddRequisitionDetail(requisitionId[0], requisitionId[1], workOrderDetailId);
-                }
+                String workOrderDetailId=jsonTemp.get("workOrderDetailId")+"";
+                designlistService.orderAddRequisitionDetail(requisitionId[0], requisitionId[1], workOrderDetailId);
             }
         } catch (Exception e) {
             return false;
