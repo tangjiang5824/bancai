@@ -124,13 +124,27 @@ Ext.define('project.project_create_picklist',{
             fields:['materialName','materialCount','countReceived','countNotReceived','countTemp'],
             proxy : {
                 type : 'ajax',
-                url : 'material/materiallsitbyproject.do',
+                url : 'order/queryWorkOrderLog.do',   //order/queryWorkOrder.do
                 reader : {
                     type : 'json',
-                    rootProperty: 'materialList',
-                }
+                    rootProperty: 'workOrderLogList',
+                },
+                // params:{
+                //     start: 0,
+                //     limit: itemsPerPage
+                // },
+
             },
-            autoLoad : false
+            autoLoad : false,
+            listeners : {
+                beforeload : function(store, operation, eOpts) {
+                    store.getProxy().setExtraParams({
+                        projectId:Ext.getCmp("projectName").getValue(),
+                        buildingId:Ext.getCmp("buildingName").getValue(),
+                        buildingpositionId:Ext.getCmp("positionName")
+                    });
+                }
+            }
         });
 
         var MaterialList2=Ext.create('Ext.data.Store',{
@@ -214,8 +228,9 @@ Ext.define('project.project_create_picklist',{
                         console.log(Ext.getCmp('projectName').getValue())
                         worksheetListStore.load({
                             params : {
-                                proejctId:Ext.getCmp('projectName').getValue(),
-                                //proejctId:'1',
+                                projectId:Ext.getCmp("projectName").getValue(),
+                                buildingId:Ext.getCmp("buildingName").getValue(),
+                                buildingpositionId:Ext.getCmp("positionName").getValue(),
                             }
                         });
                     }
@@ -240,7 +255,7 @@ Ext.define('project.project_create_picklist',{
                     flex :1
                 },
                 {
-                    dataIndex:'buildingPositionName',
+                    dataIndex:'positionName',
                     text:'清单位置',
                     flex :1
                 },

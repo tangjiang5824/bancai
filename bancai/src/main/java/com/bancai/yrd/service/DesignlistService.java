@@ -122,7 +122,7 @@ public class DesignlistService extends BaseService{
      * */
     @Transactional
     public DataList findWorkOrderLog(String projectId, String buildingId, String buildingpositionId){
-        StringBuilder sb = new StringBuilder("select * from work_order_log");
+        StringBuilder sb = new StringBuilder("select * from work_order_log_view");
         if((projectId!=null)&&(projectId.length()!=0)){
             sb.append(" where projectId=\"").append(projectId).append("\"");
             if((buildingId!=null)&&(buildingId.length()!=0))
