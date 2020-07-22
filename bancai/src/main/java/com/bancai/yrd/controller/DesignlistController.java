@@ -156,7 +156,7 @@ public class DesignlistController {
         //写回前端
         JSONObject object = new JSONObject();
         JSONArray array = new JSONArray(requisitionOrderList);
-        object.put("workOrderList", array);
+        object.put("requisitionOrderList", array);
 //        System.out.println("类型1：--"+array.getClass().getName().toString());
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html");
@@ -168,14 +168,14 @@ public class DesignlistController {
     /*
      * 查询某张领料单细节
      * */
-    @RequestMapping("/order/queryRequisitionOrder.do")
-    public void queryRequisitionOrder(String requisitionOrderId,
+    @RequestMapping("/order/queryRequisitionOrderDetail.do")
+    public void queryRequisitionOrderDetail(String requisitionOrderId,
                                       HttpServletResponse response) throws IOException, JSONException {
         DataList requisitionOrderDetailList = designlistService.findRequisitionOrderDetail(requisitionOrderId);
         //写回前端
         JSONObject object = new JSONObject();
         JSONArray array = new JSONArray(requisitionOrderDetailList);
-        object.put("workOrderList", array);
+        object.put("requisitionOrderDetailList", array);
 //        System.out.println("类型1：--"+array.getClass().getName().toString());
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html");
