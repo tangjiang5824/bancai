@@ -201,7 +201,7 @@ public class DesignlistService extends BaseService{
      * */
     @Transactional
     public DataList findRequisitionOrder(){
-        return queryService.query("select * from requisition_order");
+        return queryService.query("select * from requisition_order_view");
     }
 
     /*
