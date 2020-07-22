@@ -18,17 +18,37 @@ Ext.define('material.material_Statistics_Records',{
                 5: { value: '5', name: '撤销退库' },
             }
         });
+
+        //职员信息
+        var workerListStore = Ext.create('Ext.data.Store',{
+            fields : [ 'typeName'],
+            proxy : {
+                type : 'ajax',
+                url : '/material/findAllBytableName.do?tableName=department_worker',
+                reader : {
+                    type : 'json',
+                    rootProperty: 'department_worker',
+                },
+            },
+            autoLoad : true
+        });
+
         var toobar = Ext.create('Ext.toolbar.Toolbar',{
             items: [
                 {
-                    xtype: 'textfield',
-                    margin : '0 20 0 10',
-                    fieldLabel: '操作员',
-                    id :'userName',
-                    width: 160,
-                    labelWidth: 50,
-                    name: 'userName',
-                    value:"",
+                    fieldLabel : '操作员',
+                    xtype : 'combo',
+                    name : 'operator',
+                    id : 'operator',
+                    // disabled : true,
+                    // width:'95%',
+                    margin: '0 40 0 0',
+                    width: 150,
+                    labelWidth: 45,
+                    store : workerListStore,
+                    displayField : 'workerName',
+                    valueField : 'id',
+                    editable : true,
                 },
                 // {
                 //     xtype:'tbtext',
@@ -77,7 +97,7 @@ Ext.define('material.material_Statistics_Records',{
                     handler: function(){
                         material_Statistics_Records_Store.load({
                             params : {
-                                username : Ext.getCmp('userName').getValue(),
+                                operator : Ext.getCmp('operator').getValue(),
                                 endTime : Ext.getCmp('endTime').getValue(),
                                 startTime:Ext.getCmp('startTime').getValue(),
                                 optionType:0 //入库为0
@@ -94,7 +114,7 @@ Ext.define('material.material_Statistics_Records',{
                     handler: function(){
                         material_Statistics_Records_Store.load({
                             params : {
-                                username : Ext.getCmp('userName').getValue(),
+                                operator : Ext.getCmp('operator').getValue(),
                                 endTime : Ext.getCmp('endTime').getValue(),
                                 startTime:Ext.getCmp('startTime').getValue(),
                                 optionType:1 //出库为1
@@ -148,7 +168,7 @@ Ext.define('material.material_Statistics_Records',{
                 params:{
                     start: 0,
                     limit: itemsPerPage,
-                    username : Ext.getCmp('userName').getValue(),
+                    operator : Ext.getCmp('operator').getValue(),
                     endTime : Ext.getCmp('endTime').getValue(),
                     startTime:Ext.getCmp('startTime').getValue(),
                     // optionType:1 //出库为1
@@ -157,7 +177,7 @@ Ext.define('material.material_Statistics_Records',{
             listeners : {
                 beforeload : function(store, operation, eOpts) {
                     store.getProxy().setExtraParams({
-                        username : Ext.getCmp('userName').getValue(),
+                        operator : Ext.getCmp('operator').getValue(),
                         endTime : Ext.getCmp('endTime').getValue(),
                         startTime:Ext.getCmp('startTime').getValue(),
                         // optionType:1 //出库为1
@@ -179,7 +199,7 @@ Ext.define('material.material_Statistics_Records',{
                 editable:true
             },
             columns : [
-                { text: '操作人员',  dataIndex: 'username' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
+                { text: '操作人员',  dataIndex: 'operator' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
                 { text: '操作时间',
                     dataIndex: 'time',
                     flex :1 ,
