@@ -89,10 +89,10 @@ public class PanelMatchService extends BaseService{
      * 插入匹配结果，返回id
      */
     @Transactional
-    public int insertMatchResult(int designlistId, int matchId, String isCompleteMatch,String matchName) {
+    public int insertMatchResult(int designlistId, int matchId, String isCompleteMatch,String matchName,int madeBy) {
         return insertProjectService.insertDataToTable("insert into match_result " +
-                "(designlistId,matchId,count,isCompleteMatch,name) values (?,?,?,?,?)",
-                String.valueOf(designlistId), String.valueOf(matchId),"1.0",isCompleteMatch,matchName);
+                "(designlistId,matchId,count,isCompleteMatch,name,madeBy) values (?,?,?,?,?,?)",
+                String.valueOf(designlistId), String.valueOf(matchId),"1.0",isCompleteMatch,matchName,String.valueOf(madeBy));
     }
 
     /**
@@ -122,7 +122,7 @@ public class PanelMatchService extends BaseService{
                         while (countUse >= 1) {
                             String position = value.get(num - 1);
                             int designlistId = updateDesignlist(projectId, buildingId, position, 1);
-                            int resultId = insertMatchResult(designlistId,backproductId,"1",matchName);
+                            int resultId = insertMatchResult(designlistId,backproductId,"1",matchName,1);
                             value.remove(num - 1);
                             num--;
                             countUse--;
@@ -133,7 +133,7 @@ public class PanelMatchService extends BaseService{
                         while (num > 0) {
                             String position = value.get(num - 1);
                             int designlistId = updateDesignlist(projectId, buildingId, position, 1);
-                            int resultId = insertMatchResult(designlistId,backproductId,"1",matchName);
+                            int resultId = insertMatchResult(designlistId,backproductId,"1",matchName,1);
                             value.remove(num - 1);
                             num--;
                             countUse--;
@@ -191,7 +191,7 @@ public class PanelMatchService extends BaseService{
                         while (countUse >= 1) {
                             String position = value.get(num - 1);
                             int designlistId = updateDesignlist(projectId, buildingId, position, 2);
-                            int resultId = insertMatchResult(designlistId,preprocessId,"1",matchName);
+                            int resultId = insertMatchResult(designlistId,preprocessId,"1",matchName,2);
                             value.remove(num - 1);
                             num--;
                             countUse--;
@@ -202,7 +202,7 @@ public class PanelMatchService extends BaseService{
                         while (num > 0) {
                             String position = value.get(num - 1);
                             int designlistId = updateDesignlist(projectId, buildingId, position, 2);
-                            int resultId = insertMatchResult(designlistId,preprocessId,"1",matchName);
+                            int resultId = insertMatchResult(designlistId,preprocessId,"1",matchName,2);
                             value.remove(num - 1);
                             num--;
                             countUse--;
@@ -309,7 +309,7 @@ public class PanelMatchService extends BaseService{
                         while (countUse >= 1) {
                             String position = value.get(num - 1);
                             int designlistId = updateDesignlist(projectId, buildingId, position, 3);
-                            int resultId = insertMatchResult(designlistId,storeId,isCompleteMatch,matchName);
+                            int resultId = insertMatchResult(designlistId,storeId,isCompleteMatch,matchName,3);
                             value.remove(num - 1);
                             num--;
                             countUse--;
@@ -319,7 +319,7 @@ public class PanelMatchService extends BaseService{
                         while (num > 0) {
                             String position = value.get(num - 1);
                             int designlistId = updateDesignlist(projectId, buildingId, position, 3);
-                            int resultId = insertMatchResult(designlistId,storeId,isCompleteMatch,matchName);
+                            int resultId = insertMatchResult(designlistId,storeId,isCompleteMatch,matchName,3);
                             value.remove(num - 1);
                             num--;
                             countUse--;
