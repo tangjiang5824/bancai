@@ -368,6 +368,7 @@ Ext.define('project.project_worksheet',{
                     var buildingId = select.buildingId;
                     var buildingpositionId = select.buildingpositionId;
                     var productMadeBy = select.madeBy;
+                    var productId = select.productId;
 
                     var productName = select.productName;
                     var pro_count = select.count;
@@ -378,7 +379,7 @@ Ext.define('project.project_worksheet',{
                         fields:['materialName','materialCount','countReceived','countNotReceived','countTemp'],
                         proxy : {
                             type : 'ajax',
-                            url : 'project/workOrderDetialList.do?projectId='+projectId+'&buildingId='+buildingId+'&buildingpositionId='+buildingpositionId+'&productMadeBy='+productMadeBy,
+                            url : 'project/workOrderDetialList.do?projectId='+projectId+'&buildingId='+buildingId+'&buildingpositionId='+buildingpositionId+'&productMadeBy='+productMadeBy+'&productId='+productId,
                             reader : {
                                 type : 'json',
                                 rootProperty: 'value',
