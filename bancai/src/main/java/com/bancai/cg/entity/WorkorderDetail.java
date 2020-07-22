@@ -12,4 +12,8 @@ public class WorkorderDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private Integer productId;
+    private Integer productMadeBy;
+    private Integer workorderlogId;
+    private Double count;
+    private Integer status;
 }

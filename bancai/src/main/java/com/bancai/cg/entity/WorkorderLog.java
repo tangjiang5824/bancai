@@ -14,6 +14,7 @@ public class WorkorderLog {
     private Integer id;
     private Integer projectId;
     private Integer buildingId;
+    private Integer buildingpositionId;
     private Integer operator;
     private Date time;
 
