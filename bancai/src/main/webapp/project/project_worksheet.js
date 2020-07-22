@@ -368,6 +368,7 @@ Ext.define('project.project_worksheet',{
                     var buildingId = select.buildingId;
                     var buildingpositionId = select.buildingpositionId;
                     var productMadeBy = select.madeBy;
+                    var productId = select.productId;
 
                     var productName = select.productName;
                     var pro_count = select.count;
@@ -378,7 +379,7 @@ Ext.define('project.project_worksheet',{
                         fields:['materialName','materialCount','countReceived','countNotReceived','countTemp'],
                         proxy : {
                             type : 'ajax',
-                            url : 'project/workOrderDetialList.do?projectId='+projectId+'&buildingId='+buildingId+'&buildingpositionId='+buildingpositionId+'&productMadeBy='+productMadeBy,
+                            url : 'project/workOrderDetialList.do?projectId='+projectId+'&buildingId='+buildingId+'&buildingpositionId='+buildingpositionId+'&productMadeBy='+productMadeBy+'&productId='+productId,
                             reader : {
                                 type : 'json',
                                 rootProperty: 'value',
@@ -504,14 +505,14 @@ Ext.define('project.project_worksheet',{
                             },
                             success : function(response) {
                                 //var message =Ext.decode(response.responseText).showmessage;
-                                Ext.MessageBox.alert("提示","领取成功" );
+                                Ext.MessageBox.alert("提示","创建成功" );
                                 //刷新页面
-                                productListStore.reload();
-
+                                productListStore.load();
+                                // Ext.getCmp('PickingListGrid').getStore().load();
                             },
                             failure : function(response) {
                                 //var message =Ext.decode(response.responseText).showmessage;
-                                Ext.MessageBox.alert("提示","领取失败" );
+                                Ext.MessageBox.alert("提示","创建失败" );
                             }
                         });
 
