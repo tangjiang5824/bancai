@@ -489,7 +489,7 @@ Ext.define('project.project_worksheet',{
                         console.log(s)
                         //获取数据
                         Ext.Ajax.request({
-                            // url : 'material/materialreceivelist', //原材料入库
+                            url : 'order/createworkorder.do', //创建工单
                             method:'POST',
                             //submitEmptyText : false,
                             params : {
@@ -497,6 +497,9 @@ Ext.define('project.project_worksheet',{
                                 createTime:Ext.getCmp('createTime').getValue(),
                                 operator:Ext.getCmp("operator").value,
                                 s : "[" + s + "]",//存储选择领料的数量
+                                projectId:Ext.getCmp("projectName").getValue(),
+                                buildingId:Ext.getCmp("buildingName").getValue(),
+                                buildingpositionId:Ext.getCmp("positionName").getValue(),
                                 // materialList : "[" + materialList + "]",
                             },
                             success : function(response) {
