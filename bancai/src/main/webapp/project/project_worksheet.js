@@ -506,8 +506,8 @@ Ext.define('project.project_worksheet',{
                                 //var message =Ext.decode(response.responseText).showmessage;
                                 Ext.MessageBox.alert("提示","创建成功" );
                                 //刷新页面
-                                productListStore.reload();
-
+                                productListStore.load();
+                                // Ext.getCmp('PickingListGrid').getStore().load();
                             },
                             failure : function(response) {
                                 //var message =Ext.decode(response.responseText).showmessage;
