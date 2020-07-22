@@ -1,6 +1,7 @@
 package com.bancai.cg.controller;
 
 
+import com.bancai.cg.entity.*;
 import com.bancai.cg.service.InsertProjectService;
 import com.bancai.cg.util.newPanelMatch;
 import com.bancai.commonMethod.QueryAllService;
@@ -25,6 +26,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import com.bancai.cg.dao.*;
 
 @RestController
 public class ProjectController {
@@ -40,6 +42,12 @@ public class ProjectController {
     private InsertProjectService insertProjectService;
     @Autowired
     private QueryAllService queryAllService;
+    @Autowired
+    private workorderdetaildao workorderdetaildao;
+    @Autowired
+    private workorderlogdao workorderlogdao;
+    @Autowired
+    private workordermatchresultdao workordermatchresultdao;
 
 
 
@@ -747,6 +755,144 @@ public class ProjectController {
         response.getWriter().close();
         //log.info(response);
     }
+
+    //查询产品对应的匹配详情
+    @RequestMapping("/project/workOrderDetialList.do")
+    public WebResponse find_Workorder_List(Integer start,Integer limit,Integer projectId,Integer buildingId,Integer buildingpositionId,Integer productMadeBy,Integer productId){
+
+        mysqlcondition c=new mysqlcondition();
+        if (null!=projectId) {
+            c.and(new mysqlcondition("projectId", "=", projectId));
+        }
+        if (null!=buildingId) {
+            c.and(new mysqlcondition("buildingId", "=", buildingId));
+        }
+        if (null!=buildingpositionId) {
+            c.and(new mysqlcondition("buildingpositionId", "=", buildingpositionId));
+        }
+        if (null!=productMadeBy) {
+            c.and(new mysqlcondition("productMadeBy", "=", productMadeBy));
+        }
+        if (null!=productId) {
+            c.and(new mysqlcondition("productId", "=", productId));
+        }
+            c.and(new mysqlcondition("processStatus", "=", 0));
+        WebResponse response =queryAllService.queryDataPage(start, limit, c, "query_match_result");
+        DataList dataList=(DataList) response.get("value");
+        Map<WorkorderproductList,Integer> map_list=new HashMap<>();
+        WorkorderproductList sublist=new WorkorderproductList();
+        for(int i=0;i<dataList.size();i++){
+            DataRow row=dataList.get(i);
+            if(sublist.getDesignlistId()==null){
+                sublist.setDesignlistId((Integer)row.get("designlistId"));
+              //  sublist.addId((Integer)row.get("designlistId"));
+            }
+         //   System.out.println(row.get("designlistId")!=sublist.getDesignlistId());
+            if(!Objects.equals(row.get("designlistId"),sublist.getDesignlistId())){
+                if(map_list.containsKey(sublist)){
+                    map_list.put(sublist,map_list.get(sublist)+1);
+                }else {
+                    map_list.put(sublist,1);
+                }
+                sublist=new WorkorderproductList();
+                sublist.setDesignlistId((Integer)row.get("designlistId"));
+               // sublist.addId((Integer)row.get("designlistId"));
+                sublist.addMap(row.get("name")+"",(Double) row.get("count"));
+            }else {
+                sublist.addMap(row.get("name")+"",(Double) row.get("count"));
+            }
+            if(i==dataList.size()-1){
+                if(map_list.containsKey(sublist)){
+                    map_list.put(sublist,map_list.get(sublist)+1);
+                }else {
+                    map_list.put(sublist,1);
+                }
+            }
+        }
+        List<Map<String,Object>> rslist=new ArrayList<>();
+        map_list.size();
+        int index=1;
+        for(Map.Entry<WorkorderproductList,Integer> entry:map_list.entrySet()){
+            WorkorderproductList list=entry.getKey();
+            Map<String,Double> submap=list.getMap();
+            Map<String,Object> rsmap=null;
+            for(Map.Entry<String,Double> subentry:submap.entrySet()){
+                rsmap=new HashMap<>();
+                rsmap.put("index",index);
+                rsmap.put("name",subentry.getKey());
+                rsmap.put("count",subentry.getValue());
+                rsmap.put("totalNumber",entry.getValue());
+                rslist.add(rsmap);
+            }
+            index++;
+
+        }
+        response.put("value",rslist);
+
+        return response;
+    }
+
+    @RequestMapping("/order/createworkorder.do")
+    public boolean createworkorder(Integer projectId,Integer buildingId,Integer buildingpositionId,String s,Integer operator){
+        WorkorderLog log=new WorkorderLog();
+        log.setProjectId(projectId);
+        log.setBuildingId(buildingId);
+        log.setBuildingpositionId(buildingpositionId);
+        log.setOperator(operator);
+        log.setTime(new Date());
+        workorderlogdao.save(log);
+        JSONArray array=new JSONArray(s);
+        for(int i=0;i<array.length();i++){
+            JSONObject object=array.getJSONObject(i);
+            Integer productId=Integer.parseInt(object.get("productId")+"");
+            Integer madeby=Integer.parseInt(object.get("madeBy")+"");
+            Double count=Double.parseDouble(object.get("madeBy")+"");
+            WorkorderDetail detail=new WorkorderDetail();
+            detail.setProductId(productId);
+            detail.setProductMadeBy(madeby);
+            detail.setWorkorderlogId(log.getId());
+            detail.setStatus(0);
+            detail.setCount(count);
+            workorderdetaildao.save(detail);
+            mysqlcondition c=new mysqlcondition();
+            if (null!=projectId) {
+                c.and(new mysqlcondition("projectId", "=", projectId));
+            }
+            if (null!=buildingId) {
+                c.and(new mysqlcondition("buildingId", "=", buildingId));
+            }
+            if (null!=buildingpositionId) {
+                c.and(new mysqlcondition("buildingpositionId", "=", buildingpositionId));
+            }
+            if (null!=madeby) {
+                c.and(new mysqlcondition("productMadeBy", "=", madeby));
+            }
+            if (null!=productId) {
+                c.and(new mysqlcondition("productId", "=", productId));
+            }
+            c.and(new mysqlcondition("processStatus", "=", 0));
+            WebResponse response =queryAllService.queryDataPage(0, -1, c, "query_match_result");
+            DataList dataList=(DataList) response.get("value");
+            Set<Integer> set=new HashSet<>();
+            for(int j=0;j<dataList.size();j++){
+                WorkorderMatchresult result=new WorkorderMatchresult();
+                result.setMatchResultId(Integer.parseInt(dataList.get(j).get("id")+""));
+                result.setDetailId(detail.getId());
+                workordermatchresultdao.save(result);
+                set.add(Integer.parseInt(dataList.get(j).get("designlistId")+""));
+            }
+            for(Integer designlistId:set){
+                String sql="update designlist set processStatus=1 where id=?";
+                boolean flag=insertProjectService.insertIntoTableBySQL(sql,designlistId+"");
+                if(!flag){
+                    return  false;
+                }
+            }
+        }
+        return  true;
+        
+    }
+
 
 
 

@@ -259,49 +259,49 @@ Ext.define('userManagement.department_worker', {
             selType : 'rowmodel',
             listeners: {
                 //监听修改
-                validateedit: function (editor, e) {
-                    var id=e.record.data.id
-                    //修改的字段
-                    var field=e.field;
-                    //修改的值
-                    var newV = e.value;
-
-                    //修改的行数据
-                    var data = editor.context.newValues;
-                    console.log("含数据：==========",data)
-                    //每个属性值
-                    var workerName = data.workerName;
-                    var tel = data.tel;
-                    var departmentName = data.departmentName;
-
-
-                    var s = new Array();
-                    //修改的一行数据
-                    s.push(JSON.stringify(data));
-                    // console.log("editor===",editor.context.newValues)  //
-
-                    Ext.Ajax.request({
-                        url:"department/addOrUpdateWorkerInfo.do",  //EditDataById.do
-                        params:{
-                            id:id,
-                            // s : "[" + s + "]",
-                            workerName:workerName,
-                            tel:tel,
-                            departmentName:departmentName
-                        },
-                        success:function (response) {
-                            Ext.MessageBox.alert("提示","修改成功" );
-                            if(flag){
-                                e.record.data.id=response.responseText;
-                            }
-                            //重新加载
-                            Ext.getCmp('building_grid').getStore().load();
-                        },
-                        failure:function (response) {
-                            Ext.MessageBox.alert("提示","修改失败" );
-                        }
-                    })
-                }
+                // validateedit: function (editor, e) {
+                //     var id=e.record.data.id
+                //     //修改的字段
+                //     var field=e.field;
+                //     //修改的值
+                //     var newV = e.value;
+                //
+                //     //修改的行数据
+                //     var data = editor.context.newValues;
+                //     console.log("含数据：==========",data)
+                //     //每个属性值
+                //     var workerName = data.workerName;
+                //     var tel = data.tel;
+                //     var departmentName = data.departmentName;
+                //
+                //
+                //     var s = new Array();
+                //     //修改的一行数据
+                //     s.push(JSON.stringify(data));
+                //     // console.log("editor===",editor.context.newValues)  //
+                //
+                //     Ext.Ajax.request({
+                //         url:"department/addOrUpdateWorkerInfo.do",  //EditDataById.do
+                //         params:{
+                //             id:id,
+                //             // s : "[" + s + "]",
+                //             workerName:workerName,
+                //             tel:tel,
+                //             departmentName:departmentName
+                //         },
+                //         success:function (response) {
+                //             Ext.MessageBox.alert("提示","修改成功" );
+                //             if(flag){
+                //                 e.record.data.id=response.responseText;
+                //             }
+                //             //重新加载
+                //             Ext.getCmp('building_grid').getStore().load();
+                //         },
+                //         failure:function (response) {
+                //             Ext.MessageBox.alert("提示","修改失败" );
+                //         }
+                //     })
+                // }
             }
         });
 

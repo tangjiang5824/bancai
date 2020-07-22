@@ -122,7 +122,7 @@ public class MaterialController {
      * */
     @RequestMapping(value="/material/addData.do")
     @Transactional
-    public boolean addMaterialData(String s,String operator, HttpSession session) throws Exception {
+    public boolean addMaterialData(String s,Integer operator, HttpSession session) throws Exception {
 
         JSONArray jsonArray =JSONArray.parseArray(s);
         String userId = (String)session.getAttribute("userid");
@@ -200,7 +200,7 @@ public class MaterialController {
     //类型：0入库，1出库，2退库， 3撤销入库，4撤销出库，5撤销退库
     @RequestMapping(value = "/material/backMaterialstore.do")
     @Transactional
-    public boolean backMaterialstore(Integer materiallogId,HttpSession session ,String operator,String type) throws Exception {
+    public boolean backMaterialstore(Integer materiallogId,HttpSession session ,Integer operator,String type) throws Exception {
         MaterialLog log = materialLogdao.findById(materiallogId).orElse(null);
         MaterialLog log_bk=new MaterialLog();
         log_bk.setType(3);
@@ -234,7 +234,7 @@ public class MaterialController {
 
     @RequestMapping("/material/backmaterial.do")
     @Transactional
-    public boolean backMaterial(Integer materialId,Integer projectId,Integer buildingId,Double count,Double totalWeight,String operator,String warehouseName,HttpSession session){
+    public boolean backMaterial(Integer materialId,Integer projectId,Integer buildingId,Double count,Double totalWeight,Integer operator,String warehouseName,HttpSession session){
             MaterialInfo material=materialinfodao.findById(materialId).orElse(null);
             Project project=projectdao.findById(projectId).orElse(null);
             Building building=buildingdao.findById(buildingId).orElse(null);

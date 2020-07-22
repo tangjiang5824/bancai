@@ -393,7 +393,7 @@ Ext.define('project.result.project_match_result',{
                 },
             ],
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
-                clicksToEdit : 3
+                clicksToEdit : 2
             })],
             tbar: toobar,
             dockedItems: [{
@@ -405,23 +405,23 @@ Ext.define('project.result.project_match_result',{
                 emptyMsg:'无数据'
             }],
             listeners: {
-                validateedit : function(editor, e) {
-                    var field=e.field
-                    var id=e.record.data.id
-                    Ext.Ajax.request({
-                        url:"data/EditCellById.do",  //EditDataById.do
-                        params:{
-                            tableName:tableName,
-                            field:field,
-                            value:e.value,
-                            id:id
-                        },
-                        success:function (response) {
-                            //console.log(response.responseText);
-                        }
-                    })
-
-                }
+                // validateedit : function(editor, e) {
+                //     var field=e.field
+                //     var id=e.record.data.id
+                //     Ext.Ajax.request({
+                //         url:"data/EditCellById.do",  //EditDataById.do
+                //         params:{
+                //             tableName:tableName,
+                //             field:field,
+                //             value:e.value,
+                //             id:id
+                //         },
+                //         success:function (response) {
+                //             //console.log(response.responseText);
+                //         }
+                //     })
+                //
+                // },
             }
         });
 

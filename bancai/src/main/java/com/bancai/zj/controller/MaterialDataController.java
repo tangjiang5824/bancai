@@ -128,7 +128,7 @@ public class MaterialDataController {
      * */
     @RequestMapping(value = "/uploadMaterialExcel.do")
     @Transactional
-    public WebResponse uploadMaterial(MultipartFile uploadFile, String tableName, String operator ,HttpSession session) {
+    public WebResponse uploadMaterial(MultipartFile uploadFile, String tableName, Integer operator ,HttpSession session) {
         WebResponse response = new WebResponse();
         String userid = (String) session.getAttribute("userid");
         MaterialLog log=new MaterialLog();
