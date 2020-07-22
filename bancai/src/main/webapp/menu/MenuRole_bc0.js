@@ -291,6 +291,11 @@ Ext.define("menu.MenuRole_bc0", {
 						leaf : true
 
 					},{
+						text : '工单审核',
+						id : 'project.project_check_worksheet',
+						leaf : true
+
+					},{
 						text : '项目创建领料单',
 						id : 'project.project_create_picklist',
 						leaf : true

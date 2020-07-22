@@ -414,18 +414,18 @@ Ext.define('project.project_worksheet',{
 
         var toobar_right = Ext.create('Ext.toolbar.Toolbar',{
             items: [
-                {
-                    xtype: 'textfield',
-                    margin : '0 30 0 0',
-                    fieldLabel: '项目信息',
-                    id :'projectInfo',
-                    width: 200,
-                    labelWidth: 60,
-                    name: 'projectInfo',
-                    value:"",
-                    // border:'0 0 1 0',
-                    fieldStyle:'background:none; border-right: #000000 0px solid;border-top:0px solid;border-left:0px solid;border-bottom:#000000 1px solid;'
-                },
+                // {
+                //     xtype: 'textfield',
+                //     margin : '0 30 0 0',
+                //     fieldLabel: '项目信息',
+                //     id :'projectInfo',
+                //     width: 200,
+                //     labelWidth: 60,
+                //     name: 'projectInfo',
+                //     value:"",
+                //     // border:'0 0 1 0',
+                //     fieldStyle:'background:none; border-right: #000000 0px solid;border-top:0px solid;border-left:0px solid;border-bottom:#000000 1px solid;'
+                // },
                 {
                     xtype: 'textfield',
                     margin : '0 30 0 0',
@@ -481,22 +481,21 @@ Ext.define('project.project_worksheet',{
                         var select = Ext.getCmp('pickingMaterialGrid').getStore()
                             .getData();
 
-                        // console.log(select)
-
+                        console.log('-------->',select)
                         var s = new Array();
                         select.each(function(rec) {
                             s.push(JSON.stringify(rec.data));
                         });
                         console.log(s)
-                        console.log('2===========')
                         //获取数据
                         Ext.Ajax.request({
-                            url : 'material/materialreceivelist', //原材料入库
+                            // url : 'material/materialreceivelist', //原材料入库
                             method:'POST',
                             //submitEmptyText : false,
                             params : {
-                                workSheet_Num:Ext.getCmp('workSheet_Num').getValue(),
+                                // workSheet_Num:Ext.getCmp('workSheet_Num').getValue(),
                                 createTime:Ext.getCmp('createTime').getValue(),
+                                operator:Ext.getCmp("operator").value,
                                 s : "[" + s + "]",//存储选择领料的数量
                                 // materialList : "[" + materialList + "]",
                             },
