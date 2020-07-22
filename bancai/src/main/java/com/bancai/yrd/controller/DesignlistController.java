@@ -1,5 +1,6 @@
 package com.bancai.yrd.controller;
 
+import com.bancai.cg.service.InsertProjectService;
 import com.bancai.commonMethod.PanelMatchService;
 import com.bancai.commonMethod.QueryAllService;
 import com.bancai.domain.DataList;
@@ -20,6 +21,8 @@ import com.bancai.vo.WebResponse;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @RestController
 public class DesignlistController {
@@ -31,6 +34,8 @@ public class DesignlistController {
     private PanelMatchService panelMatchService;
     @Autowired
     private DesignlistService designlistService;
+    @Autowired
+    private InsertProjectService insertProjectService;
 
     private static String isPureNumber = "^-?[0-9]+";
     Logger log=Logger.getLogger(DesignlistController.class);
@@ -95,6 +100,115 @@ public class DesignlistController {
         response.getWriter().close();
 
     }
+
+    /*
+     * 新建领料单
+     * */
+    @RequestMapping(value = "/order/addRequisitionOrder.do")
+    public boolean addRequisitionOrder(String s, String operator, HttpSession session) throws JSONException {
+        try {
+            JSONArray jsonArray = new JSONArray(s);
+            String userId = (String)session.getAttribute("userid");
+            Date date=new Date();
+            SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            int[] requisitionId = designlistService.orderAddRequisition(userId,operator,simpleDateFormat.format(date));
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonTemp = jsonArray.getJSONObject(i);
+                System.out.println("第" + i + "个---" + jsonTemp);
+                String workOrderId=jsonTemp.get("workOrderId")+"";
+                DataList workOrderList = queryService.query("select * from work_order_detail where workorderlogId=?",workOrderId);
+                for (com.bancai.domain.DataRow dataRow : workOrderList) {
+                    String workOrderDetailId = dataRow.get("id").toString();
+                    designlistService.orderAddRequisitionDetail(requisitionId[0], requisitionId[1], workOrderDetailId);
+                }
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+    /*
+     * 查询领料单
+     * */
+    @RequestMapping("/order/queryRequisitionOrder.do")
+    public void queryRequisitionOrder(String projectId, String buildingId, String buildingpositionId,
+                               HttpServletResponse response) throws IOException, JSONException {
+        DataList requisitionOrderList = designlistService.findRequisitionOrder(projectId, buildingId, buildingpositionId);
+        //写回前端
+        JSONObject object = new JSONObject();
+        JSONArray array = new JSONArray(requisitionOrderList);
+        object.put("workOrderList", array);
+//        System.out.println("类型1：--"+array.getClass().getName().toString());
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html");
+        response.getWriter().write(object.toString());
+        response.getWriter().flush();
+        response.getWriter().close();
+    }
+
+    /*
+     * 查询某张领料单细节
+     * */
+    @RequestMapping("/order/queryRequisitionOrder.do")
+    public void queryRequisitionOrder(String requisitionOrderId,
+                                      HttpServletResponse response) throws IOException, JSONException {
+        DataList requisitionOrderDetailList = designlistService.findRequisitionOrderDetail(requisitionOrderId);
+        //写回前端
+        JSONObject object = new JSONObject();
+        JSONArray array = new JSONArray(requisitionOrderDetailList);
+        object.put("workOrderList", array);
+//        System.out.println("类型1：--"+array.getClass().getName().toString());
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html");
+        response.getWriter().write(object.toString());
+        response.getWriter().flush();
+        response.getWriter().close();
+    }
+    /*
+     * 确认领料完成
+     * */
+    @RequestMapping(value = "/order/finishRequisitionOrder.do")
+    public boolean finishRequisitionOrder(String s, String operator, HttpSession session) throws JSONException {
+        try {
+            JSONArray jsonArray = new JSONArray(s);
+            if(jsonArray.length()==0)
+                return false;
+            String userId = (String)session.getAttribute("userid");
+            Date date=new Date();
+            SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String requisitionOrderId = jsonArray.getJSONObject(0).get("requisitionOrderId")+"";
+            String sql_addLog = "insert into requisition_order_log (type,requisitionOrderId,userId,time,operator) values(?,?,?,?,?)";
+            int requisitionOrderLogId= insertProjectService.insertDataToTable(sql_addLog, "2"
+                    , requisitionOrderId,userId,simpleDateFormat.format(date),operator);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonTemp = jsonArray.getJSONObject(i);
+                System.out.println("第" + i + "个---" + jsonTemp);
+                String requisitionOrderDetailId=jsonTemp.get("requisitionOrderDetailId")+"";
+                String count = (jsonTemp.get("count")+"").trim();
+                String countRec = jsonTemp.get("countRec")+"";
+                int type = Integer.parseInt(jsonTemp.get("type")+"");
+                String storeId = jsonTemp.get("storeId")+"";
+                if((count.length()==0)||(Double.parseDouble(count)<0)||(Double.parseDouble(count)>Double.parseDouble(countRec)))
+                    return false;
+                boolean is_update_right = designlistService.orderUpdateRequisitionDetail(requisitionOrderDetailId,count,type,storeId);
+                if(!is_update_right)
+                    return false;
+                String sql_addLogDetail="insert into requisition_order_logdetail (requisitionOrderLogId,requisitionOrderDetailId,count)" +
+                        " values (?,?,?)";
+                boolean is_log_right= insertProjectService.insertIntoTableBySQL(sql_addLogDetail,
+                        String.valueOf(requisitionOrderLogId),requisitionOrderDetailId,count);
+                if(!is_log_right){
+                    return false;
+                }
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+
+
 
 
 
