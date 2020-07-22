@@ -101,16 +101,16 @@ public class DesignlistController {
 
     }
     /*
-     * 查询工单
+     * 查询工单detail
      * */
-    @RequestMapping("/order/queryWorkOrderLog.do")
-    public void queryWorkOrderLog(String projectId, String buildingId, String buildingpositionId,
+    @RequestMapping("/order/queryWorkOrderDetail.do")
+    public void queryWorkOrderDetail(String projectId, String buildingId, String buildingpositionId,
                                HttpServletResponse response) throws IOException, JSONException {
-        DataList workOrderLogList = designlistService.findWorkOrderLog(projectId, buildingId, buildingpositionId);
+        DataList workOrderDetailList = designlistService.findWorkOrderDetail(projectId, buildingId, buildingpositionId);
         //写回前端
         JSONObject object = new JSONObject();
-        JSONArray array = new JSONArray(workOrderLogList);
-        object.put("workOrderLogList", array);
+        JSONArray array = new JSONArray(workOrderDetailList);
+        object.put("workOrderDetailList", array);
 //        System.out.println("类型1：--"+array.getClass().getName().toString());
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html");

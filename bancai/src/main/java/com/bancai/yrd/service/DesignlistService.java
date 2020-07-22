@@ -118,13 +118,13 @@ public class DesignlistService extends BaseService{
     }
 
     /*
-     * 查询工单
+     * 查询工单Detail
      * */
     @Transactional
-    public DataList findWorkOrderLog(String projectId, String buildingId, String buildingpositionId){
+    public DataList findWorkOrderDetail(String projectId, String buildingId, String buildingpositionId){
         StringBuilder sb = new StringBuilder("select * from work_order_log_view");
         if((projectId!=null)&&(projectId.length()!=0)){
-            sb.append(" where projectId=\"").append(projectId).append("\"");
+            sb.append(" where status=0 and projectId=\"").append(projectId).append("\"");
             if((buildingId!=null)&&(buildingId.length()!=0))
                 sb.append(" and buildingId=\"").append(buildingId).append("\"");
             if((buildingpositionId!=null)&&(buildingpositionId.length()!=0))
