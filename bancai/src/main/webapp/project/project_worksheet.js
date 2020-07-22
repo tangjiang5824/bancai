@@ -504,14 +504,14 @@ Ext.define('project.project_worksheet',{
                             },
                             success : function(response) {
                                 //var message =Ext.decode(response.responseText).showmessage;
-                                Ext.MessageBox.alert("提示","领取成功" );
+                                Ext.MessageBox.alert("提示","创建成功" );
                                 //刷新页面
                                 productListStore.reload();
 
                             },
                             failure : function(response) {
                                 //var message =Ext.decode(response.responseText).showmessage;
-                                Ext.MessageBox.alert("提示","领取失败" );
+                                Ext.MessageBox.alert("提示","创建失败" );
                             }
                         });
 
