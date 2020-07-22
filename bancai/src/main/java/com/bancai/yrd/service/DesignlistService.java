@@ -197,27 +197,27 @@ public class DesignlistService extends BaseService{
 
 
     /*
-     * 查询领料单（未完成）
+     * 查询领料单
      * */
     @Transactional
-    public DataList findRequisitionOrder(String projectId, String buildingId, String buildingpositionId){
-        StringBuilder sb = new StringBuilder("select * from work_order_view");
-        if((projectId!=null)&&(projectId.length()!=0)){
-            sb.append(" where projectId=\"").append(projectId).append("\"");
-            if((buildingId!=null)&&(buildingId.length()!=0))
-                sb.append(" and buildingId=\"").append(buildingId).append("\"");
-            if((buildingpositionId!=null)&&(buildingpositionId.length()!=0))
-                sb.append(" and buildingpositionId=\"").append(buildingpositionId).append("\"");
-        }
-        return queryService.query(sb.toString());
+    public DataList findRequisitionOrder(){
+        return queryService.query("select * from requisition_order");
     }
 
     /*
      * 查询领料单细节
      * */
     @Transactional
-    public DataList findRequisitionOrderDetail(String requisitionOrderId){
-        return queryService.query("select * from requisition_order_detail where requisitionOrderId=?",requisitionOrderId);
+    public DataList findRequisitionOrderDetail(String requisitionOrderId,String projectId, String buildingId, String buildingpositionId){
+        StringBuilder sb = new StringBuilder("select * from requisition_order_detail where requisitionOrderId=?");
+        if((projectId!=null)&&(projectId.length()!=0)){
+            sb.append(" and projectId=\"").append(projectId).append("\"");
+            if((buildingId!=null)&&(buildingId.length()!=0))
+                sb.append(" and buildingId=\"").append(buildingId).append("\"");
+            if((buildingpositionId!=null)&&(buildingpositionId.length()!=0))
+                sb.append(" and buildingpositionId=\"").append(buildingpositionId).append("\"");
+        }
+        return queryService.query(sb.toString(),requisitionOrderId);
     }
 
     /**

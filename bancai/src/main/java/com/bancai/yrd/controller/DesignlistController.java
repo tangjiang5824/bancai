@@ -146,9 +146,8 @@ public class DesignlistController {
      * 查询领料单
      * */
     @RequestMapping("/order/queryRequisitionOrder.do")
-    public void queryRequisitionOrder(String projectId, String buildingId, String buildingpositionId,
-                               HttpServletResponse response) throws IOException, JSONException {
-        DataList requisitionOrderList = designlistService.findRequisitionOrder(projectId, buildingId, buildingpositionId);
+    public void queryRequisitionOrder(HttpServletResponse response) throws IOException, JSONException {
+        DataList requisitionOrderList = designlistService.findRequisitionOrder();
         //写回前端
         JSONObject object = new JSONObject();
         JSONArray array = new JSONArray(requisitionOrderList);
@@ -165,9 +164,9 @@ public class DesignlistController {
      * 查询某张领料单细节
      * */
     @RequestMapping("/order/queryRequisitionOrderDetail.do")
-    public void queryRequisitionOrderDetail(String requisitionOrderId,
+    public void queryRequisitionOrderDetail(String requisitionOrderId,String projectId, String buildingId, String buildingpositionId,
                                       HttpServletResponse response) throws IOException, JSONException {
-        DataList requisitionOrderDetailList = designlistService.findRequisitionOrderDetail(requisitionOrderId);
+        DataList requisitionOrderDetailList = designlistService.findRequisitionOrderDetail(requisitionOrderId,projectId,buildingId,buildingpositionId);
         //写回前端
         JSONObject object = new JSONObject();
         JSONArray array = new JSONArray(requisitionOrderDetailList);
@@ -179,6 +178,7 @@ public class DesignlistController {
         response.getWriter().flush();
         response.getWriter().close();
     }
+
     /*
      * 确认领料完成
      * */
