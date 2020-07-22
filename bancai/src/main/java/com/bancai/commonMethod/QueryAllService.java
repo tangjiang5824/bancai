@@ -34,6 +34,8 @@ public class QueryAllService extends BaseService {
 		WebResponse response=new WebResponse();
 		String countSQL="select count(*) as num "+selectSQL.substring(selectSQL.indexOf("from"));
 		log.debug(selectSQL);
+		System.out.println("----------------------------");
+		System.out.println(selectSQL);
 		log.debug(countSQL);
 		DataList list=query(selectSQL,start,limit,objs);
 		DataList countlist=query(countSQL,objs);

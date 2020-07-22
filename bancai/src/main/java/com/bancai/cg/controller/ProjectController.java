@@ -758,7 +758,7 @@ public class ProjectController {
 
     //查询产品对应的匹配详情
     @RequestMapping("/project/workOrderDetialList.do")
-    public WebResponse find_Workorder_List(Integer start,Integer limit,Integer projectId,Integer buildingId,Integer buildingpositionId,Integer productMadeBy,Integer productId){
+    public WebResponse find_Workorder_List(Integer projectId,Integer buildingId,Integer buildingpositionId,Integer productMadeBy,Integer productId){
 
         mysqlcondition c=new mysqlcondition();
         if (null!=projectId) {
@@ -777,7 +777,7 @@ public class ProjectController {
             c.and(new mysqlcondition("productId", "=", productId));
         }
             c.and(new mysqlcondition("processStatus", "=", 0));
-        WebResponse response =queryAllService.queryDataPage(start, limit, c, "query_match_result");
+        WebResponse response =queryAllService.queryDataPage(0, -1, c, "query_match_result");
         DataList dataList=(DataList) response.get("value");
         Map<WorkorderproductList,Integer> map_list=new HashMap<>();
         WorkorderproductList sublist=new WorkorderproductList();
@@ -833,6 +833,7 @@ public class ProjectController {
     }
 
     @RequestMapping("/order/createworkorder.do")
+    @Transactional
     public boolean createworkorder(Integer projectId,Integer buildingId,Integer buildingpositionId,String s,Integer operator){
         WorkorderLog log=new WorkorderLog();
         log.setProjectId(projectId);
@@ -846,7 +847,7 @@ public class ProjectController {
             JSONObject object=array.getJSONObject(i);
             Integer productId=Integer.parseInt(object.get("productId")+"");
             Integer madeby=Integer.parseInt(object.get("madeBy")+"");
-            Double count=Double.parseDouble(object.get("madeBy")+"");
+            Double count=Double.parseDouble(object.get("count")+"");
             WorkorderDetail detail=new WorkorderDetail();
             detail.setProductId(productId);
             detail.setProductMadeBy(madeby);
@@ -890,7 +891,7 @@ public class ProjectController {
             }
         }
         return  true;
-        
+
     }
 
 

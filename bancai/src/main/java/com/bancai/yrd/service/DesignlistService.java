@@ -106,9 +106,9 @@ public class DesignlistService extends BaseService{
      * */
     @Transactional
     public DataList findWorkOrder(String projectId, String buildingId, String buildingpositionId){
-        StringBuilder sb = new StringBuilder("select * from work_order_view");
+        StringBuilder sb = new StringBuilder("select * from work_order_view where processStatus=0 ");
         if((projectId!=null)&&(projectId.length()!=0)){
-            sb.append(" where projectId=\"").append(projectId).append("\"");
+            sb.append(" and projectId=\"").append(projectId).append("\"");
             if((buildingId!=null)&&(buildingId.length()!=0))
                 sb.append(" and buildingId=\"").append(buildingId).append("\"");
             if((buildingpositionId!=null)&&(buildingpositionId.length()!=0))
