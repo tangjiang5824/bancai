@@ -240,7 +240,7 @@ Ext.define('project.project_worksheet',{
         //             // 取出grid的字段名字段类型pickingMaterialGrid
         //             console.log('===========')
         //             console.log(materialList)
-        //             var select = Ext.getCmp('PickingListGrid').getStore()
+        //             var select = Ext.getCmp('productPickingListGrid').getStore()
         //                 .getData();
         //             var s = new Array();
         //             select.each(function(rec) {
@@ -323,7 +323,7 @@ Ext.define('project.project_worksheet',{
 
 
         var grid1=Ext.create('Ext.grid.Panel',{
-            id : 'PickingListGrid',
+            id : 'productPickingListGrid',
             store:productListStore,
             dock: 'bottom',
             columns:[
@@ -495,20 +495,20 @@ Ext.define('project.project_worksheet',{
                             //submitEmptyText : false,
                             params : {
                                 // workSheet_Num:Ext.getCmp('workSheet_Num').getValue(),
-                                createTime:Ext.getCmp('createTime').getValue(),
+                                // createTime:Ext.getCmp('createTime').getValue(),
                                 operator:Ext.getCmp("operator").value,
                                 s : "[" + s + "]",//存储选择领料的数量
-                                projectId:Ext.getCmp("projectName").getValue(),
-                                buildingId:Ext.getCmp("buildingName").getValue(),
-                                buildingpositionId:Ext.getCmp("positionName").getValue(),
+                                // projectId:Ext.getCmp("projectName").getValue(),
+                                // buildingId:Ext.getCmp("buildingName").getValue(),
+                                // buildingpositionId:Ext.getCmp("positionName").getValue(),
                                 // materialList : "[" + materialList + "]",
                             },
                             success : function(response) {
                                 //var message =Ext.decode(response.responseText).showmessage;
                                 Ext.MessageBox.alert("提示","创建成功" );
                                 //刷新页面
-                                productListStore.load();
-                                // Ext.getCmp('PickingListGrid').getStore().load();
+                                // productListStore.load();
+                                // Ext.getCmp('productPickingListGrid').getStore().load();
                             },
                             failure : function(response) {
                                 //var message =Ext.decode(response.responseText).showmessage;
@@ -517,13 +517,12 @@ Ext.define('project.project_worksheet',{
                         });
 
                     // 重新加载页面，该项目的领料单信息
-                        productListStore.load({
-                            params : {
-                                proejctId:Ext.getCmp('projectName').getValue(),
-                                //proejctId:'1',
-                            }
-                        });
-                    //  右边输入框重置
+                    //     productListStore.load({
+                    //         params : {
+                    //             proejctId:Ext.getCmp('projectName').getValue(),
+                    //             //proejctId:'1',
+                    //         }
+                    //     });
 
                     //  右边页面重置
                         Ext.getCmp('workSheet_Num').setValue("");
@@ -745,12 +744,12 @@ Ext.define('project.project_worksheet',{
             if (rowIndex < 0) {
                 return;
             }
-            var fieldName = Ext.getCmp('PickingListGrid').columns[columnIndex-1].text;
+            var fieldName = Ext.getCmp('productPickingListGrid').columns[columnIndex-1].text;
 
             console.log("列名：",fieldName)
             if (fieldName == "生成工单") {
                 //设置监听事件getSelectionModel().getSelection()
-                var sm = Ext.getCmp('PickingListGrid').getSelectionModel();
+                var sm = Ext.getCmp('productPickingListGrid').getSelectionModel();
                 var materialArr = sm.getSelection();
                 if (materialArr.length != 0) {
                     // Ext.Msg.confirm("提示", "共选中" + materialArr.length + "条数据，是否确认删除？", function (btn) {

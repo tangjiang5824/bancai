@@ -124,10 +124,10 @@ Ext.define('project.project_create_picklist',{
             fields:['materialName','materialCount','countReceived','countNotReceived','countTemp'],
             proxy : {
                 type : 'ajax',
-                url : 'order/queryWorkOrderLog.do',   //order/queryWorkOrder.do
+                url : 'order/queryWorkOrderDetail.do',   //order/queryWorkOrder.do
                 reader : {
                     type : 'json',
-                    rootProperty: 'workOrderLogList',
+                    rootProperty: 'workOrderDetailList',
                 },
                 // params:{
                 //     start: 0,
@@ -260,12 +260,22 @@ Ext.define('project.project_create_picklist',{
                     flex :1
                 },
                 {
-                    dataIndex:'worksheetName',
-                    text:'工单名称',
+                    dataIndex:'workOrderDetailId',
+                    text:'工单号',
                     flex :1
                 },
                 {
-                    dataIndex:'operator',
+                    dataIndex:'productName',
+                    text:'产品名称',
+                    flex :1
+                },
+                {
+                    dataIndex:'count',
+                    text:'数量',
+                    flex :1
+                },
+                {
+                    dataIndex:'workerName',
                     text:'创建人',
                     flex :1
                 },
@@ -334,18 +344,47 @@ Ext.define('project.project_create_picklist',{
 
         });
 
+        //职员信息
+        var workerListStore = Ext.create('Ext.data.Store',{
+            fields : [ 'typeName'],
+            proxy : {
+                type : 'ajax',
+                url : '/material/findAllBytableName.do?tableName=department_worker',
+                reader : {
+                    type : 'json',
+                    rootProperty: 'department_worker',
+                },
+            },
+            autoLoad : true
+        });
+
         var toobar_right = Ext.create('Ext.toolbar.Toolbar',{
             items: [
 
+                // {
+                //     xtype: 'textfield',
+                //     margin : '0 30 0 0',
+                //     fieldLabel: '创建人',
+                //     id :'pickName',
+                //     width: 200,
+                //     labelWidth: 50,
+                //     name: 'pickName',
+                //     value:"",
+                // },
                 {
-                    xtype: 'textfield',
-                    margin : '0 30 0 0',
-                    fieldLabel: '创建人',
-                    id :'pickName',
-                    width: 200,
-                    labelWidth: 50,
-                    name: 'pickName',
-                    value:"",
+                    fieldLabel : '创建人',
+                    xtype : 'combo',
+                    name : 'operator',
+                    id : 'operator',
+                    // disabled : true,
+                    // width:'95%',
+                    margin: '0 40 0 0',
+                    width: 180,
+                    labelWidth: 45,
+                    store : workerListStore,
+                    displayField : 'workerName',
+                    valueField : 'id',
+                    editable : true,
                 },
                 {
                     xtype: 'datefield',
@@ -386,12 +425,12 @@ Ext.define('project.project_create_picklist',{
                         console.log('2===========')
                         //获取数据
                         Ext.Ajax.request({
-                            url : 'material/materialreceivelist', //原材料入库
+                            url : 'order/addRequisitionOrder.do', //原材料入库
                             method:'POST',
                             //submitEmptyText : false,
                             params : {
-                                pickName:Ext.getCmp('pickName').getValue(),
-                                pickTime:Ext.getCmp('pickTime').getValue(),
+                                operator:Ext.getCmp('operator').getValue(),
+                                // pickTime:Ext.getCmp('pickTime').getValue(),
                                 s : "[" + s + "]",//存储选择领料的数量
                                 // materialList : "[" + materialList + "]",
                             },
@@ -432,8 +471,8 @@ Ext.define('project.project_create_picklist',{
             dock: 'bottom',
             columns:[
                 {
-                    dataIndex:'worksheetName',
-                    text:'工单名称',
+                    dataIndex:'workOrderDetailId', //工单号
+                    text:'工单号',
                     flex :1
                 },
                 // {
