@@ -1,23 +1,12 @@
 package com.bancai;
 
-//import org.apache.commons.dbcp2.BasicDataSource;
-
-
-
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
-import org.springframework.context.annotation.Bean;
-import org.springframework.orm.jpa.vendor.HibernateJpaSessionFactoryBean;
 
-import javax.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
 
-//@ServletComponentScan
-//@SpringBootApplication
+
 @SpringBootApplication
 public class BancaiApplication extends SpringBootServletInitializer {
 
