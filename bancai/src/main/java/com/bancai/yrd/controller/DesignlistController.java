@@ -204,7 +204,7 @@ public class DesignlistController {
                 int type = Integer.parseInt(jsonTemp.get("type")+"");
                 String storeId = jsonTemp.get("storeId")+"";
                 if((count.length()==0)||(Double.parseDouble(count)<0)||(Double.parseDouble(count)>Double.parseDouble(countRec)))
-                    return false;
+                    continue;
                 boolean is_update_right = designlistService.orderUpdateRequisitionDetail(requisitionOrderDetailId,count,type,storeId);
                 if(!is_update_right)
                     return false;

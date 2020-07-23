@@ -247,7 +247,8 @@ public class DesignlistService extends BaseService{
     @Transactional
     public boolean orderUpdateRequisitionDetail(String requisitionOrderDetailId, String count,int type,String storeId) {
         String sql1 = "update requisition_order_detail set countRec=countRec-\""+count+
-                "\" where requisitionOrderDetailId=\""+requisitionOrderDetailId+"\"";
+                "\" where id=\""+requisitionOrderDetailId+"\"";
+        System.out.println(sql1);
         jo.update(sql1);
         String sql2="";
         switch (type){
