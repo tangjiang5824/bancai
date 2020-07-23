@@ -197,17 +197,16 @@ Ext.define('project.project_material_picklist',{
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 2
             })],
-            // dockedItems: [
-            //     {
-            //     xtype: 'pagingtoolbar',
-            //     store: MaterialList,   // same store GridPanel is using
-            //     dock: 'bottom',
-            //     displayInfo: true,
-            //     displayMsg:'显示{0}-{1}条，共{2}条',
-            //     emptyMsg:'无数据'
-            // },
-            //     toolbar3
-            // ],
+            dockedItems: [
+                {
+                xtype: 'pagingtoolbar',
+                store: MaterialpickListStore,   // same store GridPanel is using
+                dock: 'bottom',
+                displayInfo: true,
+                displayMsg:'显示{0}-{1}条，共{2}条',
+                emptyMsg:'无数据'
+            }
+            ],
             listeners: {
                 // 双击表行响应事件,显示领料单的具体信息
                 itemdblclick: function(me, record, item, index,rowModel){
@@ -233,8 +232,9 @@ Ext.define('project.project_material_picklist',{
                     });
                     // Ext.getCmp("toolbar5").items.items[1].setText(pickNum);//修改id为win_num的值，动态显示在窗口中
                     // //传rowNum响应的行号:index+1
-                    // Ext.getCmp("toolbar5").items.items[2].setText(index+1)
+                    // Ext.getCmp("toolbar5").items.items[2].setText(index+1)    dockedItems
                     grid_pickList_specific.setStore(specificMaterialList);
+                    grid_pickList_specific.getDockedItems().setStore(specificMaterialList)
                 }
             }
 
@@ -268,7 +268,7 @@ Ext.define('project.project_material_picklist',{
                 //     value:"",
                 // },
                 {
-                    fieldLabel : '操作人',
+                    fieldLabel : '领料人',
                     xtype : 'combo',
                     name : 'operator',
                     id : 'operator',
@@ -374,7 +374,17 @@ Ext.define('project.project_material_picklist',{
             // height:'100%',
             flex:1,
             tbar:toobar_right,
-            selType:'checkboxmodel'
+            selType:'checkboxmodel',
+            dockedItems: [
+                {
+                    xtype: 'pagingtoolbar',
+                    store: pickList,   // same store GridPanel is using
+                    dock: 'bottom',
+                    displayInfo: true,
+                    displayMsg:'显示{0}-{1}条，共{2}条',
+                    emptyMsg:'无数据'
+                }
+            ],
         });
 
         var grid_pickList_specific=Ext.create('Ext.grid.Panel',{
@@ -414,6 +424,16 @@ Ext.define('project.project_material_picklist',{
             //     hideGroupedHeader : true,//隐藏当前分组的表头
             //     groupHeaderTpl:'这类产品有(<b><font color=red>{[values.rows[0].data.totalNumber]}</font></b>)个',
             // } ],
+            dockedItems: [
+                {
+                    xtype: 'pagingtoolbar',
+                    // store: pickList,   // same store GridPanel is using
+                    dock: 'bottom',
+                    displayInfo: true,
+                    displayMsg:'显示{0}-{1}条，共{2}条',
+                    emptyMsg:'无数据'
+                }
+            ],
         });
 
         //领料单查询信息 Panel
@@ -521,17 +541,17 @@ Ext.define('project.project_material_picklist',{
 
 
 
-        this.dockedItems = [toolbar,panel,{
-            xtype: 'pagingtoolbar',
-            // store: material_Query_Data_Store,   // same store GridPanel is using
-            dock: 'bottom',
-            displayInfo: true,
-            displayMsg:'显示{0}-{1}条，共{2}条',
-            emptyMsg:'无数据'
-        }
-        ];
-        // this.dockedItems = [toolbar,panel,toolbar3];
-        // this.items = [grid1];
+        // this.dockedItems = [toolbar,panel,{
+        //     xtype: 'pagingtoolbar',
+        //     // store: material_Query_Data_Store,   // same store GridPanel is using
+        //     dock: 'bottom',
+        //     displayInfo: true,
+        //     displayMsg:'显示{0}-{1}条，共{2}条',
+        //     emptyMsg:'无数据'
+        // }
+        // ];
+        this.tbar = toolbar;
+        this.items = [panel];
         this.callParent(arguments);
     }
 })
