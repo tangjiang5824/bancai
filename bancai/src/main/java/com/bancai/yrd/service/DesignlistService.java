@@ -209,7 +209,7 @@ public class DesignlistService extends BaseService{
      * */
     @Transactional
     public DataList findRequisitionOrderDetail(String requisitionOrderId,String projectId, String buildingId, String buildingpositionId){
-        StringBuilder sb = new StringBuilder("select * from requisition_order_detail where requisitionOrderId=?");
+        StringBuilder sb = new StringBuilder("select * from requisition_order_detail_view where requisitionOrderId=?");
         if((projectId!=null)&&(projectId.length()!=0)){
             sb.append(" and projectId=\"").append(projectId).append("\"");
             if((buildingId!=null)&&(buildingId.length()!=0))
@@ -217,6 +217,27 @@ public class DesignlistService extends BaseService{
             if((buildingpositionId!=null)&&(buildingpositionId.length()!=0))
                 sb.append(" and buildingpositionId=\"").append(buildingpositionId).append("\"");
         }
+//        DataList queryList = new DataList();
+//        queryList = queryService.query(sb.toString(),requisitionOrderId);
+//        for (int i = 0; i < queryList.size(); i++) {
+//            int type = Integer.parseInt(queryList.get(i).get("type").toString());
+//            String storeId = queryList.get(i).get("storeId").toString();
+//            String sql = "";
+//            switch (type){
+//                case 1:
+//                    sql = "select * from backproduct_info_store_type where storeId=?";
+//                    break;
+//                case 2:
+//                    sql = "select * from preprocess_info_store_type where storeId=?";
+//                    break;
+//                case 3:
+//                    sql = "select * from oldpanel_info_store_type where storeId=?";
+//                    break;
+//                case 4:
+//                    sql = "select * from material_store_view where storeId=?";
+//                    break;
+//            }
+//        }
         return queryService.query(sb.toString(),requisitionOrderId);
     }
 
