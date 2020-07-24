@@ -20,7 +20,9 @@ import com.bancai.service.BaseService;
 import javax.script.ScriptException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,17 +54,33 @@ public class DesignlistService extends BaseService{
     }
 
     /**
-     * 设计清单内容解析
+     * 设计清单内容检查
      */
     @Transactional
-    public int analyzeDesignlist(int designlistlogId, String productName, String position, String userId, String projectId, String buildingId,
-                                             String buildingpositionId) {
+    public int analyzeDesignlist(String productName, String position, String userId, String projectId, String buildingId) {
         if (!isDesignlistPositionValid(projectId, buildingId, position))
             return -100;//位置重复导入
         int productId = productDataService.addProductInfoIfNameValid(productName,userId);
         if(productId==0)
             return -200;//品名不合法
-        return setDesignlistOrigin(designlistlogId,projectId,buildingId,buildingpositionId,String.valueOf(productId),position,0,0);
+        return productId;
+    }
+    /**
+     * 设计清单生成
+     */
+    @Transactional
+    public int createDesignlistData(DataList validList, String userId, String projectId, String buildingId,
+                                 String buildingpositionId) {
+        Date date=new Date();
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String sql_addLog = "insert into designlist_log (userId,time,isrollback) values(?,?,?)";
+        int designlistlogId= insertProjectService.insertDataToTable(sql_addLog,userId,simpleDateFormat.format(date),"0");
+        for (DataRow dataRow : validList) {
+            String productId = dataRow.get("productId").toString();
+            String position = dataRow.get("position").toString();
+            setDesignlistOrigin(designlistlogId, projectId, buildingId, buildingpositionId, String.valueOf(productId), position, 0, 0);
+        }
+        return designlistlogId;
     }
     /**
      * 设计清单匹配

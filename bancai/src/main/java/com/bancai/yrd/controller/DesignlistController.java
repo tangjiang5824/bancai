@@ -24,7 +24,9 @@ import javax.servlet.http.HttpSession;
 import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 @RestController
 public class DesignlistController {
@@ -72,42 +74,57 @@ public class DesignlistController {
     public WebResponse designlistUploadData(String s, String projectId, String buildingId, String buildingpositionId, HttpSession session) {
         WebResponse response = new WebResponse();
         try {
+            int errorCount = 0;
+            DataList errorList = new DataList();
+            DataRow errorRow = new DataRow();
+            DataList validList = new DataList();
+            DataRow validRow = new DataRow();
             JSONArray jsonArray = new JSONArray(s);
             String userId = (String)session.getAttribute("userid");
-            Date date=new Date();
-            SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String sql_addLog = "insert into designlist_log (userId,time,isrollback) values(?,?,?)";
-            int designlistlogId= insertProjectService.insertDataToTable(sql_addLog,userId,simpleDateFormat.format(date),"0");
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonTemp = jsonArray.getJSONObject(i);
                 System.out.println("第" + i + "个---" + jsonTemp);
                 String productName=(jsonTemp.get("productName")+"").trim().toUpperCase();
                 String position=(jsonTemp.get("position")+"").trim().toUpperCase();
-                int analyzeDesignlist = designlistService.analyzeDesignlist(designlistlogId,productName, position, userId, projectId, buildingId, buildingpositionId);
+                int analyzeDesignlist = designlistService.analyzeDesignlist(productName, position, userId, projectId, buildingId);
                 if(analyzeDesignlist==-100){
-                    response.put("errorName",productName);
-                    response.put("errorPosition",position);
-                    response.setSuccess(false);
-                    response.setErrorCode(100); //位置重复导入
-                    return response;
+                    errorRow.put("productName",productName);
+                    errorRow.put("position",position);
+                    errorRow.put("errorCode","100");//位置重复
+                    errorList.add(errorRow);
+                    errorCount++;
                 }else if(analyzeDesignlist==-200){
-                    response.put("errorName",productName);
-                    response.put("errorPosition",position);
-                    response.setSuccess(false);
-                    response.setErrorCode(200); //品名不合法
-                    return response;
+                    errorRow.put("productName",productName);
+                    errorRow.put("position",position);
+                    errorRow.put("errorCode","200");//品名不合法
+                    errorList.add(errorRow);
+                    errorCount++;
+                }else {
+                    validRow.put("productId",String.valueOf(analyzeDesignlist));
+                    validRow.put("position",position);
+                    validList.add(validRow);
                 }
             }
+            if(errorCount!=0){
+                response.put("errorList",errorList);
+                response.put("errorCount",errorList.size());
+                response.setSuccess(false);
+                response.setErrorCode(150);
+                return response;
+            }
+            designlistService.createDesignlistData(validList,userId,projectId,buildingId,buildingpositionId);
             boolean matchDesignlist = designlistService.matchDesignlist(projectId, buildingId, buildingpositionId);
             if(!matchDesignlist){
                 response.setSuccess(false);
                 response.setErrorCode(300); //匹配失败
+                return response;
             }
         } catch (Exception e) {
             response.setSuccess(false);
             response.setErrorCode(1000); //未知错误
             response.setMsg(e.getMessage());
         }
+        response.setSuccess(true);
         return response;
     }
     
