@@ -10,6 +10,8 @@ import com.bancai.domain.DataRow;
 import com.bancai.util.Excel;
 import com.bancai.vo.UploadDataResult;
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,39 +41,39 @@ public class DesignlistService extends BaseService{
     private new_panel_match new_panel_match;
 
     /**
-     * 设计清单解析
+     * 设计清单excel解析
      */
     @Transactional
-    public UploadDataResult uploadDesignlist(InputStream inputStream, String userId, String projectId, String buildingId,
-                                             String buildingpositionId) throws IOException, ScriptException {
+    public UploadDataResult uploadDesignlist(InputStream inputStream) throws IOException, ScriptException {
         UploadDataResult result = new UploadDataResult();
-
         Excel excel = new Excel(inputStream);
-        DataList dataList = excel.readExcelContent();
-        for (DataRow dataRow : dataList) {
-            String productName = dataRow.get("productName").toString().trim().toUpperCase();
-            String position = dataRow.get("position").toString();
-            if (!isDesignlistPositionValid(projectId, buildingId, position)) {
-                result.dataList = dataList;
-                result.setErrorCode(2);
-                return result;
-            }
-            int productId = productDataService.addProductInfoIfNameValid(productName,userId);
-            if(productId==0){
-                result.setErrorCode(2);
-                result.dataList = dataList;
-                return result;
-            }
-            setDesignlistOrigin(projectId,buildingId,buildingpositionId,String.valueOf(productId),position,0,0);
-        }
+        result.dataList = excel.readExcelContent();
+        return result;
+    }
 
+    /**
+     * 设计清单内容解析
+     */
+    @Transactional
+    public boolean analyzeDesignlist(int designlistlogId, String productName, String position, String userId, String projectId, String buildingId,
+                                             String buildingpositionId) throws ScriptException {
+        if (!isDesignlistPositionValid(projectId, buildingId, position))
+            return false;
+        int productId = productDataService.addProductInfoIfNameValid(productName,userId);
+        if(productId==0)
+            return false;
+        return setDesignlistOrigin(designlistlogId,projectId,buildingId,buildingpositionId,String.valueOf(productId),position,0,0);
+    }
+    /**
+     * 设计清单匹配
+     */
+    @Transactional
+    public boolean matchDesignlist(String projectId, String buildingId, String buildingpositionId) throws ScriptException {
         panelMatchService.matchBackProduct(projectId,buildingId,buildingpositionId);
         panelMatchService.matchPreprocess(projectId,buildingId,buildingpositionId);
         panelMatchService.matchOldpanel(projectId,buildingId,buildingpositionId);
         new_panel_match.match(Integer.parseInt(projectId),Integer.parseInt(buildingId),Integer.parseInt(buildingpositionId));
-        result.success = panelMatchService.matchError(projectId,buildingId,buildingpositionId);
-        result.dataList = dataList;
-        return result;
+        return panelMatchService.matchError(projectId,buildingId,buildingpositionId);
     }
 
     private boolean isDesignlistPositionValid(String projectId,String buildingId,String position){
@@ -82,11 +84,11 @@ public class DesignlistService extends BaseService{
     /**
      * 导入设计清单，返回清单id
      */
-    private void setDesignlistOrigin(String projectId, String buildingId, String buildingpositionId, String productId, String position,
+    private boolean setDesignlistOrigin(int designlistlogId,String projectId, String buildingId, String buildingpositionId, String productId, String position,
                                      int madeBy, int processStatus){
-        insertProjectService.insertDataToTable("insert into designlist " +
-                        "(projectId,buildingId,buildingpositionId,productId,position,madeBy,processStatus) values " +
-                        "(?,?,?,?,?,?,?)", projectId, buildingId, buildingpositionId, productId, position,
+        return insertProjectService.insertIntoTableBySQL("insert into designlist " +
+                        "(designlistlogId,projectId,buildingId,buildingpositionId,productId,position,madeBy,processStatus) values " +
+                        "(?,?,?,?,?,?,?,?)",String.valueOf(designlistlogId), projectId, buildingId, buildingpositionId, productId, position,
                 String.valueOf(madeBy), String.valueOf(processStatus));
     }
 
