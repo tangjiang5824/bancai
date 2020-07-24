@@ -23,8 +23,8 @@ Ext.define('project.import_design_list', {
 // 										'产品安装位置' : '',
 // 										'是否由旧板生产' : '',
 // 									}];
-// 							//Ext.getCmp('addDataGrid')返回定义的对象
-// 							Ext.getCmp('addDataGrid').getStore().loadData(data,
+// 							//Ext.getCmp('addlistDataGrid')返回定义的对象
+// 							Ext.getCmp('addlistDataGrid').getStore().loadData(data,
 // 									true);
 // 						}
 // 					}, {
@@ -36,7 +36,7 @@ Ext.define('project.import_design_list', {
 // 						handler : function() {
 // 							// 取出grid的字段名字段类型
 // 							//var userid="<%=session.getAttribute('userid')%>";
-// 							var select = Ext.getCmp('addDataGrid').getStore()
+// 							var select = Ext.getCmp('addlistDataGrid').getStore()
 // 									.getData();
 // 							var s = new Array();
 // 							select.each(function(rec) {
@@ -89,13 +89,13 @@ Ext.define('project.import_design_list', {
 		var designlistStore = Ext.create('Ext.data.Store',{
 			id: 'designlistStore',
 			autoLoad: true,
-			fields: [],
+			fields: ['productName','position'],
 			//pageSize: itemsPerPage, // items per page
 			data:[],
 			editable:false,
 		});
 		var grid = Ext.create("Ext.grid.Panel", {
-			id : 'addDataGrid',
+			id : 'addlistDataGrid',
 			store : 'designlistStore',
 			title:"清单明细",
 			columns : [
@@ -142,16 +142,9 @@ Ext.define('project.import_design_list', {
 				// 	}
 				// },
 				{
-					dataIndex : 'listName',
-					name : '清单名称',
-					text : '清单名称(位置)',
-					width : 200,
-					// flex:0.2
-				},
-				{
-					dataIndex : 'count',
-					name : '生产数量',
-					text : '生产数量',
+					dataIndex : 'position',
+					name : '位置编号',
+					text : '位置编号',
 					width : 200,
 					// flex:0.2
 				},
@@ -220,20 +213,15 @@ Ext.define('project.import_design_list', {
 											},
 											success : function(exceluploadform,response, action) {
 												var response1 = action;
-												console.log("exceluploadform=========================>",exceluploadform)
-												console.log("response1=========================>",response1)
+												console.log("response=========================>",response)
 												Ext.MessageBox.alert("提示", "上传成功!");
-//												var toolbar2 = Ext.getCmp("toolbar2");
-//												var toolbar3 = Ext.getCmp("toolbar3");
-//												toolbar2.setVisible(false);
-//												toolbar3.setVisible(false);
-//												me.showDataGrid(tableName, response.uploadId);
 												//上传成功
 												//回显
-												console.log(action.result['value']);
+												console.log(response.result['value']);
+												console.log("response1=========================>")
 												Ext.MessageBox.alert("提示", "上传成功!");
 												//重新加载数据
-												designlistStore.loadData(action.result['value']);
+												designlistStore.loadData(response.result['value']);
 											},
 											failure : function(exceluploadform, action) {
 												var response = action.result;
@@ -347,23 +335,6 @@ Ext.define('project.import_design_list', {
 
 		});
 
-		// var tableListStore2 = Ext.create('Ext.data.Store',{
-		// 	fields : [ 'buildingName'],
-		// 	proxy : {
-		// 		type : 'ajax',
-		// 		url : 'project/findBuildingList.do',
-		// 		params : {
-		// 			projectName:Ext.getCmp('projectName').getValue(),
-		// 			//buildingName:Ext.getCmp('buildingName').getValue(),
-		// 		},
-		// 		reader : {
-		// 			type : 'json',
-		// 			rootProperty: 'buildingList',
-		// 		}
-		// 	},
-		// 	autoLoad : true
-		// });
-
 		var buildingName = Ext.create('Ext.form.ComboBox',{
 			fieldLabel : '楼栋名',
 			labelWidth : 45,
@@ -420,6 +391,7 @@ Ext.define('project.import_design_list', {
 			fieldLabel : '位置',
 			labelWidth : 60,
 			width : 200,
+			margin: '0 10 0 40',
 			id :  'positionName',
 			name : 'positionName',
 			matchFieldWidth: true,
@@ -455,22 +427,58 @@ Ext.define('project.import_design_list', {
 			id : "toolbar2",
 			items : [
 				// {
-				// 	xtype: 'textfield',
-				// 	// margin: '0 10 0 0',
-				// 	fieldLabel: ' 位置分类',
-				// 	id: 'listName',
-				// 	width: 230,
-				// 	labelWidth: 60,
-				// 	name: 'listName',
-				// 	value: "",
+				// 	xtype: 'tbtext',
+				// 	//id: 'uploadFile',
+				// 	margin: '0 0 0 40',
+				// 	text:'选择文件:',
 				// },
+				exceluploadform,
 				{
-					xtype: 'tbtext',
-					//id: 'uploadFile',
+					xtype : 'button',
+					text: '确认匹配',
+					width: 100,
 					margin: '0 0 0 40',
-					text:'选择文件:',
-				},
-				exceluploadform
+					layout: 'right',
+					handler: function(){
+						var select = Ext.getCmp('addlistDataGrid').getStore()
+							.getData();
+						var s = new Array();
+						select.each(function(rec) {
+							s.push(JSON.stringify(rec.data));
+						});
+
+						var projectId = Ext.getCmp("projectName").getValue();
+						var buildingId = Ext.getCmp("buildingName").getValue();
+						var positionId = Ext.getCmp("positionName").getValue();
+
+						console.log("s--------------",s)
+						//获取数据
+						Ext.Ajax.request({
+							url : 'designlist/uploadData.do', //上传匹配数据
+							method:'POST',
+							//submitEmptyText : false,
+							params : {
+								s : "[" + s + "]",//存储选择领料的数量
+								projectId:projectId,
+								buildingId:buildingId,
+								buildingpositionId:positionId,
+							},
+							success : function(response) {
+								if(response == false){
+									Ext.MessageBox.alert("提示","匹配失败" );
+								}else{
+									Ext.MessageBox.alert("提示","匹配成功" );
+								}
+								//var message =Ext.decode(response.responseText).showmessage;
+								//刷新页面
+							},
+							failure : function(response) {
+								//var message =Ext.decode(response.responseText).showmessage;
+								Ext.MessageBox.alert("提示","领取失败" );
+							}
+						});
+				}
+				}
 			]//exceluploadform
 		});
 

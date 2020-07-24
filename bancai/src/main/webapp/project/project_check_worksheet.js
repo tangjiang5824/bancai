@@ -5,7 +5,7 @@ Ext.define('project.project_check_worksheet',{
     title: '工单审核',
     initComponent: function(){
         var itemsPerPage = 50;
-        var tableName="material";
+        var table_workoderLog="work_order_log";
         //var materialType="1";
 
         //存放所选的原材料的具体规格
@@ -36,87 +36,8 @@ Ext.define('project.project_check_worksheet',{
             valueField: 'id',
             editable : true,
             store: tableListStore,
-            listeners:{
-                select:function (combo, record) {
-                    projectName:Ext.getCmp('projectName').getValue();
-                    //选中后
-                    var select = record[0].data;
-                    var id = select.id;//项目名对应的id
-                    console.log(id)
-                    //重新加载行选项
-                    //表名
-                    var tableName = 'building';
-                    //属性名
-                    var projectId = 'projectId';
-                    var tableListStore2 = Ext.create('Ext.data.Store',{
-                        fields : [ 'buildingName'],
-                        proxy : {
-                            type : 'ajax',
-                            //通用接口，material/findAllbyTableNameAndOnlyOneCondition.do传入表名，属性及属性值
-                            url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName='+tableName+'&columnName='+projectId+'&columnValue='+id,//根据项目id查询对应的楼栋名
-                            reader : {
-                                type : 'json',
-                                rootProperty: 'building',
-                            }
-                        },
-                        autoLoad : true,
-                        listeners:{
-                            load:function () {
-                                Ext.getCmp('buildingName').setValue("");
-                            }
-                        }
-                    });
-                    //buildingName,下拉框重新加载数据
-                    buildingName.setStore(tableListStore2);
-                }
-            }
+            //
         });
-        var buildingName = Ext.create('Ext.form.ComboBox',{
-            fieldLabel : '楼栋名',
-            labelWidth : 45,
-            width : 300,
-            id :  'buildingName',
-            name : 'buildingName',
-            matchFieldWidth: false,
-            margin: '0 10 0 40',
-            emptyText : "--请选择楼栋名--",
-            displayField: 'buildingName',
-            valueField: 'id',//楼栋的id
-            editable : false,
-            autoLoad: true,
-            //store: tableListStore2,
-        });
-
-        var buildingPositionStore = Ext.create('Ext.data.Store',{
-            fields : [ 'buildingPosition'],
-            proxy : {
-                type : 'ajax',
-                url : 'material/findAllBytableName.do?tableName=building_position',
-
-                reader : {
-                    type : 'json',
-                    rootProperty: 'building_position',
-                }
-            },
-            autoLoad : true
-        });
-
-        var buildingPositionList = Ext.create('Ext.form.ComboBox',{
-            fieldLabel : '清单位置',
-            labelWidth : 60,
-            width : 200,
-            id :  'positionName',
-            name : 'positionName',
-            matchFieldWidth: true,
-            margin: '0 10 0 40',
-            // emptyText : "--请选择项目--",
-            displayField: 'positionName',
-            valueField: 'id',
-            // typeAhead : true,
-            editable : true,
-            store: buildingPositionStore,
-        });
-
 
 
         //查询的工单数据存放位置---上界面
@@ -124,77 +45,20 @@ Ext.define('project.project_check_worksheet',{
             fields:['materialName','materialCount','countReceived','countNotReceived','countTemp'],
             proxy : {
                 type : 'ajax',
-                url : 'material/materiallsitbyproject.do',
+                url : 'material/findAllbyTableNameAndOnlyOneCondition.do',
                 reader : {
                     type : 'json',
-                    rootProperty: 'materialList',
+                    rootProperty: 'work_order_log',
                 }
             },
             autoLoad : false
         });
 
 
-        //确认入库按钮，
-        // var toolbar3 = Ext.create('Ext.toolbar.Toolbar', {
-        //     dock : "bottom",
-        //     id : "toolbar3",
-        //     //style:{float:'center',},
-        //     //margin-right: '2px',
-        //     //padding: '0 0 0 750',
-        //     style:{
-        //         //marginLeft: '900px'
-        //         layout: 'right'
-        //     },
-        //     items : [{
-        //         xtype : 'button',
-        //         iconAlign : 'center',
-        //         iconCls : 'rukuicon ',
-        //         text : '确认领料',
-        //         region:'center',
-        //         bodyStyle: 'background:#fff;',
-        //         handler : function() {
-        //
-        //             // 取出grid的字段名字段类型pickingcreate_Grid
-        //             console.log('===========')
-        //             console.log(materialList)
-        //             var select = Ext.getCmp('worksheet_Grid').getStore()
-        //                 .getData();
-        //             var s = new Array();
-        //             select.each(function(rec) {
-        //                 s.push(JSON.stringify(rec.data));
-        //             });
-        //             //获取数据
-        //             Ext.Ajax.request({
-        //                 url : 'material/updateprojectmateriallist.do', //原材料入库
-        //                 method:'POST',
-        //                 //submitEmptyText : false,
-        //                 params : {
-        //                     s : "[" + s + "]",//存储选择领料的数量
-        //                     materialList : "[" + materialList + "]",
-        //                 },
-        //                 success : function(response) {
-        //                     //var message =Ext.decode(response.responseText).showmessage;
-        //                     Ext.MessageBox.alert("提示","领取成功" );
-        //                     //刷新页面
-        //                     MaterialList.reload();
-        //
-        //                 },
-        //                 failure : function(response) {
-        //                     //var message =Ext.decode(response.responseText).showmessage;
-        //                     Ext.MessageBox.alert("提示","领取失败" );
-        //                 }
-        //             });
-        //
-        //         }
-        //     }]
-        // });
-
         var toolbar = Ext.create('Ext.toolbar.Toolbar',{
             dock : "top",
             id : "toolbar",
             items: [tableList,
-                buildingName,
-                buildingPositionList,
                 {
                     xtype : 'button',
                     text: '项目工单查询',
@@ -210,8 +74,10 @@ Ext.define('project.project_check_worksheet',{
                         console.log(Ext.getCmp('projectName').getValue())
                         worksheetListStore.load({
                             params : {
-                                proejctId:Ext.getCmp('projectName').getValue(),
-                                //proejctId:'1',
+                                tableName:table_workoderLog,
+                                columnName:'projectId',
+                                columnValue:Ext.getCmp('projectName').getValue(),
+
                             }
                         });
                     }

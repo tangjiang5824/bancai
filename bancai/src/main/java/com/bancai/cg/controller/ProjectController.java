@@ -901,7 +901,7 @@ public class ProjectController {
     }
     // 工单
     @RequestMapping("/order/workApproval.do")
-    public boolean workApproval(Integer id,Integer projectId,String type){
+    public boolean workApproval(Integer id,String type){
         String isActive=null;
         String sql="update work_order_log set isActive=? where id=?";
         //审核通过
