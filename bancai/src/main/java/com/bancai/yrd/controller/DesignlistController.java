@@ -44,11 +44,10 @@ public class DesignlistController {
      * 上传excel文件designlist
      * */
     @RequestMapping(value = "/designlist/uploadExcel.do")
-    public WebResponse oldpanelUploadMatchData(MultipartFile uploadFile, String projectId, String buildingId, String buildingpositionId, HttpSession session) {
+    public WebResponse designlistUploadExcel(MultipartFile uploadFile) {
         WebResponse response = new WebResponse();
-        String userId = (String)session.getAttribute("userid");
         try {
-            UploadDataResult result = designlistService.uploadDesignlist(uploadFile.getInputStream(), userId, projectId, buildingId, buildingpositionId);
+            UploadDataResult result = designlistService.uploadDesignlist(uploadFile.getInputStream());
             response.setSuccess(result.success);
             response.setErrorCode(result.errorCode);
             response.put("value",result.dataList);
@@ -63,6 +62,37 @@ public class DesignlistController {
         //net.sf.json.JSONObject json= net.sf.json.JSONObject.fromObject(response);
         return response;
     }
+
+    /*
+     * 上传designlist
+     * */
+    @RequestMapping(value = "/designlist/uploadData.do")
+    public boolean designlistUploadData(String s, String projectId, String buildingId, String buildingpositionId, HttpSession session) {
+        try {
+            JSONArray jsonArray = new JSONArray(s);
+            String userId = (String)session.getAttribute("userid");
+            Date date=new Date();
+            SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String sql_addLog = "insert into designlist_log (userId,time,isrollback) values(?,?,?)";
+            int designlistlogId= insertProjectService.insertDataToTable(sql_addLog,userId,simpleDateFormat.format(date),"0");
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonTemp = jsonArray.getJSONObject(i);
+                System.out.println("第" + i + "个---" + jsonTemp);
+                String productName=(jsonTemp.get("productName")+"").trim().toUpperCase();
+                String position=(jsonTemp.get("position")+"").trim().toUpperCase();
+                boolean analyzeDesignlist = designlistService.analyzeDesignlist(designlistlogId,productName, position, userId, projectId, buildingId, buildingpositionId);
+                if(!analyzeDesignlist)
+                    return false;
+            }
+            boolean matchDesignlist = designlistService.matchDesignlist(projectId, buildingId, buildingpositionId);
+            if(!matchDesignlist)
+                return false;
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+    
     /*
      * 添加或更新操作员信息
      * */
