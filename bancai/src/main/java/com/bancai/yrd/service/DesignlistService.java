@@ -20,7 +20,9 @@ import com.bancai.service.BaseService;
 import javax.script.ScriptException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,7 +46,7 @@ public class DesignlistService extends BaseService{
      * 设计清单excel解析
      */
     @Transactional
-    public UploadDataResult uploadDesignlist(InputStream inputStream) throws IOException, ScriptException {
+    public UploadDataResult uploadDesignlist(InputStream inputStream) throws IOException {
         UploadDataResult result = new UploadDataResult();
         Excel excel = new Excel(inputStream);
         result.dataList = excel.readExcelContent();
@@ -52,17 +54,33 @@ public class DesignlistService extends BaseService{
     }
 
     /**
-     * 设计清单内容解析
+     * 设计清单内容检查
      */
     @Transactional
-    public boolean analyzeDesignlist(int designlistlogId, String productName, String position, String userId, String projectId, String buildingId,
-                                             String buildingpositionId) throws ScriptException {
+    public int analyzeDesignlist(String productName, String position, String userId, String projectId, String buildingId) {
         if (!isDesignlistPositionValid(projectId, buildingId, position))
-            return false;
+            return -100;//位置重复导入
         int productId = productDataService.addProductInfoIfNameValid(productName,userId);
         if(productId==0)
-            return false;
-        return setDesignlistOrigin(designlistlogId,projectId,buildingId,buildingpositionId,String.valueOf(productId),position,0,0);
+            return -200;//品名不合法
+        return productId;
+    }
+    /**
+     * 设计清单生成
+     */
+    @Transactional
+    public int createDesignlistData(DataList validList, String userId, String projectId, String buildingId,
+                                 String buildingpositionId) {
+        Date date=new Date();
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String sql_addLog = "insert into designlist_log (userId,time,isrollback) values(?,?,?)";
+        int designlistlogId= insertProjectService.insertDataToTable(sql_addLog,userId,simpleDateFormat.format(date),"0");
+        for (DataRow dataRow : validList) {
+            String productId = dataRow.get("productId").toString();
+            String position = dataRow.get("position").toString();
+            setDesignlistOrigin(designlistlogId, projectId, buildingId, buildingpositionId, String.valueOf(productId), position, 0, 0);
+        }
+        return designlistlogId;
     }
     /**
      * 设计清单匹配
@@ -84,9 +102,9 @@ public class DesignlistService extends BaseService{
     /**
      * 导入设计清单，返回清单id
      */
-    private boolean setDesignlistOrigin(int designlistlogId,String projectId, String buildingId, String buildingpositionId, String productId, String position,
+    private int setDesignlistOrigin(int designlistlogId,String projectId, String buildingId, String buildingpositionId, String productId, String position,
                                      int madeBy, int processStatus){
-        return insertProjectService.insertIntoTableBySQL("insert into designlist " +
+        return insertProjectService.insertDataToTable("insert into designlist " +
                         "(designlistlogId,projectId,buildingId,buildingpositionId,productId,position,madeBy,processStatus) values " +
                         "(?,?,?,?,?,?,?,?)",String.valueOf(designlistlogId), projectId, buildingId, buildingpositionId, productId, position,
                 String.valueOf(madeBy), String.valueOf(processStatus));
@@ -124,9 +142,9 @@ public class DesignlistService extends BaseService{
      * */
     @Transactional
     public DataList findWorkOrderDetail(String projectId, String buildingId, String buildingpositionId){
-        StringBuilder sb = new StringBuilder("select * from work_order_detail_view");
+        StringBuilder sb = new StringBuilder("select * from work_order_detail_view where status=0 and isActive=1");
         if((projectId!=null)&&(projectId.length()!=0)){
-            sb.append(" where status=0 and projectId=\"").append(projectId).append("\"");
+            sb.append(" and projectId=\"").append(projectId).append("\"");
             if((buildingId!=null)&&(buildingId.length()!=0))
                 sb.append(" and buildingId=\"").append(buildingId).append("\"");
             if((buildingpositionId!=null)&&(buildingpositionId.length()!=0))

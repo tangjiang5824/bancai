@@ -4,6 +4,7 @@ import com.bancai.cg.service.InsertProjectService;
 import com.bancai.commonMethod.PanelMatchService;
 import com.bancai.commonMethod.QueryAllService;
 import com.bancai.domain.DataList;
+import com.bancai.domain.DataRow;
 import com.bancai.yrd.service.DesignlistService;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -20,9 +21,12 @@ import com.bancai.vo.WebResponse;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 @RestController
 public class DesignlistController {
@@ -67,30 +71,61 @@ public class DesignlistController {
      * 上传designlist
      * */
     @RequestMapping(value = "/designlist/uploadData.do")
-    public boolean designlistUploadData(String s, String projectId, String buildingId, String buildingpositionId, HttpSession session) {
+    public WebResponse designlistUploadData(String s, String projectId, String buildingId, String buildingpositionId, HttpSession session) {
+        WebResponse response = new WebResponse();
         try {
+            int errorCount = 0;
+            DataList errorList = new DataList();
+            DataRow errorRow = new DataRow();
+            DataList validList = new DataList();
+            DataRow validRow = new DataRow();
             JSONArray jsonArray = new JSONArray(s);
             String userId = (String)session.getAttribute("userid");
-            Date date=new Date();
-            SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String sql_addLog = "insert into designlist_log (userId,time,isrollback) values(?,?,?)";
-            int designlistlogId= insertProjectService.insertDataToTable(sql_addLog,userId,simpleDateFormat.format(date),"0");
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonTemp = jsonArray.getJSONObject(i);
                 System.out.println("第" + i + "个---" + jsonTemp);
                 String productName=(jsonTemp.get("productName")+"").trim().toUpperCase();
                 String position=(jsonTemp.get("position")+"").trim().toUpperCase();
-                boolean analyzeDesignlist = designlistService.analyzeDesignlist(designlistlogId,productName, position, userId, projectId, buildingId, buildingpositionId);
-                if(!analyzeDesignlist)
-                    return false;
+                int analyzeDesignlist = designlistService.analyzeDesignlist(productName, position, userId, projectId, buildingId);
+                if(analyzeDesignlist==-100){
+                    errorRow.put("productName",productName);
+                    errorRow.put("position",position);
+                    errorRow.put("errorCode","100");//位置重复
+                    errorList.add(errorRow);
+                    errorCount++;
+                }else if(analyzeDesignlist==-200){
+                    errorRow.put("productName",productName);
+                    errorRow.put("position",position);
+                    errorRow.put("errorCode","200");//品名不合法
+                    errorList.add(errorRow);
+                    errorCount++;
+                }else {
+                    validRow.put("productId",String.valueOf(analyzeDesignlist));
+                    validRow.put("position",position);
+                    validList.add(validRow);
+                }
             }
+            if(errorCount!=0){
+                response.put("errorList",errorList);
+                response.put("errorCount",errorList.size());
+                response.setSuccess(false);
+                response.setErrorCode(150);
+                return response;
+            }
+            designlistService.createDesignlistData(validList,userId,projectId,buildingId,buildingpositionId);
             boolean matchDesignlist = designlistService.matchDesignlist(projectId, buildingId, buildingpositionId);
-            if(!matchDesignlist)
-                return false;
+            if(!matchDesignlist){
+                response.setSuccess(false);
+                response.setErrorCode(300); //匹配失败
+                return response;
+            }
+            response.setSuccess(true);
         } catch (Exception e) {
-            return false;
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误
+            response.setMsg(e.getMessage());
         }
-        return true;
+        return response;
     }
     
     /*
@@ -154,7 +189,8 @@ public class DesignlistController {
      * 新建领料单
      * */
     @RequestMapping(value = "/order/addRequisitionOrder.do")
-    public boolean addRequisitionOrder(String s, String operator, HttpSession session) throws JSONException {
+    public WebResponse addRequisitionOrder(String s, String operator, HttpSession session) throws JSONException {
+        WebResponse response = new WebResponse();
         try {
             JSONArray jsonArray = new JSONArray(s);
             String userId = (String)session.getAttribute("userid");
@@ -167,10 +203,14 @@ public class DesignlistController {
                 String workOrderDetailId=jsonTemp.get("workOrderDetailId")+"";
                 designlistService.orderAddRequisitionDetail(requisitionId[0], requisitionId[1], workOrderDetailId);
             }
+            response.put("orderList",queryService.query("select * from requisition_order_detail_view where requisitionOrderId=?",String.valueOf(requisitionId[0])));
+            response.setSuccess(true);
         } catch (Exception e) {
-            return false;
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误
+            response.setMsg(e.getMessage());
         }
-        return true;
+        return response;
     }
     /*
      * 查询领料单
