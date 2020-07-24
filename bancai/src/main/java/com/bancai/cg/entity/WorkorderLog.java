@@ -13,6 +13,8 @@ public class WorkorderLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private Integer operator;
+    private Integer projectId;
+    private Integer isActive;
     private Date time;
 
 

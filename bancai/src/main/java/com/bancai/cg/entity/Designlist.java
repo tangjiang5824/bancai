@@ -15,6 +15,7 @@ public class Designlist {
     private Integer matchStatus;
     private Integer madeBy;
     private Integer processStatus;
+    private Integer workorderLogId;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -107,24 +108,11 @@ public class Designlist {
         this.processStatus = processStatus;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Designlist that = (Designlist) o;
-        return id == that.id &&
-                Objects.equals(projectId, that.projectId) &&
-                Objects.equals(buildingId, that.buildingId) &&
-                Objects.equals(buildingpositionId, that.buildingpositionId) &&
-                Objects.equals(productId, that.productId) &&
-                Objects.equals(position, that.position) &&
-                Objects.equals(matchStatus, that.matchStatus) &&
-                Objects.equals(madeBy, that.madeBy) &&
-                Objects.equals(processStatus, that.processStatus);
+    public Integer getWorkorderLogId() {
+        return workorderLogId;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, projectId, buildingId, buildingpositionId, productId, position, matchStatus, madeBy, processStatus);
+    public void setWorkorderLogId(Integer workorderLogId) {
+        this.workorderLogId = workorderLogId;
     }
 }

@@ -834,10 +834,13 @@ public class ProjectController {
 
     @RequestMapping("/order/createworkorder.do")
     @Transactional
-    public boolean createworkorder(String s,Integer operator){
+    public boolean createworkorder(String s,Integer operator,Integer projectId){
+        if(s==null||s.length()==0) return false;
         WorkorderLog log=new WorkorderLog();
         log.setOperator(operator);
         log.setTime(new Date());
+        log.setIsActive(0);
+        log.setProjectId(projectId);
         workorderlogdao.save(log);
         JSONArray array=new JSONArray(s);
         for(int i=0;i<array.length();i++){
@@ -851,7 +854,7 @@ public class ProjectController {
             detail.setWorkorderlogId(log.getId());
             detail.setStatus(0);
             detail.setCount(count);
-            Integer projectId=Integer.parseInt(object.get("projectId")+"");
+            //Integer projectId=Integer.parseInt(object.get("projectId")+"");
             detail.setProjectId(projectId);
             Integer buildingId=Integer.parseInt(object.get("buildingId")+"");
             detail.setBuildingId(buildingId);
@@ -886,8 +889,8 @@ public class ProjectController {
                 set.add(Integer.parseInt(dataList.get(j).get("designlistId")+""));
             }
             for(Integer designlistId:set){
-                String sql="update designlist set processStatus=1 where id=?";
-                boolean flag=insertProjectService.insertIntoTableBySQL(sql,designlistId+"");
+                String sql="update designlist set processStatus=1,workorderLogId=? where id=?";
+                boolean flag=insertProjectService.insertIntoTableBySQL(sql,log.getId()+"",designlistId+"");
                 if(!flag){
                     return  false;
                 }
@@ -895,6 +898,28 @@ public class ProjectController {
         }
         return  true;
 
+    }
+    // 工单
+    @RequestMapping("/order/workApproval.do")
+    public boolean workApproval(Integer id,Integer projectId,String type){
+        String isActive=null;
+        String sql="update work_order_log set isActive=? where id=?";
+        //审核通过
+        if(type.equals("1")){
+            isActive="1";
+        }else if(type.equals("2")){
+            isActive="2";
+            String sql2="update designlist set processStatus=0,workorderLogId=null where workorderLogId=?";
+            boolean flag=insertProjectService.insertIntoTableBySQL(sql2,id+"");
+            if(!flag){
+                return  false;
+            }
+        }
+        boolean flag=insertProjectService.insertIntoTableBySQL(sql,isActive,id+"");
+        if(!flag){
+            return  false;
+        }
+        return true;
     }
 
 
