@@ -4,6 +4,7 @@ import com.bancai.cg.service.InsertProjectService;
 import com.bancai.commonMethod.PanelMatchService;
 import com.bancai.commonMethod.QueryAllService;
 import com.bancai.domain.DataList;
+import com.bancai.domain.DataRow;
 import com.bancai.yrd.service.DesignlistService;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -20,6 +21,7 @@ import com.bancai.vo.WebResponse;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -67,7 +69,8 @@ public class DesignlistController {
      * 上传designlist
      * */
     @RequestMapping(value = "/designlist/uploadData.do")
-    public boolean designlistUploadData(String s, String projectId, String buildingId, String buildingpositionId, HttpSession session) {
+    public WebResponse designlistUploadData(String s, String projectId, String buildingId, String buildingpositionId, HttpSession session) {
+        WebResponse response = new WebResponse();
         try {
             JSONArray jsonArray = new JSONArray(s);
             String userId = (String)session.getAttribute("userid");
@@ -80,17 +83,32 @@ public class DesignlistController {
                 System.out.println("第" + i + "个---" + jsonTemp);
                 String productName=(jsonTemp.get("productName")+"").trim().toUpperCase();
                 String position=(jsonTemp.get("position")+"").trim().toUpperCase();
-                boolean analyzeDesignlist = designlistService.analyzeDesignlist(designlistlogId,productName, position, userId, projectId, buildingId, buildingpositionId);
-                if(!analyzeDesignlist)
-                    return false;
+                int analyzeDesignlist = designlistService.analyzeDesignlist(designlistlogId,productName, position, userId, projectId, buildingId, buildingpositionId);
+                if(analyzeDesignlist==-100){
+                    response.put("errorName",productName);
+                    response.put("errorPosition",position);
+                    response.setSuccess(false);
+                    response.setErrorCode(100); //位置重复导入
+                    return response;
+                }else if(analyzeDesignlist==-200){
+                    response.put("errorName",productName);
+                    response.put("errorPosition",position);
+                    response.setSuccess(false);
+                    response.setErrorCode(200); //品名不合法
+                    return response;
+                }
             }
             boolean matchDesignlist = designlistService.matchDesignlist(projectId, buildingId, buildingpositionId);
-            if(!matchDesignlist)
-                return false;
+            if(!matchDesignlist){
+                response.setSuccess(false);
+                response.setErrorCode(300); //匹配失败
+            }
         } catch (Exception e) {
-            return false;
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误
+            response.setMsg(e.getMessage());
         }
-        return true;
+        return response;
     }
     
     /*

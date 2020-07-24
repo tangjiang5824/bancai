@@ -44,7 +44,7 @@ public class DesignlistService extends BaseService{
      * 设计清单excel解析
      */
     @Transactional
-    public UploadDataResult uploadDesignlist(InputStream inputStream) throws IOException, ScriptException {
+    public UploadDataResult uploadDesignlist(InputStream inputStream) throws IOException {
         UploadDataResult result = new UploadDataResult();
         Excel excel = new Excel(inputStream);
         result.dataList = excel.readExcelContent();
@@ -55,13 +55,13 @@ public class DesignlistService extends BaseService{
      * 设计清单内容解析
      */
     @Transactional
-    public boolean analyzeDesignlist(int designlistlogId, String productName, String position, String userId, String projectId, String buildingId,
-                                             String buildingpositionId) throws ScriptException {
+    public int analyzeDesignlist(int designlistlogId, String productName, String position, String userId, String projectId, String buildingId,
+                                             String buildingpositionId) {
         if (!isDesignlistPositionValid(projectId, buildingId, position))
-            return false;
+            return -100;//位置重复导入
         int productId = productDataService.addProductInfoIfNameValid(productName,userId);
         if(productId==0)
-            return false;
+            return -200;//品名不合法
         return setDesignlistOrigin(designlistlogId,projectId,buildingId,buildingpositionId,String.valueOf(productId),position,0,0);
     }
     /**
@@ -84,9 +84,9 @@ public class DesignlistService extends BaseService{
     /**
      * 导入设计清单，返回清单id
      */
-    private boolean setDesignlistOrigin(int designlistlogId,String projectId, String buildingId, String buildingpositionId, String productId, String position,
+    private int setDesignlistOrigin(int designlistlogId,String projectId, String buildingId, String buildingpositionId, String productId, String position,
                                      int madeBy, int processStatus){
-        return insertProjectService.insertIntoTableBySQL("insert into designlist " +
+        return insertProjectService.insertDataToTable("insert into designlist " +
                         "(designlistlogId,projectId,buildingId,buildingpositionId,productId,position,madeBy,processStatus) values " +
                         "(?,?,?,?,?,?,?,?)",String.valueOf(designlistlogId), projectId, buildingId, buildingpositionId, productId, position,
                 String.valueOf(madeBy), String.valueOf(processStatus));
