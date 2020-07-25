@@ -12,7 +12,7 @@
     <artifactId>bancai</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>bancai</name>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
     <description>bancai project for Spring Boot</description>
 
     <properties>
@@ -20,6 +20,13 @@
     </properties>
 
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/javax.ejb/ejb-api -->
+        <dependency>
+            <groupId>javax.ejb</groupId>
+            <artifactId>ejb-api</artifactId>
+            <version>3.0</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
