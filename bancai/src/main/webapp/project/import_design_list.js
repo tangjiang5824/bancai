@@ -201,6 +201,37 @@ Ext.define('project.import_design_list', {
 										var positionId = Ext.getCmp("positionName").getValue();
 										console.log("projectId=============",projectId)
 
+										//显示上传进度
+										Ext.MessageBox.show(
+											{
+												title:'请稍候',
+												msg:'上传数据中......',
+												progressText:'',    //进度条文本
+												width:300,
+												progress:true,
+												closable:false
+											}
+										);
+										//控制进度条速度
+										var f=function(v){
+											return function(){
+												if(v==12)
+												{
+													Ext.MessageBox.hide();
+												}
+												else
+												{
+													var i=v/11;
+													Ext.MessageBox.updateProgress(i,Math.round(100*i)+"% 完成");
+												}
+											}
+										}
+										for(var i=1;i<13;i++)
+										{
+											setTimeout(f(i),i*500);//从点击时就开始计时，所以500*i表示每500ms就执行一次
+										}
+
+										//上传数据
 										exceluploadform.submit({
 											//excel上传的接口
 											//url : 'project/Upload_Design_List_Excel.do？projectId='+projectId+'&buildingId='+buildingId,//上传excel文件，同时传入项目的id和楼栋的id
@@ -245,7 +276,6 @@ Ext.define('project.import_design_list', {
 			proxy : {
 				type : 'ajax',
 				url : 'project/findProjectList.do',
-
 				reader : {
 					type : 'json',
 					rootProperty: 'projectList',
@@ -260,22 +290,53 @@ Ext.define('project.import_design_list', {
 			fieldLabel : '项目名',
 			labelWidth : 45,
 			width : 550,//'35%'
+			queryMode: 'local',
 			id :  'projectName',
 			name : 'projectName',
 			matchFieldWidth: true,
 			emptyText : "--请选择项目名--",
 			displayField: 'projectName',
 			valueField: 'id',
-			editable : false,
+			editable : true,
 			store: tableListStore1,
+			typeAhead: true,
+			triggerAction: 'all',
+			selectOnFocus:true,
 			listeners: {
+				change : function(combo, record, eOpts) {
+					if(this.callback) {
+						if(combo.lastSelection && combo.lastSelection.length>0) {
+							this.callback(combo.lastSelection[0]);
+						}
+					}
+				},
+				//下拉框搜索
+				beforequery :function(e){
+					var combo = e.combo;
+					combo.collapse();//收起
+					var value = combo.getValue();
+					if (!e.forceAll) {//如果不是通过选择，而是文本框录入
+						combo.store.clearFilter();
+						combo.store.filterBy(function(record, id) {
+							var text = record.get(combo.displayField);
+							// 用自己的过滤规则,如写正则式
+							return (text.indexOf(value) != -1);
+						});
+						combo.onLoad();//不加第一次会显示不出来
+						combo.expand();
+						return false;
+					}
+					if(!value) {
+						//如果文本框没值，清除过滤器
+						combo.store.clearFilter();
+					}
+				},
 
 				//下拉框默认返回的第一个值
 				render : function(combo) {//渲染
 					combo.getStore().on("load", function(s, r, o) {
 						combo.setValue(r[0].get('projectName'));//第一个值
 					});
-
 				},
 
 				select:function (combo, record) {

@@ -305,7 +305,7 @@ Ext.define('material.material_Query_Records',{
                         return Soims.model.application.ApplicationState[value].name; // key-value
                     },
                     editor:{xtype : 'textfield', allowBlank : false}
-                    },
+                },
                 { text: '操作时间',
                     dataIndex: 'time',
                     flex :1 ,

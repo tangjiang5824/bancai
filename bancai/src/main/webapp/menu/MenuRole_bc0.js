@@ -235,7 +235,12 @@ Ext.define("menu.MenuRole_bc0", {
 					text : '导入设计清单',
 					id : 'project.import_design_list',//project.import_planList
 					leaf : true
-				} ,
+					} ,
+					{
+						text : '设计清单审核',
+						id : 'project.project_check_designList',//
+						leaf : true
+					} ,
 					{
 						text : '项目总览',
 						id : 'project.result.project_match_result',//project.import_planList

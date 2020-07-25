@@ -36,15 +36,42 @@ Ext.define('project.management.editProject',{
             // typeAhead : true,
             editable : true,
             store: tableListStore,
-            // listeners: {
-            //
-            //     //下拉框默认返回的第一个值
-            //     render: function (combo) {//渲染
-            //         combo.getStore().on("load", function (s, r, o) {
-            //             combo.setValue(r[0].get('projectName'));//第一个值
-            //         });
-            //     }
-            // }
+            listeners: {
+                change : function(combo, record, eOpts) {
+                    if(this.callback) {
+                        if(combo.lastSelection && combo.lastSelection.length>0) {
+                            this.callback(combo.lastSelection[0]);
+                        }
+                    }
+                },
+                //下拉框搜索
+                beforequery :function(e){
+                    var combo = e.combo;
+                    combo.collapse();//收起
+                    var value = combo.getValue();
+                    if (!e.forceAll) {//如果不是通过选择，而是文本框录入
+                        combo.store.clearFilter();
+                        combo.store.filterBy(function(record, id) {
+                            var text = record.get(combo.displayField);
+                            // 用自己的过滤规则,如写正则式
+                            return (text.indexOf(value) != -1);
+                        });
+                        combo.onLoad();//不加第一次会显示不出来
+                        combo.expand();
+                        return false;
+                    }
+                    if(!value) {
+                        //如果文本框没值，清除过滤器
+                        combo.store.clearFilter();
+                    }
+                },
+                //下拉框默认返回的第一个值
+                render: function (combo) {//渲染
+                    combo.getStore().on("load", function (s, r, o) {
+                        combo.setValue(r[0].get('projectName'));//第一个值
+                    });
+                }
+            }
 
         });
         var toolbar_top = Ext.create("Ext.toolbar.Toolbar", {

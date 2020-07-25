@@ -1,8 +1,8 @@
-Ext.define('project.project_check_worksheet',{
+Ext.define('project.project_check_designList',{
     extend:'Ext.panel.Panel',
     region: 'center',
     layout:'fit',
-    title: '工单审核',
+    title: '项目设计清单审核',
     initComponent: function(){
         var itemsPerPage = 50;
         var table_workoderLog="work_order_log_view";
@@ -77,7 +77,7 @@ Ext.define('project.project_check_worksheet',{
         });
 
         var isActiveList = Ext.create('Ext.form.ComboBox', {
-            fieldLabel: '工单状态',
+            fieldLabel: '设计清单状态',
             name: 'isActiveList',
             id: 'isActiveList',
             store: isActiveListStore,
@@ -85,8 +85,8 @@ Ext.define('project.project_check_worksheet',{
             displayField: 'name',
             valueField: 'abbr',
             margin : '0 20 0 40',
-            width: 160,
-            labelWidth: 60,
+            width: 180,
+            labelWidth: 80,
             renderTo: Ext.getBody()
         });
 
@@ -124,7 +124,7 @@ Ext.define('project.project_check_worksheet',{
 
 
         var worksheet_Grid=Ext.create('Ext.grid.Panel',{
-            title: '工单查询',
+            // title: '工单查询',
             id : 'worksheet_Grid',
             store:worksheetListStore,
             dock: 'bottom',
