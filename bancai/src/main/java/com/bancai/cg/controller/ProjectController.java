@@ -911,7 +911,7 @@ public class ProjectController {
             c.and(new mysqlcondition("projectId", "=", projectId));
         }
         if (null!=isActive) {
-            c.and(new mysqlcondition("buildingId", "=", isActive));
+            c.and(new mysqlcondition("isActive", "=", isActive));
         }
         WebResponse response =queryAllService.queryDataPage(start, limit, c, "work_order_log_view");
         return response;

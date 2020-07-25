@@ -2,9 +2,6 @@ package com.bancai;
 
 import com.bancai.cg.service.InsertProjectService;
 import com.bancai.commonMethod.QueryAllService;
-import com.bancai.domain.DataList;
-import com.bancai.domain.DataRow;
-import com.sun.javaws.IconUtil;
 import org.junit.Test;
 
 import java.util.*;
