@@ -357,24 +357,11 @@ public class ProjectController {
      * @throws IOException
      */
     @RequestMapping(value="/material/findAllBytableName.do")
-    public void findAllbyTableName(HttpServletResponse response,String tableName,String page,String start,String limit) throws IOException, JSONException {
+    public void findAllbyTableName(HttpServletResponse response,String tableName,String start,String limit) throws IOException, JSONException {
         //thisPage，thisStart，thislimit用作分页，代码可以复用
-        int thisPage=1;
-        int thisStart=0;
-        int thisLimit=25;
-        if(null==page||page.equals("")){
-            thisPage=1;
-        }else {
-            thisPage=Integer.parseInt(page);
-        }
-        if(null==start||start.equals("")||null==limit||limit.equals("")){
-            thisStart=0;
-            thisLimit=25;
-        }else {
-            thisLimit=Integer.parseInt(limit);
-            thisStart=(thisPage-1)*thisLimit;
-        }
-        DataList table = insertProjectService.findallbytableName(tableName,thisStart+"",thisLimit+"");
+        if(start==null) start="0";
+        if(limit==null) limit="50";
+        DataList table = insertProjectService.findallbytableName(tableName,start,limit);
         //写回前端
         JSONObject object = new JSONObject();
         JSONArray StoreArray = new JSONArray(table);
@@ -485,12 +472,6 @@ public class ProjectController {
             jsonObject=jsonArray.getJSONObject(i);
             String productTypeName = jsonObject.get("productTypeName")+"";
             String description = jsonObject.get("description")+"";
-//            String length = jsonObject.get("length")+"";
-//            String length2 = jsonObject.get("length2")+"";
-//            String width = jsonObject.get("width")+"";
-//            String width2 = jsonObject.get("width2")+"";
-//            String weight = jsonObject.get("weight")+"";
-//            String cost = "0";//jsonObject.get("cost")+""
             String sql ="insert into producttype (productTypeName,description) values(?,?)";
             boolean flag= insertProjectService.insertIntoTableBySQL(sql,productTypeName,description);
             if(!flag){
@@ -920,6 +901,20 @@ public class ProjectController {
             return  false;
         }
         return true;
+    }
+    @RequestMapping("/order/workApprovalview.do")
+    public WebResponse workApprovalview(Integer start,Integer limit,Integer projectId,Integer isActive){
+        if(start==null) start=0;
+        if(limit==null) limit=-1;
+        mysqlcondition c=new mysqlcondition();
+        if (null!=projectId) {
+            c.and(new mysqlcondition("projectId", "=", projectId));
+        }
+        if (null!=isActive) {
+            c.and(new mysqlcondition("buildingId", "=", isActive));
+        }
+        WebResponse response =queryAllService.queryDataPage(start, limit, c, "work_order_log_view");
+        return response;
     }
 
 

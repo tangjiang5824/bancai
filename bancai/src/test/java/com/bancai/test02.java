@@ -214,11 +214,17 @@ public class test02 {
 //        if(list.get(0).get("pValue")!=null)
 //            a = Integer.parseInt(list.get(0).get("pValue").toString());
 //        System.out.println(a);
-        String ss = "aaaabbbbbb";
-        int a = 100;
-        String p = "-20&50";
-        ss=(a+Integer.parseInt(p.split("&")[0]))+ss+(a+Integer.parseInt(p.split("&")[1]));
-        System.out.println(ss);
+        ArrayList<String> arrayList = new ArrayList<>();
+        HashMap<String,String> map = new HashMap<>();
+        map.put("productName","100 W 200");
+        map.put("positon","2123");
+        map.put("code","100");
+        arrayList.add(map.toString());
+        map.put("productName","100 W 210");
+        map.put("positon","2213");
+        map.put("code","100");
+        arrayList.add(map.toString());
+        System.out.println(arrayList.toString());
     }
 
     private String IgnoreSuffix(String a){
