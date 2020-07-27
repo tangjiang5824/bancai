@@ -154,7 +154,7 @@ public class DesignlistService extends BaseService{
                 deleteDesignList(designlistId);
             }
             jo.update("update designlist_log set isrollback=1,userId=\""+userId+
-                    "\",time=\""+simpleDateFormat.format(date)+"\" where designlistlogId=\""+designlistlogId+"\"");
+                    "\",time=\""+simpleDateFormat.format(date)+"\" where id=\""+designlistlogId+"\"");
             return true;
         }
     }
