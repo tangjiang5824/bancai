@@ -295,7 +295,15 @@ public class DesignlistController {
                 JSONObject jsonTemp = jsonArray.getJSONObject(i);
                 System.out.println("第" + i + "个---" + jsonTemp);
                 String workOrderDetailId=jsonTemp.get("workOrderDetailId")+"";
-//                designlistService.orderAddRequisitionDetail(requisitionId[0], requisitionId[1], workOrderDetailId);
+                String type=jsonTemp.get("type")+"";
+                String storeId=jsonTemp.get("storeId")+"";
+                String productId=jsonTemp.get("productId")+"";
+                String count=jsonTemp.get("count")+"";
+                String projectId=jsonTemp.get("projectId")+"";
+                String buildingId=jsonTemp.get("buildingId")+"";
+                String buildingpositionId=jsonTemp.get("buildingpositionId")+"";
+                designlistService.orderAddRequisitionDetail(requisitionId[0], requisitionId[1], workOrderDetailId,
+                        type, storeId, productId, count, projectId, buildingId, buildingpositionId);
             }
         } catch (Exception e) {
             return false;

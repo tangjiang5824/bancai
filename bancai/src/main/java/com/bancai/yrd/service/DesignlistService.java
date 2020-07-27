@@ -21,10 +21,7 @@ import javax.script.ScriptException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class DesignlistService extends BaseService{
@@ -257,6 +254,9 @@ public class DesignlistService extends BaseService{
         DataList workOrderDetailListList = queryService.query("select * from work_order_detail_list where detailId=?",workOrderDetailId);
         //工单detail_list
         for (DataRow workOrderDetailListRow : workOrderDetailListList) {
+            System.out.println("[addRequisitionPreview]");
+            System.out.println("(1)createList==now=="+ Arrays.toString(createList.toArray()));
+            System.out.println("(2)workOrderDetailListRow==="+workOrderDetailListRow.toString());
             createList = addRequisitionPreview(createList,workOrderDetailListRow,workOrderDetailId);
         }
         return createList;
@@ -271,7 +271,7 @@ public class DesignlistService extends BaseService{
         String buildingId = matchResultList.get(0).get("buildingId").toString();
         String buildingName = matchResultList.get(0).get("buildingName").toString();
         String buildingpositionId = matchResultList.get(0).get("buildingpositionId").toString();
-        String buildingpositionName = matchResultList.get(0).get("buildingpositionName").toString();
+        String buildingpositionName = matchResultList.get(0).get("positionName").toString();
         String type = matchResultList.get(0).get("materialMadeBy").toString();
         String storeId = matchResultList.get(0).get("matchId").toString();
         String count = matchResultList.get(0).get("count").toString();
@@ -327,9 +327,21 @@ public class DesignlistService extends BaseService{
     /**
      * 添加领料单内容
      */
+    @Transactional
+    public void orderAddRequisitionDetail(int requisitionOrderId,int requisitionOrderLogId,String workOrderDetailId
+            ,String type,String storeId,String productId,String count,String projectId,String buildingId,String buildingpositionId) {
+        String sql_addLogDetail="insert into requisition_order_logdetail (requisitionOrderLogId,requisitionOrderDetailId,count)" +
+                " values (?,?,?)";
+        int requisitionOrderDetailId = insertProjectService.insertDataToTable("insert into requisition_order_detail " +
+                        "(requisitionOrderId,workOrderDetailId,type,storeId,productId,countRec,countAll" +
+                        ",projectId,buildingId,buildingpositionId) values (?,?,?,?,?,?,?,?,?,?)"
+                , String.valueOf(requisitionOrderId), workOrderDetailId, type, storeId, productId, count, count
+                , projectId, buildingId, buildingpositionId);
+        insertProjectService.insertIntoTableBySQL(sql_addLogDetail,
+                String.valueOf(requisitionOrderLogId), String.valueOf(requisitionOrderDetailId), count);
 
-//    @Transactional
-//    public void orderAddRequisitionDetail(int requisitionOrderId,int requisitionOrderLogId,String workOrderDetailId) {
+    }
+
 //        DataList workOrderDetailListList = queryService.query("select * from work_order_detail_list where detailId=?",workOrderDetailId);
 //        for (DataRow dataRow : workOrderDetailListList) {
 //            insertRequisitionDetail(dataRow,requisitionOrderId,requisitionOrderLogId,workOrderDetailId);
