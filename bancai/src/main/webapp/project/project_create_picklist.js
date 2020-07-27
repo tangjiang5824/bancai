@@ -435,15 +435,20 @@ Ext.define('project.project_create_picklist',{
                                 // materialList : "[" + materialList + "]",
                             },
                             success : function(response) {
+                                console.log("-----------response=======",response)
                                 //var message =Ext.decode(response.responseText).showmessage;
-                                Ext.MessageBox.alert("提示","领取成功" );
-                                //刷新页面
-                                worksheetListStore.reload();
+                                if(response == true){
+                                    Ext.MessageBox.alert("提示","创建成功" );
+                                    //刷新页面
+                                    worksheetListStore.reload();
+                                }else{
+                                    Ext.MessageBox.alert("提示","创建失败" );
+                                }
 
                             },
                             failure : function(response) {
                                 //var message =Ext.decode(response.responseText).showmessage;
-                                Ext.MessageBox.alert("提示","领取失败" );
+                                Ext.MessageBox.alert("提示","创建失败" );
                             }
                         });
 
@@ -463,16 +468,41 @@ Ext.define('project.project_create_picklist',{
                 }
 
             ]
-        })
+        });
+        //领料单预览
+        var pickinglistStore = Ext.create('Ext.data.Store',{
+            id: 'pickinglistStore',
+            autoLoad: true,
+            fields: ['productName','position'],
+            //pageSize: itemsPerPage, // items per page
+            data:[],
+            editable:false,
+        });
+
         var pickingcreate_Grid=Ext.create('Ext.grid.Panel',{
             title: '领料单创建',
             id : 'pickingcreate_Grid',
-            store:MaterialList2,
+            store:pickinglistStore,
             dock: 'bottom',
             columns:[
+                // {
+                //     dataIndex:'workOrderDetailId', //工单号
+                //     text:'工单号',
+                //     flex :1
+                // },
                 {
-                    dataIndex:'workOrderDetailId', //工单号
-                    text:'工单号',
+                    dataIndex:'name', //工单号
+                    text:'材料名',
+                    flex :1
+                },
+                {
+                    dataIndex:'count', //工单号
+                    text:'数量',
+                    flex :1
+                },
+                {
+                    dataIndex:'warehouseName', //工单号
+                    text:'仓库名',
                     flex :1
                 },
                 // {
@@ -487,6 +517,7 @@ Ext.define('project.project_create_picklist',{
             tbar:toobar_right,
             selType:'checkboxmodel'
         });
+
 
 
         var panel = Ext.create('Ext.panel.Panel',{
@@ -506,33 +537,89 @@ Ext.define('project.project_create_picklist',{
                         xtype:'button',
                         // margin: '0 0 0 30',
                         text:'选择',
-                        itemId:'move_right',
+                        // itemId:'move_right',
                         handler:function() {
                             var records = worksheet_Grid.getSelectionModel().getSelection();
-                            console.log(records)
-                            console.log("测试")
-                            console.log(records[0])
-
-                            for (i = 0; i < records.length; i++) {
-                                console.log(records[i].data['countTemp'])
-                                if(records[i].data['countTemp'] != 0){
-                                    console.log("添加")
-                                    MaterialList2.add(records[i]);
-                                }
-                            }
+                            // console.log(records)
+                            // console.log("测试")
+                            // console.log(records[0])
+                            //
+                            // for (i = 0; i < records.length; i++) {
+                            //     console.log(records[i].data['countTemp'])
+                            //     if(records[i].data['countTemp'] != 0){
+                            //         console.log("添加")
+                            //         MaterialList2.add(records[i]);
+                            //     }
+                            // }
                             //若要领数量<领取数量，则不能直接remove，需要更改数量值
 
+                            var select = Ext.getCmp('worksheet_Grid').getStore()
+                                .getData();
+                            // console.log("operator-----------------",operator);
+
+                            var s = new Array();
+                            select.each(function(rec) {
+                                s.push(JSON.stringify(rec.data));
+                                //alert(JSON.stringify(rec.data));//获得表格中的数据
+                                //s.push();
+                            });
+
+                            //进度条
+                            Ext.MessageBox.show(
+                                {
+                                    title:'请稍候',
+                                    msg:'正在查询工单的材料信息，请耐心等待...',
+                                    progressText:'',    //进度条文本
+                                    width:300,
+                                    progress:true,
+                                    closable:false
+                                }
+                            );
+
+                            Ext.Ajax.request({
+                                url : 'order/requisitionCreatePreview.do', //原材料入库
+                                method:'POST',
+                                //submitEmptyText : false,
+                                params : {
+                                    //materialType:materialtype,
+                                    s : "[" + s + "]",
+                                },
+                                success : function(response) {
+                                    //关闭进度条
+                                    Ext.MessageBox.hide();
+                                    console.log("response=======================",response)
+                                    //var message =Ext.decode(response.responseText).showmessage;
+                                    // Ext.MessageBox.alert("提示","入库成功" );
+
+                                    var res = response.responseText;
+                                    var jsonobj = JSON.parse(res);//将json字符串转换为对象
+                                    var createList = jsonobj.createList;
+
+                                    pickinglistStore.loadData(createList);//加载数据
+
+                                },
+                                failure : function(response) {
+                                    //关闭进度条
+                                    Ext.MessageBox.hide();
+
+                                    //var message =Ext.decode(response.responseText).showmessage;
+                                    // Ext.MessageBox.alert("提示","入库失败" );
+                                }
+                            });
+
                         }
-                    },{
-                        xtype:'button',
-                        text:'撤销',
-                        itemId:'move_left',
-                        handler:function(){
-                            var records=pickingcreate_Grid.getSelectionModel().getSelection();
-                            MaterialList2.remove(records);
-                            worksheetListStore.add(records);
-                        }
-                    }]
+                    },
+                    //     {
+                    //     xtype:'button',
+                    //     text:'撤销',
+                    //     itemId:'move_left',
+                    //     // handler:function(){
+                    //     //     var records=pickingcreate_Grid.getSelectionModel().getSelection();
+                    //     //     MaterialList2.remove(records);
+                    //     //     worksheetListStore.add(records);
+                    //     // }
+                    // }
+                    ]
                 },
                 pickingcreate_Grid
             ],

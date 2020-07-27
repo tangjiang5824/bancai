@@ -86,6 +86,15 @@ Ext.define('project.import_design_list', {
 // 						}
 // 					}]
 // 		});
+		//错误类型：枚举类型
+		Ext.define('designlist.errorcode.type', {
+			statics: { // 关键
+				100: { value: '100', name: '位置重复' },
+				200: { value: '200', name: '品名不合法' },
+				null: { value: 'null', name: '无' },
+			}
+		});
+
 		var designlistStore = Ext.create('Ext.data.Store',{
 			id: 'designlistStore',
 			autoLoad: true,
@@ -167,9 +176,74 @@ Ext.define('project.import_design_list', {
 				displayMsg:'显示{0}-{1}条，共{2}条',
 				emptyMsg:'无数据'
 			}],
-
-
 		});
+
+		//错误提示，弹出框
+		var errorlistStore = Ext.create('Ext.data.Store',{
+			id: 'errorlistStore',
+			autoLoad: true,
+			fields: ['productName','position'],
+			//pageSize: itemsPerPage, // items per page
+			data:[],
+			editable:false,
+		});
+
+		//弹出框，出入库详细记录
+		var specific_errorlist_outbound=Ext.create('Ext.grid.Panel',{
+			id : 'specific_errorlist_outbound',
+			// tbar: toolbar_pop,
+			store:errorlistStore,//oldpanellogdetailList，store1的数据固定
+			dock: 'bottom',
+			columns:[
+				{
+					text: '产品名称',
+					dataIndex: 'productName',
+					flex :1,
+					width:"80"
+				},
+				{
+					text: '位置',
+					dataIndex: 'position',
+					flex :1,
+					width:"80"
+				},
+				{
+					text: '产品名',
+					dataIndex: 'productName',
+					flex :1,
+					width:"80"
+				},
+				{
+					text: '错误原因',
+					flex :1,
+					dataIndex: 'errorCode',
+					renderer: function (value) {
+						return designlist.errorcode.type[value].name; // key-value
+					},
+				}
+				//fields:['oldpanelId','oldpanelName','count'],specification
+
+			],
+			flex:1,
+			//selType:'checkboxmodel',
+			plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
+				clicksToEdit : 2
+			})],
+		});
+
+		var win_errorInfo_outbound = Ext.create('Ext.window.Window', {
+			// id:'win_errorInfo_outbound',
+			title: '错误详情',
+			height: 500,
+			width: 750,
+			layout: 'fit',
+			closable : true,
+			draggable:true,
+			closeAction : 'hidden',
+			// tbar:toolbar_pop1,
+			items:specific_errorlist_outbound,
+		});
+
 
 		var exceluploadform = Ext.create("Ext.form.Panel", {
 			border : false,
@@ -512,6 +586,18 @@ Ext.define('project.import_design_list', {
 						var buildingId = Ext.getCmp("buildingName").getValue();
 						var positionId = Ext.getCmp("positionName").getValue();
 
+
+						//显示匹配进度
+						Ext.MessageBox.show(
+							{
+								title:'请稍候',
+								msg:'产品匹配中，请耐心等待...',
+								progressText:'',    //进度条文本
+								width:300,
+								progress:true,
+								closable:false
+							}
+						);
 						console.log("s--------------",s)
 						//获取数据
 						Ext.Ajax.request({
@@ -525,17 +611,55 @@ Ext.define('project.import_design_list', {
 								buildingpositionId:positionId,
 							},
 							success : function(response) {
-								if(response == false){
-									Ext.MessageBox.alert("提示","匹配失败" );
+								var res = response.responseText;
+								var jsonobj = JSON.parse(res);//将json字符串转换为对象
+								console.log(jsonobj);
+								console.log("success--------------",jsonobj.success);
+								console.log("errorList--------------",jsonobj['errorList']);
+								var success = jsonobj.success;
+								var errorList = jsonobj.errorList;
+								var errorCode = jsonobj.errorCode;
+								var errorCount = jsonobj.errorCount;
+								if(success == false){
+									if(errorCode == 150){
+										//位置重复或品名不合法
+
+										//关闭进度条
+										Ext.MessageBox.hide();
+										// Ext.MessageBox.alert("提示","匹配失败，产品位置重复或品名不合法！请重新导入" );
+										Ext.Msg.show({
+											title: '提示',
+											message: '匹配失败，产品位置重复或品名不合法！\n是否查看具体错误数据',
+											buttons: Ext.Msg.YESNO,
+											icon: Ext.Msg.QUESTION,
+											fn: function (btn) {
+												if (btn === 'yes') {
+													//点击确认，显示重复的数据
+													errorlistStore.loadData(errorList);
+													win_errorInfo_outbound.show();
+												}
+											}
+										});
+									}
+									else if(errorCode == 300){
+										Ext.MessageBox.hide();
+										Ext.MessageBox.alert("提示","产品匹配失败！请重新导入" );
+									}
+									else if(errorCode == 1000){
+										Ext.MessageBox.hide();
+										Ext.MessageBox.alert("提示","匹配失败，未知错误！请重新导入" );
+									}
 								}else{
+									Ext.MessageBox.hide();
 									Ext.MessageBox.alert("提示","匹配成功" );
 								}
 								//var message =Ext.decode(response.responseText).showmessage;
 								//刷新页面
 							},
 							failure : function(response) {
+								Ext.MessageBox.hide();
 								//var message =Ext.decode(response.responseText).showmessage;
-								Ext.MessageBox.alert("提示","领取失败" );
+								Ext.MessageBox.alert("提示","匹配失败" );
 							}
 						});
 				}
