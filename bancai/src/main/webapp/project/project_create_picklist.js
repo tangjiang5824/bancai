@@ -463,11 +463,28 @@ Ext.define('project.project_create_picklist',{
                 }
 
             ]
-        })
+        });
+        //领料单预览
+        // var specific_pickpro_List = Ext.create('Ext.data.Store',{
+        //     //id,materialName,length,width,materialType,number
+        //     fields:['materialName','length','materialType','width','specification','number'],
+        //     proxy : {
+        //         type : 'ajax',
+        //         url : 'order/requisitionCreatePreview.do',//获取同类型的原材料?s=[+s+]
+        //         // params:{
+        //         //     s:'['+s+']',
+        //         // },
+        //         reader : {
+        //             type : 'json',
+        //             rootProperty: 'createList',
+        //         },
+        //     },
+        //     autoLoad : true
+        // });
         var pickingcreate_Grid=Ext.create('Ext.grid.Panel',{
             title: '领料单创建',
             id : 'pickingcreate_Grid',
-            store:MaterialList2,
+            // store:specific_pickpro_List,
             dock: 'bottom',
             columns:[
                 {
@@ -487,6 +504,7 @@ Ext.define('project.project_create_picklist',{
             tbar:toobar_right,
             selType:'checkboxmodel'
         });
+
 
 
         var panel = Ext.create('Ext.panel.Panel',{
@@ -509,29 +527,83 @@ Ext.define('project.project_create_picklist',{
                         itemId:'move_right',
                         handler:function() {
                             var records = worksheet_Grid.getSelectionModel().getSelection();
-                            console.log(records)
-                            console.log("测试")
-                            console.log(records[0])
-
-                            for (i = 0; i < records.length; i++) {
-                                console.log(records[i].data['countTemp'])
-                                if(records[i].data['countTemp'] != 0){
-                                    console.log("添加")
-                                    MaterialList2.add(records[i]);
-                                }
-                            }
+                            // console.log(records)
+                            // console.log("测试")
+                            // console.log(records[0])
+                            //
+                            // for (i = 0; i < records.length; i++) {
+                            //     console.log(records[i].data['countTemp'])
+                            //     if(records[i].data['countTemp'] != 0){
+                            //         console.log("添加")
+                            //         MaterialList2.add(records[i]);
+                            //     }
+                            // }
                             //若要领数量<领取数量，则不能直接remove，需要更改数量值
+
+                            var select = Ext.getCmp('worksheet_Grid').getStore()
+                                .getData();
+                            // console.log("operator-----------------",operator);
+
+                            var s = new Array();
+                            select.each(function(rec) {
+                                s.push(JSON.stringify(rec.data));
+                                //alert(JSON.stringify(rec.data));//获得表格中的数据
+                                //s.push();
+                            });
+
+                            //领料单预览
+                            // var specific_worksheet_List = Ext.create('Ext.data.Store',{
+                            //     //id,materialName,length,width,materialType,number
+                            //     fields:['materialName','length','materialType','width','specification','number'],
+                            //     proxy : {
+                            //         type : 'ajax',
+                            //         url : 'order/requisitionCreatePreview.do',//获取同类型的原材料?s=[+s+]
+                            //         params:{
+                            //             s:'['+s+']',
+                            //         },
+                            //         reader : {
+                            //             type : 'json',
+                            //             rootProperty: 'createList',
+                            //         },
+                            //     },
+                            //     autoLoad : true
+                            // });
+                            // specific_pickpro_List.load({
+                            //     params : {
+                            //         s:"["+s+"]",
+                            //         //proejctId:'1',
+                            //     }
+                            // });
+                            // pickingcreate_Grid.setStore(specific_pickpro_List);
+
+                            Ext.Ajax.request({
+                                url : 'order/requisitionCreatePreview.do', //原材料入库
+                                method:'POST',
+                                //submitEmptyText : false,
+                                params : {
+                                    //materialType:materialtype,
+                                    s : "[" + s + "]",
+                                },
+                                // success : function(response) {
+                                //     //var message =Ext.decode(response.responseText).showmessage;
+                                //     Ext.MessageBox.alert("提示","入库成功" );
+                                // },
+                                // failure : function(response) {
+                                //     //var message =Ext.decode(response.responseText).showmessage;
+                                //     Ext.MessageBox.alert("提示","入库失败" );
+                                // }
+                            });
 
                         }
                     },{
                         xtype:'button',
                         text:'撤销',
                         itemId:'move_left',
-                        handler:function(){
-                            var records=pickingcreate_Grid.getSelectionModel().getSelection();
-                            MaterialList2.remove(records);
-                            worksheetListStore.add(records);
-                        }
+                        // handler:function(){
+                        //     var records=pickingcreate_Grid.getSelectionModel().getSelection();
+                        //     MaterialList2.remove(records);
+                        //     worksheetListStore.add(records);
+                        // }
                     }]
                 },
                 pickingcreate_Grid
