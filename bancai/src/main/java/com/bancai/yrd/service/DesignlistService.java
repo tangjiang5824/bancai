@@ -73,8 +73,9 @@ public class DesignlistService extends BaseService{
                                  String buildingpositionId) {
         Date date=new Date();
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String sql_addLog = "insert into designlist_log (userId,time,isrollback) values(?,?,?)";
-        int designlistlogId= insertProjectService.insertDataToTable(sql_addLog,userId,simpleDateFormat.format(date),"0");
+        String sql_addLog = "insert into designlist_log (userId,time,isrollback,projectId,buildingId,buildingpositionId) values(?,?,?,?,?,?)";
+        int designlistlogId= insertProjectService.insertDataToTable(sql_addLog,userId,simpleDateFormat.format(date),"0"
+                ,projectId, buildingId, buildingpositionId);
         for (DataRow dataRow : validList) {
             String productId = dataRow.get("productId").toString();
             String position = dataRow.get("position").toString();
@@ -111,6 +112,98 @@ public class DesignlistService extends BaseService{
     }
 
     @Transactional
+    public DataList queryDesignlistlog(String projectId, String buildingId, String buildingpositionId){
+        StringBuilder sb = new StringBuilder("select * from designlist_log where userId<>0");
+        if((projectId!=null)&&(projectId.length()!=0)){
+            sb.append(" and projectId=\"").append(projectId).append("\"");
+            if((buildingId!=null)&&(buildingId.length()!=0))
+                sb.append(" and buildingId=\"").append(buildingId).append("\"");
+        }
+        if((buildingpositionId!=null)&&(buildingpositionId.length()!=0))
+            sb.append(" and buildingpositionId=\"").append(buildingpositionId).append("\"");
+        return queryService.query(sb.toString());
+    }
+
+    @Transactional
+    public DataList queryDesignlistContain(String designlistlogId){
+        return queryService.query("select * from designlist where designlistlogId=?",designlistlogId);
+    }
+
+    @Transactional
+    public boolean designlistCanRollback(String designlistlogId){
+        DataList list = queryService.query("select * from designlist where designlistlogId=?",designlistlogId);
+        if(list.isEmpty())
+            return false;
+        else {
+            int processStatusSum = 0;
+            for (DataRow dataRow : list)
+                processStatusSum = processStatusSum + Integer.parseInt(dataRow.get("processStatus").toString());
+            return processStatusSum == 0;
+        }
+    }
+    @Transactional
+    public boolean deleteDesignListLog(String designlistlogId,String userId){
+        DataList list = queryService.query("select * from designlist where designlistlogId=?",designlistlogId);
+        if(list.isEmpty())
+            return true;
+        else {
+            for (DataRow dataRow : list) {
+                String designlistId = dataRow.get("id").toString();
+                deleteDesignList(designlistId);
+            }
+            jo.update("update designlist_log set isrollback=1,userId=\""+userId+"\""+" where designlistlogId=\""+designlistlogId+"\"");
+            return true;
+        }
+    }
+
+    @Transactional
+    public boolean deleteDesignList(String designlistId){
+        DataList list = queryService.query("select * from query_match_result where designlistId=?",designlistId);
+        if(list.isEmpty())
+            return true;
+        else {
+            for (DataRow dataRow : list) {
+                String matchResultId = dataRow.get("id").toString();
+                int type = Integer.parseInt(dataRow.get("materialMadeBy").toString());
+                int storeId = Integer.parseInt(dataRow.get("matchId").toString());
+                double count = Double.parseDouble(dataRow.get("count").toString());
+                designlistMatchResultBackStore(type, storeId, count);
+                designlistDeleteById("match_result", matchResultId);
+            }
+            designlistDeleteById("designlist",designlistId);
+            return true;
+        }
+    }
+
+    private boolean designlistMatchResultBackStore(int type,int storeId,double count){
+        String sql="";
+        switch (type){
+            case 1:
+                sql = "update backproduct_store set countUse=countUse+\""+count+"\" where id=\""+storeId+"\"";
+                break;
+            case 2:
+                sql = "update preprocess_store set countUse=countUse+\""+count+"\" where id=\""+storeId+"\"";
+                break;
+            case 3:
+                sql = "update oldpanel_store set countUse=countUse+\""+count+"\" where id=\""+storeId+"\"";
+                break;
+            case 4:
+                sql = "update material_store set count=count+\""+count+"\" where id=\""+storeId+"\"";
+                break;
+            default:
+                return true;
+        }
+        jo.update(sql);
+        return true;
+    }
+
+    private void designlistDeleteById(String tableName, String matchResultId){
+        jo.update("delete from "+tableName+" where id=\""+matchResultId+"\"");
+    }
+
+
+
+    @Transactional
     public void saveDepartmentWorkerData(String id, String departmentId, String workerName,String tel,boolean exist){
         if(exist){
             String sql1 = "update department_worker set departmentId=\""+departmentId+"\",workerName=\""+workerName+"\",tel=\""+tel+"\" where id=\""+id+"\"";
@@ -131,14 +224,14 @@ public class DesignlistService extends BaseService{
             sb.append(" and projectId=\"").append(projectId).append("\"");
             if((buildingId!=null)&&(buildingId.length()!=0))
                 sb.append(" and buildingId=\"").append(buildingId).append("\"");
-            if((buildingpositionId!=null)&&(buildingpositionId.length()!=0))
-                sb.append(" and buildingpositionId=\"").append(buildingpositionId).append("\"");
         }
+        if((buildingpositionId!=null)&&(buildingpositionId.length()!=0))
+            sb.append(" and buildingpositionId=\"").append(buildingpositionId).append("\"");
         return queryService.query(sb.toString());
     }
 
     /*
-     * 查询工单Detail
+     * 创建领料单时查询工单Detail
      * */
     @Transactional
     public DataList findWorkOrderDetail(String projectId, String buildingId, String buildingpositionId){
@@ -147,11 +240,33 @@ public class DesignlistService extends BaseService{
             sb.append(" and projectId=\"").append(projectId).append("\"");
             if((buildingId!=null)&&(buildingId.length()!=0))
                 sb.append(" and buildingId=\"").append(buildingId).append("\"");
-            if((buildingpositionId!=null)&&(buildingpositionId.length()!=0))
-                sb.append(" and buildingpositionId=\"").append(buildingpositionId).append("\"");
         }
+        if((buildingpositionId!=null)&&(buildingpositionId.length()!=0))
+            sb.append(" and buildingpositionId=\"").append(buildingpositionId).append("\"");
         return queryService.query(sb.toString());
     }
+
+    /*
+     * 创建领料单时根据勾选工单生成明细
+     * */
+//    @Transactional
+//    public DataList createRequisitionPreview(DataList createList, String workOrderDetailId){
+//        for (int i = 0; i < jsonArray.length(); i++) {
+//            JSONObject jsonTemp = jsonArray.getJSONObject(i);
+//            String workOrderDetailId=jsonTemp.get("workOrderDetailId")+"";
+//            designlistService.orderAddRequisitionDetail(requisitionId[0], requisitionId[1], workOrderDetailId);
+//        }
+//        StringBuilder sb = new StringBuilder("select * from work_order_detail_view where status=0 and isActive=1");
+//        if((projectId!=null)&&(projectId.length()!=0)){
+//            sb.append(" and projectId=\"").append(projectId).append("\"");
+//            if((buildingId!=null)&&(buildingId.length()!=0))
+//                sb.append(" and buildingId=\"").append(buildingId).append("\"");
+//        }
+//        if((buildingpositionId!=null)&&(buildingpositionId.length()!=0))
+//            sb.append(" and buildingpositionId=\"").append(buildingpositionId).append("\"");
+//        return queryService.query(sb.toString());
+//    }
+
 
     /**
      * 添加领料单
@@ -234,9 +349,9 @@ public class DesignlistService extends BaseService{
             sb.append(" and projectId=\"").append(projectId).append("\"");
             if((buildingId!=null)&&(buildingId.length()!=0))
                 sb.append(" and buildingId=\"").append(buildingId).append("\"");
-            if((buildingpositionId!=null)&&(buildingpositionId.length()!=0))
-                sb.append(" and buildingpositionId=\"").append(buildingpositionId).append("\"");
         }
+        if((buildingpositionId!=null)&&(buildingpositionId.length()!=0))
+            sb.append(" and buildingpositionId=\"").append(buildingpositionId).append("\"");
 //        DataList queryList = new DataList();
 //        queryList = queryService.query(sb.toString(),requisitionOrderId);
 //        for (int i = 0; i < queryList.size(); i++) {
@@ -284,6 +399,8 @@ public class DesignlistService extends BaseService{
             case 4:
                 sql2 = "update material_store set count=count-\""+count+"\" where id=\""+storeId+"\"";
                 break;
+            default:
+                return true;
         }
         jo.update(sql2);
         return true;

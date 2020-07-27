@@ -127,7 +127,70 @@ public class DesignlistController {
         }
         return response;
     }
-    
+
+    /*
+     * 查询导入的designlist记录
+     * */
+    @RequestMapping(value = "/designlist/queryUploadLog.do")
+    public void designlistqueryUploadLog(String projectId, String buildingId, String buildingpositionId,
+                                                HttpServletResponse response) throws IOException, JSONException {
+        DataList designlistlogList = designlistService.queryDesignlistlog(projectId, buildingId, buildingpositionId);
+        //写回前端
+        JSONObject object = new JSONObject();
+        JSONArray array = new JSONArray(designlistlogList);
+        object.put("designlistlogList", array);
+//        System.out.println("类型1：--"+array.getClass().getName().toString());
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html");
+        response.getWriter().write(object.toString());
+        response.getWriter().flush();
+    }
+
+    /*
+     * 查询导入的designlist详情by logid
+     * */
+    @RequestMapping(value = "/designlist/queryDesignlistByLogId.do")
+    public void designlistqueryByLogId(String designlistlogId, HttpServletResponse response) throws IOException, JSONException {
+        DataList designlistList = designlistService.queryDesignlistContain(designlistlogId);
+        //写回前端
+        JSONObject object = new JSONObject();
+        JSONArray array = new JSONArray(designlistList);
+        object.put("designlistList", array);
+//        System.out.println("类型1：--"+array.getClass().getName().toString());
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html");
+        response.getWriter().write(object.toString());
+        response.getWriter().flush();
+    }
+
+    /*
+     * 对上传的designlist进行撤销
+     * */
+    @RequestMapping(value = "/designlist/rollbackUploadData.do")
+    public WebResponse designlistRollbackUploadData(String designlistlogId, HttpSession session) {
+        WebResponse response = new WebResponse();
+        try {
+            if((designlistlogId==null)||(designlistlogId.length()==0)){
+                response.setSuccess(false);
+                response.setErrorCode(100); //未获取到该行数据
+                return response;
+            }
+            if(!designlistService.designlistCanRollback(designlistlogId)){
+                response.setSuccess(false);
+                response.setErrorCode(200); //已生成工单，或该清单不存在
+                return response;
+            }
+            //撤销
+            String userId = (String)session.getAttribute("userid");
+            response.setSuccess(designlistService.deleteDesignListLog(designlistlogId,userId));
+        } catch (Exception e) {
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误
+            response.setMsg(e.getMessage());
+        }
+        return response;
+    }
+
     /*
      * 添加或更新操作员信息
      * */
@@ -184,6 +247,31 @@ public class DesignlistController {
         response.getWriter().close();
 
     }
+
+    /*
+     * 根据选取工单生成领料单材料预览
+     * */
+//    @RequestMapping("/order/queryWorkOrderCountView.do")
+//    public WebResponse queryWorkOrderCountView(String s) throws JSONException {
+//        WebResponse response = new WebResponse();
+//        try {
+//            JSONArray jsonArray = new JSONArray(s);
+//            DataList createList = new DataList();
+//            for (int i = 0; i < jsonArray.length(); i++) {
+//                JSONObject jsonTemp = jsonArray.getJSONObject(i);
+//                System.out.println("第" + i + "个---" + jsonTemp);
+//                String workOrderDetailId=jsonTemp.get("workOrderDetailId")+"";
+//                createList = designlistService.createRequisitionPreview(createList, workOrderDetailId);
+//            }
+//            response.put("orderList",queryService.query("select * from requisition_order_detail_view where requisitionOrderId=?",String.valueOf(requisitionId[0])));
+//            response.setSuccess(true);
+//        } catch (Exception e) {
+//            response.setSuccess(false);
+//            response.setErrorCode(1000); //未知错误
+//            response.setMsg(e.getMessage());
+//        }
+//        return response;
+//    }
 
     /*
      * 新建领料单
