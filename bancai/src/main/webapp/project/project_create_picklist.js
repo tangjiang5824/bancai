@@ -465,26 +465,19 @@ Ext.define('project.project_create_picklist',{
             ]
         });
         //领料单预览
-        // var specific_pickpro_List = Ext.create('Ext.data.Store',{
-        //     //id,materialName,length,width,materialType,number
-        //     fields:['materialName','length','materialType','width','specification','number'],
-        //     proxy : {
-        //         type : 'ajax',
-        //         url : 'order/requisitionCreatePreview.do',//获取同类型的原材料?s=[+s+]
-        //         // params:{
-        //         //     s:'['+s+']',
-        //         // },
-        //         reader : {
-        //             type : 'json',
-        //             rootProperty: 'createList',
-        //         },
-        //     },
-        //     autoLoad : true
-        // });
+        var pickinglistStore = Ext.create('Ext.data.Store',{
+            id: 'pickinglistStore',
+            autoLoad: true,
+            fields: ['productName','position'],
+            //pageSize: itemsPerPage, // items per page
+            data:[],
+            editable:false,
+        });
+
         var pickingcreate_Grid=Ext.create('Ext.grid.Panel',{
             title: '领料单创建',
             id : 'pickingcreate_Grid',
-            // store:specific_pickpro_List,
+            store:pickinglistStore,
             dock: 'bottom',
             columns:[
                 {
@@ -584,14 +577,22 @@ Ext.define('project.project_create_picklist',{
                                     //materialType:materialtype,
                                     s : "[" + s + "]",
                                 },
-                                // success : function(response) {
-                                //     //var message =Ext.decode(response.responseText).showmessage;
-                                //     Ext.MessageBox.alert("提示","入库成功" );
-                                // },
-                                // failure : function(response) {
-                                //     //var message =Ext.decode(response.responseText).showmessage;
-                                //     Ext.MessageBox.alert("提示","入库失败" );
-                                // }
+                                success : function(response) {
+                                    console.log("response=======================",response)
+                                    //var message =Ext.decode(response.responseText).showmessage;
+                                    // Ext.MessageBox.alert("提示","入库成功" );
+
+                                    var res = response.responseText;
+                                    var jsonobj = JSON.parse(res);//将json字符串转换为对象
+                                    var createList = jsonobj.createList;
+
+                                    pickinglistStore.loadData(createList);//加载数据
+
+                                },
+                                failure : function(response) {
+                                    //var message =Ext.decode(response.responseText).showmessage;
+                                    // Ext.MessageBox.alert("提示","入库失败" );
+                                }
                             });
 
                         }

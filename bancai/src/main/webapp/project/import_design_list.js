@@ -586,6 +586,36 @@ Ext.define('project.import_design_list', {
 						var buildingId = Ext.getCmp("buildingName").getValue();
 						var positionId = Ext.getCmp("positionName").getValue();
 
+						//显示匹配进度
+						Ext.MessageBox.show(
+							{
+								title:'请稍候',
+								msg:'产品匹配中，请耐心等待...',
+								progressText:'',    //进度条文本
+								width:300,
+								progress:true,
+								closable:false
+							}
+						);
+						//控制进度条速度
+						var f=function(v){
+							return function(){
+								if(v==12)
+								{
+									Ext.MessageBox.hide();
+								}
+								else
+								{
+									var i=v/11;
+									Ext.MessageBox.updateProgress(i,Math.round(100*i)+"% 完成");
+								}
+							}
+						}
+						for(var i=1;i<13;i++)
+						{
+							setTimeout(f(i),i*500);//从点击时就开始计时，所以500*i表示每500ms就执行一次
+						}
+
 						console.log("s--------------",s)
 						//获取数据
 						Ext.Ajax.request({
