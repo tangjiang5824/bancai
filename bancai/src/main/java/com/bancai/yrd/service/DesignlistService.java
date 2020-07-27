@@ -113,7 +113,7 @@ public class DesignlistService extends BaseService{
 
     @Transactional
     public DataList queryDesignlistlog(String projectId, String buildingId, String buildingpositionId){
-        StringBuilder sb = new StringBuilder("select * from designlist_log where userId<>0");
+        StringBuilder sb = new StringBuilder("select * from designlist_log_view where userId<>0");
         if((projectId!=null)&&(projectId.length()!=0)){
             sb.append(" and projectId=\"").append(projectId).append("\"");
             if((buildingId!=null)&&(buildingId.length()!=0))
@@ -147,11 +147,14 @@ public class DesignlistService extends BaseService{
         if(list.isEmpty())
             return true;
         else {
+            Date date=new Date();
+            SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             for (DataRow dataRow : list) {
                 String designlistId = dataRow.get("id").toString();
                 deleteDesignList(designlistId);
             }
-            jo.update("update designlist_log set isrollback=1,userId=\""+userId+"\""+" where designlistlogId=\""+designlistlogId+"\"");
+            jo.update("update designlist_log set isrollback=1,userId=\""+userId+
+                    "\",time=\""+simpleDateFormat.format(date)+"\" where designlistlogId=\""+designlistlogId+"\"");
             return true;
         }
     }
