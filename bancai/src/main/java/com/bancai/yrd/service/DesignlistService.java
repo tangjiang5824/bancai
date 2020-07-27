@@ -151,7 +151,7 @@ public class DesignlistService extends BaseService{
                 deleteDesignList(designlistId);
             }
             jo.update("update designlist_log set isrollback=1,userId=\""+userId+
-                    "\",time=\""+simpleDateFormat.format(date)+"\" where designlistlogId=\""+designlistlogId+"\"");
+                    "\",time=\""+simpleDateFormat.format(date)+"\" where id=\""+designlistlogId+"\"");
             return true;
         }
     }
@@ -277,6 +277,33 @@ public class DesignlistService extends BaseService{
         String count = matchResultList.get(0).get("count").toString();
         String productId = matchResultList.get(0).get("productId").toString();
         String productName = matchResultList.get(0).get("productName").toString();
+        String name = "";
+        String warehouseName = "";
+        DataRow queryRow = new DataRow();
+        switch (type){
+            case "1":
+                queryRow = queryService.query("select * from backproduct_info_store_type where storeId=?").get(0);
+                name = queryRow.get("productName").toString();
+                warehouseName = queryRow.get("warehouseName").toString();
+                break;
+            case "2":
+                queryRow = queryService.query("select * from preprocess_info_store_type where storeId=?").get(0);
+                name = queryRow.get("productName").toString();
+                warehouseName = queryRow.get("warehouseName").toString();
+                break;
+            case "3":
+                queryRow = queryService.query("select * from oldpanel_info_store_type where storeId=?").get(0);
+                name = queryRow.get("oldpanelName").toString();
+                warehouseName = queryRow.get("warehouseName").toString();
+                break;
+            case "4":
+                queryRow = queryService.query("select * from material_store_view where storeId=?").get(0);
+                name = queryRow.get("materialName").toString();
+                warehouseName = queryRow.get("warehouseName").toString();
+                break;
+            default:
+                break;
+        }
         int con = 0;
         if(!createList.isEmpty()) {
             for (DataRow createRow : createList) {
@@ -305,6 +332,8 @@ public class DesignlistService extends BaseService{
             newRow.put("count",count);
             newRow.put("productId",productId);
             newRow.put("productName",productName);
+            newRow.put("name",name);
+            newRow.put("warehouseName",warehouseName);
             createList.add(newRow);
         }
         return createList;
