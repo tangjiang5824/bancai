@@ -110,7 +110,7 @@ public class DesignlistController {
                 response.put("errorList",errorList);
                 response.put("errorCount",errorList.size());
                 response.setSuccess(false);
-                response.setErrorCode(150);
+                response.setErrorCode(150); //位置重复或品名不合法
                 return response;
             } else {
                 designlistService.createDesignlistData(validList,userId,projectId,buildingId,buildingpositionId);
