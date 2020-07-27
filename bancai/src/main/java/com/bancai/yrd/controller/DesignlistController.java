@@ -253,27 +253,32 @@ public class DesignlistController {
     /*
      * 根据选取工单生成领料单材料预览
      * */
-//    @RequestMapping("/order/queryWorkOrderCountView.do")
-//    public WebResponse queryWorkOrderCountView(String s) throws JSONException {
-//        WebResponse response = new WebResponse();
-//        try {
-//            JSONArray jsonArray = new JSONArray(s);
-//            DataList createList = new DataList();
-//            for (int i = 0; i < jsonArray.length(); i++) {
-//                JSONObject jsonTemp = jsonArray.getJSONObject(i);
-//                System.out.println("第" + i + "个---" + jsonTemp);
-//                String workOrderDetailId=jsonTemp.get("workOrderDetailId")+"";
-//                createList = designlistService.createRequisitionPreview(createList, workOrderDetailId);
-//            }
-//            response.put("orderList",queryService.query("select * from requisition_order_detail_view where requisitionOrderId=?",String.valueOf(requisitionId[0])));
-//            response.setSuccess(true);
-//        } catch (Exception e) {
-//            response.setSuccess(false);
-//            response.setErrorCode(1000); //未知错误
-//            response.setMsg(e.getMessage());
-//        }
-//        return response;
-//    }
+    @RequestMapping("/order/requisitionCreatePreview.do")
+    public WebResponse requisitionCreatePreview(String s) throws JSONException {
+        WebResponse response = new WebResponse();
+        try {
+            JSONArray jsonArray = new JSONArray(s);
+            DataList createList = new DataList();
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonTemp = jsonArray.getJSONObject(i);
+                System.out.println("第" + i + "个---" + jsonTemp);
+                String workOrderDetailId=jsonTemp.get("workOrderDetailId")+"";
+                createList = designlistService.createRequisitionPreview(createList, workOrderDetailId);
+            }
+            response.put("createList",createList);
+            if(createList.isEmpty()) {
+                response.setSuccess(false);
+                response.setErrorCode(100);//生成的领料单为空
+            }
+            else
+                response.setSuccess(true);
+        } catch (Exception e) {
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误
+            response.setMsg(e.getMessage());
+        }
+        return response;
+    }
 
     /*
      * 新建领料单

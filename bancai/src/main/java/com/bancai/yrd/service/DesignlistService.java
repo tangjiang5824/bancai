@@ -252,15 +252,63 @@ public class DesignlistService extends BaseService{
     /*
      * 创建领料单时根据勾选工单生成明细
      * */
-//    @Transactional
-//    public DataList createRequisitionPreview(DataList createList, String workOrderDetailId){
-//        DataList workOrderDetailListList = queryService.query("select * from work_order_detail_list where detailId=?",workOrderDetailId);
-//        //工单detail_list
-//        for (DataRow dataRow : workOrderDetailListList) {
-//            requisitionPreviewCreator(dataRow,requisitionOrderId,requisitionOrderLogId,workOrderDetailId);
-//        }
-//        return createList;
-//    }
+    @Transactional
+    public DataList createRequisitionPreview(DataList createList, String workOrderDetailId){
+        DataList workOrderDetailListList = queryService.query("select * from work_order_detail_list where detailId=?",workOrderDetailId);
+        //工单detail_list
+        for (DataRow workOrderDetailListRow : workOrderDetailListList) {
+            createList = addRequisitionPreview(createList,workOrderDetailListRow,workOrderDetailId);
+        }
+        return createList;
+    }
+
+    @Transactional
+    public DataList addRequisitionPreview(DataList createList, DataRow workOrderDetailListRow,String workOrderDetailId){
+        String matchResultId = workOrderDetailListRow.get("matchResultId").toString();
+        DataList matchResultList = queryService.query("select * from query_match_result where id=?", matchResultId);
+        String projectId = matchResultList.get(0).get("projectId").toString();
+        String projectName = matchResultList.get(0).get("projectName").toString();
+        String buildingId = matchResultList.get(0).get("buildingId").toString();
+        String buildingName = matchResultList.get(0).get("buildingName").toString();
+        String buildingpositionId = matchResultList.get(0).get("buildingpositionId").toString();
+        String buildingpositionName = matchResultList.get(0).get("buildingpositionName").toString();
+        String type = matchResultList.get(0).get("materialMadeBy").toString();
+        String storeId = matchResultList.get(0).get("matchId").toString();
+        String count = matchResultList.get(0).get("count").toString();
+        String productId = matchResultList.get(0).get("productId").toString();
+        String productName = matchResultList.get(0).get("productName").toString();
+        int con = 0;
+        if(!createList.isEmpty()) {
+            for (DataRow createRow : createList) {
+                if((createRow.get("workOrderDetailId").toString().equals(workOrderDetailId))&&
+                        (createRow.get("type").toString().equals(type))&&
+                        (createRow.get("storeId").toString().equals(storeId))&&
+                        (createRow.get("productId").toString().equals(productId))){
+                    String newCount = String.valueOf(Double.parseDouble(createRow.get("count").toString())+Double.parseDouble(count));
+                    createRow.replace("count",newCount);
+                    con++;
+                    break;
+                }
+            }
+        }
+        if(con==0){
+            DataRow newRow = new DataRow();
+            newRow.put("workOrderDetailId",workOrderDetailId);
+            newRow.put("projectId",projectId);
+            newRow.put("projectName",projectName);
+            newRow.put("buildingId",buildingId);
+            newRow.put("buildingName",buildingName);
+            newRow.put("buildingpositionId",buildingpositionId);
+            newRow.put("buildingpositionName",buildingpositionName);
+            newRow.put("type",type);
+            newRow.put("storeId",storeId);
+            newRow.put("count",count);
+            newRow.put("productId",productId);
+            newRow.put("productName",productName);
+            createList.add(newRow);
+        }
+        return createList;
+    }
 
 
     /**
