@@ -188,7 +188,7 @@ public class DesignlistService extends BaseService{
                 sql = "update oldpanel_store set countUse=countUse+\""+count+"\" where id=\""+storeId+"\"";
                 break;
             case 4:
-                sql = "update material_store set count=count+\""+count+"\" where id=\""+storeId+"\"";
+                sql = "update material_store set count=countUse+\""+count+"\" where id=\""+storeId+"\"";
                 break;
             default:
                 return true;
