@@ -252,7 +252,7 @@ Ext.define("menu.MenuRole_bc0", {
 						leaf : true
 					} ,
 					{
-						text : '项目总览',
+						text : '项目匹配结果总览',
 						id : 'project.result.project_match_result',//project.import_planList
 						leaf : true
 					},
@@ -319,7 +319,12 @@ Ext.define("menu.MenuRole_bc0", {
 						text : '项目确认领料',
 						id : 'project.project_material_picklist',
 						leaf : true
-					}
+					},
+					{
+						text : '项目进度查询',
+						id : 'project.management.project_process_status',//project.import_planList
+						leaf : true
+					},
 				]
 			},
 			// 	{

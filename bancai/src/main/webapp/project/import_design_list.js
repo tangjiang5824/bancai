@@ -586,6 +586,7 @@ Ext.define('project.import_design_list', {
 						var buildingId = Ext.getCmp("buildingName").getValue();
 						var positionId = Ext.getCmp("positionName").getValue();
 
+
 						//显示匹配进度
 						Ext.MessageBox.show(
 							{
@@ -597,25 +598,6 @@ Ext.define('project.import_design_list', {
 								closable:false
 							}
 						);
-						//控制进度条速度
-						var f=function(v){
-							return function(){
-								if(v==12)
-								{
-									Ext.MessageBox.hide();
-								}
-								else
-								{
-									var i=v/11;
-									Ext.MessageBox.updateProgress(i,Math.round(100*i)+"% 完成");
-								}
-							}
-						}
-						for(var i=1;i<13;i++)
-						{
-							setTimeout(f(i),i*500);//从点击时就开始计时，所以500*i表示每500ms就执行一次
-						}
-
 						console.log("s--------------",s)
 						//获取数据
 						Ext.Ajax.request({
@@ -641,6 +623,9 @@ Ext.define('project.import_design_list', {
 								if(success == false){
 									if(errorCode == 150){
 										//位置重复或品名不合法
+
+										//关闭进度条
+										Ext.MessageBox.hide();
 										// Ext.MessageBox.alert("提示","匹配失败，产品位置重复或品名不合法！请重新导入" );
 										Ext.Msg.show({
 											title: '提示',
@@ -657,18 +642,22 @@ Ext.define('project.import_design_list', {
 										});
 									}
 									else if(errorCode == 300){
+										Ext.MessageBox.hide();
 										Ext.MessageBox.alert("提示","产品匹配失败！请重新导入" );
 									}
 									else if(errorCode == 1000){
+										Ext.MessageBox.hide();
 										Ext.MessageBox.alert("提示","匹配失败，未知错误！请重新导入" );
 									}
 								}else{
+									Ext.MessageBox.hide();
 									Ext.MessageBox.alert("提示","匹配成功" );
 								}
 								//var message =Ext.decode(response.responseText).showmessage;
 								//刷新页面
 							},
 							failure : function(response) {
+								Ext.MessageBox.hide();
 								//var message =Ext.decode(response.responseText).showmessage;
 								Ext.MessageBox.alert("提示","匹配失败" );
 							}
