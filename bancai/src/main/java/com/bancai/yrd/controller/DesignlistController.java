@@ -76,9 +76,7 @@ public class DesignlistController {
         try {
             int errorCount = 0;
             DataList errorList = new DataList();
-            DataRow errorRow = new DataRow();
             DataList validList = new DataList();
-            DataRow validRow = new DataRow();
             JSONArray jsonArray = new JSONArray(s);
             String userId = (String)session.getAttribute("userid");
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -88,18 +86,21 @@ public class DesignlistController {
                 String position=(jsonTemp.get("position")+"").trim().toUpperCase();
                 int analyzeDesignlist = designlistService.analyzeDesignlist(productName, position, userId, projectId, buildingId);
                 if(analyzeDesignlist==-100){
+                    DataRow errorRow = new DataRow();
                     errorRow.put("productName",productName);
                     errorRow.put("position",position);
                     errorRow.put("errorCode","100");//位置重复
                     errorList.add(errorRow);
                     errorCount++;
                 }else if(analyzeDesignlist==-200){
+                    DataRow errorRow = new DataRow();
                     errorRow.put("productName",productName);
                     errorRow.put("position",position);
                     errorRow.put("errorCode","200");//品名不合法
                     errorList.add(errorRow);
                     errorCount++;
                 }else {
+                    DataRow validRow = new DataRow();
                     validRow.put("productId",String.valueOf(analyzeDesignlist));
                     validRow.put("position",position);
                     validList.add(validRow);
@@ -111,15 +112,16 @@ public class DesignlistController {
                 response.setSuccess(false);
                 response.setErrorCode(150);
                 return response;
+            } else {
+                designlistService.createDesignlistData(validList,userId,projectId,buildingId,buildingpositionId);
+                boolean matchDesignlist = designlistService.matchDesignlist(projectId, buildingId, buildingpositionId);
+                if(!matchDesignlist){
+                    response.setSuccess(false);
+                    response.setErrorCode(300); //匹配失败
+                    return response;
+                }
+                response.setSuccess(true);
             }
-            designlistService.createDesignlistData(validList,userId,projectId,buildingId,buildingpositionId);
-            boolean matchDesignlist = designlistService.matchDesignlist(projectId, buildingId, buildingpositionId);
-            if(!matchDesignlist){
-                response.setSuccess(false);
-                response.setErrorCode(300); //匹配失败
-                return response;
-            }
-            response.setSuccess(true);
         } catch (Exception e) {
             response.setSuccess(false);
             response.setErrorCode(1000); //未知错误

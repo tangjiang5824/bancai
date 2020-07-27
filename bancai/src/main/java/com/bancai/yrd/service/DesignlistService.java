@@ -254,20 +254,12 @@ public class DesignlistService extends BaseService{
      * */
 //    @Transactional
 //    public DataList createRequisitionPreview(DataList createList, String workOrderDetailId){
-//        for (int i = 0; i < jsonArray.length(); i++) {
-//            JSONObject jsonTemp = jsonArray.getJSONObject(i);
-//            String workOrderDetailId=jsonTemp.get("workOrderDetailId")+"";
-//            designlistService.orderAddRequisitionDetail(requisitionId[0], requisitionId[1], workOrderDetailId);
+//        DataList workOrderDetailListList = queryService.query("select * from work_order_detail_list where detailId=?",workOrderDetailId);
+//        //工单detail_list
+//        for (DataRow dataRow : workOrderDetailListList) {
+//            requisitionPreviewCreator(dataRow,requisitionOrderId,requisitionOrderLogId,workOrderDetailId);
 //        }
-//        StringBuilder sb = new StringBuilder("select * from work_order_detail_view where status=0 and isActive=1");
-//        if((projectId!=null)&&(projectId.length()!=0)){
-//            sb.append(" and projectId=\"").append(projectId).append("\"");
-//            if((buildingId!=null)&&(buildingId.length()!=0))
-//                sb.append(" and buildingId=\"").append(buildingId).append("\"");
-//        }
-//        if((buildingpositionId!=null)&&(buildingpositionId.length()!=0))
-//            sb.append(" and buildingpositionId=\"").append(buildingpositionId).append("\"");
-//        return queryService.query(sb.toString());
+//        return createList;
 //    }
 
 
