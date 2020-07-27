@@ -284,8 +284,7 @@ public class DesignlistController {
      * 新建领料单
      * */
     @RequestMapping(value = "/order/addRequisitionOrder.do")
-    public WebResponse addRequisitionOrder(String s, String operator, HttpSession session) throws JSONException {
-        WebResponse response = new WebResponse();
+    public boolean addRequisitionOrder(String s, String operator, HttpSession session) throws JSONException {
         try {
             JSONArray jsonArray = new JSONArray(s);
             String userId = (String)session.getAttribute("userid");
@@ -296,16 +295,12 @@ public class DesignlistController {
                 JSONObject jsonTemp = jsonArray.getJSONObject(i);
                 System.out.println("第" + i + "个---" + jsonTemp);
                 String workOrderDetailId=jsonTemp.get("workOrderDetailId")+"";
-                designlistService.orderAddRequisitionDetail(requisitionId[0], requisitionId[1], workOrderDetailId);
+//                designlistService.orderAddRequisitionDetail(requisitionId[0], requisitionId[1], workOrderDetailId);
             }
-            response.put("orderList",queryService.query("select * from requisition_order_detail_view where requisitionOrderId=?",String.valueOf(requisitionId[0])));
-            response.setSuccess(true);
         } catch (Exception e) {
-            response.setSuccess(false);
-            response.setErrorCode(1000); //未知错误
-            response.setMsg(e.getMessage());
+            return false;
         }
-        return response;
+        return true;
     }
     /*
      * 查询领料单

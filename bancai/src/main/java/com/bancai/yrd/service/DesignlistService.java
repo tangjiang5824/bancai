@@ -126,7 +126,7 @@ public class DesignlistService extends BaseService{
 
     @Transactional
     public DataList queryDesignlistContain(String designlistlogId){
-        return queryService.query("select * from designlist where designlistlogId=?",designlistlogId);
+        return queryService.query("select * from designlist_product_info_view where designlistlogId=?",designlistlogId);
     }
 
     @Transactional
@@ -327,49 +327,50 @@ public class DesignlistService extends BaseService{
     /**
      * 添加领料单内容
      */
-    @Transactional
-    public void orderAddRequisitionDetail(int requisitionOrderId,int requisitionOrderLogId,String workOrderDetailId) {
-        DataList workOrderDetailListList = queryService.query("select * from work_order_detail_list where detailId=?",workOrderDetailId);
-        for (DataRow dataRow : workOrderDetailListList) {
-            insertRequisitionDetail(dataRow,requisitionOrderId,requisitionOrderLogId,workOrderDetailId);
-        }
-        String sql_updateStatus = "update work_order_detail set status=1 where id=\""+workOrderDetailId+"\"";
-        jo.update(sql_updateStatus);
-    }
 
-    @Transactional
-    public void insertRequisitionDetail(DataRow dataRow, int requisitionOrderId,int requisitionOrderLogId,String workOrderDetailId){
-        String sql_addLogDetail="insert into requisition_order_logdetail (requisitionOrderLogId,requisitionOrderDetailId,count)" +
-                " values (?,?,?)";
-        String sql = "select * from requisition_order_detail where requisitionOrderId=? and workOrderDetailId=?" +
-                " and type=? and storeId=? and productId=?";
-        String matchResultId = dataRow.get("matchResultId").toString();
-        DataList matchResultList = new DataList();
-        matchResultList = queryService.query("select * from query_match_result where id=?", matchResultId);
-        String projectId = matchResultList.get(0).get("projectId").toString();
-        String buildingId = matchResultList.get(0).get("buildingId").toString();
-        String buildingpositionId = matchResultList.get(0).get("buildingpositionId").toString();
-        String type = matchResultList.get(0).get("materialMadeBy").toString();
-        String storeId = matchResultList.get(0).get("matchId").toString();
-        String count = matchResultList.get(0).get("count").toString();
-        String productId = matchResultList.get(0).get("productId").toString();
-        DataList queryList = queryService.query(sql, String.valueOf(requisitionOrderId), workOrderDetailId, type, storeId, productId);
-        if (queryList.isEmpty()) {
-            int requisitionOrderDetailId = insertProjectService.insertDataToTable("insert into requisition_order_detail " +
-                            "(requisitionOrderId,workOrderDetailId,type,storeId,productId,countRec,countAll" +
-                            ",projectId,buildingId,buildingpositionId) values (?,?,?,?,?,?,?,?,?,?)"
-                    , String.valueOf(requisitionOrderId), workOrderDetailId, type, storeId, productId, count, count
-                    , projectId, buildingId, buildingpositionId);
-            insertProjectService.insertIntoTableBySQL(sql_addLogDetail,
-                    String.valueOf(requisitionOrderLogId), String.valueOf(requisitionOrderDetailId), count);
-        } else {
-            int requisitionOrderDetailId = Integer.parseInt(queryList.get(0).get("id").toString());
-            jo.update("update requisition_order_detail set countRec=countRec+\"" + count + "\"" + ",countAll=countAll+\"" + count + "\""
-                    + " where id=\"" + requisitionOrderDetailId + "\"");
-            insertProjectService.insertIntoTableBySQL(sql_addLogDetail,
-                    String.valueOf(requisitionOrderLogId), String.valueOf(requisitionOrderDetailId), count);
-        }
-    }
+//    @Transactional
+//    public void orderAddRequisitionDetail(int requisitionOrderId,int requisitionOrderLogId,String workOrderDetailId) {
+//        DataList workOrderDetailListList = queryService.query("select * from work_order_detail_list where detailId=?",workOrderDetailId);
+//        for (DataRow dataRow : workOrderDetailListList) {
+//            insertRequisitionDetail(dataRow,requisitionOrderId,requisitionOrderLogId,workOrderDetailId);
+//        }
+//        String sql_updateStatus = "update work_order_detail set status=1 where id=\""+workOrderDetailId+"\"";
+//        jo.update(sql_updateStatus);
+//    }
+
+//    @Transactional
+//    public void insertRequisitionDetail(DataRow dataRow, int requisitionOrderId,int requisitionOrderLogId,String workOrderDetailId){
+//        String sql_addLogDetail="insert into requisition_order_logdetail (requisitionOrderLogId,requisitionOrderDetailId,count)" +
+//                " values (?,?,?)";
+//        String sql = "select * from requisition_order_detail where requisitionOrderId=? and workOrderDetailId=?" +
+//                " and type=? and storeId=? and productId=?";
+//        String matchResultId = dataRow.get("matchResultId").toString();
+//        DataList matchResultList = new DataList();
+//        matchResultList = queryService.query("select * from query_match_result where id=?", matchResultId);
+//        String projectId = matchResultList.get(0).get("projectId").toString();
+//        String buildingId = matchResultList.get(0).get("buildingId").toString();
+//        String buildingpositionId = matchResultList.get(0).get("buildingpositionId").toString();
+//        String type = matchResultList.get(0).get("materialMadeBy").toString();
+//        String storeId = matchResultList.get(0).get("matchId").toString();
+//        String count = matchResultList.get(0).get("count").toString();
+//        String productId = matchResultList.get(0).get("productId").toString();
+//        DataList queryList = queryService.query(sql, String.valueOf(requisitionOrderId), workOrderDetailId, type, storeId, productId);
+//        if (queryList.isEmpty()) {
+//            int requisitionOrderDetailId = insertProjectService.insertDataToTable("insert into requisition_order_detail " +
+//                            "(requisitionOrderId,workOrderDetailId,type,storeId,productId,countRec,countAll" +
+//                            ",projectId,buildingId,buildingpositionId) values (?,?,?,?,?,?,?,?,?,?)"
+//                    , String.valueOf(requisitionOrderId), workOrderDetailId, type, storeId, productId, count, count
+//                    , projectId, buildingId, buildingpositionId);
+//            insertProjectService.insertIntoTableBySQL(sql_addLogDetail,
+//                    String.valueOf(requisitionOrderLogId), String.valueOf(requisitionOrderDetailId), count);
+//        } else {
+//            int requisitionOrderDetailId = Integer.parseInt(queryList.get(0).get("id").toString());
+//            jo.update("update requisition_order_detail set countRec=countRec+\"" + count + "\"" + ",countAll=countAll+\"" + count + "\""
+//                    + " where id=\"" + requisitionOrderDetailId + "\"");
+//            insertProjectService.insertIntoTableBySQL(sql_addLogDetail,
+//                    String.valueOf(requisitionOrderLogId), String.valueOf(requisitionOrderDetailId), count);
+//        }
+//    }
 
 
 
