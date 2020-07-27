@@ -503,7 +503,7 @@ Ext.define('project.project_worksheet',{
                                 // createTime:Ext.getCmp('createTime').getValue(),
                                 operator:Ext.getCmp("operator").value,
                                 s : "[" + s + "]",//存储选择领料的数量
-                                // projectId:Ext.getCmp("projectName").getValue(),
+                                projectId:Ext.getCmp("projectName").getValue(),
                                 // buildingId:Ext.getCmp("buildingName").getValue(),
                                 // buildingpositionId:Ext.getCmp("positionName").getValue(),
                                 // materialList : "[" + materialList + "]",
@@ -549,7 +549,7 @@ Ext.define('project.project_worksheet',{
                     //     });
 
                     //  右边页面重置
-                        Ext.getCmp('workSheet_Num').setValue("");
+                    //     Ext.getCmp('workSheet_Num').setValue("");
                         pre_worksheetStore.removeAll();
                     }
                 }
