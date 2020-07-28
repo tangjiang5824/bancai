@@ -223,12 +223,10 @@ public class test02 {
 //        map.put("code","100");
 //        arrayList.add(map.toString());
 //        System.out.println(arrayList.toString());
-        DataRow row = new DataRow();
-        row.put("a","a1");
-        row.put("b","b1");
-        System.out.println(row.toString());
-        row.replace("a","a2");
-        System.out.println(row.toString());
+
+        StringBuilder sb = new StringBuilder("dfdsfads,");
+        sb.deleteCharAt(sb.length()-1);
+        System.out.println(sb.toString());
     }
 
     private String IgnoreSuffix(String a){
