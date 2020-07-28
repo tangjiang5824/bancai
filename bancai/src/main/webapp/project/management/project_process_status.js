@@ -10,17 +10,17 @@ Ext.define('project.management.project_process_status',{
 
         var tableName_process = 'work_order_manage_view';
 
-        //原件类型：枚举类型
-        // Ext.define('product.model.originType', {
-        //     statics: { // 关键s
-        //         0: { value: '0', name: '未匹配' },
-        //         1: { value: '1', name: '退库成品' },
-        //         2: { value: '2', name: '预加工半产品' },
-        //         3: { value: '3', name: '旧板' },
-        //         4: { value: '4', name: '原材料新板' },
-        //         9: { value: '5', name: '未匹配成功' },
-        //     }
-        // });
+        // 原件类型：枚举类型
+        Ext.define('product.model.originType', {
+            statics: { // 关键s
+                0: { value: '0', name: '未匹配' },
+                1: { value: '1', name: '退库成品' },
+                2: { value: '2', name: '预加工半产品' },
+                3: { value: '3', name: '旧板' },
+                4: { value: '4', name: '原材料新板' },
+                9: { value: '5', name: '未匹配成功' },
+            }
+        });
 
         /*
          * *合并单元格的函数，合并表格内所有连续的具有相同值的单元格。调用方法示例：
@@ -405,6 +405,14 @@ Ext.define('project.management.project_process_status',{
                 //         return product.model.originType[value].name; // key-value
                 //     },
                 // },
+                { text: '项目名', dataIndex: 'projectName', flex :1 },
+                { text: '楼栋名', dataIndex: 'buildingName', flex :1 },
+                { text: '位置', dataIndex: 'positionName', flex :1 },
+                { text: '原板', dataIndex: 'madeBy', flex :1,
+                    renderer: function (value) {
+                        return product.model.originType[value].name; // key-value
+                    },
+                },
                 { text: '产品总数量', dataIndex: '总数量', flex :1 },
                 { text: '导入设计清单', dataIndex: '导入设计清单', flex :1 },
                 { text: '生成工单', dataIndex: '生成工单', flex :1 },
