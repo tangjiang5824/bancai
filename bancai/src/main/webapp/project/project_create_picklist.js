@@ -435,15 +435,20 @@ Ext.define('project.project_create_picklist',{
                                 // materialList : "[" + materialList + "]",
                             },
                             success : function(response) {
+                                console.log("-----------response=======",response)
                                 //var message =Ext.decode(response.responseText).showmessage;
-                                Ext.MessageBox.alert("提示","领取成功" );
-                                //刷新页面
-                                worksheetListStore.reload();
+                                if(response == true){
+                                    Ext.MessageBox.alert("提示","创建成功" );
+                                    //刷新页面
+                                    worksheetListStore.reload();
+                                }else{
+                                    Ext.MessageBox.alert("提示","创建失败" );
+                                }
 
                             },
                             failure : function(response) {
                                 //var message =Ext.decode(response.responseText).showmessage;
-                                Ext.MessageBox.alert("提示","领取失败" );
+                                Ext.MessageBox.alert("提示","创建失败" );
                             }
                         });
 
@@ -480,9 +485,24 @@ Ext.define('project.project_create_picklist',{
             store:pickinglistStore,
             dock: 'bottom',
             columns:[
+                // {
+                //     dataIndex:'workOrderDetailId', //工单号
+                //     text:'工单号',
+                //     flex :1
+                // },
                 {
-                    dataIndex:'workOrderDetailId', //工单号
-                    text:'工单号',
+                    dataIndex:'name', //工单号
+                    text:'材料名',
+                    flex :1
+                },
+                {
+                    dataIndex:'count', //工单号
+                    text:'数量',
+                    flex :1
+                },
+                {
+                    dataIndex:'warehouseName', //工单号
+                    text:'仓库名',
                     flex :1
                 },
                 // {
@@ -517,7 +537,7 @@ Ext.define('project.project_create_picklist',{
                         xtype:'button',
                         // margin: '0 0 0 30',
                         text:'选择',
-                        itemId:'move_right',
+                        // itemId:'move_right',
                         handler:function() {
                             var records = worksheet_Grid.getSelectionModel().getSelection();
                             // console.log(records)
@@ -544,30 +564,17 @@ Ext.define('project.project_create_picklist',{
                                 //s.push();
                             });
 
-                            //领料单预览
-                            // var specific_worksheet_List = Ext.create('Ext.data.Store',{
-                            //     //id,materialName,length,width,materialType,number
-                            //     fields:['materialName','length','materialType','width','specification','number'],
-                            //     proxy : {
-                            //         type : 'ajax',
-                            //         url : 'order/requisitionCreatePreview.do',//获取同类型的原材料?s=[+s+]
-                            //         params:{
-                            //             s:'['+s+']',
-                            //         },
-                            //         reader : {
-                            //             type : 'json',
-                            //             rootProperty: 'createList',
-                            //         },
-                            //     },
-                            //     autoLoad : true
-                            // });
-                            // specific_pickpro_List.load({
-                            //     params : {
-                            //         s:"["+s+"]",
-                            //         //proejctId:'1',
-                            //     }
-                            // });
-                            // pickingcreate_Grid.setStore(specific_pickpro_List);
+                            //进度条
+                            Ext.MessageBox.show(
+                                {
+                                    title:'请稍候',
+                                    msg:'正在查询工单的材料信息，请耐心等待...',
+                                    progressText:'',    //进度条文本
+                                    width:300,
+                                    progress:true,
+                                    closable:false
+                                }
+                            );
 
                             Ext.Ajax.request({
                                 url : 'order/requisitionCreatePreview.do', //原材料入库
@@ -578,6 +585,8 @@ Ext.define('project.project_create_picklist',{
                                     s : "[" + s + "]",
                                 },
                                 success : function(response) {
+                                    //关闭进度条
+                                    Ext.MessageBox.hide();
                                     console.log("response=======================",response)
                                     //var message =Ext.decode(response.responseText).showmessage;
                                     // Ext.MessageBox.alert("提示","入库成功" );
@@ -590,22 +599,27 @@ Ext.define('project.project_create_picklist',{
 
                                 },
                                 failure : function(response) {
+                                    //关闭进度条
+                                    Ext.MessageBox.hide();
+
                                     //var message =Ext.decode(response.responseText).showmessage;
                                     // Ext.MessageBox.alert("提示","入库失败" );
                                 }
                             });
 
                         }
-                    },{
-                        xtype:'button',
-                        text:'撤销',
-                        itemId:'move_left',
-                        // handler:function(){
-                        //     var records=pickingcreate_Grid.getSelectionModel().getSelection();
-                        //     MaterialList2.remove(records);
-                        //     worksheetListStore.add(records);
-                        // }
-                    }]
+                    },
+                    //     {
+                    //     xtype:'button',
+                    //     text:'撤销',
+                    //     itemId:'move_left',
+                    //     // handler:function(){
+                    //     //     var records=pickingcreate_Grid.getSelectionModel().getSelection();
+                    //     //     MaterialList2.remove(records);
+                    //     //     worksheetListStore.add(records);
+                    //     // }
+                    // }
+                    ]
                 },
                 pickingcreate_Grid
             ],

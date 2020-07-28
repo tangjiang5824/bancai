@@ -511,8 +511,9 @@ Ext.define('project.project_worksheet',{
                             success : function(response) {
                                 //var message =Ext.decode(response.responseText).showmessage;
                                 Ext.MessageBox.alert("提示","创建成功" );
+
                                 //刷新页面
-                                // productListStore.load();
+                                pre_worksheetStore.load();
                                 // Ext.getCmp('productPickingListGrid').getStore().load();
                                 var projectId = Ext.getCmp('projectName').getValue();
                                 //显示已创建的工单
@@ -530,9 +531,6 @@ Ext.define('project.project_worksheet',{
                                     autoLoad : true,
                                 });
                                 grid_worksheet_specific.setStore(worksheet_specificListStore);
-
-
-
                             },
                             failure : function(response) {
                                 //var message =Ext.decode(response.responseText).showmessage;
@@ -582,7 +580,15 @@ Ext.define('project.project_worksheet',{
             // height:'100%',
             flex:1.3,
             tbar:toobar_right,
-            selType:'checkboxmodel'
+            selType:'checkboxmodel',
+            dockedItems: [{
+                xtype: 'pagingtoolbar',
+                store: pre_worksheetStore,   // same store GridPanel is using
+                dock: 'bottom',
+                displayInfo: true,
+                displayMsg:'显示{0}-{1}条，共{2}条',
+                emptyMsg:'无数据'
+            }]
         });
 
         // //查询某类产品具体的匹配信息，右侧界面
@@ -717,11 +723,25 @@ Ext.define('project.project_worksheet',{
                     // border:'0 0 1 0',
                 }
             ]
-        })
+        });
+
+        var toolbar_worksheet_specific = Ext.create('Ext.toolbar.Toolbar',{
+            id:'toolbar_worksheet_specific',
+            items: [
+                {
+                    xtype: 'tbtext',
+                    margin : '0 10 0 0',
+                    text: '已创建的工单',
+
+                    // border:'0 0 1 0',
+                }
+            ]
+        });
+
         //工单部分order/workApprovalview
         var grid_worksheet_specific=Ext.create('Ext.grid.Panel',{
             id : 'grid_worksheet_specific',
-            // tbar:toolbar_worksheet_specific,
+            tbar:toolbar_worksheet_specific,
             store:'',
             dock: 'bottom',
             columns:[
@@ -757,6 +777,14 @@ Ext.define('project.project_worksheet',{
                 hideGroupedHeader : true,//隐藏当前分组的表头
                 groupHeaderTpl:'这类产品有(<b><font color=red>{[values.rows[0].data.totalNumber]}</font></b>)个',
             } ],
+            // dockedItems: [{
+            //     xtype: 'pagingtoolbar',
+            //     store: pre_worksheetStore,   // same store GridPanel is using
+            //     dock: 'bottom',
+            //     displayInfo: true,
+            //     displayMsg:'显示{0}-{1}条，共{2}条',
+            //     emptyMsg:'无数据'
+            // }]
         });
 
         //工单panel
@@ -872,15 +900,7 @@ Ext.define('project.project_worksheet',{
             console.log("columnIndex:",columnIndex)
         }
 
-        this.dockedItems = [toolbar,panel,{
-            xtype: 'pagingtoolbar',
-            // store: material_Query_Data_Store,   // same store GridPanel is using
-            dock: 'bottom',
-            displayInfo: true,
-            displayMsg:'显示{0}-{1}条，共{2}条',
-            emptyMsg:'无数据'
-        }
-        ];
+        this.dockedItems = [toolbar,panel];
         // this.dockedItems = [toolbar,panel,toolbar3];
         // this.items = [grid1];
         this.callParent(arguments);

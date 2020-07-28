@@ -15,7 +15,7 @@ Ext.define('project.project_check_designList',{
         //工单审核状态：枚举类型
         Ext.define('Worksheet.check.State', {
             statics: { // 关键
-                0: { value: '0', name: '待审核' },
+                0: { value: '0', name: '上传成功' },
                 1: { value: '1', name: '已撤销' },
                 // 2: { value: '2', name: '已驳回' },
                 null: { value: 'null', name: '无' },
@@ -384,9 +384,9 @@ Ext.define('project.project_check_designList',{
             ]
         });
 
-        var toolbar_pop = Ext.create('Ext.toolbar.Toolbar', {
+        var toolbar_back_pop = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
-            id:'toolbar_pop',
+            id:'toolbar_back_pop',
             items: [
                 {
                     //保存logid的值
@@ -444,7 +444,30 @@ Ext.define('project.project_check_designList',{
                                         //     designlistlogId:designlist_Id,  //工单id
                                         // },
                                         success:function (response) {
-                                            Ext.MessageBox.alert("提示", "撤销成功!");
+                                            var jsonObj = JSON.parse(response.responseText);
+                                            var success = jsonObj.success;
+                                            var errorCode = jsonObj.errorCode;
+                                            if(success == false){
+                                                if(errorCode == 200){
+                                                    //失败原因
+                                                    Ext.MessageBox.alert("提示", "撤销失败，已生成工单，或该清单不存在!");
+                                                }
+                                                else if(errorCode == 100){
+                                                    Ext.MessageBox.alert("提示", "撤销失败，未获取到该行数据!");
+                                                }
+                                                else if(errorCode == 1000){
+                                                    //未知错误
+                                                    Ext.MessageBox.alert("提示", "撤销失败，未知错误!");
+                                                }
+                                            }
+                                            else{
+                                                Ext.MessageBox.alert("提示", "撤销成功!");
+                                                //关闭窗口
+                                                win_showdesignList_outbound.close();
+                                                //刷新页面
+                                                designList_Store.load()
+                                            }
+
                                             // win_showworkorder_outbound.close();//关闭窗口
                                             // //刷新页面
                                             // Ext.getCmp("designList_Grid").getStore().load()
@@ -464,7 +487,7 @@ Ext.define('project.project_check_designList',{
         //弹出框，出入库详细记录
         var specific_designList_outbound=Ext.create('Ext.grid.Panel',{
             // id : 'specific_designList_outbound',
-            tbar: toolbar_pop,
+            tbar: toolbar_back_pop,
             // store:material_Query_Records_store1,//oldpanellogdetailList，store1的数据固定
             dock: 'bottom',
             columns:[

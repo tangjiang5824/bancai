@@ -48,6 +48,8 @@ public class ProjectController {
     private workorderlogdao workorderlogdao;
     @Autowired
     private workordermatchresultdao workordermatchresultdao;
+    @Autowired
+    private designlistdao designlistdao;
 
 
 
@@ -915,6 +917,104 @@ public class ProjectController {
         }
         WebResponse response =queryAllService.queryDataPage(start, limit, c, "work_order_log_view");
         return response;
+    }
+
+    //下料
+    @RequestMapping("/process/flow1")
+    public Boolean workProcess1(Integer id){
+        Designlist designlist=designlistdao.findById(id).orElse(null);
+        if(designlist!=null&&designlist.getProcessStatus()==1){
+            designlist.setProcessStatus(2);
+            designlistdao.save(designlist);
+        }else {
+            return false;
+        }
+        return true;
+    }
+    //回滚下料
+    @RequestMapping("/process/backflow1")
+    public Boolean workBackProcess1(Integer id){
+        Designlist designlist=designlistdao.findById(id).orElse(null);
+        if(designlist!=null&&designlist.getProcessStatus()==2){
+            designlist.setProcessStatus(1);
+            designlistdao.save(designlist);
+        }else {
+            return false;
+        }
+        return true;
+    }
+
+    //焊接
+    @RequestMapping("/process/flow2")
+    public Boolean workProcess2(Integer id){
+        Designlist designlist=designlistdao.findById(id).orElse(null);
+        if(designlist!=null&&designlist.getProcessStatus()==2){
+            designlist.setProcessStatus(3);
+            designlistdao.save(designlist);
+        }else {
+            return false;
+        }
+        return true;
+    }
+    //回滚焊接
+    @RequestMapping("/process/backflow2")
+    public Boolean workBackProcess2(Integer id){
+        Designlist designlist=designlistdao.findById(id).orElse(null);
+        if(designlist!=null&&designlist.getProcessStatus()==3){
+            designlist.setProcessStatus(2);
+            designlistdao.save(designlist);
+        }else {
+            return false;
+        }
+        return true;
+    }
+    //喷漆
+    @RequestMapping("/process/flow3")
+    public Boolean workProcess3(Integer id){
+        Designlist designlist=designlistdao.findById(id).orElse(null);
+        if(designlist!=null&&designlist.getProcessStatus()==3){
+            designlist.setProcessStatus(4);
+            designlistdao.save(designlist);
+        }else {
+            return false;
+        }
+        return true;
+    }
+    //喷漆
+    @RequestMapping("/process/backflow3")
+    public Boolean workBackProcess3(Integer id){
+        Designlist designlist=designlistdao.findById(id).orElse(null);
+        if(designlist!=null&&designlist.getProcessStatus()==4){
+            designlist.setProcessStatus(3);
+            designlistdao.save(designlist);
+        }else {
+            return false;
+        }
+        return true;
+    }
+    //组装
+    @RequestMapping("/process/flow4")
+    public Boolean workProcess4(Integer id){
+        Designlist designlist=designlistdao.findById(id).orElse(null);
+        if(designlist!=null&&designlist.getProcessStatus()==4){
+            designlist.setProcessStatus(5);
+            designlistdao.save(designlist);
+        }else {
+            return false;
+        }
+        return true;
+    }
+    //回滚组装
+    @RequestMapping("/process/backflow4")
+    public Boolean workBackProcess4(Integer id){
+        Designlist designlist=designlistdao.findById(id).orElse(null);
+        if(designlist!=null&&designlist.getProcessStatus()==5){
+            designlist.setProcessStatus(4);
+            designlistdao.save(designlist);
+        }else {
+            return false;
+        }
+        return true;
     }
 
 

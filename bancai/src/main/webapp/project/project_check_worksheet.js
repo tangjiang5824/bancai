@@ -124,7 +124,7 @@ Ext.define('project.project_check_worksheet',{
 
 
         var worksheet_Grid=Ext.create('Ext.grid.Panel',{
-            title: '工单查询',
+            // title: '工单查询',
             id : 'worksheet_Grid',
             store:worksheetListStore,
             dock: 'bottom',
