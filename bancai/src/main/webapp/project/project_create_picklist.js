@@ -540,9 +540,16 @@ Ext.define('project.project_create_picklist',{
                         // itemId:'move_right',
                         handler:function() {
                             var records = worksheet_Grid.getSelectionModel().getSelection();
-                            // console.log(records)
-                            // console.log("测试")
-                            // console.log(records[0])
+                            console.log('------------------->',records);
+                            console.log("测试");
+                            var s = new Array();
+                            for(var i=0;i<records.length;i++){
+                                // console.log("aaaa",records[i].data)
+                                s.push(JSON.stringify(records[i].data))
+                            }
+
+
+                            // console.log('..............',ss)
                             //
                             // for (i = 0; i < records.length; i++) {
                             //     console.log(records[i].data['countTemp'])
@@ -553,16 +560,19 @@ Ext.define('project.project_create_picklist',{
                             // }
                             //若要领数量<领取数量，则不能直接remove，需要更改数量值
 
-                            var select = Ext.getCmp('worksheet_Grid').getStore()
-                                .getData();
+                            // var select = Ext.getCmp('worksheet_Grid').getStore()
+                            //     .getData();
+                            //
+                            // console.log('------------------->',select)
                             // console.log("operator-----------------",operator);
 
-                            var s = new Array();
-                            select.each(function(rec) {
-                                s.push(JSON.stringify(rec.data));
-                                //alert(JSON.stringify(rec.data));//获得表格中的数据
-                                //s.push();
-                            });
+                            // var s = new Array();
+                            // select.each(function(rec) {
+                            //     console.log("ssss",rec.data)
+                            //     s.push(JSON.stringify(rec.data));
+                            //     //alert(JSON.stringify(rec.data));//获得表格中的数据
+                            //     //s.push();
+                            // });
 
                             //进度条
                             Ext.MessageBox.show(
