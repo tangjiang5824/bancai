@@ -188,7 +188,7 @@ public class DesignlistService extends BaseService{
                 sql = "update oldpanel_store set countUse=countUse+\""+count+"\" where id=\""+storeId+"\"";
                 break;
             case 4:
-                sql = "update material_store set count=countUse+\""+count+"\" where id=\""+storeId+"\"";
+                sql = "update material_store set countUse=countUse+\""+count+"\" where id=\""+storeId+"\"";
                 break;
             default:
                 return true;
@@ -361,6 +361,7 @@ public class DesignlistService extends BaseService{
             ,String type,String storeId,String productId,String count,String projectId,String buildingId,String buildingpositionId) {
         String sql_addLogDetail="insert into requisition_order_logdetail (requisitionOrderLogId,requisitionOrderDetailId,count)" +
                 " values (?,?,?)";
+        String sql_updateWorkOrderDetail = "update work_order_detail set status=1 where id=\""+workOrderDetailId+"\"";
         int requisitionOrderDetailId = insertProjectService.insertDataToTable("insert into requisition_order_detail " +
                         "(requisitionOrderId,workOrderDetailId,type,storeId,productId,countRec,countAll" +
                         ",projectId,buildingId,buildingpositionId) values (?,?,?,?,?,?,?,?,?,?)"
@@ -368,7 +369,7 @@ public class DesignlistService extends BaseService{
                 , projectId, buildingId, buildingpositionId);
         insertProjectService.insertIntoTableBySQL(sql_addLogDetail,
                 String.valueOf(requisitionOrderLogId), String.valueOf(requisitionOrderDetailId), count);
-
+        jo.update(sql_updateWorkOrderDetail);
     }
 
 //        DataList workOrderDetailListList = queryService.query("select * from work_order_detail_list where detailId=?",workOrderDetailId);
