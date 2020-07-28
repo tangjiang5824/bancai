@@ -45,20 +45,156 @@ Ext.define('project.management.buildproject', {
         // 	anchor: '100%',
         // });
 
+        //是否是预加工
+        var isPreprocessStore = Ext.create('Ext.data.Store', {
+            fields: ['abbr', 'name'],
+            data : [
+                {"abbr":"0", "name":"否"},
+                {"abbr":"1", "name":"是"},
+            ]
+        });
 
-        var toobar = Ext.create('Ext.toolbar.Toolbar',{
+        var isPreprocess = Ext.create('Ext.form.ComboBox', {
+            fieldLabel: '项目是否为预加工',
+            name: 'isPreprocess',
+            id: 'isPreprocess',
+            store: isPreprocessStore,
+            queryMode: 'local',
+            displayField: 'name',
+            valueField: 'abbr',
+            margin : '0 0 0 40',
+            width: 190,
+            labelWidth: 110,
+            renderTo: Ext.getBody(),
+            listeners:{
+                select:function (combo, record) {
+                    //选中后
+                    var select = record[0].data;
+                    var abbr = select.abbr;//项目名对应的id
+                    var value = select.name;//项目名对应的名字
+                    console.log('abbr----------',abbr);
+                    console.log('avaluebbr----------',value);
+                    var addBuild_btn = Ext.getCmp('addBuild');
+                    //1--若是预加工项目，则不允许添加楼栋
+                    if(abbr == 0){
+                        addBuild_btn.setHidden(false);
+                    }else{
+                        addBuild_btn.setHidden(true);
+                    }
+                }
+            }
+        });
+
+        var toolbar_1 = Ext.create('Ext.toolbar.Toolbar',{
             items: [
                 {
                     xtype: 'textfield',
                     margin : '0 10 0 0',
                     fieldLabel: '项目名',
                     id :'projectName',
-                    width: '35%',
+                    // width: '35%',
+                    width: 700,
                     labelWidth: 50,
                     name: 'projectName',
                     value:"",
-
                 },
+                isPreprocess
+                ]
+        });
+        //职员信息
+        var workerListStore = Ext.create('Ext.data.Store',{
+            fields : [ 'typeName'],
+            proxy : {
+                type : 'ajax',
+                url : '/material/findAllBytableName.do?tableName=department_worker',
+                reader : {
+                    type : 'json',
+                    rootProperty: 'department_worker',
+                },
+            },
+            autoLoad : true
+        });
+        var toolbar_2 = Ext.create('Ext.toolbar.Toolbar',{
+            items: [
+                // {
+                //     xtype: 'textfield',
+                //     margin : '0 10 0 0',
+                //     fieldLabel: '计划负责人',
+                //     id :'planLeader',
+                //     width: 180,
+                //     labelWidth: 80,
+                //     name: 'planLeader',
+                //     value:"",
+                // },
+                {
+                    fieldLabel : '计划负责人',
+                    xtype : 'combo',
+                    name : 'planLeader',
+                    id : 'planLeader',
+                    margin: '0 10 0 0',
+                    width: 180,
+                    labelWidth: 80,
+                    store : workerListStore,
+                    displayField : 'workerName',
+                    valueField : 'id',
+                    editable : true,
+                },
+                {
+                    fieldLabel : '生产负责人',
+                    xtype : 'combo',
+                    name : 'produceLeader',
+                    id : 'produceLeader',
+                    margin: '0 10 0 0',
+                    width: 180,
+                    labelWidth: 80,
+                    store : workerListStore,
+                    displayField : 'workerName',
+                    valueField : 'id',
+                    editable : true,
+                },
+                {
+                    fieldLabel : '采购负责人',
+                    xtype : 'combo',
+                    name : 'purchaseLeader',
+                    id : 'purchaseLeader',
+                    margin: '0 10 0 0',
+                    width: 180,
+                    labelWidth: 80,
+                    store : workerListStore,
+                    displayField : 'workerName',
+                    valueField : 'id',
+                    editable : true,
+                },
+                {
+                    fieldLabel : '财务负责人',
+                    xtype : 'combo',
+                    name : 'financeLeader',
+                    id : 'financeLeader',
+                    margin: '0 10 0 0',
+                    width: 180,
+                    labelWidth: 80,
+                    store : workerListStore,
+                    displayField : 'workerName',
+                    valueField : 'id',
+                    editable : true,
+                },
+                {
+                    fieldLabel : '仓库负责人',
+                    xtype : 'combo',
+                    name : 'storeLeader',
+                    id : 'storeLeader',
+                    margin: '0 10 0 0',
+                    width: 180,
+                    labelWidth: 80,
+                    store : workerListStore,
+                    displayField : 'workerName',
+                    valueField : 'id',
+                    editable : true,
+                },
+                ]
+        });
+        var toolbar_3 = Ext.create('Ext.toolbar.Toolbar',{
+            items: [
                 {
                     xtype : 'monthfield',
                     margin : '0 10 0 0',
@@ -68,9 +204,10 @@ Ext.define('project.management.buildproject', {
                     id : "startTime",
                     name : 'startTime',
                     //align: 'right',
-                    format : 'Y-m',
+                    format : 'Y-m-d',
                     editable : false,
-                    value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.MONTH), "Y-m-d")
+                    // value:Ext.util.Format.date(Ext.Date.add(new Date(),Ext.Date.MONTH,-1),"Y-m-d")
+                    value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
                 },  {
                     xtype : 'monthfield',
                     margin : '0 10 0 0',
@@ -80,148 +217,33 @@ Ext.define('project.management.buildproject', {
                     id : "proEndTime",
                     name : 'proEndTime',
                     //align: 'right',
-                    format : 'Y-m',
+                    format : 'Y-m-d',
                     editable : false,
-                    value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.MONTH), "Y-m-d")
-                },{
-                    xtype: 'textfield',
-                    margin : '0 10 0 0',
-                    fieldLabel: '计划负责人',
-                    id :'planLeader',
-                    width: 180,
-                    labelWidth: 80,
-                    name: 'planLeader',
-                    value:"",
-
+                    // value:Ext.util.Format.date(Ext.Date.add(new Date(),Ext.Date.MONTH,-1),"Y-m-d")
+                    value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
                 }]
         });
-        var toobar_2 = Ext.create('Ext.toolbar.Toolbar',{
-            items: [
-               {
-                    xtype: 'textfield',
-                    margin : '0 10 0 0',
-                    fieldLabel: '生产负责人',
-                    id :'produceLeader',
-                    width: 180,
-                    labelWidth: 80,
-                    name: 'produceLeader',
-                    value:"",
 
-                },{
-                    xtype: 'textfield',
-                    margin : '0 10 0 0',
-                    fieldLabel: '采购负责人',
-                    id :'purchaseLeader',
-                    width: 180,
-                    labelWidth: 80,
-                    name: 'purchaseLeader',
-                    value:"",
-
-                },{
-                    xtype: 'textfield',
-                    margin : '0 10 0 0',
-                    fieldLabel: '财务负责人',
-                    id :'financeLeader',
-                    width: 180,
-                    labelWidth: 80,
-                    name: 'financeLeader',
-                    value:"",
-
-                },{
-                    xtype: 'textfield',
-                    margin : '0 10 0 0',
-                    fieldLabel: '仓库负责人',
-                    id :'storeLeader',
-                    width: 180,
-                    labelWidth: 80,
-                    name: 'storeLeader',
-                    value:"",
-
-                }]
-        });
         var toolbar2 = Ext.create("Ext.toolbar.Toolbar", {
             dock : "top",
             items : [{
                 xtype : 'button',
                 iconAlign : 'center',
                 iconCls : 'rukuicon ',
+                id:'addBuild',
                 text : '添加楼栋',
                 handler : function() {
                     //fields: ['品号', '品名','规格','库存单位','仓库编号','数量','成本','存放位置']
                     var data = [{
-
                         '楼栋编号' : '',
                         '楼栋名' : '',
                         '楼栋负责人' : ''
-
                     }];
                     //Ext.getCmp('addDataGrid')返回定义的对象
                     Ext.getCmp('addDataGrid').getStore().loadData(data,
                         true);
-
                 }
-
             },
-            //     {
-            //     xtype : 'button',
-            //     iconAlign : 'center',
-            //     iconCls : 'rukuicon ',
-            //     text : '添加字段名',
-            //     // handler : function() {
-            //     // 	//fields: ['品号', '品名','规格','库存单位','仓库编号','数量','成本','存放位置']
-            //     // 	var data = [{
-            //     // 		'品号' : '',
-            //     // 		'长' : '',
-            //     // 		'类型' : '',
-            //     // 		'宽' : '',
-            //     // 	}];
-            //     // 	//Ext.getCmp('addDataGrid')返回定义的对象
-            //     // 	Ext.getCmp('addDataGrid').getStore().loadData(data,
-            //     // 		true);
-            //     //
-            //     // }
-            //
-            // },
-                // 	{
-                // 	xtype : 'button',
-                // 	iconAlign : 'center',
-                // 	iconCls : 'rukuicon ',
-                // 	text : '保存',
-                //
-                // 	handler : function() {
-                // 		// 取出grid的字段名字段类型
-                // 		//var userid="<%=session.getAttribute('userid')%>";
-                // 		var select = Ext.getCmp('addDataGrid').getStore()
-                // 			.getData();
-                // 		var s = new Array();
-                // 		select.each(function(rec) {
-                // 			//delete rec.data.id;
-                // 			s.push(JSON.stringify(rec.data));
-                // 			//alert(JSON.stringify(rec.data));//获得表格中的数据
-                // 		});
-                // 		//alert(s);//数组s存放表格中的数据，每条数据以json格式存放
-                //
-                // 		Ext.Ajax.request({
-                // 			url : 'addData.do', //HandleDataController
-                // 			method:'POST',
-                // 			//submitEmptyText : false,
-                // 			params : {
-                // 				tableName:tableName,
-                // 				materialType:materialtype,
-                // 				s : "[" + s + "]",
-                // 			},
-                // 			success : function(response) {
-                // 				Ext.MessageBox.alert("提示", "保存成功！");
-                // 				me.close();
-                //
-                // 			},
-                // 			failure : function(response) {
-                // 				Ext.MessageBox.alert("提示", "保存失败！");
-                // 			}
-                // 		});
-                //
-                // 	}
-                // }
             ]
         });
         var grid = Ext.create("Ext.grid.Panel", {
@@ -229,8 +251,6 @@ Ext.define('project.management.buildproject', {
             dockedItems : [toolbar2],
             store : {
                 fields: ['楼栋编号',"楼栋名","楼栋负责人"]
-//				fields : ['fieldName', 'fieldType', 'taxUnitCode',
-//						'taxUnitName', 'isNull', 'fieldCheck', 'width']
             },
             columns : [ {
                 dataIndex : 'buildingNo',
@@ -239,9 +259,7 @@ Ext.define('project.management.buildproject', {
                 editor : {// 文本字段
                     xtype : 'textfield',
                     allowBlank : false,
-
                 }
-
             }, {
                 dataIndex : 'buildingName',
                 text : '楼栋名',
@@ -249,9 +267,7 @@ Ext.define('project.management.buildproject', {
                 editor : {// 文本字段
                     xtype : 'textfield',
                     allowBlank : false,
-
                 }
-
             },{
                 dataIndex : 'buildingOwner',
                 text : '楼栋负责人',
@@ -322,7 +338,6 @@ Ext.define('project.management.buildproject', {
                         url : 'generate_project.do', //createProject.do
                         method:'POST',
                         //submitEmptyText : false,
-
                         params : {
                             //tableName:tableName,
                             //materialType:materialtype,
@@ -334,6 +349,7 @@ Ext.define('project.management.buildproject', {
                             financeLeader:Ext.getCmp('financeLeader').getValue(),
                             storeLeader:Ext.getCmp('storeLeader').getValue(),
                             projectName:Ext.getCmp('projectName').getValue(),
+                            isPreprocess:Ext.getCmp('isPreprocess').getValue(),//项目是否为预加工
                             s : "[" + s + "]",
                         },
                         success : function(response) {
@@ -350,7 +366,7 @@ Ext.define('project.management.buildproject', {
             }]
         });
 
-        this.dockedItems = [toobar,toobar_2,toolbar2,grid,toolbar3];
+        this.dockedItems = [toolbar_1,toolbar_2,toolbar_3,grid,toolbar3];
         //this.items = [ me.grid ];
         this.callParent(arguments);
 

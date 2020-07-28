@@ -11,6 +11,18 @@ Ext.define('project.project_create_picklist',{
         //存放所选的原材料的具体规格
         var materialList = '';
 
+        //原件类型：枚举类型
+        Ext.define('product.model.originType', {
+            statics: { // 关键s
+                0: { value: '0', name: '未匹配' },
+                1: { value: '1', name: '退库成品' },
+                2: { value: '2', name: '预加工半产品' },
+                3: { value: '3', name: '旧板' },
+                4: { value: '4', name: '原材料' },
+                9: { value: '5', name: '未匹配成功' },
+            }
+        });
+
         //项目名称选择
         var tableListStore = Ext.create('Ext.data.Store',{
             fields : [ "项目名称","id"],
@@ -360,17 +372,6 @@ Ext.define('project.project_create_picklist',{
 
         var toobar_right = Ext.create('Ext.toolbar.Toolbar',{
             items: [
-
-                // {
-                //     xtype: 'textfield',
-                //     margin : '0 30 0 0',
-                //     fieldLabel: '创建人',
-                //     id :'pickName',
-                //     width: 200,
-                //     labelWidth: 50,
-                //     name: 'pickName',
-                //     value:"",
-                // },
                 {
                     fieldLabel : '创建人',
                     xtype : 'combo',
@@ -496,6 +497,14 @@ Ext.define('project.project_create_picklist',{
                     flex :1
                 },
                 {
+                    dataIndex:'type', //工单号
+                    text:'材料类型',
+                    flex :1,
+                    renderer: function (value) {
+                        return product.model.originType[value].name; // key-value
+                    },
+                },
+                {
                     dataIndex:'count', //工单号
                     text:'数量',
                     flex :1
@@ -535,8 +544,8 @@ Ext.define('project.project_create_picklist',{
                     // flex:0.3,
                     items:[{
                         xtype:'button',
-                        // margin: '0 0 0 30',
-                        text:'选择',
+                        // margin: '0 0 0 0',
+                        text:'领料单信息预览',
                         // itemId:'move_right',
                         handler:function() {
                             var records = worksheet_Grid.getSelectionModel().getSelection();
@@ -547,7 +556,6 @@ Ext.define('project.project_create_picklist',{
                                 // console.log("aaaa",records[i].data)
                                 s.push(JSON.stringify(records[i].data))
                             }
-
 
                             // console.log('..............',ss)
                             //
@@ -587,6 +595,7 @@ Ext.define('project.project_create_picklist',{
                             );
 
                             Ext.Ajax.request({
+                                // url : 'order/requisitionCreatePreview.do', //原材料入库
                                 url : 'order/requisitionCreatePreview.do', //原材料入库
                                 method:'POST',
                                 //submitEmptyText : false,
@@ -619,6 +628,59 @@ Ext.define('project.project_create_picklist',{
 
                         }
                     },
+                        {
+                            xtype:'button',
+                            margin: '0 0 0 40',
+                            text:'创建领料单',
+                            // itemId:'move_right',
+                            handler:function() {
+                                var records = worksheet_Grid.getSelectionModel().getSelection();
+                                console.log('------------------->',records);
+                                console.log("测试");
+                                var s = new Array();
+                                for(var i=0;i<records.length;i++){
+                                    // console.log("aaaa",records[i].data)
+                                    s.push(JSON.stringify(records[i].data))
+                                }
+
+                                //进度条
+                                Ext.MessageBox.show(
+                                    {
+                                        title:'请稍候',
+                                        msg:'正在查询工单的材料信息，请耐心等待...',
+                                        progressText:'',    //进度条文本
+                                        width:300,
+                                        progress:true,
+                                        closable:false
+                                    }
+                                );
+                                Ext.Ajax.request({
+                                    url : 'order/addRequisitionOrder.do', //创建领料单
+                                    method:'POST',
+                                    //submitEmptyText : false,
+                                    params : {
+                                        //materialType:materialtype,
+                                        operator:Ext.getCmp('operator').getValue(),
+                                        s : "[" + s + "]",
+                                    },
+                                    success : function(response) {
+                                        //关闭进度条
+                                        Ext.MessageBox.hide();
+                                        console.log("response=======================",response)
+                                        Ext.MessageBox.alert("提示","创建成功" );
+                                    },
+                                    failure : function(response) {
+                                        //关闭进度条
+                                        Ext.MessageBox.hide();
+
+                                        //var message =Ext.decode(response.responseText).showmessage;
+                                        Ext.MessageBox.alert("提示","创建失败" );
+                                    }
+                                });
+
+                            }
+                        }
+
                     //     {
                     //     xtype:'button',
                     //     text:'撤销',

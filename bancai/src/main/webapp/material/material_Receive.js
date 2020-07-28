@@ -63,62 +63,6 @@ Ext.define('material.material_Receive',{
             fields:['materialName','materialCount'],
         });
 
-        var clms=[
-            {
-                dataIndex:'materialName',
-                text:'材料名',
-                flex :1
-            },
-            {
-                dataIndex:'width',
-                text:'材料宽',
-                flex :1
-            },
-            {
-                dataIndex:'length',
-                text:'材料长',
-                flex :1
-            },
-            {
-                dataIndex:'materialCount',
-                text:'所需数量',
-                flex :1
-            },
-            {
-                dataIndex:'countReceived',
-                text:'已领数量',
-                flex :1
-            },
-            {
-                dataIndex:'countNotReceived',
-                text:'待领数量',
-                //editor:{xtype : 'textfield', allowBlank : false}
-                flex :1
-            },
-            {
-                dataIndex:'countTemp',//countTemp
-                text:'选择领取数量',
-                id:'temp',
-                flex :1,
-                editor:{xtype : 'textfield', allowBlank : true},
-
-            }
-        ];
-        var clms1=[ {dataIndex:'materialName', text:'材料名',flex :1 },
-                    {
-                        dataIndex:'countTemp',//countTemp
-                        text:'领取数量',
-                        flex :1
-                        //editor:{xtype : 'textfield', allowBlank : true},
-
-                    }
-                    // {dataIndex:'countNotReceived', text:'要领数量',flex :1
-                    //     //editor:{xtype : 'textfield', allowBlank : false}
-                    // },
-
-                    ];
-
-
         //确认入库按钮，
         // var toolbar3 = Ext.create('Ext.toolbar.Toolbar', {
         //     dock : "bottom",
@@ -178,6 +122,12 @@ Ext.define('material.material_Receive',{
             dock : "top",
             id : "toolbar",
             items: [tableList,
+                //领料单创建时间
+
+                //位置
+
+                //材料类型
+
                 {
                     xtype : 'button',
                     text: '项目领料单查询',
@@ -206,7 +156,47 @@ Ext.define('material.material_Receive',{
             id : 'PickingListGrid',
             store:MaterialList,
             dock: 'bottom',
-            columns:clms,
+            columns:[
+                {
+                    dataIndex:'materialName',
+                    text:'材料名',
+                    flex :1
+                },
+                {
+                    dataIndex:'width',
+                    text:'材料宽',
+                    flex :1
+                },
+                {
+                    dataIndex:'length',
+                    text:'材料长',
+                    flex :1
+                },
+                {
+                    dataIndex:'materialCount',
+                    text:'所需数量',
+                    flex :1
+                },
+                {
+                    dataIndex:'countReceived',
+                    text:'已领数量',
+                    flex :1
+                },
+                {
+                    dataIndex:'countNotReceived',
+                    text:'待领数量',
+                    //editor:{xtype : 'textfield', allowBlank : false}
+                    flex :1
+                },
+                {
+                    dataIndex:'countTemp',//countTemp
+                    text:'选择领取数量',
+                    id:'temp',
+                    flex :1,
+                    editor:{xtype : 'textfield', allowBlank : true},
+
+                }
+            ],
             flex:1,
             // height:'100%',
             // tbar: toolbar,
@@ -214,17 +204,16 @@ Ext.define('material.material_Receive',{
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 2
             })],
-            // dockedItems: [
-            //     {
-            //     xtype: 'pagingtoolbar',
-            //     store: MaterialList,   // same store GridPanel is using
-            //     dock: 'bottom',
-            //     displayInfo: true,
-            //     displayMsg:'显示{0}-{1}条，共{2}条',
-            //     emptyMsg:'无数据'
-            // },
-            //     toolbar3
-            // ],
+            dockedItems: [
+                {
+                    xtype: 'pagingtoolbar',
+                    store: MaterialList,   // same store GridPanel is using
+                    dock: 'bottom',
+                    displayInfo: true,
+                    displayMsg:'显示{0}-{1}条，共{2}条',
+                    emptyMsg:'无数据'
+                }
+            ],
             listeners: {
 
 
@@ -340,32 +329,49 @@ Ext.define('material.material_Receive',{
                             }
                         });
 
-                    // 重新加载页面，该项目的领料单信息
+                        // 重新加载页面，该项目的领料单信息
                         MaterialList.load({
                             params : {
                                 proejctId:Ext.getCmp('projectName').getValue(),
                                 //proejctId:'1',
                             }
                         });
-                    //  右边输入框重置
+                        //  右边输入框重置
 
-                    //  右边页面重置
+                        //  右边页面重置
                         Ext.getCmp('pickName').setValue("");
                         MaterialList2.removeAll();
                     }
                 }
 
-                ]
+            ]
         })
         var grid2=Ext.create('Ext.grid.Panel',{
             id : 'pickingMaterialGrid',
             store:MaterialList2,
             dock: 'bottom',
-            columns:clms1,
+            columns:[
+                {dataIndex:'materialName', text:'材料名',flex :1 },
+                {
+                    dataIndex:'countTemp',//countTemp
+                    text:'领取数量',
+                    flex :1
+                    //editor:{xtype : 'textfield', allowBlank : true},
+                }],
             // height:'100%',
             flex:1,
             tbar:toobar_right,
-            selType:'checkboxmodel'
+            selType:'checkboxmodel',
+            dockedItems: [
+                {
+                    xtype: 'pagingtoolbar',
+                    store: MaterialList2,   // same store GridPanel is using
+                    dock: 'bottom',
+                    displayInfo: true,
+                    displayMsg:'显示{0}-{1}条，共{2}条',
+                    emptyMsg:'无数据'
+                }
+            ],
         });
 
 
@@ -380,68 +386,46 @@ Ext.define('material.material_Receive',{
 
             items:[grid1,
                 {
-                xtype:'container',
-                // flex:0.3,
-                items:[{
-                    xtype:'button',
-                    // margin: '0 0 0 30',
-                    text:'选择',
-                    itemId:'move_right',
-                    handler:function() {
-                        var records = grid1.getSelectionModel().getSelection();
-                        console.log(records)
-                        console.log("测试")
-                        console.log(records[0])
+                    xtype:'container',
+                    // flex:0.3,
+                    items:[{
+                        xtype:'button',
+                        // margin: '0 0 0 30',
+                        text:'选择',
+                        itemId:'move_right',
+                        handler:function() {
+                            var records = grid1.getSelectionModel().getSelection();
+                            console.log(records)
+                            console.log("测试")
+                            console.log(records[0])
 
-                        for (i = 0; i < records.length; i++) {
-                            console.log(records[i].data['countTemp'])
-                            if(records[i].data['countTemp'] != 0){
-                                console.log("添加")
-                                MaterialList2.add(records[i]);
+                            for (i = 0; i < records.length; i++) {
+                                console.log(records[i].data['countTemp'])
+                                if(records[i].data['countTemp'] != 0){
+                                    console.log("添加")
+                                    MaterialList2.add(records[i]);
+                                }
                             }
-                        }
-                        //若要领数量<领取数量，则不能直接remove，需要更改数量值
+                            //若要领数量<领取数量，则不能直接remove，需要更改数量值
 
-                    }
-                },{
-                    xtype:'button',
-                    text:'撤销',
-                    itemId:'move_left',
-                    handler:function(){
-                        var records=grid2.getSelectionModel().getSelection();
-                        MaterialList2.remove(records);
-                        MaterialList.add(records);
-                    }
-                }]
-            },
+                        }
+                    },{
+                        xtype:'button',
+                        text:'撤销',
+                        itemId:'move_left',
+                        handler:function(){
+                            var records=grid2.getSelectionModel().getSelection();
+                            MaterialList2.remove(records);
+                            MaterialList.add(records);
+                        }
+                    }]
+                },
                 grid2
             ],
         });
 
-
-
-        var grid = Ext.create('Ext.grid.Panel',{
-            id: 'uploadRecordsMain',
-            //store: uploadRecordsStore,
-            viewConfig : {
-                enableTextSelection : true,
-                editable:true
-            },
-
-        });
-
-        this.dockedItems = [toolbar,panel,{
-            xtype: 'pagingtoolbar',
-            // store: material_Query_Data_Store,   // same store GridPanel is using
-            dock: 'bottom',
-            displayInfo: true,
-            displayMsg:'显示{0}-{1}条，共{2}条',
-            emptyMsg:'无数据'
-        }
-        ];
-        // this.dockedItems = [toolbar,panel,toolbar3];
-        // this.items = [grid1];
+        this.tbar = toolbar;
+        this.items = [panel];
         this.callParent(arguments);
     }
 })
-

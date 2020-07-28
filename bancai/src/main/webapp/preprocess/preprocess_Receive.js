@@ -1,8 +1,8 @@
-Ext.define('oldpanel.oldpanel_Receive',{
+Ext.define('preprocess.preprocess_Receive',{
     extend:'Ext.panel.Panel',
     region: 'center',
     layout:'fit',
-    title: '旧板领料',
+    title: '预加工半成品领料',
 
     initComponent: function(){
         var itemsPerPage = 50;
@@ -200,13 +200,13 @@ Ext.define('oldpanel.oldpanel_Receive',{
             })],
             dockedItems: [
                 {
-                xtype: 'pagingtoolbar',
-                store: MaterialList,   // same store GridPanel is using
-                dock: 'bottom',
-                displayInfo: true,
-                displayMsg:'显示{0}-{1}条，共{2}条',
-                emptyMsg:'无数据'
-            }
+                    xtype: 'pagingtoolbar',
+                    store: MaterialList,   // same store GridPanel is using
+                    dock: 'bottom',
+                    displayInfo: true,
+                    displayMsg:'显示{0}-{1}条，共{2}条',
+                    emptyMsg:'无数据'
+                }
             ],
             listeners: {
 

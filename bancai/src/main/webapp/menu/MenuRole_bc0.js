@@ -123,7 +123,7 @@ Ext.define("menu.MenuRole_bc0", {
 				},
 					{
 						text : '预加工半成品领料',
-						// id : 'material.material_Receive',
+						id : 'preprocess.preprocess_Receive',
 						leaf : true
 					},
 				// 	{
@@ -154,7 +154,7 @@ Ext.define("menu.MenuRole_bc0", {
 				},
 					{
 						text : '退库成品领料',
-						// id : 'material.material_Receive',
+						id : 'backproduct.backproduct_Receive',
 						leaf : true
 					},
 				// 	{
