@@ -256,7 +256,7 @@ public class DesignlistService extends BaseService{
         //fori:requisition_order_detail,requisition_order_logdetail
         Date date=new Date();
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String sql_query = "select workOrderDetailId,type,storeId,productId,projectId,buildingId,buildingpositionId,sum(singleNum) as count from " +
+        String sql_query = "select id,type,storeId,productId,projectId,buildingId,buildingpositionId,sum(singleNum) as count from " +
                 "requisition_create_preview_work_order_match_store where workOrderDetailId in ("+workOrderDetailIdString+") group by workOrderDetailId,type,storeId";
         DataList insertList = queryService.query(sql_query);
         String projectId = insertList.get(0).get("projectId").toString();
@@ -268,8 +268,9 @@ public class DesignlistService extends BaseService{
         String sql_addOrderDetail = "insert into requisition_order_detail (requisitionOrderId,workOrderDetailId,type,storeId" +
                 ",productId,countRec,countAll,buildingId,buildingpositionId) values (?,?,?,?,?,?,?,?,?)";
         String sql_addLogDetail = "insert into requisition_order_logdetail (requisitionOrderLogId,requisitionOrderDetailId,count) values (?,?,?)";
+        String sql_updateStatus = "update work_order_detail set status=1 where id=\"";
         for (DataRow dataRow : insertList) {
-            String workOrderDetailId = dataRow.get("workOrderDetailId").toString();
+            String workOrderDetailId = dataRow.get("id").toString();
             String type = dataRow.get("type").toString();
             String storeId = dataRow.get("storeId").toString();
             String productId = dataRow.get("productId").toString();
@@ -278,6 +279,7 @@ public class DesignlistService extends BaseService{
             String buildingpositionId = dataRow.get("buildingpositionId").toString();
             int requisitionOrderDetailId = insertProjectService.insertDataToTable(sql_addOrderDetail, String.valueOf(requisitionOrderId)
                     , workOrderDetailId, type, storeId, productId, count, count, buildingId, buildingpositionId);
+            jo.update(sql_updateStatus+workOrderDetailId+"\"");
             insertProjectService.insertIntoTableBySQL(sql_addLogDetail, String.valueOf(requisitionOrderLogId), String.valueOf(requisitionOrderDetailId), count);
         }
     }

@@ -601,6 +601,7 @@ Ext.define('project.project_create_picklist',{
                                 //submitEmptyText : false,
                                 params : {
                                     //materialType:materialtype,
+                                    // operator : "1",
                                     s : "[" + s + "]",
                                 },
                                 success : function(response) {
