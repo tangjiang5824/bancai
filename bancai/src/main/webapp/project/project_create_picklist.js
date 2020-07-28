@@ -587,11 +587,13 @@ Ext.define('project.project_create_picklist',{
                             );
 
                             Ext.Ajax.request({
-                                url : 'order/requisitionCreatePreview.do', //原材料入库
+                                // url : 'order/requisitionCreatePreview.do', //原材料入库
+                                url : 'order/addRequisitionOrder.do', //原材料入库
                                 method:'POST',
                                 //submitEmptyText : false,
                                 params : {
                                     //materialType:materialtype,
+                                    operator : "1",
                                     s : "[" + s + "]",
                                 },
                                 success : function(response) {
