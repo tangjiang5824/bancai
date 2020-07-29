@@ -260,8 +260,8 @@ public class DesignlistService extends BaseService{
                 "requisition_create_preview_work_order_match_store where workOrderDetailId in ("+workOrderDetailIdString+") group by workOrderDetailId,type,storeId";
         DataList insertList = queryService.query(sql_query);
         String projectId = insertList.get(0).get("projectId").toString();
-        String sql_addOrder = "insert into requisition_order (userId,operator,time,projectId) values (?,?,?,?)";
-        int requisitionOrderId = insertProjectService.insertDataToTable(sql_addOrder,userId,operator,simpleDateFormat.format(date),projectId);
+        String sql_addOrder = "insert into requisition_order (userId,operator,time,projectId,status) values (?,?,?,?,?)";
+        int requisitionOrderId = insertProjectService.insertDataToTable(sql_addOrder,userId,operator,simpleDateFormat.format(date),projectId,"0");
         String sql_addLog = "insert into requisition_order_log (type,requisitionOrderId,userId,time,operator) values(?,?,?,?,?)";
         int requisitionOrderLogId = insertProjectService.insertDataToTable(sql_addLog, "1"
                 , String.valueOf(requisitionOrderId),userId,simpleDateFormat.format(date),operator);
@@ -458,23 +458,27 @@ public class DesignlistService extends BaseService{
      * 查询领料单
      * */
     @Transactional
-    public DataList findRequisitionOrder(){
-        return queryService.query("select * from requisition_order_view");
+    public DataList findRequisitionOrder(String projectId){
+        StringBuilder sb =new StringBuilder("select * from requisition_order_view");
+        if((projectId!=null)&&(projectId.length()!=0))
+            sb.append(" where projectId=\"").append(projectId).append("\"");
+        return queryService.query(sb.toString());
     }
 
     /*
      * 查询领料单细节
      * */
     @Transactional
-    public DataList findRequisitionOrderDetail(String requisitionOrderId,String projectId, String buildingId, String buildingpositionId){
-        StringBuilder sb = new StringBuilder("select * from requisition_order_detail_view where requisitionOrderId=?");
-        if((projectId!=null)&&(projectId.length()!=0)){
-            sb.append(" and projectId=\"").append(projectId).append("\"");
-            if((buildingId!=null)&&(buildingId.length()!=0))
-                sb.append(" and buildingId=\"").append(buildingId).append("\"");
-        }
-        if((buildingpositionId!=null)&&(buildingpositionId.length()!=0))
-            sb.append(" and buildingpositionId=\"").append(buildingpositionId).append("\"");
+    public DataList findRequisitionOrderDetail(String requisitionOrderId) {
+        return queryService.query("select * from requisition_order_detail_view where requisitionOrderId=?", requisitionOrderId);
+    }
+        //        if((projectId!=null)&&(projectId.length()!=0)){
+//            sb.append(" and projectId=\"").append(projectId).append("\"");
+//            if((buildingId!=null)&&(buildingId.length()!=0))
+//                sb.append(" and buildingId=\"").append(buildingId).append("\"");
+//        }
+//        if((buildingpositionId!=null)&&(buildingpositionId.length()!=0))
+//            sb.append(" and buildingpositionId=\"").append(buildingpositionId).append("\"");
 //        DataList queryList = new DataList();
 //        queryList = queryService.query(sb.toString(),requisitionOrderId);
 //        for (int i = 0; i < queryList.size(); i++) {
@@ -496,8 +500,6 @@ public class DesignlistService extends BaseService{
 //                    break;
 //            }
 //        }
-        return queryService.query(sb.toString(),requisitionOrderId);
-    }
 
     /**
      * 领料单内容领料
