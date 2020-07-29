@@ -11,6 +11,17 @@ Ext.define('project.project_query_picklist',{
         //存放所选的原材料的具体规格
         var materialList = '';
 
+        //原件类型：枚举类型
+        Ext.define('product.model.originType', {
+            statics: { // 关键s
+                0: { value: '0', name: '未匹配' },
+                1: { value: '1', name: '退库成品' },
+                2: { value: '2', name: '预加工半产品' },
+                3: { value: '3', name: '旧板' },
+                4: { value: '4', name: '原材料' },
+                9: { value: '5', name: '未匹配成功' },
+            }
+        });
         //项目名称选择
         var tableListStore = Ext.create('Ext.data.Store',{
             fields : [ "项目名称","id"],
@@ -28,6 +39,7 @@ Ext.define('project.project_query_picklist',{
             fieldLabel : '项目名',
             labelWidth : 45,
             width : '35%',
+            margin : '0 10 0 0',
             id :  'projectName',
             name : '项目名称',
             matchFieldWidth: true,
@@ -41,7 +53,6 @@ Ext.define('project.project_query_picklist',{
                     console.log(record[0].data.projectName);
                 }
             }
-
         });
 
         //查询领料单
@@ -119,10 +130,79 @@ Ext.define('project.project_query_picklist',{
         //     }]
         // });
 
+        //职员信息
+        var workerListStore = Ext.create('Ext.data.Store',{
+            fields : [ 'typeName'],
+            proxy : {
+                type : 'ajax',
+                url : '/material/findAllBytableName.do?tableName=department_worker',
+                reader : {
+                    type : 'json',
+                    rootProperty: 'department_worker',
+                },
+            },
+            autoLoad : true
+        });
+
         var toolbar = Ext.create('Ext.toolbar.Toolbar',{
             dock : "top",
             id : "toolbar",
             items: [tableList,
+                //单号
+                {
+                    xtype: 'textfield',
+                    margin : '0 10 0 0',
+                    fieldLabel: '单号',
+                    id :'picklistNum',
+                    width: 180,
+                    labelWidth: 30,
+                    name: 'picklistNum',
+                    value:"",
+                },
+                {
+                    fieldLabel : '创建人',
+                    xtype : 'combo',
+                    name : 'operator',
+                    id : 'operator',
+                    // disabled : true,
+                    // width:'95%',
+                    margin: '0 10 0 0',
+                    width: 150,
+                    labelWidth: 45,
+                    store : workerListStore,
+                    displayField : 'workerName',
+                    valueField : 'id',
+                    editable : true,
+                },
+                {
+                    xtype : 'datefield',
+                    margin : '0 0 0 0',
+                    fieldLabel : '创建时间',
+                    width : 180,
+                    labelWidth : 60,
+                    id : "startTime",
+                    name : 'startTime',
+                    format : 'Y-m-d',
+                    editable : false,
+                    //value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
+                },{
+                    xtype:'tbtext',
+                    text:'---',
+                },
+                {
+                    xtype : 'datefield',
+                    margin : '0 0 0 0',
+                    // fieldLabel : '结束时间',
+                    width : 120,
+                    // labelWidth : 60,
+                    id : "endTime",
+                    name : 'endTime',
+                    //align: 'right',
+                    format : 'Y-m-d',
+                    editable : false,
+                    //value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
+                },
+
                 {
                     xtype : 'button',
                     text: '项目领料单查询',
@@ -263,6 +343,9 @@ Ext.define('project.project_query_picklist',{
                     dataIndex:'type',
                     text:'类型',
                     flex :1,
+                    renderer: function (value) {
+                        return product.model.originType[value].name; // key-value
+                    },
                 },
                 {
                     dataIndex:'warehouseName',
@@ -278,15 +361,6 @@ Ext.define('project.project_query_picklist',{
                     dataIndex:'countRec',
                     text:'待领数量',
                     flex :1,
-                },
-                {
-                    dataIndex:'count',
-                    text:'领取数量',
-                    flex :1,
-                    editor : {
-                        xtype : 'textfield',
-                        allowBlank : true
-                    }
                 },
             ],
             // height:'100%',
