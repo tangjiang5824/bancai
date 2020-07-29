@@ -41,7 +41,7 @@ public class DesignlistController {
     @Autowired
     private InsertProjectService insertProjectService;
 
-    private static String isPureNumber = "^-?[0-9]+";
+    private static String isPureNumber = "[0-9]+";
     Logger log=Logger.getLogger(DesignlistController.class);
 
     /*
@@ -338,8 +338,9 @@ public class DesignlistController {
      * 查询领料单
      * */
     @RequestMapping("/order/queryRequisitionOrder.do")
-    public void queryRequisitionOrder(String projectId, HttpServletResponse response) throws IOException, JSONException {
-        DataList requisitionOrderList = designlistService.findRequisitionOrder(projectId);
+    public void queryRequisitionOrder(String projectId, String operator, String timeStart, String timeEnd,
+                                      HttpServletResponse response) throws IOException, JSONException {
+        DataList requisitionOrderList = designlistService.findRequisitionOrder(projectId,operator,timeStart,timeEnd);
         //写回前端
         JSONObject object = new JSONObject();
         JSONArray array = new JSONArray(requisitionOrderList);
@@ -356,61 +357,90 @@ public class DesignlistController {
      * 查询某张领料单细节
      * */
     @RequestMapping("/order/queryRequisitionOrderDetail.do")
-    public void queryRequisitionOrderDetail(String requisitionOrderId, HttpServletResponse response) throws IOException, JSONException {
-        DataList requisitionOrderDetailList = designlistService.findRequisitionOrderDetail(requisitionOrderId);
-        //写回前端
-        JSONObject object = new JSONObject();
-        JSONArray array = new JSONArray(requisitionOrderDetailList);
-        object.put("requisitionOrderDetailList", array);
-//        System.out.println("类型1：--"+array.getClass().getName().toString());
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType("text/html");
-        response.getWriter().write(object.toString());
-        response.getWriter().flush();
-        response.getWriter().close();
+    public void queryRequisitionOrderDetail(String type, String requisitionOrderId, String warehouseName, String buildingId,
+                                            String buildingpositionId,HttpServletResponse response) throws IOException, JSONException {
+        if((requisitionOrderId==null)||(requisitionOrderId.length()==0)){
+            response.sendError(100,"未选择领料单");
+        }else {
+            DataList requisitionOrderDetailList = designlistService.findRequisitionOrderDetail(type, requisitionOrderId, warehouseName, buildingId, buildingpositionId);
+            //写回前端
+            JSONObject object = new JSONObject();
+            JSONArray array = new JSONArray(requisitionOrderDetailList);
+            object.put("requisitionOrderDetailList", array);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html");
+            response.getWriter().write(object.toString());
+            response.getWriter().flush();
+            response.getWriter().close();
+        }
     }
 
     /*
      * 确认领料完成
      * */
     @RequestMapping(value = "/order/finishRequisitionOrder.do")
-    public boolean finishRequisitionOrder(String s, String operator, HttpSession session) throws JSONException {
+    public WebResponse requisitionOrderFinish(String s, String requisitionOrderId, String projectId, String operator, HttpSession session) throws JSONException {
+        WebResponse response = new WebResponse();
         try {
             JSONArray jsonArray = new JSONArray(s);
-            if(jsonArray.length()==0)
-                return false;
-            String userId = (String)session.getAttribute("userid");
-            Date date=new Date();
-            SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String requisitionOrderId = jsonArray.getJSONObject(0).get("requisitionOrderId")+"";
-            String sql_addLog = "insert into requisition_order_log (type,requisitionOrderId,userId,time,operator) values(?,?,?,?,?)";
-            int requisitionOrderLogId= insertProjectService.insertDataToTable(sql_addLog, "2"
-                    , requisitionOrderId,userId,simpleDateFormat.format(date),operator);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonTemp = jsonArray.getJSONObject(i);
-                System.out.println("第" + i + "个---" + jsonTemp);
-                String requisitionOrderDetailId=jsonTemp.get("requisitionOrderDetailId")+"";
-                String count = (jsonTemp.get("count")+"").trim();
-                String countRec = jsonTemp.get("countRec")+"";
-                int type = Integer.parseInt(jsonTemp.get("type")+"");
-                String storeId = jsonTemp.get("storeId")+"";
-                if((count.length()==0)||(Double.parseDouble(count)<0)||(Double.parseDouble(count)>Double.parseDouble(countRec)))
-                    continue;
-                boolean is_update_right = designlistService.orderUpdateRequisitionDetail(requisitionOrderDetailId,count,type,storeId);
-                if(!is_update_right)
-                    return false;
-                String sql_addLogDetail="insert into requisition_order_logdetail (requisitionOrderLogId,requisitionOrderDetailId,count)" +
-                        " values (?,?,?)";
-                boolean is_log_right= insertProjectService.insertIntoTableBySQL(sql_addLogDetail,
-                        String.valueOf(requisitionOrderLogId),requisitionOrderDetailId,count);
-                if(!is_log_right){
-                    return false;
-                }
+            if(jsonArray.length()==0){
+                response.setSuccess(false);
+                response.setErrorCode(100);//接收到的s为空
+                return response;
             }
+            if((requisitionOrderId==null)||(requisitionOrderId.length()==0)||(projectId==null)||(projectId.length()==0)){
+                response.setSuccess(false);
+                response.setErrorCode(200);//未收到领料单号或项目ID
+                return response;
+            }
+            if((operator==null)||(operator.length()==0)){
+                response.setSuccess(false);
+                response.setErrorCode(300);//未选择领料人
+                return response;
+            }
+            String userId = (String)session.getAttribute("userid");
+            DataList errorList = designlistService.checkFinishRequisitionOrder(jsonArray);
+            if(errorList.size()!=0){
+                response.put("errorList",errorList);
+                response.put("errorNum",errorList.size());
+                response.setSuccess(false);
+                response.setErrorCode(400);//存在错误输入
+                return response;
+            }
+            designlistService.finishRequisitionOrder(jsonArray,requisitionOrderId,projectId,operator,userId);
+            response.setSuccess(true);
+//            Date date=new Date();
+//            SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//            String sql_addLog = "insert into requisition_order_log (type,requisitionOrderId,userId,time,operator) values(?,?,?,?,?)";
+//            int requisitionOrderLogId= insertProjectService.insertDataToTable(sql_addLog, "2"
+//                    , requisitionOrderId,userId,simpleDateFormat.format(date),operator);
+//            for (int i = 0; i < jsonArray.length(); i++) {
+//                JSONObject jsonTemp = jsonArray.getJSONObject(i);
+//                System.out.println("第" + i + "个---" + jsonTemp);
+//                String requisitionOrderDetailId=jsonTemp.get("requisitionOrderDetailId")+"";
+//                String count = (jsonTemp.get("count")+"").trim();
+//                String countRec = jsonTemp.get("countRec")+"";
+//                int type = Integer.parseInt(jsonTemp.get("type")+"");
+//                String storeId = jsonTemp.get("storeId")+"";
+//                if((count.length()==0)||(Double.parseDouble(count)<0)||(Double.parseDouble(count)>Double.parseDouble(countRec)))
+//                    continue;
+//                boolean is_update_right = designlistService.orderUpdateRequisitionDetail(requisitionOrderDetailId,count,type,storeId);
+//                if(!is_update_right)
+//                    return false;
+//                String sql_addLogDetail="insert into requisition_order_logdetail (requisitionOrderLogId,requisitionOrderDetailId,count)" +
+//                        " values (?,?,?)";
+//                boolean is_log_right= insertProjectService.insertIntoTableBySQL(sql_addLogDetail,
+//                        String.valueOf(requisitionOrderLogId),requisitionOrderDetailId,count);
+//                if(!is_log_right){
+//                    return false;
+//                }
+//            }
         } catch (Exception e) {
-            return false;
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误
+            response.setMsg(e.getMessage());
         }
-        return true;
+        return response;
     }
 
 
