@@ -95,6 +95,7 @@ Ext.define('project.management.buildproject', {
                     // width: '35%',
                     width: 700,
                     labelWidth: 50,
+                    allowBlank:false,
                     name: 'projectName',
                     value:"",
                 },
@@ -239,13 +240,37 @@ Ext.define('project.management.buildproject', {
                         '楼栋名' : '',
                         '楼栋负责人' : ''
                     }];
-                    //Ext.getCmp('addDataGrid')返回定义的对象
-                    Ext.getCmp('addDataGrid').getStore().loadData(data,
-                        true);
+
+                    //若无项目名，则不能添加楼栋
+                    var projectName = Ext.getCmp("projectName").getValue();
+                    if(projectName != ''){
+                        //Ext.getCmp('addDataGrid')返回定义的对象
+                        Ext.getCmp('addDataGrid').getStore().loadData(data,
+                            true);
+                    }else{
+                        Ext.MessageBox.alert("警告","项目名不能为空!",function(r) {
+                            //    r = cancel||ok
+                        });
+                    }
                 }
             },
             ]
         });
+
+        var buildingOwnerList=Ext.create('Ext.form.ComboBox',{
+            id :  'buildingOwnerList',
+            name : 'buildingOwnerList',
+            matchFieldWidth: true,
+            // emptyText : "--请选择--",
+            displayField: 'workerName',
+            valueField: 'id',
+            forceSelection: true,
+            editable : false,
+            triggerAction: 'all',
+            selectOnFocus:true,
+            store: workerListStore,
+        });
+
         var grid = Ext.create("Ext.grid.Panel", {
             id : 'addDataGrid',
             dockedItems : [toolbar2],
@@ -272,9 +297,19 @@ Ext.define('project.management.buildproject', {
                 dataIndex : 'buildingOwner',
                 text : '楼栋负责人',
                 width : 150,
-                editor : {// 文本字段
-                    xtype : 'textfield',
-                    allowBlank : false,
+                //下拉框
+                // editor : {// 文本字段
+                //     xtype : 'textfield',
+                //     allowBlank : false,
+                // }
+                editor:buildingOwnerList,renderer:function(value, cellmeta, record){
+                    var index = workerListStore.find(buildingOwnerList.valueField,value);
+                    var ehrRecord = workerListStore.getAt(index);
+                    var returnvalue = "";
+                    if (ehrRecord) {
+                        returnvalue = ehrRecord.get('typeName');
+                    }
+                    return returnvalue;
                 }
             }
             ],

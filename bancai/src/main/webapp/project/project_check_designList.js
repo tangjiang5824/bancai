@@ -556,37 +556,42 @@ Ext.define('project.project_check_designList',{
             var sm = Ext.getCmp('designList_Grid').getSelectionModel();
             // var isrollback = Ext.getCmp('isrollback').getValue();
             var materialArr = sm.getSelection();
-            var designlistLogId = e.data.designlistLogId  //选中记录的logid,工单号
-            var projectName = e.data.projectName  //选中记录的项目名
+            var designlistLogId = e.data.designlistLogId;  //选中记录的logid,工单号
+            var projectName = e.data.projectName;  //选中记录的项目名
             // var workorderlogId = e.data.id  //选中记录的logid,工单号
+            var isrollback = e.data.isrollback;  //清单是否撤销
             console.log("e.data：",e.data)
             if (fieldName == "操作") {
                 //设置监听事件getSelectionModel().getSelection()
-                //工单的具体信息
-                var specific_designList_List = Ext.create('Ext.data.Store',{
-                    //id,materialName,length,width,materialType,number
-                    fields:['materialName','length','materialType','width','specification','number'],
-                    proxy : {
-                        type : 'ajax',
-                        url : 'designlist/queryDesignlistByLogId.do?designlistlogId='+designlistLogId,//获取同类型的原材料  +'&pickNum='+pickNum
-                        reader : {
-                            type : 'json',
-                            rootProperty: 'designlistList',
+                if(isrollback == 0){
+                    //工单的具体信息
+                    var specific_designList_List = Ext.create('Ext.data.Store',{
+                        //id,materialName,length,width,materialType,number
+                        fields:['materialName','length','materialType','width','specification','number'],
+                        proxy : {
+                            type : 'ajax',
+                            url : 'designlist/queryDesignlistByLogId.do?designlistlogId='+designlistLogId,//获取同类型的原材料  +'&pickNum='+pickNum
+                            reader : {
+                                type : 'json',
+                                rootProperty: 'designlistList',
+                            },
                         },
-                    },
-                    autoLoad : true
-                });
-                Ext.getCmp("toolbar_pop1").items.items[0].setValue(designlistLogId);//修改id为win_num的值，动态显示在窗口中
-                Ext.getCmp("toolbar_pop1").items.items[1].setValue(projectName);//修改id为win_num的值，动态显示在窗口中
+                        autoLoad : true
+                    });
+                    Ext.getCmp("toolbar_pop1").items.items[0].setValue(designlistLogId);//修改id为win_num的值，动态显示在窗口中
+                    Ext.getCmp("toolbar_pop1").items.items[1].setValue(projectName);//修改id为win_num的值，动态显示在窗口中
 
-                // Ext.getCmp("toolbar_pop").items.items[0].setText(workorderlogId);//修改id为win_num的值，动态显示在窗口中
-                // //传rowNum响应的行号:index+1
-                // Ext.getCmp("toolbar5").items.items[2].setText(index+1)
-                specific_designList_outbound.setStore(specific_designList_List);
-                win_showdesignList_outbound.show();
+                    // Ext.getCmp("toolbar_pop").items.items[0].setText(workorderlogId);//修改id为win_num的值，动态显示在窗口中
+                    // //传rowNum响应的行号:index+1
+                    // Ext.getCmp("toolbar5").items.items[2].setText(index+1)
+                    specific_designList_outbound.setStore(specific_designList_List);
+                    win_showdesignList_outbound.show();
+                }
+                else{
+                    Ext.MessageBox.alert("提示", "清单已撤销!");
+                }
             }
         }
-
 
         this.items = [designList_Grid];
         this.callParent(arguments);

@@ -400,73 +400,67 @@ Ext.define('project.project_create_picklist',{
                     // value:Ext.util.Format.date(Ext.Date.add(new Date(),Ext.Date.MONTH,-1),"Y-m-d")
                     value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
                 },
-                {
-                    xtype : 'button',
-                    iconAlign : 'center',
-                    iconCls : 'rukuicon ',
-                    margin : '0 0 0 30',
-                    text : '创建领料单',
-                    region:'center',
-                    bodyStyle: 'background:#fff;',
-                    handler : function() {
-
-                        // 取出grid的字段名字段类型pickingcreate_Grid
-                        console.log('1===========')
-                        var select = Ext.getCmp('pickingcreate_Grid').getStore()
-                            .getData();
-
-                        // console.log(select)
-
-
-                        var s = new Array();
-                        select.each(function(rec) {
-                            s.push(JSON.stringify(rec.data));
-                        });
-                        console.log(s)
-                        console.log('2===========')
-                        //获取数据
-                        Ext.Ajax.request({
-                            url : 'order/addRequisitionOrder.do', //原材料入库
-                            method:'POST',
-                            //submitEmptyText : false,
-                            params : {
-                                operator:Ext.getCmp('operator').getValue(),
-                                // pickTime:Ext.getCmp('pickTime').getValue(),
-                                s : "[" + s + "]",//存储选择领料的数量
-                                // materialList : "[" + materialList + "]",
-                            },
-                            success : function(response) {
-                                console.log("-----------response=======",response)
-                                //var message =Ext.decode(response.responseText).showmessage;
-                                if(response == true){
-                                    Ext.MessageBox.alert("提示","创建成功" );
-                                    //刷新页面
-                                    worksheetListStore.reload();
-                                }else{
-                                    Ext.MessageBox.alert("提示","创建失败" );
-                                }
-
-                            },
-                            failure : function(response) {
-                                //var message =Ext.decode(response.responseText).showmessage;
-                                Ext.MessageBox.alert("提示","创建失败" );
-                            }
-                        });
-
-                        // 重新加载页面，该项目的领料单信息
-                        worksheetListStore.load({
-                            params : {
-                                proejctId:Ext.getCmp('projectName').getValue(),
-                                //proejctId:'1',
-                            }
-                        });
-                        //  右边输入框重置
-
-                        //  右边页面重置
-                        Ext.getCmp('pickName').setValue("");
-                        MaterialList2.removeAll();
-                    }
-                }
+                // {
+                //     xtype : 'button',
+                //     iconAlign : 'center',
+                //     iconCls : 'rukuicon ',
+                //     margin : '0 0 0 30',
+                //     text : '创建领料单',
+                //     region:'center',
+                //     bodyStyle: 'background:#fff;',
+                //     handler : function() {
+                //         // 取出grid的字段名字段类型pickingcreate_Grid
+                //         console.log('1===========')
+                //         var select = Ext.getCmp('pickingcreate_Grid').getStore()
+                //             .getData();
+                //         // console.log(select)
+                //         var s = new Array();
+                //         select.each(function(rec) {
+                //             s.push(JSON.stringify(rec.data));
+                //         });
+                //         console.log(s)
+                //         console.log('2===========')
+                //         //获取数据
+                //         Ext.Ajax.request({
+                //             url : 'order/addRequisitionOrder.do', //原材料入库
+                //             method:'POST',
+                //             //submitEmptyText : false,
+                //             params : {
+                //                 operator:Ext.getCmp('operator').getValue(),
+                //                 // pickTime:Ext.getCmp('pickTime').getValue(),
+                //                 s : "[" + s + "]",//存储选择领料的数量
+                //             },
+                //             success : function(response) {
+                //                 console.log("-----------response=======",response)
+                //                 //var message =Ext.decode(response.responseText).showmessage;
+                //                 if(response == true){
+                //                     Ext.MessageBox.alert("提示","创建成功" );
+                //                     //刷新页面
+                //                     worksheetListStore.reload();
+                //                 }else{
+                //                     Ext.MessageBox.alert("提示","创建失败" );
+                //                 }
+                //             },
+                //             failure : function(response) {
+                //                 //var message =Ext.decode(response.responseText).showmessage;
+                //                 Ext.MessageBox.alert("提示","创建失败" );
+                //             }
+                //         });
+                //
+                //         // 重新加载页面，该项目的领料单信息
+                //         worksheetListStore.load({
+                //             params : {
+                //                 proejctId:Ext.getCmp('projectName').getValue(),
+                //                 //proejctId:'1',
+                //             }
+                //         });
+                //         //  右边输入框重置
+                //
+                //         //  右边页面重置
+                //         Ext.getCmp('pickName').setValue("");
+                //         MaterialList2.removeAll();
+                //     }
+                // }
 
             ]
         });
