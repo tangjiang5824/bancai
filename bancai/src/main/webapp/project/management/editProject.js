@@ -8,6 +8,9 @@ Ext.define('project.management.editProject',{
         var itemsPerPage = 50;
         var tableName="project_username_statusName";
         //var materialType="1";
+
+        var record_start = 0;
+
         var tableListStore = Ext.create('Ext.data.Store',{
             fields : [ 'projectName'],
             proxy : {
@@ -480,6 +483,16 @@ Ext.define('project.management.editProject',{
                 editable:true
             },
             columns : [
+                {
+                    // dataIndex : '序号',
+                    name : '序号',
+                    text : '序号',
+                    width : 60,
+                    value:'99',
+                    renderer:function(value,metadata,record,rowIndex){
+                        return　record_start　+　1　+　rowIndex;
+                    }
+                },
                 { text: '项目名称', dataIndex: 'projectName', flex :1 },
                 { text: '开始时间',  dataIndex: 'startTime' ,flex :1},
                 { text: '结束时间', dataIndex: 'endTime', flex :0.7 },

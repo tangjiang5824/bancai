@@ -251,24 +251,34 @@ public class DesignlistController {
     }
 
     /*
-     * 根据选取工单生成领料单材料预览
+     * 根据选取工单生成领料单材料汇总预览
      * */
     @RequestMapping("/order/requisitionCreatePreview.do")
     public WebResponse requisitionCreatePreview(String s) throws JSONException {
         WebResponse response = new WebResponse();
         try {
             JSONArray jsonArray = new JSONArray(s);
+            if(jsonArray.length()==0){
+                response.setSuccess(false);
+                response.setErrorCode(100);//接收到的为空
+                return response;
+            }
             DataList createList = new DataList();
+            StringBuilder sb =new StringBuilder("select type,name,warehouseName,sum(singleNum) AS count from requisition_create_preview_work_order_match_store where workOrderDetailId in (\"");
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonTemp = jsonArray.getJSONObject(i);
-                System.out.println("第" + i + "个---" + jsonTemp);
                 String workOrderDetailId=jsonTemp.get("workOrderDetailId")+"";
-                createList = designlistService.createRequisitionPreview(createList, workOrderDetailId);
+                System.out.println("第" + i + "个workOrderDetailId---" + workOrderDetailId);
+                sb.append(workOrderDetailId).append("\",");
+//                createList = designlistService.createRequisitionPreview(createList, workOrderDetailId);
             }
+            sb.deleteCharAt(sb.length()-1);
+            sb.append(") group by type,storeId");
+            createList = queryService.query(sb.toString());
             response.put("createList",createList);
             if(createList.isEmpty()) {
                 response.setSuccess(false);
-                response.setErrorCode(100);//生成的领料单为空
+                response.setErrorCode(200);//生成的领料单为空
             }
             else
                 response.setSuccess(true);
@@ -284,38 +294,52 @@ public class DesignlistController {
      * 新建领料单
      * */
     @RequestMapping(value = "/order/addRequisitionOrder.do")
-    public boolean addRequisitionOrder(String s, String operator, HttpSession session) throws JSONException {
+    public WebResponse addRequisitionOrder(String s, String operator, HttpSession session) throws JSONException {
+        WebResponse response = new WebResponse();
         try {
             JSONArray jsonArray = new JSONArray(s);
+            if(jsonArray.length()==0){
+                response.setSuccess(false);
+                response.setErrorCode(100);//接收到的为空
+                return response;
+            }
             String userId = (String)session.getAttribute("userid");
-            Date date=new Date();
-            SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            int[] requisitionId = designlistService.orderAddRequisition(userId,operator,simpleDateFormat.format(date));
+//            Date date=new Date();
+//            SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//            int[] requisitionId = designlistService.orderAddRequisition(userId,operator,simpleDateFormat.format(date));
+            StringBuilder sb = new StringBuilder();
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonTemp = jsonArray.getJSONObject(i);
-                System.out.println("第" + i + "个---" + jsonTemp);
                 String workOrderDetailId=jsonTemp.get("workOrderDetailId")+"";
-                String type=jsonTemp.get("type")+"";
-                String storeId=jsonTemp.get("storeId")+"";
-                String productId=jsonTemp.get("productId")+"";
-                String count=jsonTemp.get("count")+"";
-                String projectId=jsonTemp.get("projectId")+"";
-                String buildingId=jsonTemp.get("buildingId")+"";
-                String buildingpositionId=jsonTemp.get("buildingpositionId")+"";
-                designlistService.orderAddRequisitionDetail(requisitionId[0], requisitionId[1], workOrderDetailId,
-                        type, storeId, productId, count, projectId, buildingId, buildingpositionId);
+                sb.append("\"").append(workOrderDetailId).append("\",");
+//                String type=jsonTemp.get("type")+"";
+//                String storeId=jsonTemp.get("storeId")+"";
+//                String productId=jsonTemp.get("productId")+"";
+//                String count=jsonTemp.get("count")+"";
+//                String projectId=jsonTemp.get("projectId")+"";
+//                String buildingId=jsonTemp.get("buildingId")+"";
+//                String buildingpositionId=jsonTemp.get("buildingpositionId")+"";
+//                designlistService.orderAddRequisitionDetail(requisitionId[0], requisitionId[1], workOrderDetailId,
+//                        type, storeId, productId, count, projectId, buildingId, buildingpositionId);
             }
+            sb.deleteCharAt(sb.length()-1);
+            System.out.println("workOrderDetailId====="+sb.toString());
+            designlistService.createRequisition(sb.toString(),userId,operator);
+            response.setSuccess(true);
         } catch (Exception e) {
-            return false;
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误
+            response.setMsg(e.getMessage());
         }
-        return true;
+        return response;
     }
+
     /*
      * 查询领料单
      * */
     @RequestMapping("/order/queryRequisitionOrder.do")
-    public void queryRequisitionOrder(HttpServletResponse response) throws IOException, JSONException {
-        DataList requisitionOrderList = designlistService.findRequisitionOrder();
+    public void queryRequisitionOrder(String projectId, HttpServletResponse response) throws IOException, JSONException {
+        DataList requisitionOrderList = designlistService.findRequisitionOrder(projectId);
         //写回前端
         JSONObject object = new JSONObject();
         JSONArray array = new JSONArray(requisitionOrderList);
@@ -332,9 +356,8 @@ public class DesignlistController {
      * 查询某张领料单细节
      * */
     @RequestMapping("/order/queryRequisitionOrderDetail.do")
-    public void queryRequisitionOrderDetail(String requisitionOrderId,String projectId, String buildingId, String buildingpositionId,
-                                      HttpServletResponse response) throws IOException, JSONException {
-        DataList requisitionOrderDetailList = designlistService.findRequisitionOrderDetail(requisitionOrderId,projectId,buildingId,buildingpositionId);
+    public void queryRequisitionOrderDetail(String requisitionOrderId, HttpServletResponse response) throws IOException, JSONException {
+        DataList requisitionOrderDetailList = designlistService.findRequisitionOrderDetail(requisitionOrderId);
         //写回前端
         JSONObject object = new JSONObject();
         JSONArray array = new JSONArray(requisitionOrderDetailList);

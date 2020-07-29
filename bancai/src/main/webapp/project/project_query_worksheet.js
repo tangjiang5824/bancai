@@ -1,8 +1,8 @@
-Ext.define('project.project_check_worksheet',{
+Ext.define('project.project_query_worksheet',{
     extend:'Ext.panel.Panel',
     region: 'center',
     layout:'fit',
-    title: '工单审核',
+    title: '工单查询',
     initComponent: function(){
         var itemsPerPage = 50;
         var table_workoderLog="work_order_log_view";
@@ -161,10 +161,11 @@ Ext.define('project.project_check_worksheet',{
                 },
                 {
                     // name : '操作',
+                    // name : '操作',
                     text : '操作',
                     flex :1 ,
                     renderer:function(value, cellmeta){
-                        return "<INPUT type='button' value='审核' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
+                        return "<INPUT type='button' value='查询明细' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
                     }
                 },
 
@@ -253,152 +254,9 @@ Ext.define('project.project_check_worksheet',{
             ]
         });
 
-        var toolbar_pop = Ext.create('Ext.toolbar.Toolbar', {
-            dock : "top",
-            id:'toolbar_pop',
-            items: [
-                {
-                    //保存logid的值
-                    xtype: 'tbtext',
-                    id:'sheetLog_Id',
-                    iconAlign: 'center',
-                    iconCls: 'rukuicon ',
-                    text: ' ',//默认为空
-                    region: 'center',
-                    bodyStyle: 'background:#fff;',
-                    hidden:true
-                },
-                {
-                    //保存审核的值
-                    xtype: 'tbtext',
-                    id:'pop_isActive',
-                    iconAlign: 'center',
-                    iconCls: 'rukuicon ',
-                    text: ' ',//默认为空
-                    region: 'center',
-                    bodyStyle: 'background:#fff;',
-                    hidden:true
-                },
-                {
-                    xtype: 'textfield',
-                    margin : '0 40 0 0',
-                    fieldLabel: '审核人',
-                    id :'operator_back',
-                    width: 150,
-                    labelWidth: 50,
-                    name: 'operator_back',
-                    value:"",
-                },
-                {
-                    xtype : 'datefield',
-                    margin : '0 40 0 0',
-                    fieldLabel : '审核时间',
-                    width : 180,
-                    labelWidth : 60,
-                    id : "backTime",
-                    name : 'backTime',
-                    format : 'Y-m-d',
-                    editable : false,
-                    //value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
-                },
-                {
-                    xtype : 'button',
-                    text: '审核',
-                    width: 50,
-                    margin: '0 40 0 0',
-                    layout: 'right',
-                    handler: function(){
-
-                        //若工单已审核，则不能再审核
-                        var isAct = Ext.getCmp("pop_isActive").text;
-                        if(isAct == 0){
-                            var worksheet_Id = Ext.getCmp("worksheet_Id").getValue();
-                            console.log("worksheet_Id---------",worksheet_Id)
-                            //    material/backMaterialstore.do
-                            Ext.Msg.show({
-                                title: '操作确认',
-                                message: '将通过审核，选择“是”否确认？',
-                                buttons: Ext.Msg.YESNO,
-                                icon: Ext.Msg.QUESTION,
-                                fn: function (btn) {
-                                    if (btn === 'yes') {
-                                        Ext.Ajax.request({
-                                            url:"order/workApproval.do",  //审核
-                                            params:{
-                                                id:worksheet_Id,  //工单id
-                                                type:1,//审核通过
-                                            },
-                                            success:function (response) {
-                                                Ext.MessageBox.alert("提示", "审核通过!");
-                                                win_showworkorder_outbound.close();//关闭窗口
-                                                //刷新页面
-                                                Ext.getCmp("worksheet_Grid").getStore().load()
-                                            },
-                                            failure : function(response){
-                                                Ext.MessageBox.alert("提示", "审核失败!");
-                                            }
-                                        })
-                                    }
-                                }
-                            });
-                        }
-                        else{
-                            Ext.MessageBox.alert("提示", "已审核!");
-                        }
-                    }
-                },
-                {
-                    xtype : 'button',
-                    text: '撤销审核',
-                    width: 80,
-                    margin: '0 40 0 0',
-                    layout: 'right',
-                    handler: function(){
-                        //若工单未审核，则不能撤销审核
-                        var isAct = Ext.getCmp("pop_isActive").text;
-                        console.log("e.data：")
-                        if(isAct == 1){
-                            var worksheet_Id = Ext.getCmp("worksheet_Id").getValue();
-                            Ext.Msg.show({
-                                title: '操作确认',
-                                message: '将驳回工单，选择“是”否确认？',
-                                buttons: Ext.Msg.YESNO,
-                                icon: Ext.Msg.QUESTION,
-                                fn: function (btn) {
-                                    if (btn === 'yes') {
-                                        Ext.Ajax.request({
-                                            url:"order/workApproval.do",  //入库记录撤销
-                                            params:{
-                                                id:worksheet_Id,  //工单id
-                                                type:2,//驳回审核
-                                            },
-                                            success:function (response) {
-                                                //console.log(response.responseText);
-                                                Ext.MessageBox.alert("提示", "驳回成功!");
-                                                win_showworkorder_outbound.close();//关闭窗口
-                                                //页面刷新
-                                                Ext.getCmp("worksheet_Grid").getStore().load()
-                                            },
-                                            failure : function(response){
-                                                Ext.MessageBox.alert("提示", "驳回失败!");
-                                            }
-                                        })
-                                    }
-                                }
-                            });
-                        }
-                        else{
-                            Ext.MessageBox.alert("提示", "工单未审核，不能撤销!");
-                        }
-                    }
-                }
-            ]
-        });
-
         //弹出框，出入库详细记录
         var specific_workorder_outbound=Ext.create('Ext.grid.Panel',{
             id : 'specific_workorder_outbound',
-            tbar: toolbar_pop,
             // store:material_Query_Records_store1,//oldpanellogdetailList，store1的数据固定
             dock: 'bottom',
             columns:[

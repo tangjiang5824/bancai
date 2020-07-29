@@ -11,6 +11,18 @@ Ext.define('project.project_create_picklist',{
         //存放所选的原材料的具体规格
         var materialList = '';
 
+        //原件类型：枚举类型
+        Ext.define('product.model.originType', {
+            statics: { // 关键s
+                0: { value: '0', name: '未匹配' },
+                1: { value: '1', name: '退库成品' },
+                2: { value: '2', name: '预加工半产品' },
+                3: { value: '3', name: '旧板' },
+                4: { value: '4', name: '原材料' },
+                9: { value: '5', name: '未匹配成功' },
+            }
+        });
+
         //项目名称选择
         var tableListStore = Ext.create('Ext.data.Store',{
             fields : [ "项目名称","id"],
@@ -360,17 +372,6 @@ Ext.define('project.project_create_picklist',{
 
         var toobar_right = Ext.create('Ext.toolbar.Toolbar',{
             items: [
-
-                // {
-                //     xtype: 'textfield',
-                //     margin : '0 30 0 0',
-                //     fieldLabel: '创建人',
-                //     id :'pickName',
-                //     width: 200,
-                //     labelWidth: 50,
-                //     name: 'pickName',
-                //     value:"",
-                // },
                 {
                     fieldLabel : '创建人',
                     xtype : 'combo',
@@ -399,73 +400,67 @@ Ext.define('project.project_create_picklist',{
                     // value:Ext.util.Format.date(Ext.Date.add(new Date(),Ext.Date.MONTH,-1),"Y-m-d")
                     value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
                 },
-                {
-                    xtype : 'button',
-                    iconAlign : 'center',
-                    iconCls : 'rukuicon ',
-                    margin : '0 0 0 30',
-                    text : '创建领料单',
-                    region:'center',
-                    bodyStyle: 'background:#fff;',
-                    handler : function() {
-
-                        // 取出grid的字段名字段类型pickingcreate_Grid
-                        console.log('1===========')
-                        var select = Ext.getCmp('pickingcreate_Grid').getStore()
-                            .getData();
-
-                        // console.log(select)
-
-
-                        var s = new Array();
-                        select.each(function(rec) {
-                            s.push(JSON.stringify(rec.data));
-                        });
-                        console.log(s)
-                        console.log('2===========')
-                        //获取数据
-                        Ext.Ajax.request({
-                            url : 'order/addRequisitionOrder.do', //原材料入库
-                            method:'POST',
-                            //submitEmptyText : false,
-                            params : {
-                                operator:Ext.getCmp('operator').getValue(),
-                                // pickTime:Ext.getCmp('pickTime').getValue(),
-                                s : "[" + s + "]",//存储选择领料的数量
-                                // materialList : "[" + materialList + "]",
-                            },
-                            success : function(response) {
-                                console.log("-----------response=======",response)
-                                //var message =Ext.decode(response.responseText).showmessage;
-                                if(response == true){
-                                    Ext.MessageBox.alert("提示","创建成功" );
-                                    //刷新页面
-                                    worksheetListStore.reload();
-                                }else{
-                                    Ext.MessageBox.alert("提示","创建失败" );
-                                }
-
-                            },
-                            failure : function(response) {
-                                //var message =Ext.decode(response.responseText).showmessage;
-                                Ext.MessageBox.alert("提示","创建失败" );
-                            }
-                        });
-
-                        // 重新加载页面，该项目的领料单信息
-                        worksheetListStore.load({
-                            params : {
-                                proejctId:Ext.getCmp('projectName').getValue(),
-                                //proejctId:'1',
-                            }
-                        });
-                        //  右边输入框重置
-
-                        //  右边页面重置
-                        Ext.getCmp('pickName').setValue("");
-                        MaterialList2.removeAll();
-                    }
-                }
+                // {
+                //     xtype : 'button',
+                //     iconAlign : 'center',
+                //     iconCls : 'rukuicon ',
+                //     margin : '0 0 0 30',
+                //     text : '创建领料单',
+                //     region:'center',
+                //     bodyStyle: 'background:#fff;',
+                //     handler : function() {
+                //         // 取出grid的字段名字段类型pickingcreate_Grid
+                //         console.log('1===========')
+                //         var select = Ext.getCmp('pickingcreate_Grid').getStore()
+                //             .getData();
+                //         // console.log(select)
+                //         var s = new Array();
+                //         select.each(function(rec) {
+                //             s.push(JSON.stringify(rec.data));
+                //         });
+                //         console.log(s)
+                //         console.log('2===========')
+                //         //获取数据
+                //         Ext.Ajax.request({
+                //             url : 'order/addRequisitionOrder.do', //原材料入库
+                //             method:'POST',
+                //             //submitEmptyText : false,
+                //             params : {
+                //                 operator:Ext.getCmp('operator').getValue(),
+                //                 // pickTime:Ext.getCmp('pickTime').getValue(),
+                //                 s : "[" + s + "]",//存储选择领料的数量
+                //             },
+                //             success : function(response) {
+                //                 console.log("-----------response=======",response)
+                //                 //var message =Ext.decode(response.responseText).showmessage;
+                //                 if(response == true){
+                //                     Ext.MessageBox.alert("提示","创建成功" );
+                //                     //刷新页面
+                //                     worksheetListStore.reload();
+                //                 }else{
+                //                     Ext.MessageBox.alert("提示","创建失败" );
+                //                 }
+                //             },
+                //             failure : function(response) {
+                //                 //var message =Ext.decode(response.responseText).showmessage;
+                //                 Ext.MessageBox.alert("提示","创建失败" );
+                //             }
+                //         });
+                //
+                //         // 重新加载页面，该项目的领料单信息
+                //         worksheetListStore.load({
+                //             params : {
+                //                 proejctId:Ext.getCmp('projectName').getValue(),
+                //                 //proejctId:'1',
+                //             }
+                //         });
+                //         //  右边输入框重置
+                //
+                //         //  右边页面重置
+                //         Ext.getCmp('pickName').setValue("");
+                //         MaterialList2.removeAll();
+                //     }
+                // }
 
             ]
         });
@@ -494,6 +489,14 @@ Ext.define('project.project_create_picklist',{
                     dataIndex:'name', //工单号
                     text:'材料名',
                     flex :1
+                },
+                {
+                    dataIndex:'type', //工单号
+                    text:'材料类型',
+                    flex :1,
+                    renderer: function (value) {
+                        return product.model.originType[value].name; // key-value
+                    },
                 },
                 {
                     dataIndex:'count', //工单号
@@ -535,14 +538,20 @@ Ext.define('project.project_create_picklist',{
                     // flex:0.3,
                     items:[{
                         xtype:'button',
-                        // margin: '0 0 0 30',
-                        text:'选择',
+                        // margin: '0 0 0 0',
+                        text:'领料单信息预览',
                         // itemId:'move_right',
                         handler:function() {
                             var records = worksheet_Grid.getSelectionModel().getSelection();
-                            // console.log(records)
-                            // console.log("测试")
-                            // console.log(records[0])
+                            console.log('------------------->',records);
+                            console.log("测试");
+                            var s = new Array();
+                            for(var i=0;i<records.length;i++){
+                                // console.log("aaaa",records[i].data)
+                                s.push(JSON.stringify(records[i].data))
+                            }
+
+                            // console.log('..............',ss)
                             //
                             // for (i = 0; i < records.length; i++) {
                             //     console.log(records[i].data['countTemp'])
@@ -553,16 +562,19 @@ Ext.define('project.project_create_picklist',{
                             // }
                             //若要领数量<领取数量，则不能直接remove，需要更改数量值
 
-                            var select = Ext.getCmp('worksheet_Grid').getStore()
-                                .getData();
+                            // var select = Ext.getCmp('worksheet_Grid').getStore()
+                            //     .getData();
+                            //
+                            // console.log('------------------->',select)
                             // console.log("operator-----------------",operator);
 
-                            var s = new Array();
-                            select.each(function(rec) {
-                                s.push(JSON.stringify(rec.data));
-                                //alert(JSON.stringify(rec.data));//获得表格中的数据
-                                //s.push();
-                            });
+                            // var s = new Array();
+                            // select.each(function(rec) {
+                            //     console.log("ssss",rec.data)
+                            //     s.push(JSON.stringify(rec.data));
+                            //     //alert(JSON.stringify(rec.data));//获得表格中的数据
+                            //     //s.push();
+                            // });
 
                             //进度条
                             Ext.MessageBox.show(
@@ -577,11 +589,13 @@ Ext.define('project.project_create_picklist',{
                             );
 
                             Ext.Ajax.request({
+                                // url : 'order/requisitionCreatePreview.do', //原材料入库
                                 url : 'order/requisitionCreatePreview.do', //原材料入库
                                 method:'POST',
                                 //submitEmptyText : false,
                                 params : {
                                     //materialType:materialtype,
+                                    // operator : "1",
                                     s : "[" + s + "]",
                                 },
                                 success : function(response) {
@@ -609,6 +623,59 @@ Ext.define('project.project_create_picklist',{
 
                         }
                     },
+                        {
+                            xtype:'button',
+                            margin: '0 0 0 40',
+                            text:'创建领料单',
+                            // itemId:'move_right',
+                            handler:function() {
+                                var records = worksheet_Grid.getSelectionModel().getSelection();
+                                console.log('------------------->',records);
+                                console.log("测试");
+                                var s = new Array();
+                                for(var i=0;i<records.length;i++){
+                                    // console.log("aaaa",records[i].data)
+                                    s.push(JSON.stringify(records[i].data))
+                                }
+
+                                //进度条
+                                Ext.MessageBox.show(
+                                    {
+                                        title:'请稍候',
+                                        msg:'正在查询工单的材料信息，请耐心等待...',
+                                        progressText:'',    //进度条文本
+                                        width:300,
+                                        progress:true,
+                                        closable:false
+                                    }
+                                );
+                                Ext.Ajax.request({
+                                    url : 'order/addRequisitionOrder.do', //创建领料单
+                                    method:'POST',
+                                    //submitEmptyText : false,
+                                    params : {
+                                        //materialType:materialtype,
+                                        operator:Ext.getCmp('operator').getValue(),
+                                        s : "[" + s + "]",
+                                    },
+                                    success : function(response) {
+                                        //关闭进度条
+                                        Ext.MessageBox.hide();
+                                        console.log("response=======================",response)
+                                        Ext.MessageBox.alert("提示","创建成功" );
+                                    },
+                                    failure : function(response) {
+                                        //关闭进度条
+                                        Ext.MessageBox.hide();
+
+                                        //var message =Ext.decode(response.responseText).showmessage;
+                                        Ext.MessageBox.alert("提示","创建失败" );
+                                    }
+                                });
+
+                            }
+                        }
+
                     //     {
                     //     xtype:'button',
                     //     text:'撤销',

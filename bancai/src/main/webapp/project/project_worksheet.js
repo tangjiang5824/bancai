@@ -51,7 +51,6 @@ Ext.define('project.project_worksheet',{
             editable : true,
             store: projectListStore,
             listeners: {
-
                 change : function(combo, record, eOpts) {
                     if(this.callback) {
                         if(combo.lastSelection && combo.lastSelection.length>0) {

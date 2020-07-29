@@ -21,6 +21,7 @@ Ext.define('project.management.queryproject',{
             autoLoad : true
         });
 
+        var record_start = 0;
 
         var tableList = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '项目名',
@@ -292,7 +293,7 @@ Ext.define('project.management.queryproject',{
             draggable:true,
             // tbar:toolbar5,
             items:building_grid_query,
-            closeAction : 'destroy',
+            closeAction : 'hidden',
             modal:true,//模态窗口，背景窗口不可编辑
         });
 
@@ -371,6 +372,16 @@ Ext.define('project.management.queryproject',{
             },
             items:archive_form,
             columns : [
+                {
+                    // dataIndex : '序号',
+                    name : '序号',
+                    text : '序号',
+                    width : 60,
+                    value:'99',
+                    renderer:function(value,metadata,record,rowIndex){
+                        return　record_start　+　1　+　rowIndex;
+                    }
+                },
                 { text: '项目名称', dataIndex: 'projectName', flex :1 },
                 { text: '开始时间',  dataIndex: 'startTime' ,flex :1},
                 { text: '结束时间', dataIndex: 'endTime', flex :0.7 },

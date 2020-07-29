@@ -123,7 +123,7 @@ Ext.define("menu.MenuRole_bc0", {
 				},
 					{
 						text : '预加工半成品领料',
-						// id : 'material.material_Receive',
+						id : 'preprocess.preprocess_Receive',
 						leaf : true
 					},
 				// 	{
@@ -154,7 +154,7 @@ Ext.define("menu.MenuRole_bc0", {
 				},
 					{
 						text : '退库成品领料',
-						// id : 'material.material_Receive',
+						id : 'backproduct.backproduct_Receive',
 						leaf : true
 					},
 				// 	{
@@ -304,8 +304,13 @@ Ext.define("menu.MenuRole_bc0", {
 						text : '项目产品工单',
 						id : 'project.project_worksheet',
 						leaf : true
-
 					},{
+						text : '工单查询',
+						id : 'project.project_query_worksheet',
+						leaf : true
+
+					},
+					{
 						text : '工单审核',
 						id : 'project.project_check_worksheet',
 						leaf : true
@@ -313,6 +318,11 @@ Ext.define("menu.MenuRole_bc0", {
 					},{
 						text : '项目创建领料单',
 						id : 'project.project_create_picklist',
+						leaf : true
+					},
+					{
+						text : '项目领料单查询',
+						id : 'project.project_query_picklist',
 						leaf : true
 					},
 					{

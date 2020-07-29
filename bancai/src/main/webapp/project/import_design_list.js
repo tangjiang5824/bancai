@@ -8,6 +8,10 @@ Ext.define('project.import_design_list', {
 		//定义表名
 		var tableName="materialstore";
 		var materialtype="0";
+
+		var record_start_bottom = 0;
+		var record_start_pop = 0;
+
 // 		var toolbar2 = Ext.create("Ext.toolbar.Toolbar", {
 // 			dock : "top",
 // 			items : [{
@@ -119,6 +123,16 @@ Ext.define('project.import_design_list', {
 				// 	}
 				// },
 				{
+					// dataIndex : '序号',
+					name : '序号',
+					text : '序号',
+					width : 60,
+					value:'99',
+					renderer:function(value,metadata,record,rowIndex){
+						return　record_start_bottom　+　1　+　rowIndex;
+					}
+				},
+				{
 					dataIndex : 'productName',
 					name : '产品名称',
 					text : '产品名称',
@@ -195,6 +209,16 @@ Ext.define('project.import_design_list', {
 			store:errorlistStore,//oldpanellogdetailList，store1的数据固定
 			dock: 'bottom',
 			columns:[
+				{
+					// dataIndex : '序号',
+					name : '序号',
+					text : '序号',
+					width : 60,
+					value:'99',
+					renderer:function(value,metadata,record,rowIndex){
+						return　record_start_pop　+　1　+　rowIndex;
+					}
+				},
 				{
 					text: '产品名称',
 					dataIndex: 'productName',
@@ -356,7 +380,6 @@ Ext.define('project.import_design_list', {
 				}
 			},
 			autoLoad : true
-
 		});
 
 
