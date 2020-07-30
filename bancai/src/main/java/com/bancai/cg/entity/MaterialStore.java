@@ -9,7 +9,7 @@ import java.util.Set;
 @Table(name = "material_store")
 public class MaterialStore {
     private Integer id;
-    private Double count;
+    private Double countStore;
     private Double totalWeight;
     private String description;
     private Double countUse;
@@ -45,14 +45,13 @@ public class MaterialStore {
         this.id = id;
     }
 
-    public Double getCount() {
-        return count;
+    public Double getCountStore() {
+        return countStore;
     }
 
-    public void setCount(Double count) {
-        this.count = count;
+    public void setCountStore(Double countStore) {
+        this.countStore = countStore;
     }
-
 
     public Double getTotalWeight() {
         return totalWeight;

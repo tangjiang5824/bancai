@@ -53,7 +53,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
             matchFieldWidth: false,
             emptyText : "--请选择--",
             displayField: 'warehouseName',
-            valueField: 'warehouseName',
+            valueField: 'id',
             editable : false,
             store: storeNameList,
         });

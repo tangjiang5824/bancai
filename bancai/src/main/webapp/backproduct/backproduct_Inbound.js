@@ -43,6 +43,7 @@ Ext.define('backproduct.backproduct_Inbound', {
             },
             autoLoad : true
         });
+
         var storePosition = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '仓库名',
             labelWidth : 50,
@@ -50,10 +51,10 @@ Ext.define('backproduct.backproduct_Inbound', {
             margin: '0 10 0 20',
             id :  'storePosition',
             name : 'storePosition',
-            matchFieldWidth: false,
+            matchFieldWidth: true,
             emptyText : "--请选择--",
-            displayField: 'warehousename',
-            valueField: 'warehousename',
+            displayField: 'warehouseName',
+            valueField: 'id',
             editable : false,
             store: storeNameList,
         });
