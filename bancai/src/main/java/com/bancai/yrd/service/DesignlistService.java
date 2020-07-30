@@ -514,36 +514,36 @@ public class DesignlistService extends BaseService{
             if((count.equals("null"))||(count.length()==0)){
                 DataRow errorRow = new DataRow();
                 errorRow.put("id",jsonTemp.get("id").toString());
-                errorRow.put("errorCode",100);//未输入领取数量
+                errorRow.put("errorType","未输入领取数量");//未输入领取数量
                 errorList.add(errorRow);
             }else if((count.split("\\.").length==1)) {//无小数点
                 if(!count.matches(isPureNumber)){
                     DataRow errorRow = new DataRow();
                     errorRow.put("id",jsonTemp.get("id").toString());
-                    errorRow.put("errorCode",200);//输入的不是一个非负数
+                    errorRow.put("errorType","错误输入");//输入的不是一个非负数
                     errorList.add(errorRow);
                 }else if(Double.parseDouble(count)>Double.parseDouble(countRec)){
                     DataRow errorRow = new DataRow();
                     errorRow.put("id",jsonTemp.get("id").toString());
-                    errorRow.put("errorCode",300);//超出可领数量
+                    errorRow.put("errorType","超出可领数量");//超出可领数量
                     errorList.add(errorRow);
                 }
             }else if((count.split("\\.").length==2)) {//有小数点
                 if((!count.split("\\.")[0].matches(isPureNumber))||(!count.split("\\.")[1].matches(isPureNumber))){
                     DataRow errorRow = new DataRow();
                     errorRow.put("id",jsonTemp.get("id").toString());
-                    errorRow.put("errorCode",200);//输入的不是一个非负数
+                    errorRow.put("errorType","错误输入");//输入的不是一个非负数
                     errorList.add(errorRow);
                 }else if(Double.parseDouble(count)>Double.parseDouble(countRec)){
                     DataRow errorRow = new DataRow();
                     errorRow.put("id",jsonTemp.get("id").toString());
-                    errorRow.put("errorCode",300);//超出可领数量
+                    errorRow.put("errorType","超出可领数量");//超出可领数量
                     errorList.add(errorRow);
                 }
             }else {
                 DataRow errorRow = new DataRow();
                 errorRow.put("id",jsonTemp.get("id").toString());
-                errorRow.put("errorCode",200);//输入的不是一个非负数
+                errorRow.put("errorType","错误输入");//输入的不是一个非负数
                 errorList.add(errorRow);
             }
         }
