@@ -21,7 +21,8 @@ import java.util.*;
 @Service
 public class PanelMatchService extends BaseService{
     private Logger log = Logger.getLogger(AnalyzeNameService.class);
-    private static String isPureNumber = "^-?[0-9]+";
+    private static String isPureNumber = "[0-9]+";
+    private static String isNumberValue = "^-?[0-9]+";
 
     @Autowired
     private QueryAllService queryService;

@@ -37,7 +37,7 @@ public class test02 {
 //        String bb = "20";
 //        compare = aa.compareTo(bb);
 //        System.out.println(compare);
-        String isPureNumber = "^-?[0-9]+";
+        String isPureNumber = "[0-9]+";
         String isPureWord = "^[A-Za-z]+$";
 //        String s = "2100";
 //        String s2 = "%20%%AA";
@@ -224,9 +224,12 @@ public class test02 {
 //        arrayList.add(map.toString());
 //        System.out.println(arrayList.toString());
 
-        StringBuilder sb = new StringBuilder("dfdsfads,");
-        sb.deleteCharAt(sb.length()-1);
-        System.out.println(sb.toString());
+//        StringBuilder sb = new StringBuilder("dfdsfads,");
+//        sb.deleteCharAt(sb.length()-1);
+//        System.out.println(sb.toString());
+
+
+
     }
 
     private String IgnoreSuffix(String a){
