@@ -352,8 +352,8 @@ Ext.define('material.material_Receive',{
                     // Ext.getCmp('toolbar_specific_pickList').items.items[0].setValue(requisitionOrderId);
 
 
-                    // toolbar_specific_pickList.items.items[0].setValue(requisitionOrderId);
-                    // toolbar_specific_pickList.items.items[1].setValue(projectId);
+                    toolbar_specific_pickList.items.items[0].setValue(requisitionOrderId);
+                    toolbar_specific_pickList.items.items[1].setValue(projectId);
 
                     // //弹框
                     // win_picklistInfo_material_outbound.show();
@@ -536,71 +536,70 @@ Ext.define('material.material_Receive',{
                     }
                 },
                 //领料
-                {
-                    xtype : 'button',
-                    iconAlign : 'center',
-                    iconCls : 'rukuicon ',
-                    margin : '0 0 0 30',
-                    text : '领料',
-                    region:'center',
-                    bodyStyle: 'background:#fff;',
-                    handler : function() {
-
-                        // 取出grid的字段名字段类型pro_picking_MaterialGrid
-                        console.log('1===========')
-                        var projectId = Ext.getCmp('project_Id').getValue();
-
-                        var records = grid__query_pickList_specific.getSelectionModel().getSelection();
-                        var s = new Array();
-                        for(var i=0;i<records.length;i++){
-                            // console.log("aaaa",records[i].data)
-                            s.push(JSON.stringify(records[i].data))
-                        }
-
-                        console.log(s)
-                        console.log('2===========')
-                        // var operator = Ext.getCmp('operator').getValue();
-                        var operator = 1;
-                        console.log('2===========',operator)
-                        //判断条件：若无数据或者没有操作人员则报错，不能提交
-                        if(s.length != 0 && operator != null ){
-                            //获取数据
-                            Ext.Ajax.request({
-                                url : 'order/finishRequisitionOrder.do', //领料
-                                method:'POST',
-                                // submitEmptyText : false,
-                                params : {
-                                    requisitionOrderId:Ext.getCmp('picklistId').getValue(),
-                                    projectId:projectId,
-                                    operator:operator,
-                                    s : "[" + s + "]",//存储选择领料的数量
-                                },
-                                success : function(response) {
-                                    //var message =Ext.decode(response.responseText).showmessage;
-                                    if(response == true){
-                                        Ext.MessageBox.alert("提示","领取成功" );
-                                    }else{
-                                        Ext.MessageBox.alert("提示","领取失败" );
-                                    }
-                                },
-                                failure : function(response) {
-                                    //var message =Ext.decode(response.responseText).showmessage;
-                                    Ext.MessageBox.alert("提示","领取失败" );
-                                }
-                            });
-                        }else {
-                            Ext.MessageBox.alert("提示","没有数据或领料人！" );
-                        }
-
-                        //  左边输入框重置
-                        grid_pickList_specific.getStore().removeAll();
-
-                        //  右边页面重置
-                        Ext.getCmp('operator').setValue("");
-                        pickList.removeAll();
-                    }
-                }
-
+                // {
+                //     xtype : 'button',
+                //     iconAlign : 'center',
+                //     iconCls : 'rukuicon ',
+                //     margin : '0 0 0 30',
+                //     text : '领料',
+                //     region:'center',
+                //     bodyStyle: 'background:#fff;',
+                //     handler : function() {
+                //
+                //         // 取出grid的字段名字段类型pro_picking_MaterialGrid
+                //         console.log('1===========')
+                //         var projectId = Ext.getCmp('project_Id').getValue();
+                //
+                //         var records = grid__query_pickList_specific.getSelectionModel().getSelection();
+                //         var s = new Array();
+                //         for(var i=0;i<records.length;i++){
+                //             // console.log("aaaa",records[i].data)
+                //             s.push(JSON.stringify(records[i].data))
+                //         }
+                //
+                //         console.log(s)
+                //         console.log('2===========')
+                //         // var operator = Ext.getCmp('operator').getValue();
+                //         var operator = 1;
+                //         console.log('2===========',operator)
+                //         //判断条件：若无数据或者没有操作人员则报错，不能提交
+                //         if(s.length != 0 && operator != null ){
+                //             //获取数据
+                //             Ext.Ajax.request({
+                //                 url : 'order/finishRequisitionOrder.do', //领料
+                //                 method:'POST',
+                //                 // submitEmptyText : false,
+                //                 params : {
+                //                     requisitionOrderId:Ext.getCmp('picklistId').getValue(),
+                //                     projectId:projectId,
+                //                     operator:operator,
+                //                     s : "[" + s + "]",//存储选择领料的数量
+                //                 },
+                //                 success : function(response) {
+                //                     //var message =Ext.decode(response.responseText).showmessage;
+                //                     if(response == true){
+                //                         Ext.MessageBox.alert("提示","领取成功" );
+                //                     }else{
+                //                         Ext.MessageBox.alert("提示","领取失败" );
+                //                     }
+                //                 },
+                //                 failure : function(response) {
+                //                     //var message =Ext.decode(response.responseText).showmessage;
+                //                     Ext.MessageBox.alert("提示","领取失败" );
+                //                 }
+                //             });
+                //         }else {
+                //             Ext.MessageBox.alert("提示","没有数据或领料人！" );
+                //         }
+                //
+                //         //  左边输入框重置
+                //         grid__query_pickList_specific.getStore().removeAll();
+                //
+                //         //  右边页面重置
+                //         Ext.getCmp('operator').setValue("");
+                //         pickList.removeAll();
+                //     }
+                // }
                 ]
         });
 
@@ -683,6 +682,142 @@ Ext.define('material.material_Receive',{
         //     items:grid__query_pickList_specific,
         // });
 
+        var toobar_right = Ext.create('Ext.toolbar.Toolbar',{
+            items: [
+                // {
+                //     xtype: 'textfield',
+                //     margin : '0 10 0 0',
+                //     fieldLabel: '领料人',
+                //     id :'pickName',
+                //     width: 200,
+                //     labelWidth: 50,
+                //     name: 'pickName',
+                //     value:"",
+                // },
+                {
+                    fieldLabel : '领料人',
+                    xtype : 'combo',
+                    name : 'operator_pick',
+                    id : 'operator_pick',
+                    // disabled : true,
+                    // width:'95%',
+                    margin: '0 40 0 0',
+                    width: 200,
+                    labelWidth: 45,
+                    store : workerListStore,
+                    displayField : 'workerName',
+                    valueField : 'id',
+                    editable : true,
+                },
+                {
+                    xtype: 'datefield',
+                    margin : '0 10 0 0',
+                    fieldLabel: '领料时间',
+                    id :'pickTime',
+                    width: 200,
+                    labelWidth: 60,
+                    name: 'pickTime',
+                    value:"",
+                    format : 'Y-m-d',
+                    editable : false,
+                    // value:Ext.util.Format.date(Ext.Date.add(new Date(),Ext.Date.MONTH,-1),"Y-m-d")
+                    value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
+                },
+                {
+                    xtype : 'button',
+                    iconAlign : 'center',
+                    iconCls : 'rukuicon ',
+                    margin : '0 0 0 30',
+                    text : '领料',
+                    region:'center',
+                    bodyStyle: 'background:#fff;',
+                    handler : function() {
+
+                        // 取出grid的字段名字段类型pro_picking_MaterialGrid
+                        console.log('1===========')
+                        var select = Ext.getCmp('pro_picking_MaterialGrid').getStore()
+                            .getData();
+                        // console.log(select)
+                        var projectId = Ext.getCmp('project_Id').getValue();
+                        var s = new Array();
+                        select.each(function(rec) {
+                            s.push(JSON.stringify(rec.data));
+                        });
+                        console.log(s)
+                        console.log('2===========')
+                        var operator = Ext.getCmp('operator_pick').getValue();
+                        console.log('2===========',operator)
+                        //判断条件：若无数据或者没有操作人员则报错，不能提交
+                        if(s.length != 0 && operator != null ){
+                            //获取数据
+                            Ext.Ajax.request({
+                                url : 'order/finishRequisitionOrder.do', //领料
+                                method:'POST',
+                                // submitEmptyText : false,
+                                params : {
+                                    requisitionOrderId:Ext.getCmp('picklistId').getValue(),
+                                    projectId:projectId,
+                                    operator:operator,
+                                    s : "[" + s + "]",//存储选择领料的数量
+                                },
+                                success : function(response) {
+                                    //var message =Ext.decode(response.responseText).showmessage;
+                                    if(response == true){
+                                        Ext.MessageBox.alert("提示","领取成功" );
+                                    }else{
+                                        Ext.MessageBox.alert("提示","领取失败" );
+                                    }
+                                },
+                                failure : function(response) {
+                                    //var message =Ext.decode(response.responseText).showmessage;
+                                    Ext.MessageBox.alert("提示","领取失败" );
+                                }
+                            });
+                        }else {
+                            Ext.MessageBox.alert("提示","没有数据或领料人！" );
+                        }
+
+                        //  左边输入框重置
+                        grid__query_pickList_specific.getStore().removeAll();
+
+                        //  右边页面重置
+                        Ext.getCmp('operator').setValue("");
+                        pickList.removeAll();
+                    }
+                }
+
+            ]
+        });
+
+        var grid2=Ext.create('Ext.grid.Panel',{
+            id : 'pro_picking_MaterialGrid',
+            store:pickList,
+            dock: 'bottom',
+            autoScroll: true, //超过长度带自动滚动条
+            columns:[
+                {dataIndex:'name', text:'材料名',flex :1 },
+                {
+                    dataIndex:'count',//countTemp
+                    text:'领取数量',
+                    flex :1
+                    //editor:{xtype : 'textfield', allowBlank : true},
+
+                }],
+            // height:'100%',
+            flex:1,
+            tbar:toobar_right,
+            selType:'checkboxmodel',
+            dockedItems: [
+                {
+                    xtype: 'pagingtoolbar',
+                    store: pickList,   // same store GridPanel is using
+                    dock: 'bottom',
+                    displayInfo: true,
+                    displayMsg:'显示{0}-{1}条，共{2}条',
+                    emptyMsg:'无数据'
+                }
+            ],
+        });
 
         //领料的具体材料信息Panel
         var panel_specific = Ext.create('Ext.panel.Panel',{
@@ -690,7 +825,7 @@ Ext.define('material.material_Receive',{
             title: '领料单明细',
             //dock: 'bottom',
             layout:{
-                type:'hbox',
+                type:'vbox',
                 align:'stretch'
             },
             width:'100%',
@@ -698,7 +833,45 @@ Ext.define('material.material_Receive',{
             closable:true,
             closeAction : 'hide',
             autoDestroy: false,
-            items:[grid__query_pickList_specific],
+            items:[
+                grid__query_pickList_specific,
+                {
+                    xtype:'container',
+                    // flex:0.3,
+                    items:[{
+                        xtype:'button',
+                        // margin: '0 0 0 30',
+                        text:'选择',
+                        itemId:'move_right',
+                        handler:function() {
+                            var records = grid__query_pickList_specific.getSelectionModel().getSelection();
+                            console.log(records)
+                            console.log("测试")
+                            console.log(records[0])
+
+                            for (i = 0; i < records.length; i++) {
+                                console.log(records[i].data['countTemp'])
+                                if(records[i].data['countTemp'] != 0){
+                                    console.log("添加")
+                                    pickList.add(records[i]);
+                                }
+                            }
+                            //若要领数量<领取数量，则不能直接remove，需要更改数量值
+
+                        }
+                    },{
+                        xtype:'button',
+                        text:'撤销',
+                        itemId:'move_left',
+                        handler:function(){
+                            var records=grid2.getSelectionModel().getSelection();
+                            pickList.remove(records);
+                            grid__query_pickList_specific.store.add(records);//grid__query_pickList_specific
+                        }
+                    }]
+                },
+                grid2,
+            ],
         });
 
         //领料单查询信息 panel
