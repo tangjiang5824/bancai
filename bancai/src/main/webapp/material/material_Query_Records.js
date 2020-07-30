@@ -6,6 +6,8 @@ Ext.define('material.material_Query_Records',{
     initComponent: function(){
         var itemsPerPage = 50;
         var tableName="material";
+
+        var tableName_material_records = 'material_log';
         //var materialType="1";
         //操作类型：枚举类型
         Ext.define('Soims.model.application.ApplicationState', {
@@ -168,6 +170,7 @@ Ext.define('material.material_Query_Records',{
                                 startTime:Ext.getCmp('startTime').getValue(),
                                 projectId:Ext.getCmp('projectName').getValue(),
                                 type:Ext.getCmp('material_query_records_optionType').getValue(),
+                                tableName:tableName_material_records,
                             }
                         });
                     }
@@ -197,6 +200,7 @@ Ext.define('material.material_Query_Records',{
                     startTime:Ext.getCmp('startTime').getValue(),
                     projectId:Ext.getCmp('projectName').getValue(),
                     type:Ext.getCmp('material_query_records_optionType').getValue(),
+                    tableName:tableName_material_records,
                 }
             },
             listeners : {
@@ -208,7 +212,7 @@ Ext.define('material.material_Query_Records',{
                         startTime:Ext.getCmp('startTime').getValue(),
                         projectId:Ext.getCmp('projectName').getValue(),
                         type:Ext.getCmp('material_query_records_optionType').getValue(),
-
+                        tableName:tableName_material_records,
                     });
                 }
 
