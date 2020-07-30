@@ -1,5 +1,7 @@
 Ext.define('material.material_Receive',{
-    extend:'Ext.panel.Panel',
+    // extend:'Ext.panel.Panel',
+    extend:'Ext.tab.Panel',
+    id:'pick_tabpanel',
     region: 'center',
     layout:'fit',
     title: '原材料领料',
@@ -230,6 +232,7 @@ Ext.define('material.material_Receive',{
                 }]
         });
 
+        var receive_info = Ext.create('material.receive_info');
 
         var grid1=Ext.create('Ext.grid.Panel',{
             id : 'PickingListGrid',
@@ -332,23 +335,37 @@ Ext.define('material.material_Receive',{
                             }
                         },
                         autoLoad : true,
-                        listeners:{
-                            load:function () {
-                                Ext.getCmp('buildingName').setValue("");
-                            }
-                        }
+
+                        // listeners:{
+                        //     load:function () {
+                        //         Ext.getCmp('buildingName').setValue("");
+                        //     }
+                        // }
                     });
                     //buildingName,下拉框重新加载数据
                     buildingName.setStore(tableListStore2);
 
                     //将requisitionOrderId传到明细表格
-                    Ext.getCmp('toolbar_specific_pickList').items.items[0].setValue(requisitionOrderId);
+                    // Ext.getCmp('toolbar_specific_pickList').items.items[0].setValue(requisitionOrderId);
+
+
+                    // toolbar_specific_pickList.items.items[0].setValue(requisitionOrderId);
 
                     // //弹框
                     // win_picklistInfo_material_outbound.show();
 
                     //添加一个tabPanel
-                    var tab = tabPanel.add(grid__query_pickList_specific);
+                    var tabPanel = Ext.getCmp('pick_tabpanel');
+                    console.log("--------------------------->",tabPanel.activeTab);
+                    var tab = tabPanel.add(
+                            // grid__query_pickList_specific,
+                            panel_specific
+                        );
+                    console.log("<--------------------------->",tabPanel);
+                    console.log(panel_specific);
+                    console.log(grid__query_pickList_specific)
+                    console.log(specificMaterialList)
+                    tabPanel.setActiveTab(tab);
                 }
             }
         });
@@ -444,7 +461,7 @@ Ext.define('material.material_Receive',{
 
         var toolbar_specific_pickList = Ext.create('Ext.toolbar.Toolbar',{
             dock : "top",
-            id : "toolbar_specific_pickList",
+            // id : "toolbar_specific_pickList",
             items: [
                 {
                     xtype: 'textfield',
@@ -495,12 +512,13 @@ Ext.define('material.material_Receive',{
         });
 
         var grid__query_pickList_specific=Ext.create('Ext.grid.Panel',{
-            title:'领料单明细',
-            id : 'grid__query_pickList_specific',
+            // id : 'grid__query_pickList_specific',
             tbar:toolbar_specific_pickList,
             store:specificMaterialList,
             autoScroll: true, //超过长度带自动滚动条
             dock: 'bottom',
+            closable:true,
+            closeAction: 'hide',
             columns:[
                 {
                     dataIndex:'name',
@@ -559,99 +577,52 @@ Ext.define('material.material_Receive',{
         });
 
         //弹框
-        var win_picklistInfo_material_outbound = Ext.create('Ext.window.Window', {
-            // id:'win_errorInfo_outbound',
-            title: '领料',
-            height: 500,
-            width: 800,
-            layout: 'fit',
-            closable : true,
-            draggable:true,
-            closeAction : 'hidden',
-            // tbar:toolbar_pop1,
-            // items:grid__query_pickList_specific,
-        });
-
-
-        //领料单查询信息 Panel
-        // var panel_bottom = Ext.create('Ext.panel.Panel',{
+        // var win_picklistInfo_material_outbound = Ext.create('Ext.window.Window', {
+        //     // id:'win_errorInfo_outbound',
         //     title: '领料',
-        //     //dock: 'bottom',
-        //     layout:{
-        //         type:'hbox',
-        //         align:'stretch'
-        //     },
-        //     width:'100%',
-        //     height:500,
-        //
-        //     items:[grid__query_pickList_specific,
-        //     ],
+        //     height: 500,
+        //     width: 800,
+        //     layout: 'fit',
+        //     closable : true,
+        //     draggable:true,
+        //     closeAction : 'hidden',
+        //     // tbar:toolbar_pop1,
+        //     // items:grid__query_pickList_specific,
         // });
 
-        //领料的具体材料信息 panel
-        var panel = Ext.create('Ext.panel.Panel',{
+
+        //领料的具体材料信息Panel
+        var panel_specific = Ext.create('Ext.panel.Panel',{
+            title: '领料单明细',
             //dock: 'bottom',
             layout:{
-                type:'vbox',
+                type:'hbox',
+                align:'stretch'
+            },
+            width:'100%',
+            height:500,
+            closable:true,
+            closeAction : 'hide',
+            autoDestroy: false,
+            items:[grid__query_pickList_specific],
+        });
+
+        //领料单查询信息 panel
+        var panel_query = Ext.create('Ext.panel.Panel',{
+            //dock: 'bottom',
+            title:'领料单查询',
+            layout:{
+                type:'hbox',
                 align:'stretch'
             },
             width:'100%',
             height:'100%',
-
-            items:[grid1,
-                // {
-                //     xtype:'container',
-                //     // flex:0.3,
-                //     items:[{
-                //         xtype:'button',
-                //         // margin: '0 0 0 30',
-                //         text:'选择',
-                //         itemId:'move_right',
-                //         handler:function() {
-                //             var records = grid1.getSelectionModel().getSelection();
-                //             console.log(records)
-                //             console.log("测试")
-                //             console.log(records[0])
-                //
-                //             for (i = 0; i < records.length; i++) {
-                //                 console.log(records[i].data['countTemp'])
-                //                 if(records[i].data['countTemp'] != 0){
-                //                     console.log("添加")
-                //                     pickList.add(records[i]);
-                //                 }
-                //             }
-                //             //若要领数量<领取数量，则不能直接remove，需要更改数量值
-                //
-                //         }
-                //     },{
-                //         xtype:'button',
-                //         text:'撤销',
-                //         itemId:'move_left',
-                //         handler:function(){
-                //             var records=grid2.getSelectionModel().getSelection();
-                //             pickList.remove(records);
-                //             MaterialpickListStore.add(records);
-                //         }
-                //     }]
-                // },
-                // grid2
-                // grid__query_pickList_specific
-            ],
+            items:[grid1],
         });
 
-
-
-        // this.dockedItems = [toolbar,panel,{
-        //     xtype: 'pagingtoolbar',
-        //     // store: material_Query_Data_Store,   // same store GridPanel is using
-        //     dock: 'bottom',
-        //     displayInfo: true,
-        //     displayMsg:'显示{0}-{1}条，共{2}条',
-        //     emptyMsg:'无数据'
-        // }
-        // ];
         // this.tbar = toolbar;
-        this.items = [panel];
+
+        this.items = [panel_query];
         this.callParent(arguments);
     }
 })
