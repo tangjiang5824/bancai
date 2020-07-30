@@ -3,17 +3,17 @@ Ext.define('preprocess.preprocess_Inbound', {
     region : 'center',
     layout : "fit",
     title : '预加工半成品入库',
-    reloadPage : function() {
-        var p = Ext.getCmp('functionPanel');
-        p.removeAll();
-        cmp = Ext.create("data.UploadDataTest");
-        p.add(cmp);
-    },
-    clearGrid : function() {
-        var msgGrid = Ext.getCmp("msgGrid");
-        if (msgGrid != null || msgGrid != undefined)
-            this.remove(msgGrid);
-    },
+    // reloadPage : function() {
+    //     var p = Ext.getCmp('functionPanel');
+    //     p.removeAll();
+    //     cmp = Ext.create("data.UploadDataTest");
+    //     p.add(cmp);
+    // },
+    // clearGrid : function() {
+    //     var msgGrid = Ext.getCmp("msgGrid");
+    //     if (msgGrid != null || msgGrid != undefined)
+    //         this.remove(msgGrid);
+    // },
 
     initComponent : function() {
         var me = this;
@@ -46,14 +46,14 @@ Ext.define('preprocess.preprocess_Inbound', {
         var storePosition = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '仓库名',
             labelWidth : 50,
-            width : 200,
-            margin: '0 10 0 20',
+            width : 250,
+            margin: '0 0 0 20',
             id :  'storePosition',
             name : 'storePosition',
-            matchFieldWidth: false,
+            matchFieldWidth: true,
             emptyText : "--请选择--",
-            displayField: 'warehousename',
-            valueField: 'warehousename',
+            displayField: 'warehouseName',
+            valueField: 'id',
             editable : false,
             store: storeNameList,
         });
@@ -148,7 +148,7 @@ Ext.define('preprocess.preprocess_Inbound', {
                 // },
                 // speificLocation_row,
                 // speificLocation_col,
-                {xtype: 'textfield', fieldLabel: '入库数量', id: 'count', width: 190, labelWidth: 30,  name: 'count', value: ""},
+                {xtype: 'textfield', fieldLabel: '入库数量', id: 'count', margin: '0 0 0 20', width: 190, labelWidth: 60,  name: 'count', value: ""},
 
                 {xtype : 'button',
                     margin: '0 10 0 70',

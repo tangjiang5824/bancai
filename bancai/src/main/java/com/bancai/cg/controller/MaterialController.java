@@ -159,7 +159,7 @@ public class MaterialController {
 
             if(null!=jsonTemp.get("count")&&!jsonTemp.get("count").equals(""))   {
                 count=Double.parseDouble(jsonTemp.get("count")+"");
-                store.setCount(count);
+                store.setCountStore(count);
                 store.setCountUse(count);
             }
 
@@ -171,7 +171,7 @@ public class MaterialController {
             Set<MaterialStore> materialStores = material.getMaterialStores();
             for(MaterialStore store1:materialStores){
                 if(null!=store1.getWarehouseName()&&store1.getWarehouseName().equals(warehousename)){
-                    store1.setCount(store1.getCount()+count);
+                    store1.setCountStore(store1.getCountStore()+count);
                     store1.setCountUse(store1.getCountUse()+count);
                     store1.setTotalWeight(store1.getTotalWeight()+totalweight);
                     materialstoredao.save(store1);
@@ -184,7 +184,7 @@ public class MaterialController {
 
             if(flag) materialstoredao.save(store);
 
-            logdetail.setCount(store.getCount());
+            logdetail.setCount(store.getCountStore());
             logdetail.setMaterialInfo(material);
             logdetail.setMaterialLog(log);
             logdetail.setIsrollback(0);
@@ -217,7 +217,7 @@ public class MaterialController {
         for(MaterialLogdetail detail:materiallogdetails){
             MaterialLogdetail newdetail=new MaterialLogdetail();
             MaterialStore materialStore = detail.getMaterialStore();
-            materialStore.setCount(materialStore.getCount()-detail.getCount());
+            materialStore.setCountStore(materialStore.getCountStore()-detail.getCount());
             materialStore.setCountUse(materialStore.getCountUse()-detail.getCount());
             materialstoredao.save(materialStore);
             newdetail.setIsrollback(1);
@@ -257,14 +257,14 @@ public class MaterialController {
             logdetail.setMaterialLog(log);
             logdetail.setCount(count);
             if(null!=store){
-                store.setCount(store.getCount()+count);
+                store.setCountStore(store.getCountStore()+count);
                 store.setCountUse(store.getCountUse()+count);
                 store.setTotalWeight(store.getTotalWeight()+totalWeight);
 
             }else {
                 store=new MaterialStore();
                 store.setCountUse(count);
-                store.setCount(count);
+                store.setCountStore(count);
                 store.setWarehouseName(warehouseName);
                 store.setTotalWeight(totalWeight);
                 store.setMaterialInfo(material);
