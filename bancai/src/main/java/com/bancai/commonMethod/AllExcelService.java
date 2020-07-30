@@ -112,7 +112,7 @@ public class AllExcelService extends BaseService {
 				Double count=null;
 				if(null!=dataList.get(i).get("count")){
 					count=Double.parseDouble(dataList.get(i).get("count")+"");
-					store.setCount(count);
+					store.setCountStore(count);
 					store.setCountUse(count);
 				}
 
@@ -135,7 +135,7 @@ public class AllExcelService extends BaseService {
 				Set<MaterialStore> stores=material.getMaterialStores();
 				for(MaterialStore store1:stores){
 					if(store1.getWarehouseName().equals(warehouseName)){
-						store1.setCount(store1.getCount()+count);
+						store1.setCountStore(store1.getCountStore()+count);
 						store1.setCountUse(store1.getCountUse()+count);
 						store1.setTotalWeight(store1.getTotalWeight()+totalWeight);
 						materialstoredao.save(store1);
@@ -157,7 +157,7 @@ public class AllExcelService extends BaseService {
 				logdetail.setIsrollback(0);
 				logdetail.setMaterialLog(log);
 				logdetail.setMaterialInfo(material);
-				logdetail.setCount(store.getCount());
+				logdetail.setCount(store.getCountStore());
 				if (flag) logdetail.setMaterialStore(store);
 				mateialLogdetaildao.save(logdetail);
 

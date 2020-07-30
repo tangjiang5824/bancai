@@ -34,7 +34,7 @@ public class MaterialLogdetail {
     }
 
     @ManyToOne(targetEntity = MaterialLog.class)
-    @JoinColumn(name = "materiallogid",referencedColumnName = "id")
+    @JoinColumn(name = "materiallogId",referencedColumnName = "id")
     public MaterialLog getMaterialLog() {
         return materialLog;
     }
