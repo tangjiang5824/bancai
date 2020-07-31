@@ -28,10 +28,38 @@ public class ProductDataService extends BaseService{
     private InsertProjectService insertProjectService;
 
     @Transactional
-    public DataList productAddInsertRowToFormatList(DataList insertList,String productTypeId,String productFormat){
+    public DataList productAddInsertRowToFormatList(DataList insertList,String typeId,String format){
         DataRow row = new DataRow();
-        row.put("productTypeId",productTypeId);
-        row.put("productFormat",productFormat);
+        row.put("productTypeId",typeId);
+        row.put("productFormat",format);
+        insertList.add(row);
+        return insertList;
+    }
+    @Transactional
+    public DataList productAddInsertRowToInfoList(DataList insertList,String productFormatId,String productName,String inventoryUnit,
+                                                  String unitWeight,String unitArea,String remark,String mValue,String nValue,String pValue,
+                                                  String aValue,String bValue,String mAngle,String nAngle,String pAngle,
+                                                  String suffix,String ignoredSuffix){
+        DataRow row = new DataRow();
+        row.put("productFormatId",productFormatId);
+        row.put("productName",productName);
+        row.put("inventoryUnit",inventoryUnit);
+        row.put("unitWeight",unitWeight);
+        row.put("unitArea",unitArea);
+        row.put("remark",remark);
+        String values = mValue + "%" + nValue + "%" + pValue + "%" + aValue + "%" + bValue + "%" + mAngle +
+                "%" + nAngle + "%" + pAngle + "%" + suffix + "%" + ignoredSuffix;
+        row.put("values", values);
+//        row.put("mValue",mValue);
+//        row.put("nValue",nValue);
+//        row.put("pValue",pValue);
+//        row.put("aValue",aValue);
+//        row.put("bValue",bValue);
+//        row.put("mAngle",mAngle);
+//        row.put("nAngle",nAngle);
+//        row.put("pAngle",pAngle);
+//        row.put("suffix",suffix);
+//        row.put("ignoredSuffix",ignoredSuffix);
         insertList.add(row);
         return insertList;
     }
@@ -43,10 +71,10 @@ public class ProductDataService extends BaseService{
     public boolean productAddNewFormat(DataList insertList,String userId) {
         boolean b = true;
         for (DataRow dataRow : insertList) {
-            String productTypeId = dataRow.get("productTypeId").toString();
-            String productFormat = dataRow.get("productFormat").toString();
+            String typeId = dataRow.get("productTypeId").toString();
+            String format = dataRow.get("productFormat").toString();
             int formatId = insertProjectService.insertDataToTable("insert into product_format (productTypeId,productFormat) values (?,?)",
-                    productTypeId,productFormat);
+                    typeId,format);
             b = b&insertProjectService.insertIntoTableBySQL("insert into format_log (type,formatId,userId,time) values(?,?,?,?)",
                     "1",String.valueOf(formatId),userId,analyzeNameService.getTime());
         }
@@ -54,10 +82,50 @@ public class ProductDataService extends BaseService{
     }
 
     /**
-     * 添加新的产品info，返回新增的info id
+     * 添加新的产品info
      */
     @Transactional
-    public int productAddNewInfo(String productName, String inventoryUnit, String unitWeight,
+    public boolean productAddNewInfo(DataList insertList,String userId){
+        boolean b = true;
+        int logId = insertProjectService.insertDataToTable("insert into product_log (type,userId,time) values(?,?,?)",
+                "6",userId,analyzeNameService.getTime());
+        for (DataRow dataRow : insertList) {
+            String productFormatId = dataRow.get("productFormatId").toString();
+            String productName = dataRow.get("productName").toString();
+            String inventoryUnit = dataRow.get("inventoryUnit").toString();
+            String unitWeight = dataRow.get("unitWeight").toString();
+            String unitArea = dataRow.get("unitArea").toString();
+            String remark = dataRow.get("remark").toString();
+            String[] values = dataRow.get("values").toString().split("%");
+            String mValue = null;
+            String nValue = null;
+            String pValue = null;
+            String aValue = null;
+            String bValue = null;
+            if((!values[0].equals("null"))&&(values[0].length()!=0))
+                mValue = values[0];
+            if((!values[1].equals("null"))&&(values[1].length()!=0))
+                nValue = values[1];
+            if((!values[2].equals("null"))&&(values[2].length()!=0))
+                pValue = values[2];
+            if((!values[3].equals("null"))&&(values[3].length()!=0))
+                aValue = values[3];
+            if((!values[4].equals("null"))&&(values[4].length()!=0))
+                bValue = values[4];
+            int productId = insertProjectService.insertDataToTable("insert into product_info (productName,inventoryUnit,unitWeight,unitArea,remark," +
+                            "productFormatId,mValue,nValue,pValue,aValue,bValue,mAngle,nAngle,pAngle,suffix,ignoredSuffix,userId) " +
+                            "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                    productName,inventoryUnit,unitWeight,unitArea,remark,productFormatId,mValue,nValue,pValue,aValue,bValue
+                    ,values[5],values[6],values[7],values[8],values[9],userId);
+            b = b&insertProjectService.insertIntoTableBySQL("insert into product_logdetail (productlogId,productId) values (?,?)",
+                    String.valueOf(logId), String.valueOf(productId));
+        }
+        return b;
+    }
+
+
+    @Transactional
+    public int productAddSingleInfo(String productName, String inventoryUnit, String unitWeight,
                                  String unitArea, String remark, String userId) {
         if(analyzeNameService.isInfoExist("product",productName)!=0)
             return 0;
@@ -73,13 +141,11 @@ public class ProductDataService extends BaseService{
         if (productId == 0) {
             if (analyzeNameService.getTypeByProductName(productName).size() == 0)
                 return 0;
-            Date date = new Date();
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String sql_addLog = "insert into product_log (type,userId,time) values(?,?,?)";
-            productId = productAddNewInfo(productName, "", "", "", "", userId);
+            productId = productAddSingleInfo(productName, "", "", "", "", userId);
             if (productId == 0)
                 return 0;
-            int productlogId = insertProjectService.insertDataToTable(sql_addLog, "6", "0", simpleDateFormat.format(date));
+            int productlogId = insertProjectService.insertDataToTable(sql_addLog, "6", "0", analyzeNameService.getTime());
             boolean isLogRight = insertProjectService.insertIntoTableBySQL("insert into product_logdetail (productlogId,productId) values (?,?)",
                     String.valueOf(productlogId), String.valueOf(productId));
             if (!isLogRight)
@@ -237,6 +303,66 @@ public class ProductDataService extends BaseService{
         return formatList;
     }
 
+    /**
+     * 添加数据,返回添加的产品id
+     */
+    @Transactional
+    public int[] backProduct(String productName, String warehouseName, String count) {
+        String[] info = analyzeNameService.isInfoExistBackUnit("product", productName);
+        //id,unitWeight,unitArea
+        int productId = Integer.parseInt(info[0]);
+        System.out.println("backproductUpload===productId=" + productId);
+        if (productId == 0) {
+            return new int[]{0,0};
+        }
+        int backproductstoreId = backproductSaveData(info, warehouseName, count);
+        return new int[]{productId,backproductstoreId};
+    }
+
+    private int backproductSaveData(String[] info, String warehouseName, String countNum){
+        //id,unitWeight,unitArea
+        int con = 0;
+        String count = String.valueOf(Double.parseDouble(countNum));
+        if((info[1]!=null)&&(!info[1].equals("")))
+            info[1] = String.valueOf(Double.parseDouble(info[1])*Double.parseDouble(count));
+        else {
+            info[1] = null;
+            con += 1;
+        }
+        if((info[2]!=null)&&(!info[2].equals("")))
+            info[2] = String.valueOf(Double.parseDouble(info[2])*Double.parseDouble(count));
+        else {
+            info[2]=null;
+            con += 10;
+        }
+        String sql = "select * from backproduct_store where productId=? and warehouseName=?";
+        DataList queryList = queryService.query(sql,info[0],warehouseName);
+        if(queryList.isEmpty()){
+            return insertProjectService.insertDataToTable("insert into backproduct_store " +
+                            "(productId,countUse,countStore,warehouseName,totalArea,totalWeight) values (?,?,?,?,?,?)",
+                    info[0],count,count,warehouseName,info[2], info[1]);
+        } else {
+            String sql2 = "update backproduct_store set countUse=countUse+\"" + count + "\",countStore=countStore+\"" + count+"\"";
+
+            switch (con) {
+                case 0:
+                    sql2 = sql2 + ",totalArea=totalArea+\"" + info[2] + "\",totalWeight=totalWeight+\"" + info[1]+"\"";
+                    break;
+                case 1:
+                    sql2 = sql2 + ",totalArea=totalArea+\"" + info[2]+"\"";
+                    break;
+                case 10:
+                    sql2 = sql2 + ",totalWeight=totalWeight+\"" + info[1]+"\"";
+                    break;
+                case 11:
+                default:
+                    break;
+            }
+            sql2 = sql2 + " where id=\"" + queryList.get(0).get("id").toString()+"\"";
+            jo.update(sql2);
+            return Integer.parseInt(queryList.get(0).get("id").toString());
+        }
+    }
 
 
 

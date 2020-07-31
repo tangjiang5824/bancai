@@ -28,28 +28,89 @@ public class OldpanelDataService extends BaseService {
     @Autowired
     private InsertProjectService insertProjectService;
 
+    @Transactional
+    public DataList oldpanelAddInsertRowToFormatList(DataList insertList,String typeId,String format){
+        DataRow row = new DataRow();
+        row.put("oldpanelTypeId",typeId);
+        row.put("oldpanelFormat",format);
+        insertList.add(row);
+        return insertList;
+    }
+
+    @Transactional
+    public DataList oldpanelAddInsertRowToInfoList(DataList insertList,String oldpanelFormatId,String oldpanelName,String inventoryUnit,
+                                                  String unitWeight,String unitArea,String remark,String mValue,String nValue,String pValue,
+                                                  String aValue,String bValue,String mAngle,String nAngle,String pAngle,
+                                                  String suffix){
+        DataRow row = new DataRow();
+        row.put("oldpanelFormatId",oldpanelFormatId);
+        row.put("oldpanelName",oldpanelName);
+        row.put("inventoryUnit",inventoryUnit);
+        row.put("unitWeight",unitWeight);
+        row.put("unitArea",unitArea);
+        row.put("remark",remark);
+        String values = mValue + "%" + nValue + "%" + pValue + "%" + aValue + "%" + bValue + "%" + mAngle +
+                "%" + nAngle + "%" + pAngle + "%" + suffix;
+        row.put("values", values);
+        insertList.add(row);
+        return insertList;
+    }
     /**
-     * 添加新的旧板format，返回新增的format id
+     * 添加新的旧板format
      */
     @Transactional
-    public int oldpanelAddNewFormat(String oldpanelTypeId, String oldpanelFormat) {
-        if(analyzeNameService.isFormatExist("oldpanel",oldpanelTypeId,oldpanelFormat)!=0)
-            return 0;
-        return oldpanelSaveFormat(oldpanelTypeId, oldpanelFormat);
+    public boolean oldpanelAddNewFormat(DataList insertList,String userId) {
+        boolean b = true;
+        for (DataRow dataRow : insertList) {
+            String typeId = dataRow.get("oldpanelTypeId").toString();
+            String format = dataRow.get("oldpanelFormat").toString();
+            int formatId = insertProjectService.insertDataToTable("insert into oldpanel_format (oldpanelTypeId,oldpanelFormat) values (?,?)",
+                    typeId,format);
+            b = b&insertProjectService.insertIntoTableBySQL("insert into format_log (type,formatId,userId,time) values(?,?,?,?)",
+                    "2",String.valueOf(formatId),userId,analyzeNameService.getTime());
+        }
+        return b;
     }
-    private int oldpanelSaveFormat(String oldpanelTypeId, String oldpanelFormat){
-        return insertProjectService.insertDataToTable("insert into oldpanel_format (oldpanelTypeId,oldpanelFormat) values (?,?)"
-                , oldpanelTypeId, oldpanelFormat);
-    }
+
     /**
-     * 添加新的旧板info，返回新增的info id
+     * 添加新的旧板info
      */
     @Transactional
-    public int oldpanelAddNewInfo(String oldpanelName, String inventoryUnit, String unitWeight,
-                                  String unitArea, String remark, String userId) {
-        if(analyzeNameService.isInfoExist("oldpanel",oldpanelName)!=0)
-            return 0;
-        return oldpanelSaveInfo(oldpanelName, inventoryUnit, unitWeight, unitArea, remark, userId);
+    public boolean oldpanelAddNewInfo(DataList insertList,String userId){
+        boolean b = true;
+        int logId = oldpanelAddLogBackId("6",userId,null);
+        for (DataRow dataRow : insertList) {
+            String oldpanelFormatId = dataRow.get("oldpanelFormatId").toString();
+            String oldpanelName = dataRow.get("oldpanelName").toString();
+            String inventoryUnit = dataRow.get("inventoryUnit").toString();
+            String unitWeight = dataRow.get("unitWeight").toString();
+            String unitArea = dataRow.get("unitArea").toString();
+            String remark = dataRow.get("remark").toString();
+            String[] values = dataRow.get("values").toString().split("%");
+            String mValue = null;
+            String nValue = null;
+            String pValue = null;
+            String aValue = null;
+            String bValue = null;
+            if((!values[0].equals("null"))&&(values[0].length()!=0))
+                mValue = values[0];
+            if((!values[1].equals("null"))&&(values[1].length()!=0))
+                nValue = values[1];
+            if((!values[2].equals("null"))&&(values[2].length()!=0))
+                pValue = values[2];
+            if((!values[3].equals("null"))&&(values[3].length()!=0))
+                aValue = values[3];
+            if((!values[4].equals("null"))&&(values[4].length()!=0))
+                bValue = values[4];
+            int oldpanelId = insertProjectService.insertDataToTable("insert into oldpanel_info (oldpanelName,inventoryUnit,unitWeight,unitArea,remark," +
+                            "oldpanelFormatId,mValue,nValue,pValue,aValue,bValue,mAngle,nAngle,pAngle,suffix,userId) " +
+                            "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                    oldpanelName,inventoryUnit,unitWeight,unitArea,remark,oldpanelFormatId,mValue,nValue,pValue,aValue,bValue
+                    ,values[5],values[6],values[7],values[8],userId);
+            b = b&insertProjectService.insertIntoTableBySQL("insert into oldpanel_logdetail (oldpanellogId,oldpanelId) values (?,?)",
+                    String.valueOf(logId), String.valueOf(oldpanelId));
+        }
+        return b;
     }
 
     @Transactional
@@ -70,13 +131,9 @@ public class OldpanelDataService extends BaseService {
         String time =analyzeNameService.getTime();
         int oldpanellogId = 0;
         if (projectId.equals("-1") && buildingId.equals("-1")) {//入库
-            oldpanellogId = insertProjectService.insertDataToTable(
-                    "insert into oldpanel_log (type,userId,time,operator,isrollback) values(?,?,?,?,?)",
-                    "0",userId,time,operator,"0");
+            oldpanellogId = oldpanelAddLogBackId("0",userId,operator);
         } else {//退库
-            oldpanellogId = insertProjectService.insertDataToTable(
-                    "insert into oldpanel_log (type,userId,time,projectId,buildingId,operator,isrollback) values(?,?,?,?,?,?,?)",
-                    "2",userId,time,projectId,buildingId,operator,"0");
+            oldpanellogId = oldpanelAddLogBackId("2",userId,operator);
         }
         if(oldpanellogId==0)
             return false;
@@ -120,36 +177,41 @@ public class OldpanelDataService extends BaseService {
                 oldpanelId,count,oldpanellogId,storeId,"0");
     }
 
-
-
-    private int oldpanelSaveInfo(String oldpanelName, String inventoryUnit, String unitWeight0,
-                                 String unitArea0, String remark, String userId){
-        double unitArea = Double.parseDouble(unitArea0);
-        double unitWeight = Double.parseDouble(unitWeight0);
-        String[] analyzeOldpanelName = analyzeNameService.analyzeOldpanelName(oldpanelName);
-        if(analyzeOldpanelName==null)
-            return 0;
-        DataList formatList = queryService.query("select * from oldpanel_format where oldpanelTypeId=? and oldpanelFormat=?",
-                analyzeOldpanelName[1],analyzeOldpanelName[0]);
-        if(formatList.size()==0)
-            return 0;
-        String productFormatId = formatList.get(0).get("id").toString();
-        //返回String[]{format,oldpanelTypeId,classificationId,m,n,p,a,b,mAngle,nAngle,pAngle,suffix,oldpanelTypeName};
-        String sql = "insert into oldpanel_info (oldpanelName,inventoryUnit,unitWeight,unitArea,remark," +
-                "oldpanelFormatId,mValue,nValue,pValue,aValue,bValue,mAngle,nAngle,pAngle,suffix,userId) " +
-                "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-        String[] t = {oldpanelName,inventoryUnit,
-                String.valueOf(unitWeight),String.valueOf(unitArea),remark,
-                productFormatId,analyzeOldpanelName[3],
-                analyzeOldpanelName[4],analyzeOldpanelName[5],analyzeOldpanelName[6],analyzeOldpanelName[7],
-                analyzeOldpanelName[8],analyzeOldpanelName[9],analyzeOldpanelName[10],analyzeOldpanelName[11],userId};
-        System.out.println("SaveInfo======="+Arrays.toString(t));
-        return insertProjectService.insertDataToTable(sql,oldpanelName,inventoryUnit,
-                String.valueOf(unitWeight),String.valueOf(unitArea),remark,
-                productFormatId,analyzeOldpanelName[3],
-                analyzeOldpanelName[4],analyzeOldpanelName[5],analyzeOldpanelName[6],analyzeOldpanelName[7],
-                analyzeOldpanelName[8],analyzeOldpanelName[9],analyzeOldpanelName[10],analyzeOldpanelName[11],userId);
+    private int oldpanelAddLogBackId(String type,String userId,String operator){
+        return insertProjectService.insertDataToTable(
+                "insert into oldpanel_log (type,userId,time,operator,isrollback) values(?,?,?,?,?)",
+                type,userId,analyzeNameService.getTime(),operator,"0");
     }
+
+
+//    private int oldpanelSaveInfo(String oldpanelName, String inventoryUnit, String unitWeight0,
+//                                 String unitArea0, String remark, String userId){
+//        double unitArea = Double.parseDouble(unitArea0);
+//        double unitWeight = Double.parseDouble(unitWeight0);
+//        String[] analyzeOldpanelName = analyzeNameService.analyzeOldpanelName(oldpanelName);
+//        if(analyzeOldpanelName==null)
+//            return 0;
+//        DataList formatList = queryService.query("select * from oldpanel_format where oldpanelTypeId=? and oldpanelFormat=?",
+//                analyzeOldpanelName[1],analyzeOldpanelName[0]);
+//        if(formatList.size()==0)
+//            return 0;
+//        String productFormatId = formatList.get(0).get("id").toString();
+//        //返回String[]{format,oldpanelTypeId,classificationId,m,n,p,a,b,mAngle,nAngle,pAngle,suffix,oldpanelTypeName};
+//        String sql = "insert into oldpanel_info (oldpanelName,inventoryUnit,unitWeight,unitArea,remark," +
+//                "oldpanelFormatId,mValue,nValue,pValue,aValue,bValue,mAngle,nAngle,pAngle,suffix,userId) " +
+//                "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+//        String[] t = {oldpanelName,inventoryUnit,
+//                String.valueOf(unitWeight),String.valueOf(unitArea),remark,
+//                productFormatId,analyzeOldpanelName[3],
+//                analyzeOldpanelName[4],analyzeOldpanelName[5],analyzeOldpanelName[6],analyzeOldpanelName[7],
+//                analyzeOldpanelName[8],analyzeOldpanelName[9],analyzeOldpanelName[10],analyzeOldpanelName[11],userId};
+//        System.out.println("SaveInfo======="+Arrays.toString(t));
+//        return insertProjectService.insertDataToTable(sql,oldpanelName,inventoryUnit,
+//                String.valueOf(unitWeight),String.valueOf(unitArea),remark,
+//                productFormatId,analyzeOldpanelName[3],
+//                analyzeOldpanelName[4],analyzeOldpanelName[5],analyzeOldpanelName[6],analyzeOldpanelName[7],
+//                analyzeOldpanelName[8],analyzeOldpanelName[9],analyzeOldpanelName[10],analyzeOldpanelName[11],userId);
+//    }
 
 
 //    private int oldpanelSaveData(String[] analyzeOldpanelName, String oldpanelName, String classificationId, String inventoryUnit,
