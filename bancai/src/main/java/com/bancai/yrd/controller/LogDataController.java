@@ -4,17 +4,12 @@ import com.bancai.commonMethod.NewCondition;
 import com.bancai.commonMethod.QueryAllService;
 import com.bancai.domain.DataList;
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 import com.bancai.service.TableService;
 import com.bancai.vo.WebResponse;
-import com.bancai.yrd.service.Y_Upload_Data_Service;
-
-import javax.servlet.http.HttpSession;
+import com.bancai.yrd.service.OldpanelDataService;
 
 @RestController
 public class LogDataController {
@@ -24,7 +19,7 @@ public class LogDataController {
     @Autowired
     private QueryAllService queryService;
     @Autowired
-    private Y_Upload_Data_Service y_Upload_Data_Service;
+    private OldpanelDataService oldpanel_Data_Service;
 
     Logger log=Logger.getLogger(LogDataController.class);
 

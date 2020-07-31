@@ -228,7 +228,10 @@ public class test02 {
 //        sb.deleteCharAt(sb.length()-1);
 //        System.out.println(sb.toString());
 
-
+        DataRow row =new DataRow();
+        row.put("a","aa");
+        row.put("b",null);
+        System.out.println((row.get("b")!=null)&&(row.get("b").toString().length()!=0));
 
     }
 
