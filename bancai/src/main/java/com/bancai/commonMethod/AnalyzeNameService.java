@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 
 @Service
 public class AnalyzeNameService extends BaseService {
@@ -23,6 +25,12 @@ public class AnalyzeNameService extends BaseService {
     @Autowired
     private QueryAllService queryService;
 
+    @Transactional
+    public String getTime(){
+        Date date = new Date();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return simpleDateFormat.format(date);
+    }
     @Transactional
     public DataList addErrorRowToErrorList(DataList errorList, String id,String errorType){
         DataRow errorRow = new DataRow();

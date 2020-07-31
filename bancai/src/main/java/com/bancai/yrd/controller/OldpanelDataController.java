@@ -159,6 +159,7 @@ public class OldpanelDataController {
             if(jsonArray.length()==0){
                 response.setSuccess(false);
                 response.setErrorCode(100); //提交的s为空
+                return response;
             }
             DataList errorList = new DataList();
             DataList insertList = new DataList();
@@ -179,7 +180,7 @@ public class OldpanelDataController {
                     if(oldpanelId==null)
                         errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"没有该旧板的基础信息");
                     else
-                        insertList = oldpanelDataService.addInsertRowToInboundList(insertList,oldpanelId[0],warehouseName,count,oldpanelId[1],oldpanelId[2]);
+                        insertList = oldpanelDataService.oldpanelAddInsertRowToInboundList(insertList,oldpanelId[0],warehouseName,count,oldpanelId[1],oldpanelId[2]);
                 }
             }
             if(!errorList.isEmpty()){

@@ -52,7 +52,7 @@ Ext.define('product.product_Format_Input', {
             matchFieldWidth: false,
             emptyText : "--请选择--",
             displayField: 'productTypeName',
-            valueField: 'productTypeName',
+            valueField: 'id',
             editable : false,
             store: productNameList,
             listeners:{

@@ -3,6 +3,7 @@ package com.bancai.yrd.controller;
 import com.bancai.cg.service.InsertProjectService;
 import com.bancai.commonMethod.*;
 import com.bancai.db.mysqlcondition;
+import com.bancai.domain.DataList;
 import com.bancai.yrd.service.ProductDataService;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -37,77 +38,129 @@ public class ProductDataController {
     private ProductDataService productDataService;
 
     Logger log = Logger.getLogger(ProductDataController.class);
+    private static String isPureNumber = "[0-9]+";
 
     /*
      * 新增产品品名格式
      * */
     @RequestMapping(value = "/product/addFormat.do")
-    public boolean productAddFormat(String s, HttpSession session) throws JSONException {
+    public WebResponse productAddFormat(String s, HttpSession session) throws JSONException {
+        WebResponse response = new WebResponse();
         try {
             JSONArray jsonArray = new JSONArray(s);
-            JSONObject jsonTemp = jsonArray.getJSONObject(0);
-            String productTypeId=jsonTemp.get("productTypeId")+"";
-            String format1=jsonTemp.get("format1")+"";
-            String format2=jsonTemp.get("format2")+"";
-            String format3=jsonTemp.get("format3")+"";
-            String format4=jsonTemp.get("format4")+"";
-            String productFormat = format1+format2+format3+format4;
-            int formatId = productDataService.productAddNewFormat(productTypeId, productFormat);
-            if (formatId == 0) {
-                return false;//已经存在
-            }
             String userId = (String) session.getAttribute("userid");
-            Date date = new Date();
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String sql_addLog = "insert into format_log (type,formatId,userId,time) values(?,?,?,?)";
-            boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLog,
-                    "1",String.valueOf(formatId), userId, simpleDateFormat.format(date));
-            if (!is_log_right) {
-                return false;
+            if(jsonArray.length()==0){
+                response.setSuccess(false);
+                response.setErrorCode(100); //提交的s为空
+                return response;
             }
+            DataList errorList = new DataList();
+            DataList insertList = new DataList();
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonTemp = jsonArray.getJSONObject(i);
+                String id = jsonTemp.get("id")+"";
+                String productTypeId=jsonTemp.get("productTypeId")+"";
+                String format1=jsonTemp.get("format1")+"";
+                String format2=jsonTemp.get("format2")+"";
+                String format3=jsonTemp.get("format3")+"";
+                String format4=jsonTemp.get("format4")+"";
+                String productFormat = format1+format2+format3+format4;
+                if((productTypeId.equals("null"))||(productTypeId.length()==0))
+                    errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"未选择类型");
+                else if((productFormat.length()!=4)||(!productFormat.matches(isPureNumber)))
+                    errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"格式错误或选择不完全");
+                else if(analyzeNameService.isFormatExist("product",productTypeId,productFormat)!=0)
+                    errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"此格式已存在");
+                else
+                    insertList = productDataService.productAddInsertRowToFormatList(insertList,productTypeId,productFormat);
+            }
+            if(!errorList.isEmpty()){
+                response.setSuccess(false);
+                response.setErrorCode(200);//提交的s存在错误内容
+                response.put("errorList",errorList);
+                response.put("errorCount",errorList.size());
+                return response;
+            }
+            boolean uploadResult = productDataService.productAddNewFormat(insertList,userId);
+            response.setSuccess(uploadResult);
         } catch (Exception e) {
-            return false;
+            e.printStackTrace();
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误
+            response.setMsg(e.getMessage());
         }
-        return true;
+        return response;
     }
 
     /*
      * 新增产品基础信息
      * */
     @RequestMapping(value = "/product/addInfo.do")
-    public boolean productAddInfo(String s, HttpSession session) throws JSONException {
+    public WebResponse productAddInfo(String s, HttpSession session) throws JSONException {
+        WebResponse response = new WebResponse();
         try {
             JSONArray jsonArray = new JSONArray(s);
             String userId = (String) session.getAttribute("userid");
-            Date date = new Date();
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String sql_addLog = "insert into product_log (type,userId,time,isrollback) values(?,?,?,?)";
-            int productlogId = insertProjectService.insertDataToTable(sql_addLog, "6", userId, simpleDateFormat.format(date),"0");
+            if(jsonArray.length()==0){
+                response.setSuccess(false);
+                response.setErrorCode(100); //提交的s为空
+                return response;
+            }
+            DataList errorList = new DataList();
+            DataList insertList = new DataList();
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonTemp = jsonArray.getJSONObject(i);
-                System.out.println("第" + i + "个---" + jsonTemp);
+                String id = jsonTemp.get("id")+"";
                 String productName = (jsonTemp.get("productName") + "").trim().toUpperCase();
-//                String classificationId = jsonTemp.get("classificationId") + "";
-                String inventoryUnit = jsonTemp.get("inventoryUnit") + "";
-                String unitWeight = jsonTemp.get("unitWeight") + "";
-                String unitArea = jsonTemp.get("unitArea") + "";
+                String inventoryUnit = (jsonTemp.get("inventoryUnit") + "").trim().toUpperCase();
+                String unitWeight = (jsonTemp.get("unitWeight") + "").trim().toUpperCase();
+                String unitArea = (jsonTemp.get("unitArea") + "").trim().toUpperCase();
                 String remark = jsonTemp.get("remark") + "";
-                int productId = productDataService.productAddNewInfo(productName, inventoryUnit,
-                        unitWeight, unitArea, remark, userId);
-                if (productId == 0) {
-                    return false;//已经存在
-                }
-                String sql_addLogDetail = "insert into product_logdetail (productlogId,productId,isrollback) values (?,?,?)";
-                boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLogDetail,
-                        String.valueOf(productlogId), String.valueOf(productId),"0");
-                if (!is_log_right) {
-                    return false;
-                }
+//                if((productTypeId.equals("null"))||(productTypeId.length()==0))
+//                    errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"未选择类型");
+//                else if((productFormat.length()!=4)||(!productFormat.matches(isPureNumber)))
+//                    errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"格式错误或选择不完全");
+//                else if(analyzeNameService.isInfoExist("product",productName)!=0)
+//                    errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"已经存在这种产品");
+//                else
+//                    insertList = productDataService.productAddInsertRowToFormatList(insertList,productTypeId,productFormat);
             }
+            if(!errorList.isEmpty()){
+                response.setSuccess(false);
+                response.setErrorCode(200);//提交的s存在错误内容
+                response.put("errorList",errorList);
+                response.put("errorCount",errorList.size());
+                return response;
+            }
+            boolean uploadResult = productDataService.productAddNewFormat(insertList,userId);
+            response.setSuccess(uploadResult);
         } catch (Exception e) {
-            return false;
+            e.printStackTrace();
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误
+            response.setMsg(e.getMessage());
         }
-        return true;
+        return response;
+//            String sql_addLog = "insert into product_log (type,userId,time,isrollback) values(?,?,?,?)";
+//            int productlogId = insertProjectService.insertDataToTable(sql_addLog, "6", userId, simpleDateFormat.format(date),"0");
+//            for (int i = 0; i < jsonArray.length(); i++) {
+//                JSONObject jsonTemp = jsonArray.getJSONObject(i);
+//                System.out.println("第" + i + "个---" + jsonTemp);
+//                String productName = (jsonTemp.get("productName") + "").trim().toUpperCase();
+////                String classificationId = jsonTemp.get("classificationId") + "";
+//                String inventoryUnit = jsonTemp.get("inventoryUnit") + "";
+//                String unitWeight = jsonTemp.get("unitWeight") + "";
+//                String unitArea = jsonTemp.get("unitArea") + "";
+//                String remark = jsonTemp.get("remark") + "";
+//                int productId = productDataService.productAddNewInfo(productName, inventoryUnit,
+//                        unitWeight, unitArea, remark, userId);
+//
+//                }
+//                String sql_addLogDetail = "insert into product_logdetail (productlogId,productId,isrollback) values (?,?,?)";
+//                boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLogDetail,
+//                        String.valueOf(productlogId), String.valueOf(productId),"0");
+
+//            }
     }
 
     /*

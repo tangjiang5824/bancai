@@ -23,30 +23,43 @@ public class ProductDataService extends BaseService{
     @Autowired
     private QueryAllService queryService;
     @Autowired
-    private AnalyzeNameService AnalyzeNameService;
+    private AnalyzeNameService analyzeNameService;
     @Autowired
     private InsertProjectService insertProjectService;
 
+    @Transactional
+    public DataList productAddInsertRowToFormatList(DataList insertList,String productTypeId,String productFormat){
+        DataRow row = new DataRow();
+        row.put("productTypeId",productTypeId);
+        row.put("productFormat",productFormat);
+        insertList.add(row);
+        return insertList;
+    }
+
     /**
-     * 添加新的产品format，返回新增的format id
+     * 添加新的产品format
      */
     @Transactional
-    public int productAddNewFormat(String productTypeId, String productFormat) {
-        if(AnalyzeNameService.isFormatExist("product",productTypeId,productFormat)!=0)
-            return 0;
-        return productSaveFormat(productTypeId, productFormat);
+    public boolean productAddNewFormat(DataList insertList,String userId) {
+        boolean b = true;
+        for (DataRow dataRow : insertList) {
+            String productTypeId = dataRow.get("productTypeId").toString();
+            String productFormat = dataRow.get("productFormat").toString();
+            int formatId = insertProjectService.insertDataToTable("insert into product_format (productTypeId,productFormat) values (?,?)",
+                    productTypeId,productFormat);
+            b = b&insertProjectService.insertIntoTableBySQL("insert into format_log (type,formatId,userId,time) values(?,?,?,?)",
+                    "1",String.valueOf(formatId),userId,analyzeNameService.getTime());
+        }
+        return b;
     }
-    private int productSaveFormat(String productTypeId, String productFormat){
-        return insertProjectService.insertDataToTable("insert into product_format (productTypeId,productFormat) values (?,?)"
-                , productTypeId, productFormat);
-    }
+
     /**
      * 添加新的产品info，返回新增的info id
      */
     @Transactional
     public int productAddNewInfo(String productName, String inventoryUnit, String unitWeight,
                                  String unitArea, String remark, String userId) {
-        if(AnalyzeNameService.isInfoExist("product",productName)!=0)
+        if(analyzeNameService.isInfoExist("product",productName)!=0)
             return 0;
         return productSaveInfo(productName, inventoryUnit, unitWeight, unitArea, remark, userId);
     }
@@ -56,9 +69,9 @@ public class ProductDataService extends BaseService{
      */
     @Transactional
     public int addProductInfoIfNameValid(String productName,String userId){
-        int productId = AnalyzeNameService.isInfoExist("product", productName);
+        int productId = analyzeNameService.isInfoExist("product", productName);
         if (productId == 0) {
-            if (AnalyzeNameService.getTypeByProductName(productName).size() == 0)
+            if (analyzeNameService.getTypeByProductName(productName).size() == 0)
                 return 0;
             Date date = new Date();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -85,7 +98,7 @@ public class ProductDataService extends BaseService{
             unitWeight = String.valueOf(Double.parseDouble(unitWeight));
         else
             unitWeight = null;
-        String[] analyzeProductName = AnalyzeNameService.analyzeProductName(productName);
+        String[] analyzeProductName = analyzeNameService.analyzeProductName(productName);
         if(analyzeProductName==null)
             return 0;
         DataList formatList = queryService.query("select * from product_format where productTypeId=? and productFormat=?",
@@ -114,7 +127,7 @@ public class ProductDataService extends BaseService{
      */
     @Transactional
     public int[] addProduct(String productName, String warehouseName, String count) {
-        String[] info = AnalyzeNameService.isInfoExistBackUnit("product", productName);
+        String[] info = analyzeNameService.isInfoExistBackUnit("product", productName);
         //id,unitWeight,unitArea
         int productId = Integer.parseInt(info[0]);
         System.out.println("productUpload===productId=" + productId);

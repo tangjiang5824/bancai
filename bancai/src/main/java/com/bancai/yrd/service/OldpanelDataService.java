@@ -53,7 +53,7 @@ public class OldpanelDataService extends BaseService {
     }
 
     @Transactional
-    public DataList addInsertRowToInboundList(DataList insertList,String oldpanelId,String warehouseName,String count,String unitWeight,String unitArea){
+    public DataList oldpanelAddInsertRowToInboundList(DataList insertList,String oldpanelId,String warehouseName,String count,String unitWeight,String unitArea){
         DataRow row = new DataRow();
         row.put("oldpanelId",oldpanelId);
         row.put("warehouseName",warehouseName);
@@ -67,17 +67,16 @@ public class OldpanelDataService extends BaseService {
 
     @Transactional
     public boolean insertOldpanelDataToStore(DataList insertList,String userId,String operator,String projectId,String buildingId){
-        Date date = new Date();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String time =analyzeNameService.getTime();
         int oldpanellogId = 0;
         if (projectId.equals("-1") && buildingId.equals("-1")) {//入库
             oldpanellogId = insertProjectService.insertDataToTable(
                     "insert into oldpanel_log (type,userId,time,operator,isrollback) values(?,?,?,?,?)",
-                    "0",userId,simpleDateFormat.format(date),operator,"0");
+                    "0",userId,time,operator,"0");
         } else {//退库
             oldpanellogId = insertProjectService.insertDataToTable(
                     "insert into oldpanel_log (type,userId,time,projectId,buildingId,operator,isrollback) values(?,?,?,?,?,?,?)",
-                    "2",userId,simpleDateFormat.format(date),projectId,buildingId,operator,"0");
+                    "2",userId,time,projectId,buildingId,operator,"0");
         }
         if(oldpanellogId==0)
             return false;
