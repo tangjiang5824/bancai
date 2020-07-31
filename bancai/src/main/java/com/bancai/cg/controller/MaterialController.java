@@ -6,6 +6,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.bancai.cg.dao.*;
 import com.bancai.cg.entity.*;
 import com.bancai.cg.util.JPAObjectUtil;
+import com.bancai.commonMethod.QueryAllService;
+import com.bancai.db.mysqlcondition;
+import com.bancai.vo.WebResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -45,6 +48,8 @@ public class MaterialController {
     private materialTypedao materialTypedao;
     @Autowired
     private MaterialMatchRulesRepository materialMatchRulesRepository;
+    @Autowired
+    private QueryAllService queryAllService;
 
 
     //向materialtype原材料类型表插入
@@ -77,42 +82,53 @@ public class MaterialController {
 
     @RequestMapping(value = "/material/findmaterialinfobycondition.do")
     @Transactional
-    public String findMaterialInfo(String materialName,Integer typeId,Double unitWeight,String inventoryUnit,String page,String start,String limit){
+    public WebResponse findMaterialInfo(String materialName, Integer typeId, Double unitWeight, String inventoryUnit,  Integer start, Integer limit){
 
-        Specification<MaterialInfo> spec = new Specification<MaterialInfo>() {
-            @Override
-            public Predicate toPredicate(Root<MaterialInfo> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-                 List<Predicate> condition=new ArrayList<>();
-                if(materialName!=null&&materialName.trim().length()!=0)
-                    condition.add(criteriaBuilder.equal(root.get("materialName").as(String.class),materialName));
-//                if(width!=null)
-//                    condition.add(criteriaBuilder.equal(root.get("width").as(Integer.class),width));
-                if(typeId!=null){
-                    condition.add(criteriaBuilder.equal(root.join("typeId").get("id"),typeId));
-                }
-                if(unitWeight!=null)
-                    condition.add(criteriaBuilder.equal(root.get("unitWeight").as(Double.class),unitWeight));
-
-                if(inventoryUnit!=null&&inventoryUnit.trim().length()!=0)
-                    condition.add(criteriaBuilder.equal(root.get("inventoryUnit").as(String.class),inventoryUnit));
-                return criteriaBuilder.and(condition.toArray(new Predicate[condition.size()]));
-            }
-        };
-
-        Pageable pageable=PageRequest.of(Integer.parseInt(page)-1,Integer.parseInt(limit));
-        Page<MaterialInfo> page1=materialinfodao.findAll(spec,pageable);
-        List<MaterialInfo> list= page1.getContent();
-    //    JSONArray array=new JSONArray(Arrays.asList(list));
-        List<Map> rlist=new ArrayList<>();
-        for (int i=0;i<list.size();i++){
-            Map<String,Object> map=JSONObject.parseObject(JSONObject.toJSONString(list.get(i)), HashMap.class);
-            map.put("typeName",list.get(i).getTypeId().getTypeName());
-            rlist.add(map);
+//        Specification<MaterialInfo> spec = new Specification<MaterialInfo>() {
+//            @Override
+//            public Predicate toPredicate(Root<MaterialInfo> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+//                 List<Predicate> condition=new ArrayList<>();
+//                if(materialName!=null&&materialName.trim().length()!=0)
+//                    condition.add(criteriaBuilder.equal(root.get("materialName").as(String.class),materialName));
+////                if(width!=null)
+////                    condition.add(criteriaBuilder.equal(root.get("width").as(Integer.class),width));
+//                if(typeId!=null){
+//                    condition.add(criteriaBuilder.equal(root.join("typeId").get("id"),typeId));
+//                }
+//                if(unitWeight!=null)
+//                    condition.add(criteriaBuilder.equal(root.get("unitWeight").as(Double.class),unitWeight));
+//
+//                if(inventoryUnit!=null&&inventoryUnit.trim().length()!=0)
+//                    condition.add(criteriaBuilder.equal(root.get("inventoryUnit").as(String.class),inventoryUnit));
+//                return criteriaBuilder.and(condition.toArray(new Predicate[condition.size()]));
+//            }
+//        };
+//
+//        Pageable pageable=PageRequest.of(Integer.parseInt(page)-1,Integer.parseInt(limit));
+//        Page<MaterialInfo> page1=materialinfodao.findAll(spec,pageable);
+//        List<MaterialInfo> list= page1.getContent();
+//    //    JSONArray array=new JSONArray(Arrays.asList(list));
+//        List<Map> rlist=new ArrayList<>();
+//        for (int i=0;i<list.size();i++){
+//            Map<String,Object> map=JSONObject.parseObject(JSONObject.toJSONString(list.get(i)), HashMap.class);
+//            map.put("typeName",list.get(i).getTypeId().getTypeName());
+//            rlist.add(map);
+//        }
+//        JSONObject object=new JSONObject();
+//        object.put("totalCount",list.size());
+//        object.put("material_info",rlist);
+//        return object.toJSONString();
+        mysqlcondition c=new mysqlcondition();
+        if (null!=materialName&&materialName.length()!=0) {
+            c.and(new mysqlcondition("materialName", "=", materialName));
         }
-        JSONObject object=new JSONObject();
-        object.put("totalCount",list.size());
-        object.put("material_info",rlist);
-        return object.toJSONString();
+        if (typeId!=null) {
+            c.and(new mysqlcondition("typeId", "=", typeId));
+        }
+        if (null!=inventoryUnit&&inventoryUnit.length()!=0) {
+            c.and(new mysqlcondition("inventoryUnit", "=", inventoryUnit));
+        }
+        return queryAllService.queryDataPage(start, limit, c, "material_info_view");
     }
 
     /*
@@ -312,10 +328,10 @@ public class MaterialController {
     }
 
     @RequestMapping("/project/match/newPanel.do")
-    public boolean addNewPanelRule(Integer productformatId,Integer materialTypeId,String count, String m,String n, String a,String b, String p, String condition1, String condition2, String upWidth, String orientation){
+    public boolean addNewPanelRule(Integer productformatId,Integer materialtypeId,String count, String m,String n, String a,String b, String p, String condition1, String condition2, String upWidth, String orientation){
         MaterialMatchRules rule=new MaterialMatchRules();
         if(count.trim().length()==0) {
-            count=null;
+            count="1.0";
         }else {
             JPAObjectUtil.removeSpace(count);
         }
@@ -368,7 +384,7 @@ public class MaterialController {
             JPAObjectUtil.removeSpace(orientation);
         }
         rule.setProductformatId(productformatId);
-        rule.setMaterialTypeId(materialTypedao.findById(materialTypeId).orElse(null));
+        rule.setMaterialTypeId(materialTypedao.findById(materialtypeId).orElse(null));
         try {
             rule.setCount(Double.parseDouble(count));
         }catch (Exception e){
@@ -382,7 +398,7 @@ public class MaterialController {
         try {
             rule.setnNum(Integer.parseInt(n));
         }catch (Exception e){
-            rule.setmValue(n);
+            rule.setnValue(n);
         }
         try {
             rule.setpNum(Integer.parseInt(p));
