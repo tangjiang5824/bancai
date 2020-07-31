@@ -148,10 +148,10 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                 // },
                 // speificLocation_row,
                 // speificLocation_col,
-                {xtype: 'textfield', fieldLabel: '入库数量', id: 'count', width: 190, labelWidth: 30,  name: 'count', value: ""},
+                {xtype: 'textfield', fieldLabel: '入库数量', id: 'count', margin: '0 10 0 30',width: 190, labelWidth: 60,  name: 'count', value: ""},
 
-                {xtype : 'button',
-                    margin: '0 10 0 70',
+                {   xtype : 'button',
+                    margin: '0 10 0 30',
                     iconAlign : 'center',
                     iconCls : 'rukuicon ',
                     text : '添加',
@@ -163,7 +163,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                         //var unitWeight = Ext.getCmp('unitWeight').getValue();
                         //var unitArea = Ext.getCmp('unitArea').getValue();
                         //var remark = Ext.getCmp('remark').getValue();
-                        var warehouseName = Ext.getCmp('storePosition').getValue();
+                        var warehouseName = Ext.getCmp('storePosition').rawValue;
                         var data = [{
                             'oldpanelName' : oldpanelName,
                             //'classificationName':classificationName,
@@ -179,7 +179,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                         // console.log(Ext.getCmp('cost').getValue());
                         //若品名未填则添加失败
                         if (oldpanelName != ''&&count!= ''&&warehouseName!= '') {
-                            Ext.getCmp('addDataGrid').getStore().loadData(data, true);
+                            Ext.getCmp('old_addDataGrid').getStore().loadData(data, true);
                             //清除框里的数据
                             Ext.getCmp('oldpanelName').setValue('');
                             //Ext.getCmp('classification').setValue('');
@@ -196,8 +196,107 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                             });
                         }
                     }
+                },
+
+                //删除行数据
+                {
+                    xtype : 'button',
+                    margin: '0 10 0 30',
+                    iconAlign : 'center',
+                    iconCls : 'rukuicon ',
+                    text : '删除',
+                    handler: function(){
+                        var sm = Ext.getCmp('old_addDataGrid').getSelectionModel();
+                        var oldpanelArr = sm.getSelection();
+                        if (oldpanelArr.length != 0) {
+                            Ext.Msg.confirm("提示", "共选中" + oldpanelArr.length + "条数据，是否确认删除？", function (btn) {
+                                if (btn == 'yes') {
+                                    //先删除后台再删除前台
+                                    //ajax 删除后台数据 成功则删除前台数据；失败则不删除前台数据
+                                    //Extjs 4.x 删除
+                                    Ext.getCmp('old_addDataGrid').getStore().remove(oldpanelArr);
+                                } else {
+                                    return;
+                                }
+                            });
+                        } else {
+                            //Ext.Msg.confirm("提示", "无选中数据");
+                            Ext.Msg.alert("提示", "无选中数据");
+                        }
+                    }
                 }
             ]
+        });
+
+
+        //错误提示，弹出框
+        var old_inb_errorlistStore = Ext.create('Ext.data.Store',{
+            id: 'old_inb_errorlistStore',
+            autoLoad: true,
+            fields: ['productName','position'],
+            //pageSize: itemsPerPage, // items per page
+            data:[],
+            editable:false,
+        });
+
+        //弹出框，出入库详细记录
+        var old_inb_errorlist_outbound=Ext.create('Ext.grid.Panel',{
+            id : 'old_inb_errorlist_outbound',
+            // tbar: toolbar_pop,
+            store:old_inb_errorlistStore,//oldpanellogdetailList，store1的数据固定
+            dock: 'bottom',
+            columns:[
+                {
+                    header: '序号',
+                    xtype: 'rownumberer',
+                    width: 60,
+                    align: 'center',
+                    sortable: false
+                },
+                {
+                    text: '旧板名称',
+                    dataIndex: 'oldpanelName',
+                    flex :1,
+                    width:"80"
+                },
+                {
+                    text: '仓库名称',
+                    dataIndex: 'warehouseName',
+                    flex :1,
+                    width:"80"
+                },
+                {
+                    text: '入库数量',
+                    dataIndex: 'count',
+                    flex :1,
+                    width:"80"
+                },
+                {
+                    text: '错误原因',
+                    flex :1,
+                    dataIndex: 'errorType',
+                }
+                //fields:['oldpanelId','oldpanelName','count'],specification
+
+            ],
+            flex:1,
+            //selType:'checkboxmodel',
+            plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
+                clicksToEdit : 2
+            })],
+        });
+
+        var win_oldinb_errorInfo_outbound = Ext.create('Ext.window.Window', {
+            // id:'win_oldinb_errorInfo_outbound',
+            title: '错误详情',
+            height: 500,
+            width: 750,
+            layout: 'fit',
+            closable : true,
+            draggable:true,
+            closeAction : 'hidden',
+            // tbar:toolbar_pop1,
+            items:old_inb_errorlist_outbound,
         });
 
         //职员信息
@@ -261,7 +360,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                 handler : function() {
 
                     // 取出grid的字段名字段类型
-                    var select = Ext.getCmp('addDataGrid').getStore()
+                    var select = Ext.getCmp('old_addDataGrid').getStore()
                         .getData();
                     var s = new Array();
                     select.each(function(rec) {
@@ -285,14 +384,50 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                         },
                         success : function(response) {
                             console.log("12312312312321",response.responseText);
-                            if(response.responseText.includes("false"))
-                            {
-                                Ext.MessageBox.alert("提示","入库失败，品名不规范" );
-                            }
-                            //var message =Ext.decode(response.responseText).showmessage;
-                            else{
+                            // if(response.responseText.includes("false"))
+                            // {
+                            //     Ext.MessageBox.alert("提示","入库失败，品名不规范" );
+                            // }
+                            // //var message =Ext.decode(response.responseText).showmessage;
+                            // else{
+                            //     Ext.MessageBox.alert("提示","入库成功" );
+                            // }
+
+                            var res = response.responseText;
+                            var jsonobj = JSON.parse(res);//将json字符串转换为对象
+                            console.log(jsonobj);
+                            console.log("success--------------",jsonobj.success);
+                            console.log("errorList--------------",jsonobj['errorList']);
+                            var success = jsonobj.success;
+                            var errorList = jsonobj.errorList;
+                            var errorCode = jsonobj.errorCode;
+                            var errorCount = jsonobj.errorCount;
+                            if(success == false){
+                                //错误输入
+                                if(errorCode == 200){
+                                    //关闭进度条
+                                    // Ext.MessageBox.alert("提示","匹配失败，产品位置重复或品名不合法！请重新导入" );
+                                    Ext.Msg.show({
+                                        title: '提示',
+                                        message: '入库失败！存在错误内容',
+                                        buttons: Ext.Msg.YESNO,
+                                        icon: Ext.Msg.QUESTION,
+                                        fn: function (btn) {
+                                            if (btn === 'yes') {
+                                                //点击确认，显示重复的数据
+                                                old_inb_errorlistStore.loadData(errorList);
+                                                win_oldinb_errorInfo_outbound.show();
+
+                                            }
+                                        }
+                                    });
+                                }
+                                else if(errorCode == 1000){
+                                    Ext.MessageBox.alert("提示","入库失败，未知错误！请重新领取" );
+                                }
+                            }else{
                                 Ext.MessageBox.alert("提示","入库成功" );
-                            }
+                               }
 
                         },
                         failure : function(response) {
@@ -307,8 +442,8 @@ Ext.define('oldpanel.oldpanel_Inbound', {
 
 
 
-        var grid = Ext.create("Ext.grid.Panel", {
-            id : 'addDataGrid',
+        var old_addDataGrid = Ext.create("Ext.grid.Panel", {
+            id : 'old_addDataGrid',
             //dockedItems : [toolbar2],
             store : {
                 // fields: ['材料名','品号', '长',"；类型","宽",'规格','库存单位','仓库编号','数量','成本','存放位置']
@@ -329,13 +464,13 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                 {dataIndex : 'oldpanelName', text : '旧板名称', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
                 {dataIndex : 'warehouseName', text : '仓库名称', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'count', text : '入库数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {
-                    name : '操作',
-                    text : '操作',
-                    renderer:function(value, cellmeta){
-                        return "<INPUT type='button' value='删 除' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
-                    }
-                }
+                // {
+                //     name : '操作',
+                //     text : '操作',
+                //     renderer:function(value, cellmeta){
+                //         return "<INPUT type='button' value='删 除' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
+                //     }
+                // }
 
             ],
             viewConfig : {
@@ -350,54 +485,52 @@ Ext.define('oldpanel.oldpanel_Inbound', {
             selType : 'checkboxmodel'//'rowmodel'
         });
 
-        grid.addListener('cellclick', cellclick);
-        function cellclick(grid, rowIndex, columnIndex, e) {
-            if (rowIndex < 0) {
-                return;
-            }
-            var fieldName = Ext.getCmp('addDataGrid').columns[columnIndex-1].text;
-
-            console.log("列名：",fieldName)
-            if (fieldName == "操作") {
-                //设置监听事件getSelectionModel().getSelection()
-                var sm = Ext.getCmp('addDataGrid').getSelectionModel();
-                var oldpanelArr = sm.getSelection();
-                if (oldpanelArr.length != 0) {
-                    Ext.Msg.confirm("提示", "共选中" + oldpanelArr.length + "条数据，是否确认删除？", function (btn) {
-                        if (btn == 'yes') {
-                            //先删除后台再删除前台
-                            //ajax 删除后台数据 成功则删除前台数据；失败则不删除前台数据
-
-                            //Extjs 4.x 删除
-                            Ext.getCmp('addDataGrid').getStore().remove(oldpanelArr);
-                        } else {
-                            return;
-                        }
-                    });
-                } else {
-                    //Ext.Msg.confirm("提示", "无选中数据");
-                    Ext.Msg.alert("提示", "无选中数据");
-                }
-            }
-
-
-            console.log("rowIndex:",rowIndex)
-            console.log("columnIndex:",columnIndex)
-            // var record = grid.getStore().getAt(rowIndex);
-            // var id = record.get('id');
-            // var fieldName = grid.getColumnModel().getDataIndex(columnIndex);
-            // if (fieldName == "c_reply") {
-            //     Ext.Msg.alert('c_reply', rowIndex + "  -  " + id);
-            // }else if (fieldName == "c_agree") {
-            //     Ext.Msg.alert('c_agree', rowIndex + "  -  " + id);
-            // }
-
-        };
+        // old_addDataGrid.addListener('cellclick', cellclick);
+        // function cellclick(grid, rowIndex, columnIndex, e) {
+        //     if (rowIndex < 0) {
+        //         return;
+        //     }
+        //     var fieldName = Ext.getCmp('old_addDataGrid').columns[columnIndex-1].text;
+        //
+        //     console.log("列名：",fieldName)
+        //     if (fieldName == "操作") {
+        //         //设置监听事件getSelectionModel().getSelection()
+        //         var sm = Ext.getCmp('old_addDataGrid').getSelectionModel();
+        //         var oldpanelArr = sm.getSelection();
+        //         if (oldpanelArr.length != 0) {
+        //             Ext.Msg.confirm("提示", "共选中" + oldpanelArr.length + "条数据，是否确认删除？", function (btn) {
+        //                 if (btn == 'yes') {
+        //                     //先删除后台再删除前台
+        //                     //ajax 删除后台数据 成功则删除前台数据；失败则不删除前台数据
+        //
+        //                     //Extjs 4.x 删除
+        //                     Ext.getCmp('old_addDataGrid').getStore().remove(oldpanelArr);
+        //                 } else {
+        //                     return;
+        //                 }
+        //             });
+        //         } else {
+        //             //Ext.Msg.confirm("提示", "无选中数据");
+        //             Ext.Msg.alert("提示", "无选中数据");
+        //         }
+        //     }
+        //
+        //     console.log("rowIndex:",rowIndex)
+        //     console.log("columnIndex:",columnIndex)
+        //     // var record = grid.getStore().getAt(rowIndex);
+        //     // var id = record.get('id');
+        //     // var fieldName = grid.getColumnModel().getDataIndex(columnIndex);
+        //     // if (fieldName == "c_reply") {
+        //     //     Ext.Msg.alert('c_reply', rowIndex + "  -  " + id);
+        //     // }else if (fieldName == "c_agree") {
+        //     //     Ext.Msg.alert('c_agree', rowIndex + "  -  " + id);
+        //     // }
+        // };
 
         this.dockedItems = [
             //toolbar,
             //toobar,toolbar1,
-            toolbar2, grid, toolbar3];
+            toolbar2, old_addDataGrid, toolbar3];
         //this.items = [ me.grid ];
         this.callParent(arguments);
 
