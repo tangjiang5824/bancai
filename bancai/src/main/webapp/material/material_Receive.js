@@ -16,8 +16,9 @@ Ext.define('material.material_Receive',{
         //存放所选的原材料的具体规格
         var materialList = '';
 
-
+        var record_start_pop = 0;
         var record_start_bottom = 0;//序号
+        var record_start_rec = 0;
 
         //原件类型：枚举类型
         Ext.define('product.model.originType', {
@@ -613,6 +614,16 @@ Ext.define('material.material_Receive',{
             closeAction: 'hide',
             columns:[
                 {
+                    // dataIndex : '序号',
+                    name : '序号',
+                    text : '序号',
+                    width : 60,
+                    value:'99',
+                    renderer:function(value,metadata,record,rowIndex){
+                        return　record_start_rec　+　1　+　rowIndex;
+                    }
+                },
+                {
                     dataIndex:'name',
                     text:'材料名',
                     flex :1
@@ -681,6 +692,69 @@ Ext.define('material.material_Receive',{
         //     // tbar:toolbar_pop1,
         //     items:grid__query_pickList_specific,
         // });
+
+        //错误提示，弹出框
+        var m_receive_errorlistStore = Ext.create('Ext.data.Store',{
+            id: 'm_receive_errorlistStore',
+            autoLoad: true,
+            fields: ['productName','position'],
+            //pageSize: itemsPerPage, // items per page
+            data:[],
+            editable:false,
+        });
+
+        //弹出框，出入库详细记录
+        var material_receive_errorlist_outbound=Ext.create('Ext.grid.Panel',{
+            id : 'material_receive_errorlist_outbound',
+            // tbar: toolbar_pop,
+            store:m_receive_errorlistStore,//oldpanellogdetailList，store1的数据固定
+            dock: 'bottom',
+            columns:[
+                {
+                    // dataIndex : '序号',
+                    name : '序号',
+                    text : '序号',
+                    width : 60,
+                    value:'99',
+                    renderer:function(value,metadata,record,rowIndex){
+                        return　record_start_pop　+　1　+　rowIndex;
+                    }
+                },
+
+                {
+                    text: '序列',
+                    dataIndex: 'id',
+                    flex :1,
+                    width:"80"
+                },
+                {
+                    text: '错误原因',
+                    flex :1,
+                    dataIndex: 'errorType',
+                }
+                //fields:['oldpanelId','oldpanelName','count'],specification
+
+            ],
+            flex:1,
+            //selType:'checkboxmodel',
+            plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
+                clicksToEdit : 2
+            })],
+        });
+
+        var win_mrec_errorInfo_outbound = Ext.create('Ext.window.Window', {
+            // id:'win_mrec_errorInfo_outbound',
+            title: '错误详情',
+            height: 500,
+            width: 750,
+            layout: 'fit',
+            closable : true,
+            draggable:true,
+            closeAction : 'hidden',
+            // tbar:toolbar_pop1,
+            items:material_receive_errorlist_outbound,
+        });
+
 
         var toobar_right = Ext.create('Ext.toolbar.Toolbar',{
             items: [
@@ -762,11 +836,68 @@ Ext.define('material.material_Receive',{
                                 },
                                 success : function(response) {
                                     //var message =Ext.decode(response.responseText).showmessage;
-                                    if(response == true){
-                                        Ext.MessageBox.alert("提示","领取成功" );
+                                    console.log('111111111111111111111',response);
+                                    var res = response.responseText;
+                                    var jsonobj = JSON.parse(res);//将json字符串转换为对象
+                                    console.log(jsonobj);
+                                    console.log("success--------------",jsonobj.success);
+                                    console.log("errorList--------------",jsonobj['errorList']);
+                                    var success = jsonobj.success;
+                                    var errorList = jsonobj.errorList;
+                                    var errorCode = jsonobj.errorCode;
+                                    var errorCount = jsonobj.errorNum;
+                                    if(success == false){
+                                        //错误输入
+                                        if(errorCode == 400){
+                                            //关闭进度条
+                                            Ext.MessageBox.hide();
+                                            // Ext.MessageBox.alert("提示","匹配失败，产品位置重复或品名不合法！请重新导入" );
+                                            Ext.Msg.show({
+                                                title: '提示',
+                                                message: '领取失败，存在错误输入！\n是否查看具体错误数据',
+                                                buttons: Ext.Msg.YESNO,
+                                                icon: Ext.Msg.QUESTION,
+                                                fn: function (btn) {
+                                                    if (btn === 'yes') {
+                                                        //点击确认，显示重复的数据
+                                                        m_receive_errorlistStore.loadData(errorList);
+                                                        win_mrec_errorInfo_outbound.show();
+                                                    }
+                                                }
+                                            });
+                                        }
+                                        else if(errorCode == 100){
+                                            Ext.MessageBox.hide();
+                                            Ext.MessageBox.alert("提示","领取失败！未选择领取材料" );
+                                        }
+                                        else if(errorCode == 200){
+                                            Ext.MessageBox.hide();
+                                            Ext.MessageBox.alert("提示","领取失败！未收到领料单号或项目ID" );
+                                        }
+                                        else if(errorCode == 300){
+                                            Ext.MessageBox.hide();
+                                            Ext.MessageBox.alert("提示","领取失败！未选择领料人" );
+                                        }
+                                        else if(errorCode == 1000){
+                                            Ext.MessageBox.hide();
+                                            Ext.MessageBox.alert("提示","领取失败，未知错误！请重新领取" );
+                                        }
                                     }else{
-                                        Ext.MessageBox.alert("提示","领取失败" );
+                                        Ext.MessageBox.hide();
+                                        Ext.MessageBox.alert("提示","领取成功" );
+
+                                        //  领料页面重置
+                                        Ext.getCmp('operator').setValue("");
+                                        pickList.removeAll();
+
+                                        //  领料单查询重新加载
+                                        grid__query_pickList_specific.getStore().load();
                                     }
+                                    // if(response == true){
+                                    //     Ext.MessageBox.alert("提示","领取成功" );
+                                    // }else{
+                                    //     Ext.MessageBox.alert("提示","领取失败" );
+                                    // }
                                 },
                                 failure : function(response) {
                                     //var message =Ext.decode(response.responseText).showmessage;
@@ -776,13 +907,6 @@ Ext.define('material.material_Receive',{
                         }else {
                             Ext.MessageBox.alert("提示","没有数据或领料人！" );
                         }
-
-                        //  左边输入框重置
-                        grid__query_pickList_specific.getStore().removeAll();
-
-                        //  右边页面重置
-                        Ext.getCmp('operator').setValue("");
-                        pickList.removeAll();
                     }
                 }
 
@@ -795,6 +919,17 @@ Ext.define('material.material_Receive',{
             dock: 'bottom',
             autoScroll: true, //超过长度带自动滚动条
             columns:[
+                //序号
+                {
+                    // dataIndex : '序号',
+                    name : '序号',
+                    text : '序号',
+                    width : 60,
+                    value:'99',
+                    renderer:function(value,metadata,record,rowIndex){
+                        return　record_start_rec　+　1　+　rowIndex;
+                    }
+                },
                 {dataIndex:'name', text:'材料名',flex :1 },
                 {
                     dataIndex:'count',//countTemp

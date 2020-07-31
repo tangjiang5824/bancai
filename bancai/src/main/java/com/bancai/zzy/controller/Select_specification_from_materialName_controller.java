@@ -273,25 +273,10 @@ public class Select_specification_from_materialName_controller {
 	 * 原材料查询出入库记录
 	 * */
 	@RequestMapping(value = "/material/material_query_records.do")
-	public WebResponse materialDataList1(String start, String limit, String projectId,
-										String type, String page,String startTime, String endTime, String operator) throws ParseException {
+	public WebResponse materialDataList1(Integer start,Integer limit, String projectId,
+										String type,String startTime, String endTime, String operator,String tableName)  {
 		//log.debug(startWidth+" "+endWidth);
-		int thisPage=1;
-		int thisStart=0;
-		int thisLimit=25;
-		if(null==page||page.equals("")){
-			thisPage=1;
-		}else {
-			thisPage=Integer.parseInt(page);
-		}
-		if(null==start||start.equals("")||null==limit||limit.equals("")){
-			thisStart=0;
-			thisLimit=25;
-		}else {
-			thisLimit=Integer.parseInt(limit);
-			thisStart=(thisPage-1)*thisLimit;
-		}
-		String tableName = "materiallog_projectname_view";
+		//String tableName = "materiallog_projectname_view";
 //		System.out.println(startWidth);
 //		System.out.println(endWidth);
 //
@@ -312,7 +297,7 @@ public class Select_specification_from_materialName_controller {
 		if (null!=operator&&operator.length() != 0) {
 			c.and(new mysqlcondition("operator", "=", operator));
 		}
-		WebResponse wr=queryAllService.queryDataPage(thisStart, thisLimit, c, tableName);
+		WebResponse wr=queryAllService.queryDataPage(start, limit, c, tableName);
 		return wr;
 	}
 	/*

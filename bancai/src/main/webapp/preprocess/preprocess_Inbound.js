@@ -70,27 +70,7 @@ Ext.define('preprocess.preprocess_Inbound', {
             },
             autoLoad : true
         });
-        var oldpanelTypeList = Ext.create('Ext.form.ComboBox',{
-            fieldLabel : '旧板类型',
-            labelWidth : 70,
-            width : 230,
-            id :  'oldpanelType',
-            name : 'oldpanelType',
-            matchFieldWidth: false,
-            emptyText : "--请选择--",
-            displayField: 'oldpanelTypeName',
-            valueField: 'oldpanelType',
-            editable : false,
-            store: oldPanelNameList,
-            listeners:{
-                select: function(combo, record, index) {
 
-                    console.log(oldpanelTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
-                    //console.log(record[0].data.materialName);
-                }
-            }
-
-        });
 
         var classificationListStore = Ext.create('Ext.data.Store',{
             fields : [ 'classificationName'],
@@ -199,6 +179,19 @@ Ext.define('preprocess.preprocess_Inbound', {
                 }
             ]
         });
+        //职员信息
+        var workerListStore = Ext.create('Ext.data.Store',{
+            fields : [ 'typeName'],
+            proxy : {
+                type : 'ajax',
+                url : '/material/findAllBytableName.do?tableName=department_worker',
+                reader : {
+                    type : 'json',
+                    rootProperty: 'department_worker',
+                },
+            },
+            autoLoad : true
+        });
 
         //确认入库按钮，
         var toolbar3 = Ext.create('Ext.toolbar.Toolbar', {
@@ -213,14 +206,19 @@ Ext.define('preprocess.preprocess_Inbound', {
             },
             items : [
                 {
-                    xtype: 'textfield',
-                    margin: '0 20 0 0',
-                    fieldLabel: ' 入库人',
-                    id: 'operator',
+                    fieldLabel : '入库人',
+                    xtype : 'combo',
+                    name : 'operator',
+                    id : 'operator',
+                    // disabled : true,
+                    // width:'95%',
+                    margin: '0 40 0 0',
                     width: 150,
                     labelWidth: 45,
-                    name: 'operator',
-                    value: "",
+                    store : workerListStore,
+                    displayField : 'workerName',
+                    valueField : 'workerName',
+                    editable : true,
                 },
                 {
                     xtype : 'button',

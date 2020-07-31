@@ -18,7 +18,6 @@ Ext.define('preprocess.preprocess_Query_Records',{
     initComponent: function(){
         var itemsPerPage = 50;
         var tableName="material";
-        var tableName_pre_records='preprocess_log';
         //var materialType="1";
         //操作类型：枚举类型
         Ext.define('Soims.model.application.ApplicationState', {
@@ -79,8 +78,8 @@ Ext.define('preprocess.preprocess_Query_Records',{
 
         var optionType = Ext.create('Ext.form.ComboBox', {
             fieldLabel: '操作类型',
-            name: 'preprocess_query_records_optionType',
-            id: 'preprocess_query_records_optionType',
+            name: 'material_query_records_optionType',
+            id: 'material_query_records_optionType',
             store: optionTypeList,
             queryMode: 'local',
             displayField: 'name',
@@ -174,14 +173,13 @@ Ext.define('preprocess.preprocess_Query_Records',{
                     margin: '0 0 0 15',
                     layout: 'right',
                     handler: function(){
-                        preprocess_Query_Records_store.load({
+                        material_Query_Records_Store.load({
                             params : {
                                 operator : Ext.getCmp('operator').getValue(),
                                 endTime : Ext.getCmp('endTime').getValue(),
                                 startTime:Ext.getCmp('startTime').getValue(),
                                 projectId:Ext.getCmp('projectName').getValue(),
-                                type:Ext.getCmp('preprocess_query_records_optionType').getValue(),
-                                tableName:tableName_pre_records,
+                                type:Ext.getCmp('material_query_records_optionType').getValue(),
                             }
                         });
                     }
@@ -189,9 +187,8 @@ Ext.define('preprocess.preprocess_Query_Records',{
             ]
         });
 
-
-        var preprocess_Query_Records_store = Ext.create('Ext.data.Store',{
-            id: 'preprocess_Query_Records_store',
+        var material_Query_Records_Store = Ext.create('Ext.data.Store',{
+            id: 'material_Query_Records_Store',
             autoLoad: true,
             fields: [],
             pageSize: itemsPerPage, // items per page
@@ -211,22 +208,24 @@ Ext.define('preprocess.preprocess_Query_Records',{
                     endTime : Ext.getCmp('endTime').getValue(),
                     startTime:Ext.getCmp('startTime').getValue(),
                     projectId:Ext.getCmp('projectName').getValue(),
-                    type:Ext.getCmp('preprocess_query_records_optionType').getValue(),
-                    tableName:tableName_pre_records,
+                    type:Ext.getCmp('material_query_records_optionType').getValue(),
                 }
             },
             listeners : {
                 beforeload : function(store, operation, eOpts) {
                     store.getProxy().setExtraParams({
+
                         operator : Ext.getCmp('operator').getValue(),
                         endTime : Ext.getCmp('endTime').getValue(),
                         startTime:Ext.getCmp('startTime').getValue(),
                         projectId:Ext.getCmp('projectName').getValue(),
-                        type:Ext.getCmp('preprocess_query_records_optionType').getValue(),
-                        tableName:tableName_pre_records,
+                        type:Ext.getCmp('material_query_records_optionType').getValue(),
+
                     });
                 }
+
             }
+
 
         });
 
@@ -236,22 +235,22 @@ Ext.define('preprocess.preprocess_Query_Records',{
             count:'2',
             specification:'ttt',
         }];
-        var preprocess_Query_Records_store1=Ext.create('Ext.data.Store',{
-            id: 'preprocess_Query_Records_store1',
+        var material_Query_Records_store1=Ext.create('Ext.data.Store',{
+            id: 'material_Query_Records_store1',
             fields:['原材料名称','数量'],
             data:sampleData
         });
 
 
         //弹出框
-        var preprocess_Query_Records_specific_data_grid=Ext.create('Ext.grid.Panel',{
-            id : 'preprocess_Query_Records_specific_data_grid',
-            store:preprocess_Query_Records_store1,//oldpanellogdetailList，store1的数据固定
+        var material_Query_Records_specific_data_grid=Ext.create('Ext.grid.Panel',{
+            id : 'material_Query_Records_specific_data_grid',
+            store:material_Query_Records_store1,//oldpanellogdetailList，store1的数据固定
             dock: 'bottom',
             columns:[
                 {
-                    text: '产品名',
-                    dataIndex: 'productName',
+                    text: '原材料名',
+                    dataIndex: 'materialName',
                     flex :1,
                     width:"80"
                 },
@@ -288,21 +287,21 @@ Ext.define('preprocess.preprocess_Query_Records',{
             }
         });
 
-        var preprocess_Query_Records_win_showmaterialData = Ext.create('Ext.window.Window', {
-            // id:'preprocess_Query_Records_win_showmaterialData',
-            title: '预加工半成品出入库详细信息',
+        var material_Query_Records_win_showmaterialData = Ext.create('Ext.window.Window', {
+            // id:'material_Query_Records_win_showmaterialData',
+            title: '原材料出入库详细信息',
             height: 500,
             width: 650,
             layout: 'fit',
             closable : true,
             draggable:true,
             closeAction : 'hidden',
-            items:preprocess_Query_Records_specific_data_grid,
+            items:material_Query_Records_specific_data_grid,
         });
 
         var grid = Ext.create('Ext.grid.Panel',{
             id: 'material_Query_Records_Main',
-            store: preprocess_Query_Records_store,
+            store: material_Query_Records_Store,
             viewConfig : {
                 enableTextSelection : true,
                 editable:true
@@ -334,7 +333,7 @@ Ext.define('preprocess.preprocess_Query_Records',{
             tbar:toobar,
             dockedItems:[{
                 xtype: 'pagingtoolbar',
-                store: preprocess_Query_Records_store,   // same store GridPanel is using
+                store: material_Query_Records_Store,   // same store GridPanel is using
                 dock: 'bottom',
                 displayInfo: true,
                 displayMsg:'显示{0}-{1}条，共{2}条',
@@ -356,24 +355,23 @@ Ext.define('preprocess.preprocess_Query_Records',{
                     var opType = select.type;
                     console.log(id);
                     console.log(opType)
-                    var preprocesslogdetailList = Ext.create('Ext.data.Store',{
+                    var materiallogdetailList = Ext.create('Ext.data.Store',{
                         //id,materialName,length,width,materialType,number
                         fields:['materialName','length','width','materialType','count'],
                         //fields:['materialName','length','materialType','width','count'],//'oldpanelId','oldpanelName','count'
-                        //fields:['materialName','length','materialType','width','count'],//'oldpanelId','oldpanelName','count'
                         proxy : {
                             type : 'ajax',
-                            // url: 'material/findMaterialLogdetails.do?materiallogId=' + id,
-                            url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName=preprocess_logdetail_productName&columnName=preprocesslogId&columnValue='+id,//获取同类型的原材料
+                            url: 'material/findMaterialLogdetails.do?materiallogId=' + id,
+                            // url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName=material_logdetail&columnName=materiallogId&columnValue='+id,//获取同类型的原材料
                             reader : {
                                 type : 'json',
-                                rootProperty: 'preprocess_logdetail_productName',
+                                rootProperty: 'material_logdetail',
                             },
                         },
                         autoLoad : true
                     });
                     // 根据出入库0/1，决定弹出框表格列名
-                    var col = preprocess_Query_Records_specific_data_grid.columns[1];
+                    var col = material_Query_Records_specific_data_grid.columns[1];
                     if(opType == 1){
                         col.setText("出库数量");
                     }
@@ -384,9 +382,10 @@ Ext.define('preprocess.preprocess_Query_Records',{
                         col.setText("入库数量");
                     }
 
-                    preprocess_Query_Records_specific_data_grid.setStore(preprocesslogdetailList);
-                    console.log(preprocesslogdetailList);
-                    preprocess_Query_Records_win_showmaterialData.show();
+
+                    material_Query_Records_specific_data_grid.setStore(materiallogdetailList);
+                    console.log(materiallogdetailList);
+                    material_Query_Records_win_showmaterialData.show();
                 }
             }
         });

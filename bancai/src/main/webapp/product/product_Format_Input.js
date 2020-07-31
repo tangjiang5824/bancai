@@ -127,8 +127,8 @@ Ext.define('product.product_Format_Input', {
         });
         var format1 = Ext.create('Ext.form.ComboBox', {
             fieldLabel: '类型选择1',
-            name: 'oldpanel_basic_info_format1',//'oldpanel_query_records_optionType',
-            id: 'oldpanel_basic_info_format1',
+            name: 'pro_basic_info_format1',//'oldpanel_query_records_optionType',
+            id: 'pro_basic_info_format1',
             store: format1store,
             queryMode: 'local',
             displayField: 'name',
@@ -140,8 +140,8 @@ Ext.define('product.product_Format_Input', {
         });
         var format2 = Ext.create('Ext.form.ComboBox', {
             fieldLabel: '类型选择2',
-            name: 'oldpanel_basic_info_format2',//'oldpanel_query_records_optionType',
-            id: 'oldpanel_basic_info_format2',
+            name: 'pro_basic_info_format2',//'oldpanel_query_records_optionType',
+            id: 'pro_basic_info_format2',
             store: format2store,
             queryMode: 'local',
             displayField: 'name',
@@ -153,8 +153,8 @@ Ext.define('product.product_Format_Input', {
         });
         var format3 = Ext.create('Ext.form.ComboBox', {
             fieldLabel: '类型选择3',
-            name: 'oldpanel_basic_info_format3',//'oldpanel_query_records_optionType',
-            id: 'oldpanel_basic_info_format3',
+            name: 'pro_basic_info_format3',//'oldpanel_query_records_optionType',
+            id: 'pro_basic_info_format3',
             store: format3store,
             queryMode: 'local',
             displayField: 'name',
@@ -166,8 +166,8 @@ Ext.define('product.product_Format_Input', {
         });
         var format4 = Ext.create('Ext.form.ComboBox', {
             fieldLabel: '类型选择4',
-            name: 'oldpanel_basic_info_format4',//'oldpanel_query_records_optionType',
-            id: 'oldpanel_basic_info_format4',
+            name: 'pro_basic_info_format4',//'oldpanel_query_records_optionType',
+            id: 'pro_basic_info_format4',
             store: format4store,
             queryMode: 'local',
             displayField: 'name',
@@ -194,14 +194,14 @@ Ext.define('product.product_Format_Input', {
                         console.log("123zzy123"+Ext.getCmp('productType').getValue());
                         var productTypeName = Ext.getCmp('productType').rawValue;
                         var productTypeId = Ext.getCmp('productType').getValue();
-                        var format1Name = Ext.getCmp('oldpanel_basic_info_format1').rawValue;
-                        var format2Name = Ext.getCmp('oldpanel_basic_info_format2').rawValue;
-                        var format3Name = Ext.getCmp('oldpanel_basic_info_format3').rawValue;
-                        var format4Name = Ext.getCmp('oldpanel_basic_info_format4').rawValue;
-                        var format1 = Ext.getCmp('oldpanel_basic_info_format1').getValue();
-                        var format2 = Ext.getCmp('oldpanel_basic_info_format2').getValue();
-                        var format3 = Ext.getCmp('oldpanel_basic_info_format3').getValue();
-                        var format4 = Ext.getCmp('oldpanel_basic_info_format4').getValue();
+                        var format1Name = Ext.getCmp('pro_basic_info_format1').rawValue;
+                        var format2Name = Ext.getCmp('pro_basic_info_format2').rawValue;
+                        var format3Name = Ext.getCmp('pro_basic_info_format3').rawValue;
+                        var format4Name = Ext.getCmp('pro_basic_info_format4').rawValue;
+                        var format1 = Ext.getCmp('pro_basic_info_format1').getValue();
+                        var format2 = Ext.getCmp('pro_basic_info_format2').getValue();
+                        var format3 = Ext.getCmp('pro_basic_info_format3').getValue();
+                        var format4 = Ext.getCmp('pro_basic_info_format4').getValue();
                         var data = [{
                             'productTypeName' : productTypeName,
                             'productTypeId' : productTypeId,
@@ -220,7 +220,7 @@ Ext.define('product.product_Format_Input', {
                         // console.log(Ext.getCmp('cost').getValue());
                         //若品名未填则添加失败
                         if (productTypeId != '') {
-                            Ext.getCmp('addDataGrid').getStore().loadData(data, true);
+                            Ext.getCmp('add_pro_DataGrid').getStore().loadData(data, true);
                             //清除框里的数据
                             // Ext.getCmp('oldpanelName').setValue('');
                             // //Ext.getCmp('classification').setValue('');
@@ -273,7 +273,7 @@ Ext.define('product.product_Format_Input', {
                 handler : function() {
 
                     // 取出grid的字段名字段类型
-                    var select = Ext.getCmp('addDataGrid').getStore()
+                    var select = Ext.getCmp('add_pro_DataGrid').getStore()
                         .getData();
                     var s = new Array();
                     select.each(function(rec) {
@@ -320,11 +320,11 @@ Ext.define('product.product_Format_Input', {
 
 
         var grid = Ext.create("Ext.grid.Panel", {
-            id : 'addDataGrid',
+            id : 'add_pro_DataGrid',
             //dockedItems : [toolbar2],
             store : {
                 // fields: ['材料名','品号', '长',"；类型","宽",'规格','库存单位','仓库编号','数量','成本','存放位置']
-                //fields: ['productTypeName','productTypeId','count']
+                fields: []
             },
 
             columns : [
@@ -339,11 +339,11 @@ Ext.define('product.product_Format_Input', {
                 //     }
                 // },
                 //{dataIndex : 'oldpanelTypeId', text : '旧板类型Id', flex :1,},
-                {dataIndex : 'productTypeName', text : '旧板类型', flex :1,},
-                {dataIndex : 'format1Name', text : '旧板格式1', flex :1,},
-                {dataIndex : 'format2Name', text : '旧板格式2', flex :1,},
-                {dataIndex : 'format3Name', text : '旧板格式3', flex :1,},
-                {dataIndex : 'format4Name', text : '旧板格式4', flex :1,},
+                {dataIndex : 'productTypeName', text : '产品类型', flex :1,},
+                {dataIndex : 'format1Name', text : '产品格式1', flex :1,},
+                {dataIndex : 'format2Name', text : '产品格式2', flex :1,},
+                {dataIndex : 'format3Name', text : '产品格式3', flex :1,},
+                {dataIndex : 'format4Name', text : '产品格式4', flex :1,},
                 {
                     name : '操作',
                     text : '操作',
@@ -370,12 +370,12 @@ Ext.define('product.product_Format_Input', {
             if (rowIndex < 0) {
                 return;
             }
-            var fieldName = Ext.getCmp('addDataGrid').columns[columnIndex-1].text;
+            var fieldName = Ext.getCmp('add_pro_DataGrid').columns[columnIndex-1].text;
 
             console.log("列名：",fieldName)
             if (fieldName == "操作") {
                 //设置监听事件getSelectionModel().getSelection()
-                var sm = Ext.getCmp('addDataGrid').getSelectionModel();
+                var sm = Ext.getCmp('add_pro_DataGrid').getSelectionModel();
                 var oldpanelArr = sm.getSelection();
                 if (oldpanelArr.length != 0) {
                     Ext.Msg.confirm("提示", "共选中" + oldpanelArr.length + "条数据，是否确认删除？", function (btn) {
@@ -384,7 +384,7 @@ Ext.define('product.product_Format_Input', {
                             //ajax 删除后台数据 成功则删除前台数据；失败则不删除前台数据
 
                             //Extjs 4.x 删除
-                            Ext.getCmp('addDataGrid').getStore().remove(oldpanelArr);
+                            Ext.getCmp('add_pro_DataGrid').getStore().remove(oldpanelArr);
                         } else {
                             return;
                         }
