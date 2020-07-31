@@ -2,6 +2,7 @@ package com.bancai;
 
 import com.bancai.cg.service.InsertProjectService;
 import com.bancai.commonMethod.QueryAllService;
+import com.bancai.domain.DataList;
 import com.bancai.domain.DataRow;
 import org.junit.Test;
 
@@ -228,9 +229,18 @@ public class test02 {
 //        sb.deleteCharAt(sb.length()-1);
 //        System.out.println(sb.toString());
 
-        String a = null;
-        String b = a+"";
-        System.out.println(b.equals("null"));
+        HashMap<String,String> map = new HashMap<>();
+        map.put("kk1","vv1");
+        map.put("kk2","vv2");
+        map.put("kk1","vv3");
+        Iterator it = map.keySet().iterator();
+        while (it.hasNext()){
+            String key = it.next().toString();
+            String value = map.get(key);
+            System.out.println("(1)"+key);
+            System.out.println(value);
+        }
+
 
 
     }

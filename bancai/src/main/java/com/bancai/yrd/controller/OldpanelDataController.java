@@ -25,12 +25,11 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 @RestController
 public class OldpanelDataController {
 
-    @Autowired
-    private TableService tableService;
     @Autowired
     private QueryAllService queryService;
     @Autowired
@@ -49,100 +48,188 @@ public class OldpanelDataController {
      * 新增旧板品名格式
      * */
     @RequestMapping(value = "/oldpanel/addFormat.do")
-    public boolean oldpanelAddFormat(String s, HttpSession session) throws JSONException {
+    public WebResponse oldpanelAddFormat(String s, HttpSession session) throws JSONException {
+        WebResponse response = new WebResponse();
         try {
             JSONArray jsonArray = new JSONArray(s);
-            JSONObject jsonTemp = jsonArray.getJSONObject(0);
-            String oldpanelTypeId=jsonTemp.get("oldpanelTypeId")+"";
-            String format1=jsonTemp.get("format1")+"";
-            String format2=jsonTemp.get("format2")+"";
-            String format3=jsonTemp.get("format3")+"";
-            String format4=jsonTemp.get("format4")+"";
-            String oldpanelFormat = format1+format2+format3+format4;
-            int formatId = oldpanelDataService.oldpanelAddNewFormat(oldpanelTypeId, oldpanelFormat);
-            if (formatId == 0) {
-                return false;//已经存在
-            }
             String userId = (String) session.getAttribute("userid");
-            Date date = new Date();
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String sql_addLog = "insert into format_log (type,formatId,userId,time) values(?,?,?,?)";
-            boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLog,
-                    "2", String.valueOf(formatId),userId,simpleDateFormat.format(date));
-            if (!is_log_right) {
-                return false;
+            if(jsonArray.length()==0){
+                response.setSuccess(false);
+                response.setErrorCode(100); //提交的s为空
+                return response;
             }
+            DataList errorList = new DataList();
+            DataList insertList = new DataList();
+            HashMap<String,String> map = new HashMap<>();
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonTemp = jsonArray.getJSONObject(i);
+                String id = jsonTemp.get("id")+"";
+                String typeId=jsonTemp.get("oldpanelTypeId")+"";
+                String format1=jsonTemp.get("format1")+"";
+                String format2=jsonTemp.get("format2")+"";
+                String format3=jsonTemp.get("format3")+"";
+                String format4=jsonTemp.get("format4")+"";
+                String format = format1+format2+format3+format4;
+                map.put("oldpanelTypeId",typeId);
+                map.put("format1",format1);
+                map.put("format2",format2);
+                map.put("format3",format3);
+                map.put("format4",format4);
+                if((typeId.equals("null"))||(typeId.length()==0))
+                    errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"未选择类型",map);
+                else if((format.length()!=4)||(!format.matches(isPureNumber)))
+                    errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"格式错误或选择不完全",map);
+                else if(analyzeNameService.isFormatExist("oldpanel",typeId,format)!=0)
+                    errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"此格式已存在",map);
+                else
+                    insertList = oldpanelDataService.oldpanelAddInsertRowToFormatList(insertList,typeId,format);
+            }
+            if(!errorList.isEmpty()){
+                response.setSuccess(false);
+                response.setErrorCode(200);//提交的s存在错误内容
+                response.put("errorList",errorList);
+                response.put("errorCount",errorList.size());
+                return response;
+            }
+            boolean uploadResult = oldpanelDataService.oldpanelAddNewFormat(insertList,userId);
+            response.setSuccess(uploadResult);
         } catch (Exception e) {
-            return false;
+            e.printStackTrace();
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误
+            response.setMsg(e.getMessage());
         }
-        return true;
+        return response;
+//        try {
+//            JSONArray jsonArray = new JSONArray(s);
+//            JSONObject jsonTemp = jsonArray.getJSONObject(0);
+//            String oldpanelTypeId=jsonTemp.get("oldpanelTypeId")+"";
+//            String format1=jsonTemp.get("format1")+"";
+//            String format2=jsonTemp.get("format2")+"";
+//            String format3=jsonTemp.get("format3")+"";
+//            String format4=jsonTemp.get("format4")+"";
+//            String oldpanelFormat = format1+format2+format3+format4;
+//            int formatId = oldpanelDataService.oldpanelAddNewFormat(oldpanelTypeId, oldpanelFormat);
+//            if (formatId == 0) {
+//                return false;//已经存在
+//            }
+//            String userId = (String) session.getAttribute("userid");
+//            Date date = new Date();
+//            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//            String sql_addLog = "insert into format_log (type,formatId,userId,time) values(?,?,?,?)";
+//            boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLog,
+//                    "2", String.valueOf(formatId),userId,simpleDateFormat.format(date));
+//            if (!is_log_right) {
+//                return false;
+//            }
+//        } catch (Exception e) {
+//            return false;
+//        }
+//        return true;
     }
 
     /*
      * 添加旧板基础信息
      * */
     @RequestMapping(value = "/oldpanel/addInfo.do")
-    public boolean oldpanelAddInfo(String s, HttpSession session) throws JSONException {
-        try{
+    public WebResponse oldpanelAddInfo(String s, HttpSession session) throws JSONException {
+        WebResponse response = new WebResponse();
+        try {
             JSONArray jsonArray = new JSONArray(s);
-            String userId = (String)session.getAttribute("userid");
-            Date date=new Date();
-            SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String sql_addLog = "insert into oldpanel_log (type,userId,time,isrollback) values(?,?,?,?)";
-            int oldpanellogId= insertProjectService.insertDataToTable(sql_addLog,"6",userId,simpleDateFormat.format(date),"0");
+            String userId = (String) session.getAttribute("userid");
+            if(jsonArray.length()==0){
+                response.setSuccess(false);
+                response.setErrorCode(100); //提交的s为空
+                return response;
+            }
+            DataList errorList = new DataList();
+            DataList insertList = new DataList();
+            HashMap<String,String> map = new HashMap<>();
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonTemp = jsonArray.getJSONObject(i);
-                System.out.println("第" + i + "个---" + jsonTemp);
-                String oldpanelName=(jsonTemp.get("oldpanelName")+"").trim().toUpperCase();
-//                String classificationId=jsonTemp.get("classificationId")+"";
-                String inventoryUnit=jsonTemp.get("inventoryUnit")+"";
-                String unitWeight=jsonTemp.get("unitWeight")+"";
-                String unitArea=jsonTemp.get("unitArea")+"";
-                String remark=jsonTemp.get("remark")+"";
-                int oldpanelId =  oldpanelDataService.oldpanelAddNewInfo(oldpanelName,inventoryUnit,
-                        unitWeight,unitArea,remark,userId);
-                if(oldpanelId==0){
-                    return false;//已经存在这种旧板
-                }
-                String sql_addLogDetail="insert into oldpanel_logdetail (oldpanellogId,oldpanelId,isrollback) values (?,?,?)";
-                boolean is_log_right= insertProjectService.insertIntoTableBySQL(sql_addLogDetail,
-                        String.valueOf(oldpanellogId),String.valueOf(oldpanelId),"0");
-                if(!is_log_right){
-                    return false;
+                String id = jsonTemp.get("id")+"";
+                String oldpanelName = (jsonTemp.get("oldpanelName") + "").trim().toUpperCase();
+                String inventoryUnit = (jsonTemp.get("inventoryUnit") + "").trim().toUpperCase();
+                String unitWeight = (jsonTemp.get("unitWeight") + "").trim().toUpperCase();
+                String unitArea = (jsonTemp.get("unitArea") + "").trim().toUpperCase();
+                String remark = jsonTemp.get("remark") + "";
+                map.put("oldpanelName",oldpanelName);
+                map.put("inventoryUnit",inventoryUnit);
+                map.put("unitWeight",unitWeight);
+                map.put("unitArea",unitArea);
+                map.put("remark",remark);
+                if(analyzeNameService.isInfoExist("oldpanel",oldpanelName)!=0)
+                    errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"已经存在这种旧板",map);
+                else if(((unitWeight.split("\\.").length==1)&&(!unitWeight.matches(isPureNumber)))||
+                        ((unitWeight.split("\\.").length==2)&&(
+                                (!unitWeight.split("\\.")[0].matches(isPureNumber))||(!unitWeight.split("\\.")[1].matches(isPureNumber))
+                        ))||((unitWeight.split("\\.").length!=1)&&((unitWeight.split("\\.").length!=2))))
+                    errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"重量输入有误",map);
+                else if(((unitArea.split("\\.").length==1)&&(!unitArea.matches(isPureNumber)))||
+                        ((unitArea.split("\\.").length==2)&&(
+                                (!unitArea.split("\\.")[0].matches(isPureNumber))||(!unitArea.split("\\.")[1].matches(isPureNumber))
+                        ))||((unitArea.split("\\.").length!=1)&&((unitArea.split("\\.").length!=2))))
+                    errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"面积输入有误",map);
+                else{
+                    String[] a = analyzeNameService.analyzeOldpanelName(oldpanelName);
+                    if(a==null)
+                        errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"未找到这种旧板类型",map);
+                    else {
+                        int formatId = analyzeNameService.isFormatExist("oldpanel", a[1], a[0]);
+                        if (formatId == 0)
+                            errorList = analyzeNameService.addErrorRowToErrorList(errorList, id, "未找到这种旧板格式",map);
+                        else
+                            insertList = oldpanelDataService.oldpanelAddInsertRowToInfoList(insertList, String.valueOf(formatId), oldpanelName, inventoryUnit,
+                                    unitWeight, unitArea, remark, a[4], a[5], a[6], a[7], a[8], a[9], a[10], a[11], a[12]);
+                    }
                 }
             }
-        }catch (Exception e){
-            return false;
+            if(!errorList.isEmpty()){
+                response.setSuccess(false);
+                response.setErrorCode(200);//提交的s存在错误内容
+                response.put("errorList",errorList);
+                response.put("errorCount",errorList.size());
+                return response;
+            }
+            boolean uploadResult = oldpanelDataService.oldpanelAddNewInfo(insertList,userId);
+            response.setSuccess(uploadResult);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误或品名错误
+            response.setMsg(e.getMessage());
         }
-        return true;
-//        try {
+        return response;
+//        try{
 //            JSONArray jsonArray = new JSONArray(s);
-//            JSONObject jsonTemp = jsonArray.getJSONObject(0);
-//            StringBuilder fB = new StringBuilder();
-//            StringBuilder iB = new StringBuilder();
-//            fB.append(jsonTemp.get("format1")).append(jsonTemp.get("format2")).append(jsonTemp.get("format3"))
-//                    .append(jsonTemp.get("format4"));
-//            iB.append(jsonTemp.get("format1_info")).append("%").append(jsonTemp.get("format2_info")).append("%")
-//                    .append(jsonTemp.get("format3_info")).append("%").append(jsonTemp.get("format4_info"));
-//            String format = fB.toString();
-//            String info = iB.toString();
-////            System.out.println(format);
-////            System.out.println(info);
-//            String[] sFormat = format.split("");
-//            String[] sInfo = info.split("%");
-//            String tableName = "oldpanel_info";
-//            String sql = "insert into "+ tableName +" (oldpanelType,oldpanelFormat,formatInfo) values (?,?,?)";
-//            for (int i = 0; i < sFormat.length; i++) {
-//                if (sFormat[i].equals("1")){
-//                    String typeName = sInfo[i];
-//                    String type = AnalyzeNameService.getOldpanelType(typeName);
-//                    return insertProjectService.insertIntoTableBySQL(sql,type,format,info);
+//            String userId = (String)session.getAttribute("userid");
+//            String sql_addLog = "insert into oldpanel_log (type,userId,time,isrollback) values(?,?,?,?)";
+//            int oldpanellogId= insertProjectService.insertDataToTable(sql_addLog,"6",userId,analyzeNameService.getTime(),"0");
+//            for (int i = 0; i < jsonArray.length(); i++) {
+//                JSONObject jsonTemp = jsonArray.getJSONObject(i);
+//                System.out.println("第" + i + "个---" + jsonTemp);
+//                String oldpanelName=(jsonTemp.get("oldpanelName")+"").trim().toUpperCase();
+////                String classificationId=jsonTemp.get("classificationId")+"";
+//                String inventoryUnit=jsonTemp.get("inventoryUnit")+"";
+//                String unitWeight=jsonTemp.get("unitWeight")+"";
+//                String unitArea=jsonTemp.get("unitArea")+"";
+//                String remark=jsonTemp.get("remark")+"";
+//                int oldpanelId =  oldpanelDataService.oldpanelAddNewInfo(oldpanelName,inventoryUnit,
+//                        unitWeight,unitArea,remark,userId);
+//                if(oldpanelId==0){
+//                    return false;//已经存在这种旧板
+//                }
+//                String sql_addLogDetail="insert into oldpanel_logdetail (oldpanellogId,oldpanelId,isrollback) values (?,?,?)";
+//                boolean is_log_right= insertProjectService.insertIntoTableBySQL(sql_addLogDetail,
+//                        String.valueOf(oldpanellogId),String.valueOf(oldpanelId),"0");
+//                if(!is_log_right){
+//                    return false;
 //                }
 //            }
-//        } catch (Exception e){
+//        }catch (Exception e){
 //            return false;
 //        }
-//        return false;
+//        return true;
     }
 
     /*
@@ -163,6 +250,7 @@ public class OldpanelDataController {
             }
             DataList errorList = new DataList();
             DataList insertList = new DataList();
+            HashMap<String,String> map = new HashMap<>();
             System.out.println("[===checkOldpanelUploadData===]");
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonTemp = jsonArray.getJSONObject(i);
@@ -171,14 +259,17 @@ public class OldpanelDataController {
                 String oldpanelName = (jsonTemp.get("oldpanelName") + "").trim().toUpperCase();
                 String warehouseName = (jsonTemp.get("warehouseName") + "").trim().toUpperCase();
                 String count = (jsonTemp.get("count") + "").trim();
+                map.put("oldpanelName",oldpanelName);
+                map.put("warehouseName",warehouseName);
+                map.put("count",count);
                 if((!count.matches(isPureNumber))||(Integer.parseInt(count)<=0))
-                    errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"输入数量不为正整数");
+                    errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"输入数量不为正整数",map);
                 else if(analyzeNameService.isWarehouseNameNotExist(warehouseName))
-                    errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"仓库名不存在");
+                    errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"仓库名不存在",map);
                 else {
                     String [] oldpanelId = analyzeNameService.isInfoExistBackUnit("oldpanel",oldpanelName);
                     if(oldpanelId==null)
-                        errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"没有该旧板的基础信息");
+                        errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"没有该旧板的基础信息",map);
                     else
                         insertList = oldpanelDataService.oldpanelAddInsertRowToInboundList(insertList,oldpanelId[0],warehouseName,count,oldpanelId[1],oldpanelId[2]);
                 }

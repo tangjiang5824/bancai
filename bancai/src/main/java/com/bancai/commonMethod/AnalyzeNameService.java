@@ -12,8 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
+import java.util.*;
 
 @Service
 public class AnalyzeNameService extends BaseService {
@@ -32,10 +31,16 @@ public class AnalyzeNameService extends BaseService {
         return simpleDateFormat.format(date);
     }
     @Transactional
-    public DataList addErrorRowToErrorList(DataList errorList, String id,String errorType){
+    public DataList addErrorRowToErrorList(DataList errorList, String id, String errorType,HashMap<String,String> map){
         DataRow errorRow = new DataRow();
         errorRow.put("id",id);
         errorRow.put("errorType",errorType);
+        Iterator iterator = map.keySet().iterator();
+        while (iterator.hasNext()){
+            String key = iterator.next().toString();
+            String value = map.get(key);
+            errorRow.put(key,value);
+        }
         errorList.add(errorRow);
         return errorList;
     }
@@ -235,9 +240,9 @@ public class AnalyzeNameService extends BaseService {
      * 根据类型（旧板、产品）和品名判断format是否存在，返回id或0
      */
     @Transactional
-    public int isFormatExist(String tablename, String productTypeId, String productFormat) {
+    public int isFormatExist(String tablename, String typeId, String format) {
         String sql = "select id from "+tablename+"_format where "+tablename+"TypeId=? and "+tablename+"Format=?";
-        DataList dataList = queryService.query(sql,productTypeId,productFormat);
+        DataList dataList = queryService.query(sql,typeId,format);
         if(dataList.isEmpty())
             return 0;
         return Integer.parseInt(dataList.get(0).get("id").toString());
