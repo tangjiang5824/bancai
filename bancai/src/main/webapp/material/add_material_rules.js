@@ -47,21 +47,22 @@ Ext.define('material.add_material_rules', {
             autoLoad : true
         });
         //
-        var material_type = Ext.create('Ext.form.ComboBox', {
-            fieldLabel: '原材料类型',
-            name: 'materialTypeId',
-            id: 'materialTypeId',
-            store: materialTypeStore,
-            queryMode: 'local',
+        var material_type=Ext.create('Ext.form.ComboBox',{
+            // fieldLabel : '原材料分类',
+            // labelWidth : 80,
+            // width : 230,
+            // margin: '0 10 0 40',
+            id :  'materialtypeId',
+            name : 'materialtypeId',
+            matchFieldWidth: true,
+            emptyText : "--请选择--",
             displayField: 'typeName',
+            forceSelection: true,
             valueField: 'id',
-            margin : '0 20 0 40',
-            width: 200,
-            labelWidth: 75,
-            allowBlank:false,
-            blankText  : "原材料类型不能为空",
-            renderTo: Ext.getBody(),
-
+            editable : false,
+            triggerAction: 'all',
+            selectOnFocus:true,
+            store: materialTypeStore,
         });
 
         var productStore = Ext.create('Ext.data.Store',{

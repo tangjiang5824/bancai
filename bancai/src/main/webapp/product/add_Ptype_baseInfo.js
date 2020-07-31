@@ -2,7 +2,7 @@ Ext.define('product.add_Ptype_baseInfo', {
     extend : 'Ext.panel.Panel',
     region : 'center',
     layout : "fit",
-    title : '新增旧板类型基础信息',
+    title : '新增产品类型',
     reloadPage : function() {
         var p = Ext.getCmp('functionPanel');
         p.removeAll();
@@ -121,10 +121,10 @@ Ext.define('product.add_Ptype_baseInfo', {
             fields : [ 'typeName'],
             proxy : {
                 type : 'ajax',
-                url : '/material/findAllBytableName.do?tableName=classification',
+                url : '/material/findAllBytableName.do?tableName=product_classification',
                 reader : {
                     type : 'json',
-                    rootProperty: 'classification',
+                    rootProperty: 'product_classification',
                 },
             },
             autoLoad : true
