@@ -1,8 +1,8 @@
 package com.bancai.yrd.service;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 
 import com.bancai.cg.service.InsertProjectService;
 import com.bancai.commonMethod.AnalyzeNameService;
@@ -10,6 +10,8 @@ import com.bancai.commonMethod.QueryAllService;
 import com.bancai.domain.DataList;
 import com.bancai.domain.DataRow;
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,12 +19,12 @@ import com.bancai.service.BaseService;
 import com.bancai.vo.WebResponse;
 
 @Service
-public class Y_Upload_Data_Service extends BaseService {
-    private Logger log = Logger.getLogger(Y_Upload_Data_Service.class);
+public class OldpanelDataService extends BaseService {
+    private Logger log = Logger.getLogger(OldpanelDataService.class);
     @Autowired
     private QueryAllService queryService;
     @Autowired
-    private AnalyzeNameService AnalyzeNameService;
+    private AnalyzeNameService analyzeNameService;
     @Autowired
     private InsertProjectService insertProjectService;
 
@@ -31,7 +33,7 @@ public class Y_Upload_Data_Service extends BaseService {
      */
     @Transactional
     public int oldpanelAddNewFormat(String oldpanelTypeId, String oldpanelFormat) {
-        if(AnalyzeNameService.isFormatExist("oldpanel",oldpanelTypeId,oldpanelFormat)!=0)
+        if(analyzeNameService.isFormatExist("oldpanel",oldpanelTypeId,oldpanelFormat)!=0)
             return 0;
         return oldpanelSaveFormat(oldpanelTypeId, oldpanelFormat);
     }
@@ -45,37 +47,87 @@ public class Y_Upload_Data_Service extends BaseService {
     @Transactional
     public int oldpanelAddNewInfo(String oldpanelName, String inventoryUnit, String unitWeight,
                                   String unitArea, String remark, String userId) {
-        if(AnalyzeNameService.isInfoExist("oldpanel",oldpanelName)!=0)
+        if(analyzeNameService.isInfoExist("oldpanel",oldpanelName)!=0)
             return 0;
         return oldpanelSaveInfo(oldpanelName, inventoryUnit, unitWeight, unitArea, remark, userId);
     }
-    /**
-     * 添加数据,返回添加的旧板info id
-     */
-    @Transactional
-    public int[] oldpanelUpload(String oldpanelName, String warehouseName, String count) {
-        String[] info = AnalyzeNameService.isInfoExistBackUnit("oldpanel",oldpanelName);
-        //id,unitWeight,unitArea
-        int oldpanelId = Integer.parseInt(info[0]);
-        System.out.println("oldpanelUpload===oldpanelId="+oldpanelId);
-        if(oldpanelId==0){
-            return new int[]{0, 0};
-        }
-        int oldpanelstoreId = oldpanelSaveData(info,warehouseName,count);
-        return new int[]{oldpanelId, oldpanelstoreId};
 
-//        String[] analyzeOldpanelName = AnalyzeNameService.analyzeOldpanelName(oldpanelName);
-//        if(!AnalyzeNameService.isOldpanelFormatExist(analyzeOldpanelName[0],analyzeOldpanelName[1],analyzeOldpanelName[7],analyzeOldpanelName[8]))
-//            return 0;
-//        return String.valueOf(oldpanelSaveData(analyzeOldpanelName,oldpanelName,classificationId,inventoryUnit, number,
-//                warehouseName, unitArea, unitWeight, remark, uploadId));
+    @Transactional
+    public DataList addInsertRowToInboundList(DataList insertList,String oldpanelId,String warehouseName,String count,String unitWeight,String unitArea){
+        DataRow row = new DataRow();
+        row.put("oldpanelId",oldpanelId);
+        row.put("warehouseName",warehouseName);
+        row.put("count",count);
+        row.put("unitWeight",unitWeight);
+        row.put("unitArea",unitArea);
+        insertList.add(row);
+        return insertList;
     }
+
+
+    @Transactional
+    public boolean insertOldpanelDataToStore(DataList insertList,String userId,String operator,String projectId,String buildingId){
+        Date date = new Date();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        int oldpanellogId = 0;
+        if (projectId.equals("-1") && buildingId.equals("-1")) {//入库
+            oldpanellogId = insertProjectService.insertDataToTable(
+                    "insert into oldpanel_log (type,userId,time,operator,isrollback) values(?,?,?,?,?)",
+                    "0",userId,simpleDateFormat.format(date),operator,"0");
+        } else {//退库
+            oldpanellogId = insertProjectService.insertDataToTable(
+                    "insert into oldpanel_log (type,userId,time,projectId,buildingId,operator,isrollback) values(?,?,?,?,?,?,?)",
+                    "2",userId,simpleDateFormat.format(date),projectId,buildingId,operator,"0");
+        }
+        if(oldpanellogId==0)
+            return false;
+        for (DataRow dataRow : insertList) {
+            oldpanelAddStoreAndLogDetailByRow(dataRow,String.valueOf(oldpanellogId));
+        }
+        return true;
+    }
+    private void oldpanelAddStoreAndLogDetailByRow(DataRow dataRow,String oldpanellogId){
+        String oldpanelId = dataRow.get("oldpanelId").toString();
+        String warehouseName = dataRow.get("warehouseName").toString();
+        String count = dataRow.get("count").toString();
+        String totalWeight = "";
+        String totalArea = "";
+        if(dataRow.get("unitWeight")!=null)
+            totalWeight = String.valueOf(Double.parseDouble(count)*Double.parseDouble(dataRow.get("unitWeight").toString()));
+        if(dataRow.get("unitArea")!=null)
+            totalArea = String.valueOf(Double.parseDouble(count)*Double.parseDouble(dataRow.get("unitArea").toString()));
+        DataList queryList = queryService.query("select * from oldpanel_store where oldpanelId=? and warehouseName=?"
+                ,oldpanelId,warehouseName);
+        String storeId = "";
+        if(queryList.isEmpty()){
+            storeId = String.valueOf(insertProjectService.insertDataToTable(
+                    "insert into oldpanel_store (oldpanelId,countUse,countStore,warehouseName,totalWeight,totalArea) values (?,?,?,?,?,?)",
+                    oldpanelId,count,count,warehouseName,totalWeight,totalArea));
+        } else {
+            storeId = queryList.get(0).get("id").toString();
+            double countStore = Double.parseDouble(queryList.get(0).get("countStore").toString());
+            String countStoreNew = String.valueOf(countStore+Double.parseDouble(count));
+            String countUseNew = String.valueOf(Double.parseDouble(queryList.get(0).get("countUse").toString())+Double.parseDouble(count));
+            if(totalArea.length()!=0)
+                totalArea = String.valueOf(Double.parseDouble(dataRow.get("unitArea").toString())*countStore+Double.parseDouble(totalArea));
+            if(totalWeight.length()!=0)
+                totalWeight = String.valueOf(Double.parseDouble(dataRow.get("unitWeight").toString())*countStore+Double.parseDouble(totalWeight));
+            jo.update("update oldpanel_store set countUse=\""+countUseNew+
+                    "\",countStore=\""+countStoreNew+"\",totalArea=\""+ totalArea +
+                    "\",totalWeight=\""+totalWeight+ "\" where id=\""+storeId+"\"");
+        }
+        insertProjectService.insertIntoTableBySQL(
+                "insert into oldpanel_logdetail (oldpanelId,count,oldpanellogId,oldpanelstoreId,isrollback) values (?,?,?,?,?)",
+                oldpanelId,count,oldpanellogId,storeId,"0");
+    }
+
+
 
     private int oldpanelSaveInfo(String oldpanelName, String inventoryUnit, String unitWeight0,
                                  String unitArea0, String remark, String userId){
         double unitArea = Double.parseDouble(unitArea0);
         double unitWeight = Double.parseDouble(unitWeight0);
-        String[] analyzeOldpanelName = AnalyzeNameService.analyzeOldpanelName(oldpanelName);
+        String[] analyzeOldpanelName = analyzeNameService.analyzeOldpanelName(oldpanelName);
         if(analyzeOldpanelName==null)
             return 0;
         DataList formatList = queryService.query("select * from oldpanel_format where oldpanelTypeId=? and oldpanelFormat=?",
@@ -100,27 +152,7 @@ public class Y_Upload_Data_Service extends BaseService {
                 analyzeOldpanelName[8],analyzeOldpanelName[9],analyzeOldpanelName[10],analyzeOldpanelName[11],userId);
     }
 
-    private int oldpanelSaveData(String[] info, String warehouseName, String countNum){
-        //id,unitWeight,unitArea
-        String count = String.valueOf(Double.parseDouble(countNum));
-        String sql = "select * from oldpanel_store where oldpanelId=? and warehouseName=?";
-        DataList queryList = queryService.query(sql,info[0],warehouseName);
-        if(queryList.isEmpty()){
-            return insertProjectService.insertDataToTable("insert into oldpanel_store " +
-                    "(oldpanelId,countUse,countStore,warehouseName,totalArea,totalWeight) values (?,?,?,?,?,?)",
-                    info[0],count,count,warehouseName,String.valueOf(Double.parseDouble(info[2])*Double.parseDouble(count)),
-                    String.valueOf(Double.parseDouble(info[1])*Double.parseDouble(count)));
-        } else {
-            String oldpanelstoreId = queryList.get(0).get("id").toString();
-            String sql2 = "update oldpanel_store set countUse=countUse+\""+count+
-                    "\",countStore=countStore+\""+count+"\",totalArea=totalArea+\""+
-                    String.valueOf(Double.parseDouble(info[2]) * Double.parseDouble(count)) +
-                    "\",totalWeight=totalWeight+\""+String.valueOf(Double.parseDouble(info[1])*Double.parseDouble(count))+
-                    "\" where id=\""+oldpanelstoreId+"\"";
-            jo.update(sql2);
-            return Integer.parseInt(oldpanelstoreId);
-        }
-    }
+
 //    private int oldpanelSaveData(String[] analyzeOldpanelName, String oldpanelName, String classificationId, String inventoryUnit,
 //                                  String number, String warehouseName, String unitArea0, String unitWeight0, String remark, String uploadId) {
 //        double unitArea = Double.parseDouble(unitArea0);

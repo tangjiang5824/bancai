@@ -23,6 +23,14 @@ public class AnalyzeNameService extends BaseService {
     @Autowired
     private QueryAllService queryService;
 
+    @Transactional
+    public DataList addErrorRowToErrorList(DataList errorList, String id,String errorType){
+        DataRow errorRow = new DataRow();
+        errorRow.put("id",id);
+        errorRow.put("errorType",errorType);
+        errorList.add(errorRow);
+        return errorList;
+    }
     /**
      * 根据旧板类型名获取类型ID
      */
@@ -250,11 +258,16 @@ public class AnalyzeNameService extends BaseService {
         String id = dataList.get(0).get("id").toString();
         String unitWeight = null;
         String unitArea = null;
-        if(dataList.get(0).get("unitWeight")!=null)
+        if((dataList.get(0).get("unitWeight")!=null)&&(dataList.get(0).get("unitWeight").toString().length()!=0))
             unitWeight = dataList.get(0).get("unitWeight").toString();
-        if(dataList.get(0).get("unitArea")!=null)
+        if((dataList.get(0).get("unitArea")!=null)&&(dataList.get(0).get("unitArea").toString().length()!=0))
             unitArea = dataList.get(0).get("unitArea").toString();
         return new String[]{id,unitWeight,unitArea};
+    }
+
+    @Transactional
+    public boolean isWarehouseNameNotExist(String warehouseName){
+        return queryService.query("select * from storeposition where warehouseName=?",warehouseName).isEmpty();
     }
     /**
      * 根据产品类型名获取类型ID

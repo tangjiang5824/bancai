@@ -6,6 +6,7 @@ import com.bancai.commonMethod.AnalyzeNameService;
 import com.bancai.commonMethod.NewCondition;
 import com.bancai.commonMethod.QueryAllService;
 import com.bancai.domain.DataList;
+import com.bancai.domain.DataRow;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.bancai.service.TableService;
 import com.bancai.vo.UploadDataResult;
 import com.bancai.vo.WebResponse;
-import com.bancai.yrd.service.Y_Upload_Data_Service;
+import com.bancai.yrd.service.OldpanelDataService;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -26,14 +27,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @RestController
-public class Oldpanel_Data_Controller {
+public class OldpanelDataController {
 
     @Autowired
     private TableService tableService;
     @Autowired
     private QueryAllService queryService;
     @Autowired
-    private Y_Upload_Data_Service y_Upload_Data_Service;
+    private OldpanelDataService oldpanelDataService;
     @Autowired
     private InsertProjectService insertProjectService;
     @Autowired
@@ -41,7 +42,8 @@ public class Oldpanel_Data_Controller {
     @Autowired
     private AnalyzeNameService analyzeNameService;
 
-    Logger log = Logger.getLogger(Oldpanel_Data_Controller.class);
+    Logger log = Logger.getLogger(OldpanelDataController.class);
+    private static String isPureNumber = "[0-9]+";
 
     /*
      * 新增旧板品名格式
@@ -57,7 +59,7 @@ public class Oldpanel_Data_Controller {
             String format3=jsonTemp.get("format3")+"";
             String format4=jsonTemp.get("format4")+"";
             String oldpanelFormat = format1+format2+format3+format4;
-            int formatId = y_Upload_Data_Service.oldpanelAddNewFormat(oldpanelTypeId, oldpanelFormat);
+            int formatId = oldpanelDataService.oldpanelAddNewFormat(oldpanelTypeId, oldpanelFormat);
             if (formatId == 0) {
                 return false;//已经存在
             }
@@ -97,7 +99,7 @@ public class Oldpanel_Data_Controller {
                 String unitWeight=jsonTemp.get("unitWeight")+"";
                 String unitArea=jsonTemp.get("unitArea")+"";
                 String remark=jsonTemp.get("remark")+"";
-                int oldpanelId =  y_Upload_Data_Service.oldpanelAddNewInfo(oldpanelName,inventoryUnit,
+                int oldpanelId =  oldpanelDataService.oldpanelAddNewInfo(oldpanelName,inventoryUnit,
                         unitWeight,unitArea,remark,userId);
                 if(oldpanelId==0){
                     return false;//已经存在这种旧板
@@ -144,69 +146,59 @@ public class Oldpanel_Data_Controller {
     }
 
     /*
-     * 添加单个数据
+     * 旧板入库与退库
      * */
     //produces = {"text/html;charset=UTF-8"}
     @RequestMapping(value = "/oldpanel/addData.do")
-    public boolean oldpanelAddData(String s, String projectId, String buildingId, String operator, HttpSession session) {
-        JSONArray jsonArray = new JSONArray(s);
-        String userId = (String)session.getAttribute("userid");
-        Date date=new Date();
-        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String sql_addLog = "insert into oldpanel_log (type,userId,time,operator,isrollback) values(?,?,?,?,?)";
-        String sql_backLog = "insert into oldpanel_log (type,userId,time,projectId,buildingId,operator,isrollback) values(?,?,?,?,?,?,?)";
-//        JSONObject jsonBack = jsonArray.getJSONObject(0);
-//        String projectId;
-//        String buildingId;
-//        try{
-//            projectId = jsonBack.get("projectId")+"";
-//            buildingId = jsonBack.get("buildingId")+"";
-//        }catch (JSONException e){
-//            projectId="";
-//            buildingId="";
-//        }
-        int oldpanellogId;
-        if(projectId.equals("-1")&&buildingId.equals("-1")){
-            oldpanellogId= insertProjectService.insertDataToTable(sql_addLog,"0",userId,simpleDateFormat.format(date)
-                    ,operator,"0");
-        } else {
-            oldpanellogId= insertProjectService.insertDataToTable(sql_backLog,"2",userId,simpleDateFormat.format(date)
-                    ,projectId,buildingId,operator,"0");
-        }
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonTemp = jsonArray.getJSONObject(i);
-            //获得第i条数据的各个属性值
-            System.out.println("第" + i + "个:userid=" + userId + "---" + jsonTemp);
-            String oldpanelName=(jsonTemp.get("oldpanelName")+"").trim().toUpperCase();
-            String warehouseName=jsonTemp.get("warehouseName")+"";
-            String count=jsonTemp.get("count")+"";
-
-            int[] oldpanelId = y_Upload_Data_Service.oldpanelUpload(oldpanelName,warehouseName,count);
-            if(oldpanelId[0]==0){
-                return false;
+    public WebResponse oldpanelAddData(String s, String projectId, String buildingId, String operator, HttpSession session) {
+        WebResponse response = new WebResponse();
+        try {
+            JSONArray jsonArray = new JSONArray(s);
+            String userId = (String) session.getAttribute("userid");
+            //检查
+            if(jsonArray.length()==0){
+                response.setSuccess(false);
+                response.setErrorCode(100); //提交的s为空
             }
-            String sql_addLogDetail="insert into oldpanel_logdetail (oldpanelId,count,oldpanellogId,oldpanelstoreId,isrollback) values (?,?,?,?,?)";
-            boolean is_log_right= insertProjectService.insertIntoTableBySQL(sql_addLogDetail,String.valueOf(oldpanelId[0]),
-                    count,String.valueOf(oldpanellogId),String.valueOf(oldpanelId[1]),"0");
-            if(!is_log_right){
-                return false;
+            DataList errorList = new DataList();
+            DataList insertList = new DataList();
+            System.out.println("[===checkOldpanelUploadData===]");
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonTemp = jsonArray.getJSONObject(i);
+                System.out.println("第" + i + "个:" + jsonTemp);
+                String id = jsonTemp.get("id")+"";
+                String oldpanelName = (jsonTemp.get("oldpanelName") + "").trim().toUpperCase();
+                String warehouseName = (jsonTemp.get("warehouseName") + "").trim().toUpperCase();
+                String count = (jsonTemp.get("count") + "").trim();
+                if((!count.matches(isPureNumber))||(Integer.parseInt(count)<=0))
+                    errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"输入数量不为正整数");
+                else if(analyzeNameService.isWarehouseNameNotExist(warehouseName))
+                    errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"仓库名不存在");
+                else {
+                    String [] oldpanelId = analyzeNameService.isInfoExistBackUnit("oldpanel",oldpanelName);
+                    if(oldpanelId==null)
+                        errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"没有该旧板的基础信息");
+                    else
+                        insertList = oldpanelDataService.addInsertRowToInboundList(insertList,oldpanelId[0],warehouseName,count,oldpanelId[1],oldpanelId[2]);
+                }
             }
+            if(!errorList.isEmpty()){
+                response.setSuccess(false);
+                response.setErrorCode(200);//提交的s存在错误内容
+                response.put("errorList",errorList);
+                response.put("errorCount",errorList.size());
+                return response;
+            }
+            System.out.println("[===checkOldpanelUploadData==Complete=NoError]");
+            boolean uploadResult= oldpanelDataService.insertOldpanelDataToStore(insertList,userId,operator,projectId,buildingId);
+            response.setSuccess(uploadResult);
+        }catch (Exception e){
+            e.printStackTrace();
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误
+            response.setMsg(e.getMessage());
         }
-
-//        JSONArray array = new JSONArray();
-//        try {
-//            UploadDataResult result = allExcelService.uploadExcelData(uploadFile.getInputStream(),uploadId,tableName,String.valueOf(oldpanellogId));
-//            response.put("value",result.dataList);
-//            response.put("totalCount", result.dataList.size());
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            response.setSuccess(false);
-//            response.setErrorCode(1000); //未知错误
-//            response.setMsg(e.getMessage());
-//        }
-//        System.out.println(response.get("success"));
-//        System.out.println(response.get("value"));
-        return true;
+        return response;
     }
 
     /*
@@ -215,26 +207,19 @@ public class Oldpanel_Data_Controller {
 
     //produces = {"text/html;charset=UTF-8"}
     @RequestMapping(value = "/oldpanel/uploadExcel.do")
-    public WebResponse uploadOldpanel(MultipartFile uploadFile,String operator, HttpSession session) {
+    public WebResponse uploadOldpanel(MultipartFile uploadFile) {
         WebResponse response = new WebResponse();
-        String userId = (String) session.getAttribute("userid");
-        Date date=new Date();
-        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String sql_addLog = "insert into oldpanel_log (type,userId,time,operator,isrollback) values(?,?,?,?,?)";
-        int oldpanellogId= insertProjectService.insertDataToTable(sql_addLog,"0",userId,simpleDateFormat.format(date)
-                ,operator,"0");
         try {
-            UploadDataResult result = allExcelService.uploadOldpanelExcelData(uploadFile.getInputStream(),userId,String.valueOf(oldpanellogId));
-            response.put("value",result.dataList);
-            response.put("totalCount", result.dataList.size());
+            UploadDataResult result = allExcelService.uploadOldpanelExcelData(uploadFile.getInputStream());
+            response.put("dataList",result.dataList);
+            response.put("listSize", result.dataList.size());
+            response.setSuccess(true);
         } catch (IOException e) {
             e.printStackTrace();
             response.setSuccess(false);
             response.setErrorCode(1000); //未知错误
             response.setMsg(e.getMessage());
         }
-        System.out.println(response.get("success"));
-        System.out.println(response.get("value"));
         return response;
     }
 //    public String oldpanelUploadData(MultipartFile uploadFile, HttpSession session) {
@@ -289,7 +274,7 @@ public class Oldpanel_Data_Controller {
             re = queryService.queryPage(start, limit, c, tableName);
             String typeTableName = "oldpaneltype";
 //            System.out.println(re);
-            re = y_Upload_Data_Service.ChangeQueryPageFromAToB(re, typeTableName, "oldpanelType", "oldpanelTypeName");
+            re = oldpanelDataService.ChangeQueryPageFromAToB(re, typeTableName, "oldpanelType", "oldpanelTypeName");
 //                System.out.println(re);
             return re;
 

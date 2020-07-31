@@ -5,7 +5,7 @@ import com.bancai.commonMethod.*;
 import com.bancai.domain.DataList;
 import com.bancai.yrd.service.MatchRulesService;
 import com.bancai.yrd.service.ProductDataService;
-import com.bancai.yrd.service.Y_Upload_Data_Service;
+import com.bancai.yrd.service.OldpanelDataService;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,10 +13,6 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-import com.bancai.service.TableService;
-import com.bancai.vo.UploadDataResult;
-import com.bancai.vo.WebResponse;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -37,7 +33,7 @@ public class MatchRulesController {
     @Autowired
     private ProductDataService productDataService;
     @Autowired
-    private Y_Upload_Data_Service y_upload_data_service;
+    private OldpanelDataService oldpanel_data_service;
     @Autowired
     private MatchRulesService matchRulesService;
 
@@ -85,7 +81,7 @@ public class MatchRulesController {
      * */
     @RequestMapping(value="/match/findOldpanelTypeList.do")
     public void findOldpanelType(HttpServletResponse response) throws IOException, JSONException {
-        DataList typeList = y_upload_data_service.findOldpanelTypeList();
+        DataList typeList = oldpanel_data_service.findOldpanelTypeList();
         //写回前端
         JSONObject object = new JSONObject();
         JSONArray array = new JSONArray(typeList);
@@ -103,7 +99,7 @@ public class MatchRulesController {
      * */
     @RequestMapping(value="/match/findOldpanelFormatList.do")
     public void findOldpanelFormat(String oldpanelTypeId, HttpServletResponse response) throws IOException, JSONException {
-        DataList formatList = y_upload_data_service.findOldpanelFormatList(oldpanelTypeId);
+        DataList formatList = oldpanel_data_service.findOldpanelFormatList(oldpanelTypeId);
         //写回前端
         JSONObject object = new JSONObject();
         JSONArray array = new JSONArray(formatList);
