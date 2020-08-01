@@ -128,21 +128,21 @@ public class OldpanelDataService extends BaseService {
 
     @Transactional
     public boolean insertOldpanelDataToStore(DataList insertList,String userId,String operator,String projectId,String buildingId){
-        String time =analyzeNameService.getTime();
-        int oldpanellogId = 0;
+        int logId = 0;
+        boolean b = true;
         if (projectId.equals("-1") && buildingId.equals("-1")) {//入库
-            oldpanellogId = oldpanelAddLogBackId("0",userId,operator);
+            logId = oldpanelAddLogBackId("0",userId,operator);
         } else {//退库
-            oldpanellogId = oldpanelAddLogBackId("2",userId,operator);
+            logId = oldpanelAddLogBackId("2",userId,operator);
         }
-        if(oldpanellogId==0)
+        if(logId==0)
             return false;
         for (DataRow dataRow : insertList) {
-            oldpanelAddStoreAndLogDetailByRow(dataRow,String.valueOf(oldpanellogId));
+            b = b&oldpanelAddStoreAndLogDetailByRow(dataRow,String.valueOf(logId));
         }
-        return true;
+        return b;
     }
-    private void oldpanelAddStoreAndLogDetailByRow(DataRow dataRow,String oldpanellogId){
+    private boolean oldpanelAddStoreAndLogDetailByRow(DataRow dataRow,String logId){
         String oldpanelId = dataRow.get("oldpanelId").toString();
         String warehouseName = dataRow.get("warehouseName").toString();
         String count = dataRow.get("count").toString();
@@ -172,9 +172,9 @@ public class OldpanelDataService extends BaseService {
                     "\",countStore=\""+countStoreNew+"\",totalArea=\""+ totalArea +
                     "\",totalWeight=\""+totalWeight+ "\" where id=\""+storeId+"\"");
         }
-        insertProjectService.insertIntoTableBySQL(
+        return insertProjectService.insertIntoTableBySQL(
                 "insert into oldpanel_logdetail (oldpanelId,count,oldpanellogId,oldpanelstoreId,isrollback) values (?,?,?,?,?)",
-                oldpanelId,count,oldpanellogId,storeId,"0");
+                oldpanelId,count,logId,storeId,"0");
     }
 
     private int oldpanelAddLogBackId(String type,String userId,String operator){
