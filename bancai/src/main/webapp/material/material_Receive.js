@@ -623,6 +623,14 @@ Ext.define('material.material_Receive',{
                         return　record_start_rec　+　1　+　rowIndex;
                     }
                 },
+                // new Ext.grid.RowNumberer(),//序号
+                // {
+                //     header: '序号',
+                //     xtype: 'rownumberer',
+                //     width: 60,
+                //     align: 'center',
+                //     sortable: false
+                // },
                 {
                     dataIndex:'name',
                     text:'材料名',
@@ -660,6 +668,15 @@ Ext.define('material.material_Receive',{
                         allowBlank : true
                     }
                 },
+                // {
+                //     dataIndex:'',
+                //     text:'错误原因',
+                //     flex :1,
+                //     editor : {
+                //         xtype : 'textfield',
+                //         allowBlank : true
+                //     }
+                // },
             ],
             // height:'100%',
             flex:1,
@@ -860,8 +877,38 @@ Ext.define('material.material_Receive',{
                                                 fn: function (btn) {
                                                     if (btn === 'yes') {
                                                         //点击确认，显示重复的数据
-                                                        m_receive_errorlistStore.loadData(errorList);
-                                                        win_mrec_errorInfo_outbound.show();
+                                                        // m_receive_errorlistStore.loadData(errorList);
+                                                        // win_mrec_errorInfo_outbound.show();
+
+                                                        Ext.MessageBox.alert("提示","领取失败！标红的行数据存在问题！\n 请检查后重新领料！" );
+                                                        //添加错误原因
+                                                        // var column = Ext.create('Ext.grid.column.Column', {
+                                                        //     dataIndex:'',
+                                                        //     text: '错误原因',
+                                                        //     flex:1,
+                                                        //     style: "text-align:center;",
+                                                        //     align:'center',
+                                                        // });
+                                                        // grid2.headerCt.insert(grid2.columns.length+1,column);
+
+                                                        //红色标记
+                                                        for(var i=0;i<errorList.length;i++){
+                                                            console.log("errorList------------",errorList[i]);
+                                                            var row_id = errorList[i].id;
+                                                            var row_errorType = errorList[i].errorType;
+
+                                                            var row = grid2.getStore().indexOfId(row_id)     //(row_id);
+                                                            console.log("row--------->>>",row)
+                                                            var tr = grid2.getView().getNode(row);
+
+                                                            //设置值
+                                                            // grid2.getStore().getAt(row).set('错误原因',row_errorType);
+
+                                                            //标红
+                                                            console.log("tr--------->>>",tr);
+                                                            tr.style.backgroundColor = '#FF0000';//行标红
+
+                                                        }
                                                     }
                                                 }
                                             });
@@ -936,8 +983,8 @@ Ext.define('material.material_Receive',{
                     text:'领取数量',
                     flex :1
                     //editor:{xtype : 'textfield', allowBlank : true},
-
-                }],
+                },
+                ],
             // height:'100%',
             flex:1,
             tbar:toobar_right,

@@ -262,7 +262,7 @@ public class ProductDataService extends BaseService{
      * */
     @Transactional
     public DataList findProductTypeList(){
-        return queryService.query("select * from producttype order by id ASC");
+        return queryService.query("select * from producttype order by classificationId,productTypeName ASC");
 
     }
     /*

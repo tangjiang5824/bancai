@@ -34,15 +34,81 @@ Ext.define('oldpanel.old_Upload_Data', {
                 beforeload : function(store, operation, eOpts) {
                     store.getProxy().setExtraParams({
                         tableName :tableName,
-
                         //oldpanelType:oldpanelType
-
                     });
                 }
 
             }
+        });
 
+        //错误提示，弹出框
+        var old_up_errorlistStore = Ext.create('Ext.data.Store',{
+            id: 'old_up_errorlistStore',
+            autoLoad: true,
+            fields: ['productName','position'],
+            //pageSize: itemsPerPage, // items per page
+            data:[],
+            editable:false,
+        });
 
+        //弹出框，出入库详细记录
+        var old_up_errorlist_outbound=Ext.create('Ext.grid.Panel',{
+            id : 'old_up_errorlist_outbound',
+            // tbar: toolbar_pop,
+            store:old_up_errorlistStore,//oldpanellogdetailList，store1的数据固定
+            dock: 'bottom',
+            columns:[
+                {
+                    header: '序号',
+                    xtype: 'rownumberer',
+                    width: 60,
+                    align: 'center',
+                    sortable: false
+                },
+                {
+                    text: '旧板名称',
+                    dataIndex: 'oldpanelName',
+                    flex :1,
+                    width:"80"
+                },
+                {
+                    text: '仓库名称',
+                    dataIndex: 'warehouseName',
+                    flex :1,
+                    width:"80"
+                },
+                {
+                    text: '入库数量',
+                    dataIndex: 'count',
+                    flex :1,
+                    width:"80"
+                },
+                {
+                    text: '错误原因',
+                    flex :1,
+                    dataIndex: 'errorType',
+                }
+                //fields:['oldpanelId','oldpanelName','count'],specification
+
+            ],
+            flex:1,
+            //selType:'checkboxmodel',
+            plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
+                clicksToEdit : 2
+            })],
+        });
+
+        var win_oldup_errorInfo_outbound = Ext.create('Ext.window.Window', {
+            // id:'win_oldup_errorInfo_outbound',
+            title: '错误详情',
+            height: 500,
+            width: 750,
+            layout: 'fit',
+            closable : true,
+            draggable:true,
+            closeAction : 'hidden',
+            // tbar:toolbar_pop1,
+            items:old_up_errorlist_outbound,
         });
 
         var grid = Ext.create('Ext.grid.Panel',{
@@ -53,49 +119,20 @@ Ext.define('oldpanel.old_Upload_Data', {
                 editable:true
             },
             columns : [
-                // {dataIndex : 'oldpanelType', text : '旧板类型', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
-                // {dataIndex : 'length', text : '长一', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // {dataIndex : 'length2', text : '长二', flex :1, editor : {xtype : 'textfield', allowBlank : true,}},
-                // {dataIndex : 'width', text : '宽一', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // {dataIndex : 'width2', text : '宽二', flex :1, editor : {xtype : 'textfield', allowBlank : true,}},
-                // {dataIndex : 'width3', text : '宽三', flex :1, editor : {xtype : 'textfield', allowBlank : true,}},
-                // {dataIndex : 'oldpanelNo', text : '品号', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // {dataIndex : 'oldpanelName', text : '旧板名称', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // {dataIndex : 'inventoryUnit', text : '库存单位', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // {dataIndex : 'specification', text : '规格', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // {dataIndex : 'countStore', text : '数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // {dataIndex : 'weight', text : '重量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // {dataIndex : 'warehouseNo', text : '仓库编号', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // {dataIndex : 'rowNo', text : '行', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // {dataIndex : 'columNo', text : '列', flex :1, editor : {xtype : 'textfield', allowBlank : false,}}
-                // {dataIndex : 'oldpanelName', text : '旧板名称', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
-                // {dataIndex : 'classificationName', text : '分类', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
-                // {dataIndex : 'inventoryUnit', text : '库存单位', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // //{dataIndex : 'countUse', text : '可用数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // //{dataIndex : 'countStore', text : '库存数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // {dataIndex : 'number', text : '入库数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // {dataIndex : 'warehouseName', text : '仓库名称', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // {dataIndex : 'unitArea', text : '单面积', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // {dataIndex : 'unitWeight', text : '单重', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // //{dataIndex : 'totalArea', text : '总面积', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // //{dataIndex : 'totalWeight', text : '总重', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // //{dataIndex : 'length', text : '长', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // //{dataIndex : 'width', text : '宽', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // {dataIndex : 'remark', text : '备注', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : '品名', text : '旧板名称', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
-                {dataIndex : '分类', text : '分类', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
-                {dataIndex : '单位', text : '库存单位', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'oldpanelName', text : '旧板名称', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
+                // {dataIndex : '分类', text : '分类', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
+                // {dataIndex : '单位', text : '库存单位', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 //{dataIndex : 'countUse', text : '可用数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 //{dataIndex : 'countStore', text : '库存数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : '入库数量', text : '入库数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : '入库仓库', text : '仓库名称', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : '单面积/m2', text : '单面积', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : '单重/KG', text : '单重', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'count', text : '入库数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'warehouseName', text : '仓库名称', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                // {dataIndex : '单面积/m2', text : '单面积', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                // {dataIndex : '单重/KG', text : '单重', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 //{dataIndex : 'totalArea', text : '总面积', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 //{dataIndex : 'totalWeight', text : '总重', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 //{dataIndex : 'length', text : '长', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 //{dataIndex : 'width', text : '宽', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : '备注', text : '备注', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                // {dataIndex : '备注', text : '备注', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
             ],
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 3
@@ -163,17 +200,53 @@ Ext.define('oldpanel.old_Upload_Data', {
                                                 //materialtype:materialtype,
                                                 //check:check
                                             },
-                                            success : function(form, action) {
-                                                //上传成功
-                                                var response = action.result;
-                                                //回显
-                                                console.log('1100000')
-                                                console.log(action.result['value']);
+                                            // success : function(form, action) {
+                                            //     //上传成功
+                                            //     var response = action.result;
+                                            //     //回显
+                                            //     console.log('1100000')
+                                            //     console.log(action.result['value']);
+                                            //     Ext.MessageBox.alert("提示", "上传成功!");
+                                            //     //重新加载数据
+                                            //     oldpanelStore.loadData(action.result['value']);
+                                            // },
+                                            success : function(exceluploadform,response, action) {
+                                                var response1 = action;
+                                                console.log("response=========================>",response)
                                                 Ext.MessageBox.alert("提示", "上传成功!");
-                                                //重新加载数据
-                                                oldpanelStore.loadData(action.result['value']);
+                                                console.log(response.response.responseText);
+                                                var res = response.response.responseText;
+                                                var jsonobj = JSON.parse(res);
+                                                //上传成功
+                                                var success = jsonobj.success;
+                                                var dataList = jsonobj.dataList;
+                                                //回显
+                                                console.log("response1=========================>",dataList);
+                                                if(success == false){
+                                                    //excel上传失败
+                                                    Ext.Msg.show({
+                                                        title: '提示',
+                                                        message: '入库失败！存在错误内容',
+                                                        buttons: Ext.Msg.YESNO,
+                                                        icon: Ext.Msg.QUESTION,
+                                                        fn: function (btn) {
+                                                            if (btn === 'yes') {
+                                                                //点击确认，显示重复的数据
+                                                                // old_up_errorlistStore.loadData(errorList);
+                                                                // win_oldup_errorInfo_outbound.show();
+                                                            }
+                                                        }
+                                                    });
+
+                                                }else{
+                                                    Ext.MessageBox.alert("提示", "上传成功!");
+                                                    //重新加载数据
+                                                    oldpanelStore.loadData(dataList);
+                                                }
+                                                // Ext.MessageBox.alert("提示", "上传成功!");
 
                                             },
+
                                             failure : function(form, action) {
                                                 var response = action.result;
                                                 switch (response.errorCode) {
@@ -244,8 +317,7 @@ Ext.define('oldpanel.old_Upload_Data', {
                         }
                     }
                 }
-            }
-
+            },
             ]
         });
 
@@ -305,7 +377,92 @@ Ext.define('oldpanel.old_Upload_Data', {
                     valueField : 'id',
                     editable : true,
                 },
-                form
+                form,
+                //确认入库
+                //确认上传
+                {
+                    xtype : 'button',
+                    iconAlign : 'center',
+                    iconCls : 'rukuicon ',
+                    text : '确认入库',
+                    margin: '0 0 0 40',
+                    region:'center',
+                    bodyStyle: 'background:#fff;',
+                    handler : function() {
+
+                        var projectId = "-1";
+                        var buildingId = "-1";
+
+                        // 取出grid的字段名字段类型
+                        var select = Ext.getCmp('uploadRecordsMain').getStore()
+                            .getData();
+                        var s = new Array();
+                        select.each(function(rec) {
+                            //delete rec.data.id;
+                            s.push(JSON.stringify(rec.data));
+                            //alert(JSON.stringify(rec.data));//获得表格中的数据
+                        });
+                        console.log(s);
+                        //获取数据
+                        //获得当前操作时间
+                        //var sTime=Ext.Date.format(Ext.getCmp('startTime').getValue(), 'Y-m-d H:i:s');
+                        Ext.Ajax.request({
+                            url : 'oldpanel/addData.do', //旧板入库
+                            method:'POST',
+                            //submitEmptyText : false,
+                            params : {
+                                s : "[" + s + "]",
+                                projectId : projectId,
+                                buildingId : buildingId,
+                                operator: Ext.getCmp('operator').getValue(),
+                            },
+                            success : function(response) {
+                                var res = response.responseText;
+                                var jsonobj = JSON.parse(res);//将json字符串转换为对象
+                                console.log(jsonobj);
+                                console.log("success--------------",jsonobj.success);
+                                console.log("errorList--------------",jsonobj['errorList']);
+                                var success = jsonobj.success;
+                                var errorList = jsonobj.errorList;
+                                var errorCode = jsonobj.errorCode;
+                                var errorCount = jsonobj.errorCount;
+                                if(success == false){
+                                    //错误输入
+                                    if(errorCode == 200){
+                                        //关闭进度条
+                                        // Ext.MessageBox.alert("提示","匹配失败，产品位置重复或品名不合法！请重新导入" );
+                                        Ext.Msg.show({
+                                            title: '提示',
+                                            message: '入库失败！存在错误内容',
+                                            buttons: Ext.Msg.YESNO,
+                                            icon: Ext.Msg.QUESTION,
+                                            fn: function (btn) {
+                                                if (btn === 'yes') {
+                                                    //点击确认，显示重复的数据
+                                                    old_up_errorlistStore.loadData(errorList);
+                                                    win_oldup_errorInfo_outbound.show();
+                                                }
+                                            }
+                                        });
+                                    }
+                                    else if(errorCode == 1000){
+                                        Ext.MessageBox.alert("提示","入库失败，未知错误！请重新领取" );
+                                    }
+                                }else{
+                                    Ext.MessageBox.alert("提示","入库成功" );
+                                    //刷新
+                                    Ext.getCmp('uploadRecordsMain').getStore().remove();
+                                }
+
+                            },
+                            failure : function(response) {
+                                //var message =Ext.decode(response.responseText).showmessage;
+                                Ext.MessageBox.alert("提示","入库失败" );
+                            }
+                        });
+
+                    }
+                }
             ]
         });
 
