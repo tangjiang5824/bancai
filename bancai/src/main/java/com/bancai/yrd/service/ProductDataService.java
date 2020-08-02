@@ -64,6 +64,18 @@ public class ProductDataService extends BaseService{
         return insertList;
     }
 
+    @Transactional
+    public DataList productAddInsertRowToInboundList(DataList insertList,String productId,String warehouseName,String count,String unitWeight,String unitArea){
+        DataRow row = new DataRow();
+        row.put("productId",productId);
+        row.put("warehouseName",warehouseName);
+        row.put("count",count);
+        row.put("unitWeight",unitWeight);
+        row.put("unitArea",unitArea);
+        insertList.add(row);
+        return insertList;
+    }
+
     /**
      * 添加新的产品format
      */
@@ -250,7 +262,7 @@ public class ProductDataService extends BaseService{
      * */
     @Transactional
     public DataList findProductTypeList(){
-        return queryService.query("select * from producttype order by id ASC");
+        return queryService.query("select * from producttype order by classificationId,productTypeName ASC");
 
     }
     /*
@@ -303,67 +315,179 @@ public class ProductDataService extends BaseService{
         return formatList;
     }
 
-    /**
-     * 添加数据,返回添加的产品id
-     */
     @Transactional
-    public int[] backProduct(String productName, String warehouseName, String count) {
-        String[] info = analyzeNameService.isInfoExistBackUnit("product", productName);
-        //id,unitWeight,unitArea
-        int productId = Integer.parseInt(info[0]);
-        System.out.println("backproductUpload===productId=" + productId);
-        if (productId == 0) {
-            return new int[]{0,0};
+    public boolean insertProductDataToStore(String method,DataList insertList,String userId,String operator,String projectId,String buildingId){
+        boolean b = true;
+        int logId = 0;
+        if (projectId.equals("-1") && buildingId.equals("-1")) {//入库
+            logId = productAddLogBackId(method,"0",userId,operator);
+        } else {//退库
+            logId = productAddLogBackId(method,"2",userId,operator);
         }
-        int backproductstoreId = backproductSaveData(info, warehouseName, count);
-        return new int[]{productId,backproductstoreId};
+        if(logId==0)
+            return false;
+        for (DataRow dataRow : insertList) {
+            b = b&productAddStoreAndLogDetailByRow(method,dataRow,String.valueOf(logId));
+        }
+        return b;
     }
-
-    private int backproductSaveData(String[] info, String warehouseName, String countNum){
-        //id,unitWeight,unitArea
-        int con = 0;
-        String count = String.valueOf(Double.parseDouble(countNum));
-        if((info[1]!=null)&&(!info[1].equals("")))
-            info[1] = String.valueOf(Double.parseDouble(info[1])*Double.parseDouble(count));
-        else {
-            info[1] = null;
-            con += 1;
-        }
-        if((info[2]!=null)&&(!info[2].equals("")))
-            info[2] = String.valueOf(Double.parseDouble(info[2])*Double.parseDouble(count));
-        else {
-            info[2]=null;
-            con += 10;
-        }
-        String sql = "select * from backproduct_store where productId=? and warehouseName=?";
-        DataList queryList = queryService.query(sql,info[0],warehouseName);
+    private int productAddLogBackId(String method,String type,String userId,String operator){
+        return insertProjectService.insertDataToTable(
+                "insert into "+method+"_log (type,userId,time,operator,isrollback) values(?,?,?,?,?)",
+                type,userId,analyzeNameService.getTime(),operator,"0");
+    }
+    private boolean productAddStoreAndLogDetailByRow(String method, DataRow dataRow,String logId){
+        String productId = dataRow.get("productId").toString();
+        String warehouseName = dataRow.get("warehouseName").toString();
+        String count = dataRow.get("count").toString();
+        String totalWeight = "";
+        String totalArea = "";
+        if(dataRow.get("unitWeight")!=null)
+            totalWeight = String.valueOf(Double.parseDouble(count)*Double.parseDouble(dataRow.get("unitWeight").toString()));
+        if(dataRow.get("unitArea")!=null)
+            totalArea = String.valueOf(Double.parseDouble(count)*Double.parseDouble(dataRow.get("unitArea").toString()));
+        DataList queryList = queryService.query("select * from "+method+"_store where productId=? and warehouseName=?"
+                ,productId,warehouseName);
+        String storeId = "";
         if(queryList.isEmpty()){
-            return insertProjectService.insertDataToTable("insert into backproduct_store " +
-                            "(productId,countUse,countStore,warehouseName,totalArea,totalWeight) values (?,?,?,?,?,?)",
-                    info[0],count,count,warehouseName,info[2], info[1]);
+            storeId = String.valueOf(insertProjectService.insertDataToTable(
+                    "insert into "+method+"_store (productId,countUse,countStore,warehouseName,totalWeight,totalArea) values (?,?,?,?,?,?)",
+                    productId,count,count,warehouseName,totalWeight,totalArea));
         } else {
-            String sql2 = "update backproduct_store set countUse=countUse+\"" + count + "\",countStore=countStore+\"" + count+"\"";
-
-            switch (con) {
-                case 0:
-                    sql2 = sql2 + ",totalArea=totalArea+\"" + info[2] + "\",totalWeight=totalWeight+\"" + info[1]+"\"";
-                    break;
-                case 1:
-                    sql2 = sql2 + ",totalArea=totalArea+\"" + info[2]+"\"";
-                    break;
-                case 10:
-                    sql2 = sql2 + ",totalWeight=totalWeight+\"" + info[1]+"\"";
-                    break;
-                case 11:
-                default:
-                    break;
-            }
-            sql2 = sql2 + " where id=\"" + queryList.get(0).get("id").toString()+"\"";
-            jo.update(sql2);
-            return Integer.parseInt(queryList.get(0).get("id").toString());
+            storeId = queryList.get(0).get("id").toString();
+            double countStore = Double.parseDouble(queryList.get(0).get("countStore").toString());
+            String countStoreNew = String.valueOf(countStore+Double.parseDouble(count));
+            String countUseNew = String.valueOf(Double.parseDouble(queryList.get(0).get("countUse").toString())+Double.parseDouble(count));
+            if(totalArea.length()!=0)
+                totalArea = String.valueOf(Double.parseDouble(dataRow.get("unitArea").toString())*countStore+Double.parseDouble(totalArea));
+            if(totalWeight.length()!=0)
+                totalWeight = String.valueOf(Double.parseDouble(dataRow.get("unitWeight").toString())*countStore+Double.parseDouble(totalWeight));
+            jo.update("update "+method+"_store set countUse=\""+countUseNew+
+                    "\",countStore=\""+countStoreNew+"\",totalArea=\""+ totalArea +
+                    "\",totalWeight=\""+totalWeight+ "\" where id=\""+storeId+"\"");
         }
+        return insertProjectService.insertIntoTableBySQL(
+                "insert into "+method+"_logdetail (productId,count,"+method+"logId,"+method+"storeId,isrollback) values (?,?,?,?,?)",
+                productId,count,logId,storeId,"0");
     }
 
+//    /**
+//     * 添加数据,返回添加的产品id
+//     */
+//    @Transactional
+//    public int[] backProduct(String productName, String warehouseName, String count) {
+//        String[] info = analyzeNameService.isInfoExistBackUnit("product", productName);
+//        //id,unitWeight,unitArea
+//        int productId = Integer.parseInt(info[0]);
+//        System.out.println("backproductUpload===productId=" + productId);
+//        if (productId == 0) {
+//            return new int[]{0,0};
+//        }
+//        int backproductstoreId = backproductSaveData(info, warehouseName, count);
+//        return new int[]{productId,backproductstoreId};
+//    }
+//
+//    private int backproductSaveData(String[] info, String warehouseName, String countNum){
+//        //id,unitWeight,unitArea
+//        int con = 0;
+//        String count = String.valueOf(Double.parseDouble(countNum));
+//        if((info[1]!=null)&&(!info[1].equals("")))
+//            info[1] = String.valueOf(Double.parseDouble(info[1])*Double.parseDouble(count));
+//        else {
+//            info[1] = null;
+//            con += 1;
+//        }
+//        if((info[2]!=null)&&(!info[2].equals("")))
+//            info[2] = String.valueOf(Double.parseDouble(info[2])*Double.parseDouble(count));
+//        else {
+//            info[2]=null;
+//            con += 10;
+//        }
+//        String sql = "select * from backproduct_store where productId=? and warehouseName=?";
+//        DataList queryList = queryService.query(sql,info[0],warehouseName);
+//        if(queryList.isEmpty()){
+//            return insertProjectService.insertDataToTable("insert into backproduct_store " +
+//                            "(productId,countUse,countStore,warehouseName,totalArea,totalWeight) values (?,?,?,?,?,?)",
+//                    info[0],count,count,warehouseName,info[2], info[1]);
+//        } else {
+//            String sql2 = "update backproduct_store set countUse=countUse+\"" + count + "\",countStore=countStore+\"" + count+"\"";
+//
+//            switch (con) {
+//                case 0:
+//                    sql2 = sql2 + ",totalArea=totalArea+\"" + info[2] + "\",totalWeight=totalWeight+\"" + info[1]+"\"";
+//                    break;
+//                case 1:
+//                    sql2 = sql2 + ",totalArea=totalArea+\"" + info[2]+"\"";
+//                    break;
+//                case 10:
+//                    sql2 = sql2 + ",totalWeight=totalWeight+\"" + info[1]+"\"";
+//                    break;
+//                case 11:
+//                default:
+//                    break;
+//            }
+//            sql2 = sql2 + " where id=\"" + queryList.get(0).get("id").toString()+"\"";
+//            jo.update(sql2);
+//            return Integer.parseInt(queryList.get(0).get("id").toString());
+//        }
+//    }
+//
+//    /**
+//     * 添加数据,返回添加的产品id
+//     */
+//    @Transactional
+//    public int[] preprocessInbound(String productName, String warehouseName, String count) {
+//        String[] info = analyzeNameService.isInfoExistBackUnit("product", productName);
+//        //id,unitWeight,unitArea
+//        int productId = Integer.parseInt(info[0]);
+//        System.out.println("preprocessUpload===productId=" + productId);
+//        if (productId == 0) {
+//            return new int[]{0,0};
+//        }
+//        int preprocessstoreId = preprocessSaveData(info, warehouseName, count);
+//        return new int[]{productId,preprocessstoreId};
+//    }
+//
+//    private int preprocessSaveData(String[] info, String warehouseName, String countNum){
+//        //id,unitWeight,unitArea
+//        String count = String.valueOf(Double.parseDouble(countNum));
+//        int con = 0;
+//        if((info[1]!=null)&&(!info[1].equals("")))
+//            info[1] = String.valueOf(Double.parseDouble(info[1])*Double.parseDouble(count));
+//        else
+//            con += 1;
+//        if((info[2]!=null)&&(!info[2].equals("")))
+//            info[2] = String.valueOf(Double.parseDouble(info[2])*Double.parseDouble(count));
+//        else
+//            con += 10;
+//        String sql = "select * from preprocess_store where productId=? and warehouseName=?";
+//        DataList queryList = queryService.query(sql,info[0],warehouseName);
+//        if(queryList.isEmpty()){
+//            return insertProjectService.insertDataToTable("insert into preprocess_store " +
+//                            "(productId,countUse,countStore,warehouseName,totalArea,totalWeight) values (?,?,?,?,?,?)",
+//                    info[0],count,count,warehouseName,info[2], info[1]);
+//        } else {
+//            String sql2 = "update preprocess_store set countUse=countUse+\"" + count + "\",countStore=countStore+\"" + count+"\"";
+//
+//            switch (con) {
+//                case 0:
+//                    sql2 = sql2 + ",totalArea=totalArea+\"" + info[2] + "\",totalWeight=totalWeight+\"" + info[1]+"\"";
+//                    break;
+//                case 1:
+//                    sql2 = sql2 + ",totalArea=totalArea+\"" + info[2]+"\"";
+//                    break;
+//                case 10:
+//                    sql2 = sql2 + ",totalWeight=totalWeight+\"" + info[1]+"\"";
+//                    break;
+//                case 11:
+//                default:
+//                    break;
+//            }
+//            sql2 = sql2 + " where id=\"" + queryList.get(0).get("id").toString()+"\"";
+//            jo.update(sql2);
+//            return Integer.parseInt(queryList.get(0).get("id").toString());
+//        }
+//    }
 
 
 }

@@ -25,7 +25,7 @@ Ext.define('material.query_Mcatergory_baseInfo',{
                 method:'POST',
                 reader:{
                     type : 'json',
-                    rootProperty: 'material_info',
+                    rootProperty: 'value',
                     totalProperty: 'totalCount'
                 },
                 params:{
@@ -145,7 +145,7 @@ Ext.define('material.query_Mcatergory_baseInfo',{
                 // { text: '原材料品名',  dataIndex: 'materialName' ,flex :1,editor : {xtype : 'textfield', allowBlank : false}},
                 { text: '原材料品名',  dataIndex: 'materialName' ,flex :1},
                 {
-                    dataIndex : 'typeId',
+                    dataIndex : 'typeName',
                     text : '原材料类型',
                     flex :.6,
                 },

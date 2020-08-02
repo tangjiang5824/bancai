@@ -38,7 +38,7 @@ public class MatchRulesController {
     private MatchRulesService matchRulesService;
 
     Logger log = Logger.getLogger(MatchRulesController.class);
-    private static String isPureNumber = "^-?[0-9]+";
+    private static String isPureNumber = "[0-9]+";
 
     /*
      * 查询所有的产品类型
