@@ -86,7 +86,7 @@ public class new_panel_match {
             ProductInfo productInfo = productInfodao.findById(designlist.getProductId()).orElse(null);
             List<MaterialMatchRules> rules=null;
             if(productInfo.getSuffix()!=null&&productInfo.getSuffix().trim().length()!=0){
-                rules=materialMatchRulesRepository.findAllByProductformatIdaAndAndSuffix(productInfo.getProductFormatId().getId(),productInfo.getSuffix());
+                rules=materialMatchRulesRepository.findAllByProductformatIdAndSuffix(productInfo.getProductFormatId().getId(),productInfo.getSuffix());
             }else
              rules=materialMatchRulesRepository.findAllByProductformatId(productInfo.getProductFormatId().getId());
             String type=productInfo.getProductFormatId().getProducttype().getClassification().getClassificationName();
