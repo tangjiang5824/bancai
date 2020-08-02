@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface MaterialMatchRulesRepository extends JpaRepository<MaterialMatchRules, Integer>, JpaSpecificationExecutor<MaterialMatchRules> {
     public List<MaterialMatchRules> findAllByProductformatId(int productformatId);
+    public List<MaterialMatchRules> findAllByProductformatIdaAndAndSuffix(int productformatId,String suffix);
 }
