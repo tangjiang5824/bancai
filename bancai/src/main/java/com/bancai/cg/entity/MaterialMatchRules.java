@@ -33,6 +33,15 @@ public class MaterialMatchRules implements Serializable {
     private String condition2;
     private String upWidth;
     private String orientation;
+    private String suffix;
+
+    public String getSuffix() {
+        return suffix;
+    }
+
+    public void setSuffix(String suffix) {
+        this.suffix = suffix;
+    }
 
     public Integer getId() {
         return id;
