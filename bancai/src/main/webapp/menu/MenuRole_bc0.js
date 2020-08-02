@@ -325,14 +325,19 @@ Ext.define("menu.MenuRole_bc0", {
 						id : 'project.project_query_picklist',
 						leaf : true
 					},
-					{
-						text : '项目确认领料',
-						id : 'project.project_material_picklist',
-						leaf : true
-					},
+					// {
+					// 	text : '项目确认领料',
+					// 	id : 'project.project_material_picklist',
+					// 	leaf : true
+					// },
 					{
 						text : '项目进度查询',
 						id : 'project.management.project_process_status',//project.import_planList
+						leaf : true
+					},
+					{
+						text : '项目创建退库单',
+						id : 'project.project_create_backlist',
 						leaf : true
 					},
 				]
