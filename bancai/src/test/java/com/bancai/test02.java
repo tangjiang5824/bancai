@@ -229,17 +229,17 @@ public class test02 {
 //        sb.deleteCharAt(sb.length()-1);
 //        System.out.println(sb.toString());
 
-        HashMap<String,String> map = new HashMap<>();
-        map.put("kk1","vv1");
-        map.put("kk2","vv2");
-        map.put("kk1","vv3");
-        Iterator it = map.keySet().iterator();
-        while (it.hasNext()){
-            String key = it.next().toString();
-            String value = map.get(key);
-            System.out.println("(1)"+key);
-            System.out.println(value);
-        }
+//        HashMap<String,String> map = new HashMap<>();
+//        map.put("kk1","vv1");
+//        map.put("kk2","vv2");
+//        map.put("kk1","vv3");
+//        Iterator it = map.keySet().iterator();
+//        while (it.hasNext()){
+//            String key = it.next().toString();
+//            String value = map.get(key);
+//            System.out.println("(1)"+key);
+//            System.out.println(value);
+//        }
 
 
 

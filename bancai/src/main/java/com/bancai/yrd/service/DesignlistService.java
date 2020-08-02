@@ -664,6 +664,18 @@ public class DesignlistService extends BaseService{
 //    }
 
 
+    /**
+     * 退料单excel解析
+     */
+    @Transactional
+    public UploadDataResult uploadBackStoreExcel(InputStream inputStream) throws IOException {
+        UploadDataResult result = new UploadDataResult();
+        Excel excel = new Excel(inputStream);
+        result.dataList = excel.readExcelContent();
+        return result;
+    }
+
+
 
 
 

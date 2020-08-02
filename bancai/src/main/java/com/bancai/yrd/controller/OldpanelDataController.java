@@ -233,11 +233,11 @@ public class OldpanelDataController {
     }
 
     /*
-     * 旧板入库与退库
+     * 旧板入库
      * */
     //produces = {"text/html;charset=UTF-8"}
     @RequestMapping(value = "/oldpanel/addData.do")
-    public WebResponse oldpanelAddData(String s, String projectId, String buildingId, String operator, HttpSession session) {
+    public WebResponse oldpanelAddData(String s,String operator,String inputTime, HttpSession session) {
         WebResponse response = new WebResponse();
         try {
             JSONArray jsonArray = new JSONArray(s);
@@ -259,9 +259,11 @@ public class OldpanelDataController {
                 String oldpanelName = (jsonTemp.get("oldpanelName") + "").trim().toUpperCase();
                 String warehouseName = (jsonTemp.get("warehouseName") + "").trim().toUpperCase();
                 String count = (jsonTemp.get("count") + "").trim();
+                String remark = (jsonTemp.get("remark") + "").trim();
                 map.put("oldpanelName",oldpanelName);
                 map.put("warehouseName",warehouseName);
                 map.put("count",count);
+                map.put("remark",remark);
                 if((!count.matches(isPureNumber))||(Integer.parseInt(count)<=0))
                     errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"输入数量不为正整数",map);
                 else if(analyzeNameService.isWarehouseNameNotExist(warehouseName))
@@ -271,7 +273,7 @@ public class OldpanelDataController {
                     if(oldpanelId==null)
                         errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"没有该旧板的基础信息",map);
                     else
-                        insertList = oldpanelDataService.oldpanelAddInsertRowToInboundList(insertList,oldpanelId[0],warehouseName,count,oldpanelId[1],oldpanelId[2]);
+                        insertList = oldpanelDataService.oldpanelAddInsertRowToInboundList(insertList,oldpanelId[0],warehouseName,count,remark,oldpanelId[1],oldpanelId[2]);
                 }
             }
             if(!errorList.isEmpty()){
@@ -282,7 +284,78 @@ public class OldpanelDataController {
                 return response;
             }
             System.out.println("[===checkOldpanelUploadData==Complete=NoError]");
-            boolean uploadResult= oldpanelDataService.insertOldpanelDataToStore(insertList,userId,operator,projectId,buildingId);
+            boolean uploadResult= oldpanelDataService.insertOldpanelDataToStore(insertList,userId,operator,inputTime);
+            response.setSuccess(uploadResult);
+        }catch (Exception e){
+            e.printStackTrace();
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误
+            response.setMsg(e.getMessage());
+        }
+        return response;
+    }
+    /*
+     * 旧板退库
+     * */
+    //produces = {"text/html;charset=UTF-8"}
+    @RequestMapping(value = "/oldpanel/backData.do")
+    public WebResponse oldpanelBackData(String s, String projectId, String buildingId, String operator,String description,String inputTime, HttpSession session) {
+        WebResponse response = new WebResponse();
+        try {
+            JSONArray jsonArray = new JSONArray(s);
+            String userId = (String) session.getAttribute("userid");
+            //检查
+            if(jsonArray.length()==0){
+                response.setSuccess(false);
+                response.setErrorCode(100); //提交的s为空
+                return response;
+            }
+            if((projectId==null)||(projectId.length()==0)||(buildingId==null)||(buildingId.length()==0)||(operator==null)||(operator.length()==0)||(description==null)||(description.length()==0)){
+                response.setSuccess(false);
+                response.setErrorCode(300); //项目或楼栋或退料原因或退料人为空
+                return response;
+            }
+            DataList errorList = new DataList();
+            DataList insertList = new DataList();
+            HashMap<String,String> map = new HashMap<>();
+            System.out.println("[===checkOldpanelUploadData===]");
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonTemp = jsonArray.getJSONObject(i);
+                System.out.println("第" + i + "个:" + jsonTemp);
+                String id = jsonTemp.get("id")+"";
+                String oldpanelName = (jsonTemp.get("oldpanelName") + "").trim().toUpperCase();
+                String backWarehouseName = (jsonTemp.get("backWarehouseName") + "").trim().toUpperCase();
+                String warehouseName = (jsonTemp.get("warehouseName") + "").trim().toUpperCase();
+                String count = (jsonTemp.get("count") + "").trim();
+                String remark = (jsonTemp.get("remark") + "").trim();
+                if(warehouseName.equals("NULL")||warehouseName.length()==0)
+                    warehouseName = "退料仓";
+                map.put("oldpanelName",oldpanelName);
+                map.put("backWarehouseName",backWarehouseName);
+                map.put("warehouseName",warehouseName);
+                map.put("count",count);
+                map.put("remark",remark);
+                if((!count.matches(isPureNumber))||(Integer.parseInt(count)<=0))
+                    errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"输入数量不为正整数",map);
+                else if(analyzeNameService.isWarehouseNameNotExist(warehouseName))
+                    errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"仓库名不存在",map);
+                else {
+                    String [] oldpanelId = analyzeNameService.isInfoExistBackUnit("oldpanel",oldpanelName);
+                    if(oldpanelId==null)
+                        errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"没有该旧板的基础信息",map);
+                    else
+                        insertList = oldpanelDataService.oldpanelAddInsertRowToBackList(insertList,oldpanelId[0],backWarehouseName,warehouseName,count,remark,oldpanelId[1],oldpanelId[2]);
+                }
+            }
+            if(!errorList.isEmpty()){
+                response.setSuccess(false);
+                response.setErrorCode(200);//提交的s存在错误内容
+                response.put("errorList",errorList);
+                response.put("errorCount",errorList.size());
+                return response;
+            }
+            System.out.println("[===checkOldpanelUploadData==Complete=NoError]");
+            boolean uploadResult= oldpanelDataService.insertOldpanelDataBackStore(insertList,userId,operator,projectId,buildingId,description,inputTime);
             response.setSuccess(uploadResult);
         }catch (Exception e){
             e.printStackTrace();
@@ -294,7 +367,7 @@ public class OldpanelDataController {
     }
 
     /*
-     * 上传excel文件
+     * 旧板入库上传excel文件
      * */
 
     //produces = {"text/html;charset=UTF-8"}

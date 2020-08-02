@@ -1,6 +1,7 @@
 package com.bancai.yrd.controller;
 
 import com.bancai.cg.service.InsertProjectService;
+import com.bancai.commonMethod.AllExcelService;
 import com.bancai.commonMethod.PanelMatchService;
 import com.bancai.commonMethod.QueryAllService;
 import com.bancai.domain.DataList;
@@ -40,6 +41,8 @@ public class DesignlistController {
     private DesignlistService designlistService;
     @Autowired
     private InsertProjectService insertProjectService;
+    @Autowired
+    private AllExcelService allExcelService;
 
     private static String isPureNumber = "[0-9]+";
     Logger log=Logger.getLogger(DesignlistController.class);
@@ -440,6 +443,48 @@ public class DesignlistController {
             response.setErrorCode(1000); //未知错误
             response.setMsg(e.getMessage());
         }
+        return response;
+    }
+
+    /*
+     * 上传excel文件退料单
+     * */
+    @RequestMapping(value = "/backStore/uploadExcel.do")
+    public WebResponse backStoreUploadExcel(MultipartFile uploadFile,String type) {
+        WebResponse response = new WebResponse();
+        try {
+            if(type==null){
+                response.setSuccess(false);
+                response.setErrorCode(100); //退料类型错误
+                return response;
+            }
+            UploadDataResult result = new UploadDataResult();
+            switch (type){
+                case "1":
+                    break;
+                case "2":
+                    break;
+                case "3":
+                    result = allExcelService.uploadBackOldpanelExcelData(uploadFile.getInputStream());
+                    break;
+                case "4":
+                    break;
+                default:
+                    response.setSuccess(false);
+                    response.setErrorCode(100); //退料类型错误
+                    return response;
+            }
+            response.setSuccess(result.success);
+            response.setErrorCode(result.errorCode);
+            response.put("value",result.dataList);
+            response.put("totalCount", result.dataList.size());
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误
+            response.setMsg(e.getMessage());
+        }
+        //net.sf.json.JSONObject json= net.sf.json.JSONObject.fromObject(response);
         return response;
     }
 
