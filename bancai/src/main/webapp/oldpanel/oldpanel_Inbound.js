@@ -351,6 +351,19 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                     editable : true,
                 },
                 {
+                    xtype: 'datefield',
+                    margin : '0 30 0 0',
+                    fieldLabel: '入库日期',
+                    id :'inputTime',
+                    width: 200,
+                    labelWidth: 60,
+                    name: 'inputTime',
+                    format : 'Y-m-d',
+                    editable : false,
+                    // value:Ext.util.Format.date(Ext.Date.add(new Date(),Ext.Date.MONTH,-1),"Y-m-d")
+                    value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
+                },
+                {
                 xtype : 'button',
                 iconAlign : 'center',
                 iconCls : 'rukuicon ',
@@ -381,6 +394,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                             projectId : projectId,
                             buildingId : buildingId,
                             operator: Ext.getCmp('operator').getValue(),
+                            inputTime:Ext.getCmp('inputTime').getValue(),
                         },
                         success : function(response) {
                             console.log("12312312312321",response.responseText);
@@ -444,7 +458,6 @@ Ext.define('oldpanel.oldpanel_Inbound', {
 
         var old_addDataGrid = Ext.create("Ext.grid.Panel", {
             id : 'old_addDataGrid',
-            //dockedItems : [toolbar2],
             store : {
                 // fields: ['材料名','品号', '长',"；类型","宽",'规格','库存单位','仓库编号','数量','成本','存放位置']
                 fields: ['oldpanelName','warehouseName','count']
@@ -527,11 +540,24 @@ Ext.define('oldpanel.oldpanel_Inbound', {
         //     // }
         // };
 
-        this.dockedItems = [
-            //toolbar,
-            //toobar,toolbar1,
-            toolbar2, old_addDataGrid, toolbar3];
-        //this.items = [ me.grid ];
+        // this.dockedItems = [
+        //     //toolbar,
+        //     //toobar,toolbar1,
+        //     toolbar2, old_addDataGrid];
+        this.dockedItems=[{
+            xtype : 'toolbar',
+            dock : 'top',
+            items : [toolbar2]
+        },
+            {
+                xtype : 'toolbar',
+                dock : 'top',
+                style:'border-width:0 0 0 0;',
+                items : [toolbar3]
+            },
+        ];
+        // this.tbar = toolbar2;
+        this.items = [ old_addDataGrid ];
         this.callParent(arguments);
 
     }

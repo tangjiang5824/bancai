@@ -558,27 +558,6 @@ Ext.define('project.project_create_backlist', {
 			editable : false,
 			autoLoad: true,
 			//store: tableListStore2,
-			listeners: {
-				load:function () {
-
-					// // projectName:Ext.getCmp('projectName').getValue();
-					// // buildingName:Ext.getCmp('buildingName').getValue();
-					// Ext.Ajax.request({
-					// 	url:'project/getSelectedBuildingName.do',
-					// 	params:{
-					// 		//projectName:Ext.getCmp('projectName').getValue(),
-					// 		buildingName:Ext.getCmp('buildingName').getValue(),
-					// 	},
-					// 	success:function (response,config) {
-					// 		//alert("combox1把数据传到后台成功");
-					// 	},
-					// 	failure:function (form, action) {
-					// 		//alert("combox1把数据传到后台成功");
-					// 	}
-					// })
-
-				}
-			}
 		});
 
 		var buildingPositionStore = Ext.create('Ext.data.Store',{
@@ -628,6 +607,17 @@ Ext.define('project.project_create_backlist', {
 			items : [   tableList1,
 						buildingName,
 						// buildingPositionList,
+						//退库类型
+						{
+							xtype: 'textfield',
+							fieldLabel: '退库类型',
+							id: 'back_type',
+							margin: '0 30 0 0',
+							width: 390,
+							labelWidth: 60,
+							name: 'back_type',
+							value: ""
+						},
 
 					]//exceluploadform
 		});
@@ -724,7 +714,7 @@ Ext.define('project.project_create_backlist', {
 						var back_reason = Ext.getCmp("back_reason").getValue();
 						var back_operator = Ext.getCmp("back_operator").getValue();
 						var backTime = Ext.getCmp("backTime").getValue();
-
+						var back_type = Ext.getCmp("back_type").getValue();
 
 						//获取数据
 						Ext.Ajax.request({
@@ -738,7 +728,8 @@ Ext.define('project.project_create_backlist', {
 								// buildingpositionId:positionId,
 								back_reason:back_reason,
 								back_operator:back_operator,
-								backTime:backTime
+								backTime:backTime,
+								type:back_type,
 							},
 							success : function(response) {
 								var res = response.responseText;

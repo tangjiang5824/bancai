@@ -114,7 +114,7 @@ Ext.define("menu.MenuRole_bc0", {
 					leaf : true
 				} ,{
 					text : '预加工半成品批量入库',
-					id : '',
+					id : 'preprocess.preprocess_Upload_Data',
 					leaf : true
 				} ,{
 					text : '预加工半成品库存查询',
