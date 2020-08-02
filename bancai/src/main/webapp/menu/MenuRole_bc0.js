@@ -46,7 +46,7 @@ Ext.define("menu.MenuRole_bc0", {
 				},
 				{
 					text : '旧板出入库记录查询',
-					id : 'oldpanel.oldpanel_Outbound',//'oldpanel.oldpanel_Query_Records',
+					id : 'oldpanel.oldpanel_Query_Records',//'oldpanel.oldpanel_Query_Records',
 					leaf : true
 				}, {
 					text : '旧板出入库记录统计',
@@ -114,7 +114,7 @@ Ext.define("menu.MenuRole_bc0", {
 					leaf : true
 				} ,{
 					text : '预加工半成品批量入库',
-					id : '',
+					id : 'preprocess.preprocess_Upload_Data',
 					leaf : true
 				} ,{
 					text : '预加工半成品库存查询',
@@ -325,14 +325,19 @@ Ext.define("menu.MenuRole_bc0", {
 						id : 'project.project_query_picklist',
 						leaf : true
 					},
-					{
-						text : '项目确认领料',
-						id : 'project.project_material_picklist',
-						leaf : true
-					},
+					// {
+					// 	text : '项目确认领料',
+					// 	id : 'project.project_material_picklist',
+					// 	leaf : true
+					// },
 					{
 						text : '项目进度查询',
 						id : 'project.management.project_process_status',//project.import_planList
+						leaf : true
+					},
+					{
+						text : '项目创建退库单',
+						id : 'project.project_create_backlist',
 						leaf : true
 					},
 				]

@@ -84,7 +84,11 @@ public class new_panel_match {
             }
             pre_match_results=new ArrayList<>();
             ProductInfo productInfo = productInfodao.findById(designlist.getProductId()).orElse(null);
-            List<MaterialMatchRules> rules=materialMatchRulesRepository.findAllByProductformatId(productInfo.getProductFormatId().getId());
+            List<MaterialMatchRules> rules=null;
+            if(productInfo.getSuffix()!=null&&productInfo.getSuffix().trim().length()!=0){
+                rules=materialMatchRulesRepository.findAllByProductformatIdAndSuffix(productInfo.getProductFormatId().getId(),productInfo.getSuffix());
+            }else
+             rules=materialMatchRulesRepository.findAllByProductformatId(productInfo.getProductFormatId().getId());
             String type=productInfo.getProductFormatId().getProducttype().getClassification().getClassificationName();
             List<List<Object>> list = JPAObjectUtil.NewPanelMatch(productInfo, type, rules);
 

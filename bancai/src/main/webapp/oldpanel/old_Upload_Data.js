@@ -362,12 +362,13 @@ Ext.define('oldpanel.old_Upload_Data', {
             dock : "top",
             id : "toolbar2",
             items : [
+                form,
                 {
                     fieldLabel : '入库人',
                     xtype : 'combo',
                     name : 'operator',
                     id : 'operator',
-                    margin: '0 40 0 0',
+                    margin: '0 40 0 40',
                     // disabled : true,
                     // width:'95%',
                     width: 150,
@@ -377,7 +378,19 @@ Ext.define('oldpanel.old_Upload_Data', {
                     valueField : 'id',
                     editable : true,
                 },
-                form,
+                {
+                    xtype: 'datefield',
+                    margin : '0 30 0 0',
+                    fieldLabel: '入库日期',
+                    id :'inputTime',
+                    width: 200,
+                    labelWidth: 60,
+                    name: 'inputTime',
+                    format : 'Y-m-d',
+                    editable : false,
+                    // value:Ext.util.Format.date(Ext.Date.add(new Date(),Ext.Date.MONTH,-1),"Y-m-d")
+                    value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
+                },
                 //确认入库
                 //确认上传
                 {
@@ -385,7 +398,7 @@ Ext.define('oldpanel.old_Upload_Data', {
                     iconAlign : 'center',
                     iconCls : 'rukuicon ',
                     text : '确认入库',
-                    margin: '0 0 0 40',
+                    margin: '0 0 0 0',
                     region:'center',
                     bodyStyle: 'background:#fff;',
                     handler : function() {
@@ -415,6 +428,7 @@ Ext.define('oldpanel.old_Upload_Data', {
                                 projectId : projectId,
                                 buildingId : buildingId,
                                 operator: Ext.getCmp('operator').getValue(),
+                                inputTime:Ext.getCmp('operator').getValue(),
                             },
                             success : function(response) {
                                 var res = response.responseText;

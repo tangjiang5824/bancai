@@ -159,7 +159,7 @@ Ext.define('preprocess.preprocess_Inbound', {
                         // console.log(Ext.getCmp('cost').getValue());
                         //若品名未填则添加失败
                         if (productName != ''&&count!= '') {
-                            Ext.getCmp('addDataGrid').getStore().loadData(data, true);
+                            Ext.getCmp('pre_addDataGrid').getStore().loadData(data, true);
                             //清除框里的数据
                             Ext.getCmp('productName').setValue('');
                             //Ext.getCmp('classification').setValue('');
@@ -174,6 +174,33 @@ Ext.define('preprocess.preprocess_Inbound', {
                             Ext.MessageBox.alert("警告","品名、入库数量不能为空",function(r) {
                                 //    r = cancel||ok
                             });
+                        }
+                    }
+                },
+                //删除行数据
+                {
+                    xtype : 'button',
+                    margin: '0 10 0 30',
+                    iconAlign : 'center',
+                    iconCls : 'rukuicon ',
+                    text : '删除',
+                    handler: function(){
+                        var sm = Ext.getCmp('pre_addDataGrid').getSelectionModel();
+                        var pre_Arr = sm.getSelection();
+                        if (pre_Arr.length != 0) {
+                            Ext.Msg.confirm("提示", "共选中" + pre_Arr.length + "条数据，是否确认删除？", function (btn) {
+                                if (btn == 'yes') {
+                                    //先删除后台再删除前台
+                                    //ajax 删除后台数据 成功则删除前台数据；失败则不删除前台数据
+                                    //Extjs 4.x 删除
+                                    Ext.getCmp('pre_addDataGrid').getStore().remove(pre_Arr);
+                                } else {
+                                    return;
+                                }
+                            });
+                        } else {
+                            //Ext.Msg.confirm("提示", "无选中数据");
+                            Ext.Msg.alert("提示", "无选中数据");
                         }
                     }
                 }
@@ -221,6 +248,19 @@ Ext.define('preprocess.preprocess_Inbound', {
                     editable : true,
                 },
                 {
+                    xtype: 'datefield',
+                    margin : '0 30 0 0',
+                    fieldLabel: '入库日期',
+                    id :'inputTime',
+                    width: 200,
+                    labelWidth: 60,
+                    name: 'inputTime',
+                    format : 'Y-m-d',
+                    editable : false,
+                    // value:Ext.util.Format.date(Ext.Date.add(new Date(),Ext.Date.MONTH,-1),"Y-m-d")
+                    value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
+                },
+                {
                     xtype : 'button',
                     iconAlign : 'center',
                     iconCls : 'rukuicon ',
@@ -230,7 +270,7 @@ Ext.define('preprocess.preprocess_Inbound', {
                     handler : function() {
 
                         // 取出grid的字段名字段类型
-                        var select = Ext.getCmp('addDataGrid').getStore()
+                        var select = Ext.getCmp('pre_addDataGrid').getStore()
                             .getData();
                         var s = new Array();
                         select.each(function(rec) {
@@ -251,6 +291,7 @@ Ext.define('preprocess.preprocess_Inbound', {
                                 projectId : projectId,
                                 buildingId : buildingId,
                                 operator: Ext.getCmp('operator').getValue(),
+                                inputTime:Ext.getCmp('inputTime').getValue(),
                             },
                             success : function(response) {
                                 console.log("12312312312321",response.responseText);
@@ -278,7 +319,7 @@ Ext.define('preprocess.preprocess_Inbound', {
 
 
         var grid = Ext.create("Ext.grid.Panel", {
-            id : 'addDataGrid',
+            id : 'pre_addDataGrid',
             //dockedItems : [toolbar2],
             store : {
                 // fields: ['材料名','品号', '长',"；类型","宽",'规格','库存单位','仓库编号','数量','成本','存放位置']
@@ -320,58 +361,20 @@ Ext.define('preprocess.preprocess_Inbound', {
             selType : 'checkboxmodel'//'rowmodel'
         });
 
-        grid.addListener('cellclick', cellclick);
-        function cellclick(grid, rowIndex, columnIndex, e) {
-            if (rowIndex < 0) {
-                return;
-            }
-            var fieldName = Ext.getCmp('addDataGrid').columns[columnIndex-1].text;
-
-            console.log("列名：",fieldName)
-            if (fieldName == "操作") {
-                //设置监听事件getSelectionModel().getSelection()
-                var sm = Ext.getCmp('addDataGrid').getSelectionModel();
-                var oldpanelArr = sm.getSelection();
-                if (oldpanelArr.length != 0) {
-                    Ext.Msg.confirm("提示", "共选中" + oldpanelArr.length + "条数据，是否确认删除？", function (btn) {
-                        if (btn == 'yes') {
-                            //先删除后台再删除前台
-                            //ajax 删除后台数据 成功则删除前台数据；失败则不删除前台数据
-
-                            //Extjs 4.x 删除
-                            Ext.getCmp('addDataGrid').getStore().remove(oldpanelArr);
-                        } else {
-                            return;
-                        }
-                    });
-                } else {
-                    //Ext.Msg.confirm("提示", "无选中数据");
-                    Ext.Msg.alert("提示", "无选中数据");
-                }
-            }
-
-
-            console.log("rowIndex:",rowIndex)
-            console.log("columnIndex:",columnIndex)
-            // var record = grid.getStore().getAt(rowIndex);
-            // var id = record.get('id');
-            // var fieldName = grid.getColumnModel().getDataIndex(columnIndex);
-            // if (fieldName == "c_reply") {
-            //     Ext.Msg.alert('c_reply', rowIndex + "  -  " + id);
-            // }else if (fieldName == "c_agree") {
-            //     Ext.Msg.alert('c_agree', rowIndex + "  -  " + id);
-            // }
-
-        };
-
-        this.dockedItems = [
-            //toolbar,
-            //toobar,toolbar1,
-            toolbar2, grid, toolbar3];
-        //this.items = [ me.grid ];
+        this.dockedItems=[{
+            xtype : 'toolbar',
+            dock : 'top',
+            items : [toolbar2]
+        },
+            {
+                xtype : 'toolbar',
+                dock : 'top',
+                style:'border-width:0 0 0 0;',
+                items : [toolbar3]
+            },
+        ];
+        this.items = [ grid ];
         this.callParent(arguments);
-
     }
-
 })
 
