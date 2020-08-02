@@ -257,12 +257,47 @@ Ext.define('backproduct.backproduct_Inbound', {
                             },
                             success : function(response) {
                                 console.log("12312312312321",response.responseText);
-                                if(response.responseText.includes("false"))
-                                {
-                                    Ext.MessageBox.alert("提示","入库失败，品名不规范" );
-                                }
-                                //var message =Ext.decode(response.responseText).showmessage;
-                                else{
+                                // if(response.responseText.includes("false"))
+                                // {
+                                //     Ext.MessageBox.alert("提示","入库失败，品名不规范" );
+                                // }
+                                // //var message =Ext.decode(response.responseText).showmessage;
+                                // else{
+                                //     Ext.MessageBox.alert("提示","入库成功" );
+                                // }
+                                var res = response.responseText;
+                                var jsonobj = JSON.parse(res);//将json字符串转换为对象
+                                console.log(jsonobj);
+                                console.log("success--------------",jsonobj.success);
+                                console.log("errorList--------------",jsonobj['errorList']);
+                                var success = jsonobj.success;
+                                var errorList = jsonobj.errorList;
+                                var errorCode = jsonobj.errorCode;
+                                var errorCount = jsonobj.errorCount;
+                                if(success == false){
+                                    //错误输入
+                                    if(errorCode == 200){
+                                        //关闭进度条
+                                        // Ext.MessageBox.alert("提示","匹配失败，产品位置重复或品名不合法！请重新导入" );
+                                        Ext.Msg.show({
+                                            title: '提示',
+                                            message: '入库失败！存在错误内容',
+                                            buttons: Ext.Msg.YESNO,
+                                            icon: Ext.Msg.QUESTION,
+                                            fn: function (btn) {
+                                                if (btn === 'yes') {
+                                                    //点击确认，显示重复的数据
+                                                    old_inb_errorlistStore.loadData(errorList);
+                                                    win_oldinb_errorInfo_outbound.show();
+
+                                                }
+                                            }
+                                        });
+                                    }
+                                    else if(errorCode == 1000){
+                                        Ext.MessageBox.alert("提示","入库失败，未知错误！请重新领取" );
+                                    }
+                                }else{
                                     Ext.MessageBox.alert("提示","入库成功" );
                                 }
 

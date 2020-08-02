@@ -46,7 +46,7 @@ Ext.define("menu.MenuRole_bc0", {
 				},
 				{
 					text : '旧板出入库记录查询',
-					id : 'oldpanel.oldpanel_Outbound',//'oldpanel.oldpanel_Query_Records',
+					id : 'oldpanel.oldpanel_Query_Records',//'oldpanel.oldpanel_Query_Records',
 					leaf : true
 				}, {
 					text : '旧板出入库记录统计',
