@@ -30,7 +30,7 @@ public class DesignlistService extends BaseService{
     @Autowired
     private QueryAllService queryService;
     @Autowired
-    private AnalyzeNameService AnalyzeNameService;
+    private AnalyzeNameService analyzeNameService;
     @Autowired
     private InsertProjectService insertProjectService;
     @Autowired
@@ -69,10 +69,8 @@ public class DesignlistService extends BaseService{
     @Transactional
     public int createDesignlistData(DataList validList, String userId, String projectId, String buildingId,
                                  String buildingpositionId) {
-        Date date=new Date();
-        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String sql_addLog = "insert into designlist_log (userId,time,isrollback,projectId,buildingId,buildingpositionId) values(?,?,?,?,?,?)";
-        int designlistlogId= insertProjectService.insertDataToTable(sql_addLog,userId,simpleDateFormat.format(date),"0"
+        int designlistlogId= insertProjectService.insertDataToTable(sql_addLog,userId,analyzeNameService.getTime(),"0"
                 ,projectId, buildingId, buildingpositionId);
         for (DataRow dataRow : validList) {
             String productId = dataRow.get("productId").toString();
@@ -251,7 +249,7 @@ public class DesignlistService extends BaseService{
      * 创建领料单
      * */
     @Transactional
-    public void createRequisition(String workOrderDetailIdString, String userId, String operator){
+    public boolean createRequisition(String workOrderDetailIdString, String userId, String operator){
         //requisition_order
         //requisition_order_log
         //fori:requisition_order_detail,requisition_order_logdetail
@@ -262,6 +260,7 @@ public class DesignlistService extends BaseService{
         int requisitionOrderId = createRequisitionOrderBackId(userId,operator,projectId);
         int requisitionOrderLogId = requisitionOrderAddLogBackId("1",String.valueOf(requisitionOrderId),userId,operator);
         String sql_updateStatus = "update work_order_detail set status=1 where id=\"";
+        boolean b = true;
         for (DataRow dataRow : insertList) {
             String workOrderDetailId = dataRow.get("id").toString();
             String type = dataRow.get("type").toString();
@@ -273,14 +272,13 @@ public class DesignlistService extends BaseService{
             int requisitionOrderDetailId = createRequisitionOrderDetailBackId(String.valueOf(requisitionOrderId),workOrderDetailId,
                     type,storeId,productId,count,buildingId,buildingpositionId);
             jo.update(sql_updateStatus+workOrderDetailId+"\"");
-            requisitionOrderAddLogDetail(String.valueOf(requisitionOrderLogId), String.valueOf(requisitionOrderDetailId), count);
+            b = b&requisitionOrderAddLogDetail(String.valueOf(requisitionOrderLogId), String.valueOf(requisitionOrderDetailId), count);
         }
+        return b;
     }
     private int createRequisitionOrderBackId(String userId,String operator,String projectId){
-        Date date=new Date();
-        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return insertProjectService.insertDataToTable("insert into requisition_order (userId,operator,time,projectId,status) values (?,?,?,?,?)",
-                userId,operator,simpleDateFormat.format(date),projectId,"0");
+                userId,operator,analyzeNameService.getTime(),projectId,"0");
     }
     private int createRequisitionOrderDetailBackId(String requisitionOrderId,String workOrderDetailId,String type, String storeId,
                                                    String productId,String count,String buildingId,String buildingpositionId){
@@ -289,10 +287,8 @@ public class DesignlistService extends BaseService{
                 requisitionOrderId, workOrderDetailId, type, storeId, productId, count, count, buildingId, buildingpositionId);
     }
     private int requisitionOrderAddLogBackId(String type, String requisitionOrderId, String userId, String operator){
-        Date date=new Date();
-        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return insertProjectService.insertDataToTable("insert into requisition_order_log (type,requisitionOrderId,userId,time,operator) values(?,?,?,?,?)",
-                type,requisitionOrderId,userId,simpleDateFormat.format(date),operator);
+                type,requisitionOrderId,userId,analyzeNameService.getTime(),operator);
     }
     private boolean requisitionOrderAddLogDetail(String requisitionOrderLogId,String requisitionOrderDetailId,String count){
         return insertProjectService.insertIntoTableBySQL("insert into requisition_order_logdetail (requisitionOrderLogId,requisitionOrderDetailId,count) values (?,?,?)",
@@ -594,11 +590,9 @@ public class DesignlistService extends BaseService{
         }
     }
     private int outboundStoreAddLogBackId(String store, String userId, String operator,String projectId){
-        Date date=new Date();
-        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return insertProjectService.insertDataToTable("insert into " + store +
                 "_log (type,time,userId,operator,projectId,isrollback) values (?,?,?,?,?,?)",
-                "1",simpleDateFormat.format(date),userId,operator,projectId,"1");
+                "1",analyzeNameService.getTime(),userId,operator,projectId,"1");
     }
     private void outboundStoreCountUpdate(String store, String storeId, String count){
         jo.update("update " + store + "_store set countStore=countStore-\"" + count + "\" where id=\"" + storeId + "\"");
@@ -664,18 +658,53 @@ public class DesignlistService extends BaseService{
 //    }
 
 
-    /**
-     * 退料单excel解析
-     */
+    /*
+     * 创建退料单
+     * */
     @Transactional
-    public UploadDataResult uploadBackStoreExcel(InputStream inputStream) throws IOException {
-        UploadDataResult result = new UploadDataResult();
-        Excel excel = new Excel(inputStream);
-        result.dataList = excel.readExcelContent();
-        return result;
+    public boolean createReturnOrder(JSONArray jsonArray,String type,String projectId,String buildingId,String description,String operator,String userId){
+        boolean b = true;
+        int orderId = createReturnOrderBackId(type,projectId,buildingId,description,operator,userId);
+        int logId = createReturnOrderLogBackId(String.valueOf(orderId),userId,operator);
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonTemp = jsonArray.getJSONObject(i);
+            String storeId = jsonTemp.get("storeId")+"";
+            String name=jsonTemp.get("name")+"";
+            String backWarehouseName = (jsonTemp.get("backWarehouseName")+"").trim();
+            String warehouseName =  jsonTemp.get("warehouseName")+"";
+            String count = jsonTemp.get("count")+"";
+            String unitWeight =  jsonTemp.get("unitWeight")+"";
+            String unitArea = jsonTemp.get("unitArea")+"";
+            String totalWeight = jsonTemp.get("totalWeight")+"";
+            String totalArea = jsonTemp.get("totalArea")+"";
+            String inventoryUnit = jsonTemp.get("inventoryUnit")+"";
+            String remark = jsonTemp.get("remark")+"";
+            int detailId = createReturnOrderDetailBackId(String.valueOf(orderId),storeId,name,backWarehouseName,warehouseName,count,unitWeight,unitArea,
+                    totalWeight,totalArea,inventoryUnit,remark);
+            b = b&createReturnOrderLogDetail(String.valueOf(logId),String.valueOf(detailId),count);
+        }
+        return b;
     }
 
-
+    private int createReturnOrderBackId(String type,String projectId,String buildingId,String description,String operator,String userId){
+        return insertProjectService.insertDataToTable("insert into return_order (type,projectId,buildingId,description,operator,userId,status,time) values (?,?,?,?,?,?,?,?)"
+                , type,projectId,buildingId,description,operator,userId,"0",analyzeNameService.getTime());
+    }
+    private int createReturnOrderLogBackId(String orderId,String userId,String operator){
+        return insertProjectService.insertDataToTable("insert into return_order_log (returnOrderId,userId,operator,type,time) values (?,?,?,?,?)"
+                , orderId,userId,operator,"1",analyzeNameService.getTime());
+    }
+    private int createReturnOrderDetailBackId(String orderId,String storeId,String name,String backWarehouseName,String warehouseName,String count,
+                                              String unitWeight ,String unitArea,String totalWeight,String totalArea,String inventoryUnit, String remark){
+        return insertProjectService.insertDataToTable("insert into return_order_detail (returnOrderId,storeId,name,backWarehouseName,warehouseName" +
+                ",countAll,countReturn,unitWeight,unitArea,totalWeight,totalArea,inventoryUnit,remark) values (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                orderId,storeId,name,backWarehouseName,warehouseName,count,count,unitWeight,unitArea,
+                totalWeight,totalArea,inventoryUnit,remark);
+    }
+    private boolean createReturnOrderLogDetail(String logId,String detailId,String count){
+        return insertProjectService.insertIntoTableBySQL("insert into return_order_logdetail (returnOrderLogId,returnOrderDetailId,count) values (?,?,?)",
+                logId,detailId,count);
+    }
 
 
 

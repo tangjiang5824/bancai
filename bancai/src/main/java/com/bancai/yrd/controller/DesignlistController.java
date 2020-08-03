@@ -4,6 +4,7 @@ import com.bancai.cg.service.InsertProjectService;
 import com.bancai.commonMethod.AllExcelService;
 import com.bancai.commonMethod.PanelMatchService;
 import com.bancai.commonMethod.QueryAllService;
+import com.bancai.db.mysqlcondition;
 import com.bancai.domain.DataList;
 import com.bancai.domain.DataRow;
 import com.bancai.yrd.service.DesignlistService;
@@ -327,8 +328,8 @@ public class DesignlistController {
             }
             sb.deleteCharAt(sb.length()-1);
             System.out.println("workOrderDetailId====="+sb.toString());
-            designlistService.createRequisition(sb.toString(),userId,operator);
-            response.setSuccess(true);
+            boolean result = designlistService.createRequisition(sb.toString(),userId,operator);
+            response.setSuccess(result);
         } catch (Exception e) {
             response.setSuccess(false);
             response.setErrorCode(1000); //未知错误
@@ -341,42 +342,83 @@ public class DesignlistController {
      * 查询领料单
      * */
     @RequestMapping("/order/queryRequisitionOrder.do")
-    public void queryRequisitionOrder(String projectId, String operator, String timeStart, String timeEnd,
-                                      HttpServletResponse response) throws IOException, JSONException {
-        DataList requisitionOrderList = designlistService.findRequisitionOrder(projectId,operator,timeStart,timeEnd);
-        //写回前端
-        JSONObject object = new JSONObject();
-        JSONArray array = new JSONArray(requisitionOrderList);
-        object.put("requisitionOrderList", array);
-//        System.out.println("类型1：--"+array.getClass().getName().toString());
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType("text/html");
-        response.getWriter().write(object.toString());
-        response.getWriter().flush();
-        response.getWriter().close();
+    public WebResponse queryRequisitionOrder(String projectId, String operator, String timeStart, String timeEnd,Integer start,Integer limit){
+        mysqlcondition c=new mysqlcondition();
+        if (null!=projectId&&projectId.length() != 0) {
+            c.and(new mysqlcondition("projectId", "=", projectId));
+        }
+        if (null!=operator&&operator.length() != 0) {
+            c.and(new mysqlcondition("operator", "=", operator));
+        }
+        if (null!=timeStart&&timeStart.length() != 0) {
+            c.and(new mysqlcondition("timeStart", ">=", timeStart));
+        }
+        if (null!=timeEnd&&timeEnd.length() != 0) {
+            c.and(new mysqlcondition("timeEnd", "<=", timeEnd));
+        }
+        return queryService.queryDataPage(start, limit, c, "requisition_order_view");
     }
+//    public void queryRequisitionOrder(String projectId, String operator, String timeStart, String timeEnd,
+//                                      HttpServletResponse response) throws IOException, JSONException {
+//        DataList requisitionOrderList = designlistService.findRequisitionOrder(projectId,operator,timeStart,timeEnd);
+//        //写回前端
+//        JSONObject object = new JSONObject();
+//        JSONArray array = new JSONArray(requisitionOrderList);
+//        object.put("requisitionOrderList", array);
+////        System.out.println("类型1：--"+array.getClass().getName().toString());
+//        response.setCharacterEncoding("UTF-8");
+//        response.setContentType("text/html");
+//        response.getWriter().write(object.toString());
+//        response.getWriter().flush();
+//        response.getWriter().close();
+//    }
 
     /*
      * 查询某张领料单细节
      * */
     @RequestMapping("/order/queryRequisitionOrderDetail.do")
-    public void queryRequisitionOrderDetail(String type, String requisitionOrderId, String warehouseName, String buildingId,
-                                            String buildingpositionId,HttpServletResponse response) throws IOException, JSONException {
-        if((requisitionOrderId==null)||(requisitionOrderId.length()==0)){
-            response.sendError(100,"未选择领料单");
+    public WebResponse queryRequisitionOrderDetail(String type, String requisitionOrderId, String warehouseName, String buildingId,
+                                                   String buildingpositionId,Integer start,Integer limit){
+        mysqlcondition c=new mysqlcondition();
+        if (null!=requisitionOrderId&&requisitionOrderId.length() != 0) {
+            c.and(new mysqlcondition("requisitionOrderId", "=", requisitionOrderId));
         }else {
-            DataList requisitionOrderDetailList = designlistService.findRequisitionOrderDetail(type, requisitionOrderId, warehouseName, buildingId, buildingpositionId);
-            //写回前端
-            JSONObject object = new JSONObject();
-            JSONArray array = new JSONArray(requisitionOrderDetailList);
-            object.put("requisitionOrderDetailList", array);
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("text/html");
-            response.getWriter().write(object.toString());
-            response.getWriter().flush();
-            response.getWriter().close();
+            WebResponse webResponse = new WebResponse();
+            webResponse.setSuccess(false);
+            webResponse.setErrorCode(100);//未获取到领料单号
+            return webResponse;
         }
+        if (null!=type&&type.length() != 0) {
+            c.and(new mysqlcondition("type", "=", type));
+        }
+        if (null!=warehouseName&&warehouseName.length() != 0) {
+            c.and(new mysqlcondition("warehouseName", "=", warehouseName));
+        }
+        if (null!=buildingId&&buildingId.length() != 0) {
+            c.and(new mysqlcondition("buildingId", "=", buildingId));
+        }
+        if (null!=buildingpositionId&&buildingpositionId.length() != 0) {
+            c.and(new mysqlcondition("buildingpositionId", "=", buildingpositionId));
+        }
+        return queryService.queryDataPage(start, limit, c, "requisition_order_detail_view");
     }
+//    public void queryRequisitionOrderDetail(String type, String requisitionOrderId, String warehouseName, String buildingId,
+//                                            String buildingpositionId,HttpServletResponse response) throws IOException, JSONException {
+//        if((requisitionOrderId==null)||(requisitionOrderId.length()==0)){
+//            response.sendError(100,"未选择领料单");
+//        }else {
+//            DataList requisitionOrderDetailList = designlistService.findRequisitionOrderDetail(type, requisitionOrderId, warehouseName, buildingId, buildingpositionId);
+//            //写回前端
+//            JSONObject object = new JSONObject();
+//            JSONArray array = new JSONArray(requisitionOrderDetailList);
+//            object.put("requisitionOrderDetailList", array);
+//            response.setCharacterEncoding("UTF-8");
+//            response.setContentType("text/html");
+//            response.getWriter().write(object.toString());
+//            response.getWriter().flush();
+//            response.getWriter().close();
+//        }
+//    }
 
     /*
      * 确认领料完成
@@ -468,6 +510,7 @@ public class DesignlistController {
                     result = allExcelService.uploadBackOldpanelExcelData(uploadFile.getInputStream());
                     break;
                 case "4":
+                    result = allExcelService.uploadBackMaterialExcelData(uploadFile.getInputStream());
                     break;
                 default:
                     response.setSuccess(false);
@@ -487,6 +530,89 @@ public class DesignlistController {
         //net.sf.json.JSONObject json= net.sf.json.JSONObject.fromObject(response);
         return response;
     }
+
+    /*
+     * 新建退料单
+     * */
+    @RequestMapping(value = "/backStore/createReturnOrder.do")
+    public WebResponse backStoreAddData(String s, String type, String projectId,String buildingId,String description, String operator, HttpSession session) throws JSONException {
+        WebResponse response = new WebResponse();
+        try {
+            JSONArray jsonArray = new JSONArray(s);
+            if(jsonArray.length()==0){
+                response.setSuccess(false);
+                response.setErrorCode(100);//接收到的s为空
+                return response;
+            }
+            if((projectId==null)||(projectId.length()==0)||(buildingId==null)||(buildingId.length()==0)){
+                response.setSuccess(false);
+                response.setErrorCode(200);//未收到项目或楼栋ID
+                return response;
+            }
+            if((operator==null)||(operator.length()==0)){
+                response.setSuccess(false);
+                response.setErrorCode(300);//未选择退料人
+                return response;
+            }
+            if((description==null)||(description.length()==0)){
+                response.setSuccess(false);
+                response.setErrorCode(400);//未输入退料原因
+                return response;
+            }
+            if((type==null)||(type.length()==0)){
+                response.setSuccess(false);
+                response.setErrorCode(500);//未选择退料类型
+                return response;
+            }
+            String userId = (String)session.getAttribute("userid");
+            boolean result = designlistService.createReturnOrder(jsonArray,type,projectId,buildingId,description,operator,userId);
+            response.setSuccess(result);
+        } catch (Exception e) {
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误
+            response.setMsg(e.getMessage());
+        }
+        return response;
+    }
+
+    /*
+     * 查询退料单
+     * */
+    @RequestMapping("/backStore/queryReturnOrder.do")
+    public WebResponse queryReturnOrder(String projectId, String operator, String timeStart, String timeEnd,Integer start,Integer limit){
+        mysqlcondition c=new mysqlcondition();
+        if (null!=projectId&&projectId.length() != 0) {
+            c.and(new mysqlcondition("projectId", "=", projectId));
+        }
+        if (null!=operator&&operator.length() != 0) {
+            c.and(new mysqlcondition("operator", "=", operator));
+        }
+        if (null!=timeStart&&timeStart.length() != 0) {
+            c.and(new mysqlcondition("timeStart", ">=", timeStart));
+        }
+        if (null!=timeEnd&&timeEnd.length() != 0) {
+            c.and(new mysqlcondition("timeEnd", "<=", timeEnd));
+        }
+        return queryService.queryDataPage(start, limit, c, "return_order");
+    }
+
+    /*
+     * 查询某张退料单细节
+     * */
+    @RequestMapping("/backStore/queryReturnOrderDetail.do")
+    public WebResponse queryReturnOrderDetail(String returnOrderId,Integer start,Integer limit){
+        mysqlcondition c=new mysqlcondition();
+        if (null!=returnOrderId&&returnOrderId.length() != 0) {
+            c.and(new mysqlcondition("returnOrderId", "=", returnOrderId));
+        }else {
+            WebResponse webResponse = new WebResponse();
+            webResponse.setSuccess(false);
+            webResponse.setErrorCode(100);//未获取到退料单号
+            return webResponse;
+        }
+        return queryService.queryDataPage(start, limit, c, "return_order_detail");
+    }
+
 
 
 
