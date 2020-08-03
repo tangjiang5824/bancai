@@ -531,7 +531,6 @@ Ext.define('material.material_Inbound', {
                     valueField : 'id',
                     editable : true,
                 },
-
                 {
                 xtype : 'button',
                 iconAlign : 'center',
@@ -542,6 +541,7 @@ Ext.define('material.material_Inbound', {
                 handler : function() {
 
                     var operator = Ext.getCmp('operator').value;
+                    var inputTime=Ext.getCmp('inputTime').value;
                     // 取出grid的字段名字段类型
                     var select = Ext.getCmp('addDataGrid').getStore()
                         .getData();

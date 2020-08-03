@@ -323,7 +323,7 @@ Ext.define('project.project_query_picklist',{
                     rootProperty: 'requisitionOrderDetailList',
                 },
             },
-            autoLoad : true
+            autoLoad : false
         });
 
         var grid__query_pickList_specific=Ext.create('Ext.grid.Panel',{

@@ -142,7 +142,7 @@ Ext.define('material.material_Outbound',{
             fields: [],
             pageSize: itemsPerPage, // items per page
             proxy:{
-                url : "material/material_query_records.do",
+                url : "material/material_query_records.do?tableName=materiallog_projectname_view",
                 type: 'ajax',
                 reader:{
                     type : 'json',
@@ -150,8 +150,6 @@ Ext.define('material.material_Outbound',{
                     totalProperty: 'totalCount'
                 },
                 params:{
-                    start: 0,
-                    limit: 20,
                     type:0,
                     // operator : Ext.getCmp('operator').getValue(),//获取操作员名，type操作类型
                     // startTime:Ext.getCmp('startTime').getValue(),
