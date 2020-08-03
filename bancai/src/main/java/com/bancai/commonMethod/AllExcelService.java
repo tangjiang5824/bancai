@@ -29,6 +29,7 @@ import java.util.Set;
 @Service
 public class AllExcelService extends BaseService {
 	private Logger log = Logger.getLogger(AllExcelService.class);
+	private static String isPureNumber = "[0-9]+";
 	@Autowired
 	private TableService tableService;
 	@Autowired
@@ -208,7 +209,7 @@ public class AllExcelService extends BaseService {
 		Iterator it = excelList.iterator();
 		DataList dataList = new DataList();
 		while (it.hasNext()){
-			com.bancai.domain.DataRow dataRow = (DataRow) it.next();
+			DataRow dataRow = (DataRow) it.next();
 			String oldpanelName = (dataRow.get("品名") + "").trim().toUpperCase();
 			if(oldpanelName.length()==0){
 				it.remove();
@@ -228,6 +229,83 @@ public class AllExcelService extends BaseService {
 			dataList.add(row);
 		}
 		result.dataList = dataList;
+		return result;
+	}
+
+	/**
+	 * 旧板退料单上传数据
+	 *
+	 * @param inputStream
+	 * @return
+	 * @throws IOException
+	 */
+	@Transactional
+	public UploadDataResult uploadBackOldpanelExcelData(InputStream inputStream) throws IOException {
+		UploadDataResult result = new UploadDataResult();
+		Excel excel = new Excel(inputStream);
+		DataList excelList = excel.readExcelContent();
+		Iterator it = excelList.iterator();
+		DataList dataList = new DataList();
+		DataList errorList = new DataList();
+		String sql_info = "select * from oldpanel_info where oldpanelName=?";
+		while (it.hasNext()){
+			DataRow dataRow = (DataRow) it.next();
+			String oldpanelName = (dataRow.get("品名") + "").trim().toUpperCase();
+			String count = dataRow.get("退料数量") + "";
+			if(oldpanelName.length()==0){
+				it.remove();
+				continue;
+			} else if (oldpanelName.equals("合计")){
+				it.remove();
+				break;
+			}
+			DataList queryList = queryService.query(sql_info,oldpanelName);
+			if(queryList.isEmpty()){
+				errorList.add(dataRow);
+			}else if(((count.split("\\.").length==1)&&(!count.matches(isPureNumber)))||
+					((count.split("\\.").length==2)&&(
+							(!count.split("\\.")[0].matches(isPureNumber))||(!count.split("\\.")[1].matches(isPureNumber))
+					))||((count.split("\\.").length!=1)&&((count.split("\\.").length!=2)))){
+				errorList.add(dataRow);
+			}else if(errorList.isEmpty()){
+				DataRow queryRow = queryList.get(0);
+				String backWarehouseName = dataRow.get("退料仓库") + "";
+				String warehouseName = dataRow.get("收料仓库") + "";
+				String remark = dataRow.get("备注") + "";
+				String unitWeight = "";
+				String unitArea = "";
+				String totalWeight = "";
+				String totalArea = "";
+				String inventoryUnit = queryRow.get("inventoryUnit")+"";
+				if((queryRow.get("unitWeight")!=null)&&(queryRow.get("unitWeight").toString().length()!=0)){
+					unitWeight = queryRow.get("unitWeight").toString();
+					totalWeight = String.valueOf(Double.parseDouble(unitWeight)*Double.parseDouble(count));
+				}
+				if((queryRow.get("unitArea")!=null)&&(queryRow.get("unitArea").toString().length()!=0)){
+					unitArea = queryRow.get("unitArea").toString();
+					totalArea = String.valueOf(Double.parseDouble(unitArea)*Double.parseDouble(count));
+				}
+				DataRow row = new DataRow();
+				row.put("oldpanelName",oldpanelName);
+				row.put("backWarehouseName",backWarehouseName);
+				row.put("warehouseName",warehouseName);
+				row.put("count",count);
+				row.put("unitWeight",unitWeight);
+				row.put("unitArea",unitArea);
+				row.put("totalWeight",totalWeight);
+				row.put("totalArea",totalArea);
+				row.put("inventoryUnit",inventoryUnit);
+				row.put("remark",remark);
+				dataList.add(row);
+			}
+		}
+		if(errorList.isEmpty()){
+			result.dataList = dataList;
+		}else {
+			result.dataList = errorList;
+			result.setSuccess(false);
+			result.setErrorCode(200);
+		}
 		return result;
 	}
 

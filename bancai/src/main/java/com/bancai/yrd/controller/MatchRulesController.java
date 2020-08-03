@@ -3,6 +3,7 @@ package com.bancai.yrd.controller;
 import com.bancai.cg.service.InsertProjectService;
 import com.bancai.commonMethod.*;
 import com.bancai.domain.DataList;
+import com.bancai.vo.WebResponse;
 import com.bancai.yrd.service.MatchRulesService;
 import com.bancai.yrd.service.ProductDataService;
 import com.bancai.yrd.service.OldpanelDataService;
@@ -116,13 +117,20 @@ public class MatchRulesController {
      * 新增旧板匹配规则
      * */
     @RequestMapping(value = "/match/addOldpanelMatchRules.do")
-    public boolean addOldpanelMatchRules(String productFormatId,String oldpanelFormatId,String priority,String isCompleteMatch,
-                                         String s_product,String s_old, HttpSession session) throws JSONException {
+    public WebResponse addOldpanelMatchRules(String productFormatId, String oldpanelFormatId, String priority, String isCompleteMatch,
+                                             String s_product, String s_old, HttpSession session) throws JSONException {
+        WebResponse response = new WebResponse();
         try {
-            if(!priority.matches(isPureNumber))
-                return false;
-            if((isCompleteMatch==null)||isCompleteMatch.equals(""))
-                return false;
+            if(!priority.matches(isPureNumber)){
+                response.setSuccess(false);
+                response.setErrorCode(100);//优先级错误
+                return response;
+            }
+            if((isCompleteMatch==null)||isCompleteMatch.equals("")){
+                response.setSuccess(false);
+                response.setErrorCode(200);//是否完全匹配错误
+                return response;
+            }
             String userId = (String)session.getAttribute("userid");
             Date date=new Date();
             SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -166,12 +174,19 @@ public class MatchRulesController {
             String sql_addLog = "insert into oldpanel_match_ruleslog (oldpanelMatchRulesId,type,time,userId) values (?,?,?,?)";
             boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLog,String.valueOf(oldpanelMatchRulesId)
                     ,"0",simpleDateFormat.format(date),userId);
-            if(!is_log_right)
-                return false;
+            if(!is_log_right){
+                response.setSuccess(false);
+                response.setErrorCode(300);//插入表错误
+                return response;
+            }
+            response.setSuccess(true);
         } catch (Exception e) {
-            return false;
+            e.printStackTrace();
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误
+            response.setMsg(e.getMessage());
         }
-        return true;
+        return response;
     }
 
 

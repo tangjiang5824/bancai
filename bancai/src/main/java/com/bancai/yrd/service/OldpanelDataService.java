@@ -78,7 +78,7 @@ public class OldpanelDataService extends BaseService {
     @Transactional
     public boolean oldpanelAddNewInfo(DataList insertList,String userId){
         boolean b = true;
-        int logId = oldpanelAddLogBackId("6",userId,null);
+        int logId = oldpanelAddLogBackId("6",userId,null,null,null,"",null);
         for (DataRow dataRow : insertList) {
             String oldpanelFormatId = dataRow.get("oldpanelFormatId").toString();
             String oldpanelName = dataRow.get("oldpanelName").toString();
@@ -114,40 +114,69 @@ public class OldpanelDataService extends BaseService {
     }
 
     @Transactional
-    public DataList oldpanelAddInsertRowToInboundList(DataList insertList,String oldpanelId,String warehouseName,String count,String unitWeight,String unitArea){
+    public DataList oldpanelAddInsertRowToInboundList(DataList insertList,String oldpanelId,String warehouseName,String count,String remark,String unitWeight,String unitArea){
         DataRow row = new DataRow();
         row.put("oldpanelId",oldpanelId);
         row.put("warehouseName",warehouseName);
         row.put("count",count);
+        row.put("remark",remark);
+        row.put("unitWeight",unitWeight);
+        row.put("unitArea",unitArea);
+        insertList.add(row);
+        return insertList;
+    }
+    @Transactional
+    public DataList oldpanelAddInsertRowToBackList(DataList insertList,String oldpanelId,String backWarehouseName,String warehouseName,String count,String remark,String unitWeight,String unitArea){
+        DataRow row = new DataRow();
+        row.put("oldpanelId",oldpanelId);
+        row.put("backWarehouseName",backWarehouseName);
+        row.put("warehouseName",warehouseName);
+        row.put("count",count);
+        row.put("remark",remark);
         row.put("unitWeight",unitWeight);
         row.put("unitArea",unitArea);
         insertList.add(row);
         return insertList;
     }
 
-
+    /*
+     * 入库
+     * */
     @Transactional
-    public boolean insertOldpanelDataToStore(DataList insertList,String userId,String operator,String projectId,String buildingId){
-        int logId = 0;
+    public boolean insertOldpanelDataToStore(DataList insertList,String userId,String operator,String inputTime){
         boolean b = true;
-        if (projectId.equals("-1") && buildingId.equals("-1")) {//入库
-            logId = oldpanelAddLogBackId("0",userId,operator);
-        } else {//退库
-            logId = oldpanelAddLogBackId("2",userId,operator);
-        }
+        int logId = oldpanelAddLogBackId("0",userId,operator,null,null,"",inputTime);
         if(logId==0)
             return false;
         for (DataRow dataRow : insertList) {
-            b = b&oldpanelAddStoreAndLogDetailByRow(dataRow,String.valueOf(logId));
+            b = b&oldpanelAddStoreAndLogDetailByRow(dataRow,String.valueOf(logId),1);
         }
         return b;
     }
-    private boolean oldpanelAddStoreAndLogDetailByRow(DataRow dataRow,String logId){
+    /*
+     * 退库
+     * */
+    @Transactional
+    public boolean insertOldpanelDataBackStore(DataList insertList,String userId,String operator,String projectId,String buildingId,String description,String inputTime){
+        boolean b = true;
+        int logId = oldpanelAddLogBackId("2",userId,operator,projectId,buildingId,description,inputTime);
+        if(logId==0)
+            return false;
+        for (DataRow dataRow : insertList) {
+            b = b&oldpanelAddStoreAndLogDetailByRow(dataRow,String.valueOf(logId),2);
+        }
+        return b;
+    }
+    private boolean oldpanelAddStoreAndLogDetailByRow(DataRow dataRow,String logId,int method){//method=1入库，2退库
         String oldpanelId = dataRow.get("oldpanelId").toString();
         String warehouseName = dataRow.get("warehouseName").toString();
         String count = dataRow.get("count").toString();
+        String remark = dataRow.get("remark").toString();
         String totalWeight = "";
         String totalArea = "";
+        String backWarehouseName = null;
+        if(method==2)
+            backWarehouseName = dataRow.get("backWarehouseName").toString();
         if(dataRow.get("unitWeight")!=null)
             totalWeight = String.valueOf(Double.parseDouble(count)*Double.parseDouble(dataRow.get("unitWeight").toString()));
         if(dataRow.get("unitArea")!=null)
@@ -173,14 +202,14 @@ public class OldpanelDataService extends BaseService {
                     "\",totalWeight=\""+totalWeight+ "\" where id=\""+storeId+"\"");
         }
         return insertProjectService.insertIntoTableBySQL(
-                "insert into oldpanel_logdetail (oldpanelId,count,oldpanellogId,oldpanelstoreId,isrollback) values (?,?,?,?,?)",
-                oldpanelId,count,logId,storeId,"0");
+                "insert into oldpanel_logdetail (oldpanelId,count,oldpanellogId,oldpanelstoreId,isrollback,backWarehouseName,remark) values (?,?,?,?,?,?,?)",
+                oldpanelId,count,logId,storeId,"0",backWarehouseName,remark);
     }
 
-    private int oldpanelAddLogBackId(String type,String userId,String operator){
+    private int oldpanelAddLogBackId(String type,String userId,String operator,String projectId,String buildingId,String description,String inputTime){
         return insertProjectService.insertDataToTable(
-                "insert into oldpanel_log (type,userId,time,operator,isrollback) values(?,?,?,?,?)",
-                type,userId,analyzeNameService.getTime(),operator,"0");
+                "insert into oldpanel_log (type,userId,time,operator,isrollback,projectId,buildingId,description,inputTime) values(?,?,?,?,?,?,?,?,?)",
+                type,userId,analyzeNameService.getTime(),operator,"0",projectId,buildingId,description,inputTime);
     }
 
 
