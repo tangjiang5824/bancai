@@ -320,6 +320,9 @@ Ext.define('material.material_Receive',{
                         }
                     });
 
+                    //确认领料部分，重置
+                    pickList.removeAll();
+
                     //表名
                     var tableName = 'building';
                     //属性名
@@ -800,20 +803,20 @@ Ext.define('material.material_Receive',{
                     valueField : 'id',
                     editable : true,
                 },
-                {
-                    xtype: 'datefield',
-                    margin : '0 10 0 0',
-                    fieldLabel: '领料时间',
-                    id :'pickTime',
-                    width: 200,
-                    labelWidth: 60,
-                    name: 'pickTime',
-                    value:"",
-                    format : 'Y-m-d',
-                    editable : false,
-                    // value:Ext.util.Format.date(Ext.Date.add(new Date(),Ext.Date.MONTH,-1),"Y-m-d")
-                    value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
-                },
+                // {
+                //     xtype: 'datefield',
+                //     margin : '0 10 0 0',
+                //     fieldLabel: '领料时间',
+                //     id :'pickTime',
+                //     width: 200,
+                //     labelWidth: 60,
+                //     name: 'pickTime',
+                //     value:"",
+                //     format : 'Y-m-d',
+                //     editable : false,
+                //     // value:Ext.util.Format.date(Ext.Date.add(new Date(),Ext.Date.MONTH,-1),"Y-m-d")
+                //     value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
+                // },
                 {
                     xtype : 'button',
                     iconAlign : 'center',
