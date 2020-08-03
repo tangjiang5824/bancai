@@ -71,7 +71,7 @@ Ext.define('material.material_Receive',{
                 url : 'order/queryRequisitionOrder.do', //领料单查询
                 reader : {
                     type : 'json',
-                    rootProperty: 'requisitionOrderList',
+                    rootProperty: 'value',
                 }
             },
             autoLoad : true
@@ -398,7 +398,7 @@ Ext.define('material.material_Receive',{
                 url : 'order/queryRequisitionOrderDetail.do',//获取同类型的原材料  +'&pickNum='+pickNum
                 reader : {
                     type : 'json',
-                    rootProperty: 'requisitionOrderDetailList',
+                    rootProperty: 'value',
                 },
             },
             autoLoad : true
