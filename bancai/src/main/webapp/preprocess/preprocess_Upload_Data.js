@@ -367,19 +367,19 @@ Ext.define('preprocess.preprocess_Upload_Data', {
                     valueField : 'id',
                     editable : true,
                 },
-                {
-                    xtype: 'datefield',
-                    margin : '0 30 0 0',
-                    fieldLabel: '入库日期',
-                    id :'inputTime',
-                    width: 200,
-                    labelWidth: 60,
-                    name: 'inputTime',
-                    format : 'Y-m-d',
-                    editable : false,
-                    // value:Ext.util.Format.date(Ext.Date.add(new Date(),Ext.Date.MONTH,-1),"Y-m-d")
-                    value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
-                },
+                // {
+                //     xtype: 'datefield',
+                //     margin : '0 30 0 0',
+                //     fieldLabel: '入库日期',
+                //     id :'inputTime',
+                //     width: 200,
+                //     labelWidth: 60,
+                //     name: 'inputTime',
+                //     format : 'Y-m-d',
+                //     editable : false,
+                //     // value:Ext.util.Format.date(Ext.Date.add(new Date(),Ext.Date.MONTH,-1),"Y-m-d")
+                //     value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
+                // },
                 //确认入库
                 //确认上传
                 {
@@ -417,7 +417,7 @@ Ext.define('preprocess.preprocess_Upload_Data', {
                                 projectId : projectId,
                                 buildingId : buildingId,
                                 operator: Ext.getCmp('operator').getValue(),
-                                inputTime:Ext.getCmp('inputTime').getValue(),
+                                // inputTime:Ext.getCmp('inputTime').getValue(),
                             },
                             success : function(response) {
                                 var res = response.responseText;
@@ -493,17 +493,31 @@ Ext.define('preprocess.preprocess_Upload_Data', {
             ]
         });
 
-        this.dockedItems = [toolbar1,toolbar,grid,
+        // this.dockedItems = [toolbar1,toolbar,grid,
+        //     {
+        //         xtype: 'pagingtoolbar',
+        //         store: preproductStore,   // same store GridPanel is using    uploadMaterialRecordsStore
+        //         dock: 'bottom',
+        //         displayInfo: true,
+        //         displayMsg:'显示{0}-{1}条，共{2}条',
+        //         emptyMsg:'无数据'
+        //     }
+        // ];
+
+        this.dockedItems=[{
+            xtype : 'toolbar',
+            dock : 'top',
+            items : [toolbar1]
+        },
             {
-                xtype: 'pagingtoolbar',
-                store: preproductStore,   // same store GridPanel is using    uploadMaterialRecordsStore
-                dock: 'bottom',
-                displayInfo: true,
-                displayMsg:'显示{0}-{1}条，共{2}条',
-                emptyMsg:'无数据'
-            }
+                xtype : 'toolbar',
+                dock : 'top',
+                style:'border-width:0 0 0 0;',
+                items : [toolbar]
+            },
         ];
-        //this.items = [ me.grid ];
+
+        this.items = [ grid ];
         this.callParent(arguments);
 
     }
