@@ -120,31 +120,21 @@ Ext.define('oldpanel.old_Upload_Data', {
             },
             columns : [
                 {dataIndex : 'oldpanelName', text : '旧板名称', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
-                // {dataIndex : '分类', text : '分类', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
-                // {dataIndex : '单位', text : '库存单位', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                //{dataIndex : 'countUse', text : '可用数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                //{dataIndex : 'countStore', text : '库存数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'count', text : '入库数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'warehouseName', text : '仓库名称', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // {dataIndex : '单面积/m2', text : '单面积', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // {dataIndex : '单重/KG', text : '单重', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                //{dataIndex : 'totalArea', text : '总面积', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                //{dataIndex : 'totalWeight', text : '总重', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                //{dataIndex : 'length', text : '长', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                //{dataIndex : 'width', text : '宽', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 // {dataIndex : '备注', text : '备注', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
             ],
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 3
             })],
-            // dockedItems: [{
-            //     xtype: 'pagingtoolbar',
-            //     store: MaterialStore,   // same store GridPanel is using    uploadMaterialRecordsStore
-            //     dock: 'bottom',
-            //     displayInfo: true,
-            //     displayMsg:'显示{0}-{1}条，共{2}条',
-            //     emptyMsg:'无数据'
-            // }],
+            dockedItems: [{
+                xtype: 'pagingtoolbar',
+                store: oldpanelStore,   // same store GridPanel is using    uploadMaterialRecordsStore
+                dock: 'bottom',
+                displayInfo: true,
+                displayMsg:'显示{0}-{1}条，共{2}条',
+                emptyMsg:'无数据'
+            }],
             listeners: {
                 validateedit : function(editor, e) {
                     var field=e.field
@@ -378,19 +368,19 @@ Ext.define('oldpanel.old_Upload_Data', {
                     valueField : 'id',
                     editable : true,
                 },
-                {
-                    xtype: 'datefield',
-                    margin : '0 30 0 0',
-                    fieldLabel: '入库日期',
-                    id :'inputTime',
-                    width: 200,
-                    labelWidth: 60,
-                    name: 'inputTime',
-                    format : 'Y-m-d',
-                    editable : false,
-                    // value:Ext.util.Format.date(Ext.Date.add(new Date(),Ext.Date.MONTH,-1),"Y-m-d")
-                    value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
-                },
+                // {
+                //     xtype: 'datefield',
+                //     margin : '0 30 0 0',
+                //     fieldLabel: '入库日期',
+                //     id :'inputTime',
+                //     width: 200,
+                //     labelWidth: 60,
+                //     name: 'inputTime',
+                //     format : 'Y-m-d',
+                //     editable : false,
+                //     // value:Ext.util.Format.date(Ext.Date.add(new Date(),Ext.Date.MONTH,-1),"Y-m-d")
+                //     value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
+                // },
                 //确认入库
                 //确认上传
                 {
@@ -428,7 +418,7 @@ Ext.define('oldpanel.old_Upload_Data', {
                                 projectId : projectId,
                                 buildingId : buildingId,
                                 operator: Ext.getCmp('operator').getValue(),
-                                inputTime:Ext.getCmp('operator').getValue(),
+                                // inputTime:Ext.getCmp('operator').getValue(),
                             },
                             success : function(response) {
                                 var res = response.responseText;
@@ -505,17 +495,20 @@ Ext.define('oldpanel.old_Upload_Data', {
             ]
         });
 
-        this.dockedItems = [toolbar1,toolbar,grid,
+        this.dockedItems=[{
+            xtype : 'toolbar',
+            dock : 'top',
+            items : [toolbar1]
+        },
             {
-                xtype: 'pagingtoolbar',
-                store: oldpanelStore,   // same store GridPanel is using    uploadMaterialRecordsStore
-                dock: 'bottom',
-                displayInfo: true,
-                displayMsg:'显示{0}-{1}条，共{2}条',
-                emptyMsg:'无数据'
-            }
+                xtype : 'toolbar',
+                dock : 'top',
+                style:'border-width:0 0 0 0;',
+                items : [toolbar]
+            },
         ];
-        //this.items = [ me.grid ];
+
+        this.items = [ grid ];
         this.callParent(arguments);
 
     }

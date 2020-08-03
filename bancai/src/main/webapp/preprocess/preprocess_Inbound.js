@@ -247,19 +247,19 @@ Ext.define('preprocess.preprocess_Inbound', {
                     valueField : 'workerName',
                     editable : true,
                 },
-                {
-                    xtype: 'datefield',
-                    margin : '0 30 0 0',
-                    fieldLabel: '入库日期',
-                    id :'inputTime',
-                    width: 200,
-                    labelWidth: 60,
-                    name: 'inputTime',
-                    format : 'Y-m-d',
-                    editable : false,
-                    // value:Ext.util.Format.date(Ext.Date.add(new Date(),Ext.Date.MONTH,-1),"Y-m-d")
-                    value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
-                },
+                // {
+                //     xtype: 'datefield',
+                //     margin : '0 30 0 0',
+                //     fieldLabel: '入库日期',
+                //     id :'inputTime',
+                //     width: 200,
+                //     labelWidth: 60,
+                //     name: 'inputTime',
+                //     format : 'Y-m-d',
+                //     editable : false,
+                //     // value:Ext.util.Format.date(Ext.Date.add(new Date(),Ext.Date.MONTH,-1),"Y-m-d")
+                //     value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
+                // },
                 {
                     xtype : 'button',
                     iconAlign : 'center',
@@ -291,7 +291,7 @@ Ext.define('preprocess.preprocess_Inbound', {
                                 projectId : projectId,
                                 buildingId : buildingId,
                                 operator: Ext.getCmp('operator').getValue(),
-                                inputTime:Ext.getCmp('inputTime').getValue(),
+                                // inputTime:Ext.getCmp('inputTime').getValue(),
                             },
                             success : function(response) {
                                 console.log("12312312312321",response.responseText);

@@ -6,8 +6,6 @@ Ext.define('material.material_Receive',{
     layout:'fit',
     title: '原材料领料',
 
-
-
     initComponent: function(){
         var itemsPerPage = 50;
         var tableName="material";
@@ -296,7 +294,7 @@ Ext.define('material.material_Receive',{
                 itemdblclick: function(me, record, item, index,rowModel){
                     var select = record.data;
                     console.log("select--======",select);
-                    var requisitionOrderId = select.requisitionOrderId;
+                    var requisitionOrderId = select.requisitionOrderId;//领料单号
                     var projectId = select.projectId;
 
                     //var pickNumber = select.
@@ -356,31 +354,33 @@ Ext.define('material.material_Receive',{
                     toolbar_specific_pickList.items.items[0].setValue(requisitionOrderId);
                     toolbar_specific_pickList.items.items[1].setValue(projectId);
 
+                    console.log("--------------requisitionOrderId:",requisitionOrderId)
                     // //弹框
                     // win_picklistInfo_material_outbound.show();
-
-                    // //添加一个tabPanel
                     var tabPanel = Ext.getCmp('pick_tabpanel');
-                    console.log("--------------------------->1",tabPanel);
-                    var newPanel = panel_specific;
-                    var myPanel = tabPanel.items[0];
-                    console.log("--------------------------->2",myPanel);
-                    if(myPanel==null){
-                        tabPanel.add(newPanel).show();
+                    var tabs = Ext.getCmp('myPanel');
+                    if(!tabs){
+                        var t = tabPanel.add({
+                            // title:requisitionOrderId+'领料单明细',
+                            title:'明细',
+                            id:'myPanel',
+                            layout:'fit',
+                            items:[panel_specific],
+                            closable:true,
+                            closeAction:'hide',
+                            autoDestroy: true,
+                        });
+                        tabPanel.setActiveTab(t);
                     }
-                    // else{
-                    //     // tabPanel.unhideTabStripItem(myPanel);
-                    // }
-                    // var tab = tabPanel.add(
-                    //         // grid__query_pickList_specific,
-                    //         panel_specific
-                    //     );
-                    // tabPanel.setActiveTab(tab);
+                    else{
+                        tabs.show();
+                    }
 
                     //关闭
                     tabPanel.on('beforeremove', function(tabs, tab) {
-                        console.log("beforeremove----",tabs)
+                        // console.log("beforeremove----",tabs)
                         // tabPanel.remove(tab);
+                        // Ext.getCmp("pick_tabpanel").remove(Ext.getCmp("myPanel"));
                         return false;
                     });
                 }
@@ -1001,10 +1001,25 @@ Ext.define('material.material_Receive',{
             ],
         });
 
+        // function conrirmTab(e) {
+        //     Ext.MessageBox.show({
+        //         title:'操作确认',
+        //         msg:'您确定要退出  <b>'+e.title+'</b> 么？',
+        //         buttons:Ext.MessageBox.YESNO,
+        //         icon:Ext.MessageBox.QUESTION,
+        //         fn:function(btn, text) {
+        //             if(btn=='yes') {
+        //                 // Ext.getCmp('pick_tabpanel').remove(e);//remove(tab,true)
+        //                 Ext.getCmp('pick_tabpanel').remove(e,true)
+        //             }
+        //         }
+        //     });
+        //     return false;
+        // }
+
         //领料的具体材料信息Panel
         var panel_specific = Ext.create('Ext.panel.Panel',{
-            id:'myPanel',
-            title: '领料单明细',
+            // title: '领料单材料详情',
             //dock: 'bottom',
             layout:{
                 type:'vbox',
@@ -1012,9 +1027,9 @@ Ext.define('material.material_Receive',{
             },
             width:'100%',
             height:500,
-            closable:true,
-            closeAction : 'hide',
-            autoDestroy: false,
+            // closable:true,
+            // closeAction : 'hide',
+            // autoDestroy: false,
             items:[
                 grid__query_pickList_specific,
                 {
@@ -1054,6 +1069,9 @@ Ext.define('material.material_Receive',{
                 },
                 grid2,
             ],
+            // listeners:{
+            //     beforeclose: conrirmTab
+            // }
         });
 
         //领料单查询信息 panel
@@ -1067,6 +1085,7 @@ Ext.define('material.material_Receive',{
             width:'100%',
             height:'100%',
             items:[grid1],
+
         });
 
         // this.tbar = toolbar;
