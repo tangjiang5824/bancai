@@ -157,16 +157,16 @@ Ext.define('preprocess.preprocess_Receive',{
             id : "toolbar",
             items: [tableList,
                 //单号
-                {
-                    xtype: 'textfield',
-                    margin : '0 10 0 0',
-                    fieldLabel: '单号',
-                    id :'picklistNum',
-                    width: 180,
-                    labelWidth: 30,
-                    name: 'picklistNum',
-                    value:"",
-                },
+                // {
+                //     xtype: 'textfield',
+                //     margin : '0 10 0 0',
+                //     fieldLabel: '单号',
+                //     id :'picklistNum',
+                //     width: 180,
+                //     labelWidth: 30,
+                //     name: 'picklistNum',
+                //     value:"",
+                // },
                 {
                     fieldLabel : '创建人',
                     xtype : 'combo',
@@ -228,6 +228,10 @@ Ext.define('preprocess.preprocess_Receive',{
                             params : {
                                 proejctId:Ext.getCmp('projectName').getValue(),
                                 //proejctId:'1',
+                                operator:Ext.getCmp('operator').getValue(),
+                                timeStart:Ext.getCmp('startTime').getValue(),
+                                timeEnd:Ext.getCmp('endTime').getValue(),
+
                             }
                         });
                     }
@@ -264,7 +268,8 @@ Ext.define('preprocess.preprocess_Receive',{
                 {
                     dataIndex:'time',
                     text:'创建时间',
-                    flex :1
+                    flex :1,
+                    renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')
                 },
                 {
                     dataIndex:'projectName',
@@ -361,12 +366,12 @@ Ext.define('preprocess.preprocess_Receive',{
                     // //弹框
                     // win_picklistInfo_preprocess_outbound.show();
                     var tabPanel = Ext.getCmp('preprocess_pick_tabpanel');
-                    var tabs = Ext.getCmp('myPanel');
+                    var tabs = Ext.getCmp('pre_myPanel');
                     if(!tabs){
                         var t = tabPanel.add({
                             // title:requisitionOrderId+'领料单明细',
                             title:'明细',
-                            id:'myPanel',
+                            id:'pre_myPanel',
                             layout:'fit',
                             items:[panel_specific],
                             closable:true,

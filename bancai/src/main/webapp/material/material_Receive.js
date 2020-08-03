@@ -157,16 +157,16 @@ Ext.define('material.material_Receive',{
             id : "toolbar",
             items: [tableList,
                 //单号
-                {
-                    xtype: 'textfield',
-                    margin : '0 10 0 0',
-                    fieldLabel: '单号',
-                    id :'picklistNum',
-                    width: 180,
-                    labelWidth: 30,
-                    name: 'picklistNum',
-                    value:"",
-                },
+                // {
+                //     xtype: 'textfield',
+                //     margin : '0 10 0 0',
+                //     fieldLabel: '单号',
+                //     id :'picklistNum',
+                //     width: 180,
+                //     labelWidth: 30,
+                //     name: 'picklistNum',
+                //     value:"",
+                // },
                 {
                     fieldLabel : '创建人',
                     xtype : 'combo',
@@ -228,6 +228,9 @@ Ext.define('material.material_Receive',{
                             params : {
                                 proejctId:Ext.getCmp('projectName').getValue(),
                                 //proejctId:'1',
+                                operator:Ext.getCmp('operator').getValue(),
+                                timeStart:Ext.getCmp('startTime').getValue(),
+                                timeEnd:Ext.getCmp('endTime').getValue(),
                             }
                         });
                     }
@@ -264,7 +267,8 @@ Ext.define('material.material_Receive',{
                 {
                     dataIndex:'time',
                     text:'创建时间',
-                    flex :1
+                    flex :1,
+                    renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')
                 },
                 {
                     dataIndex:'projectName',
