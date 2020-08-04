@@ -85,7 +85,6 @@ public class AllExcelService extends BaseService {
 		//新增JPA时改动
 		MaterialInfo material=null;
 //		System.out.println(dataList);
-		if (tablename.equals("material_store")) {
 			for (int i = 0; i < dataList.size(); i++) {
 				String materialName = dataList.get(i).get("materialName") + "";
 	//			String specification = dataList.get(i).get("specification") + "";
@@ -142,13 +141,6 @@ public class AllExcelService extends BaseService {
 
 				if(flag) materialstoredao.save(store);
 
-				//修改插入到数据库里面的datalist
-
-
-
-
-
-
 				logdetail.setIsrollback(0);
 				logdetail.setMaterialLog(log);
 				logdetail.setMaterialInfo(material);
@@ -156,39 +148,51 @@ public class AllExcelService extends BaseService {
 				if (flag) logdetail.setMaterialStore(store);
 				mateialLogdetaildao.save(logdetail);
 
-				//原材料入库
-//				String sql_insert_material="insert into material_store (materialId,specification,inventoryUnit,count,countUse,warehouseName,unitWeight,totalWeight,description,uploadId) values (?,?,?,?,?,?,?,?,?,?)";
-//				int store_id= insertProjectService.insertDataToTable(sql_insert_material,materialId,specification,inventoryUnit,count,count,warehouseName,unitWeight,totalWeight,description,userid);
-//				//后面为log记录
-//				String sql_log_detail = "insert into material_logdetail (materialName,materialId,count,specification,materiallogId,materialstoreId,isrollback) values (?,?,?,?,?,?,?)";
-//				boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_log_detail,materialName,materialId,count,specification,String.valueOf(main_key),store_id+"","0");
 			}
+		result.dataList = dataList;
+		result.success = true;
+		return result;
+
+	}
+	/**
+	 * 原材料上传数据(先上传解析返回后点确定后入库)
+	 *
+	 * @param inputStream
+	 * @param
+	 * @return
+	 * @throws IOException
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public UploadDataResult uploadExcelData(InputStream inputStream) throws IOException {
+		DataList dataList;
+		UploadDataResult result = new UploadDataResult();
+		Excel excel = new Excel(inputStream);
+		dataList = excel.readExcelContent();
+		DataList errorlist=new DataList();
+		//新增JPA时改动
+//		System.out.println(dataList);
+		for (int i = 0; i < dataList.size(); i++) {
+			int index=-1;
+			String materialName = dataList.get(i).get("原材料名") + "";
+			List<MaterialInfo> materialList=materialinfodao.findByMaterialName(materialName);
+			if(materialList.size()!=1) {
+				errorlist.add(dataList.get(i));
+				index=errorlist.size()-1;
+				if(materialList.size()>1){
+					errorlist.get(index).put("错误原因","存在多个相同原材料名； ");
+				}else {
+					//materialList.size()<1
+					if(materialName.equals("null")){
+						errorlist.get(index).put("错误原因","原材料名为空； ");
+					}else
+					errorlist.get(index).put("错误原因","系统中不存在该原材料，请在原材料基础信息中进行添加； ");
+				}
+			}
+			String warehouseName=dataList.get(i).get("仓库名称")+"";
+			String sql="select * from storeposition where ";
+
+
 		}
-//		else if (tablename.equals("oldpanel")) {
-//			for (int i = 0; i < dataList.size(); i++) {
-//				String oldpanelTypeName = dataList.get(i).get("oldpanelType") + "";
-//				String sql_trans = "select oldpanelType from oldpaneltype where oldpanelTypeName = ?";
-//				typeList = queryService.query(sql_trans,oldpanelTypeName.toUpperCase());
-//				if(typeList.isEmpty())
-//				{
-//					result.setErrorCode(2);
-//					return result;
-//				} else {
-//					String oldpanelType = typeList.get(0).get("oldpanelType") + "";
-//					dataList2.get(i).put("oldpanelType",oldpanelType);
-//					String countStore = dataList.get(i).get("countStore") + "";
-//					dataList2.get(i).put("countUse",countStore);
-////					System.out.println(dataList2);
-//					String oldpanelName = dataList.get(i).get("oldpanelName") + "";
-//					String specification = dataList.get(i).get("specification")+"";
-//					String sql_log_detail = "insert into oldpanellogdetail (oldpanelName,count,specification,oldpanellogId) values (?,?,?,?)";
-////					boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_log_detail,oldpanelName,countStore,specification,String.valueOf(main_key));
-//				}
-//			}
-//		}
-		// 插入数据
-		//log.debug("materialtype= "+materialtype);
-		//boolean upload = uploadData(dataList2,userid,tablename);
 		result.dataList = dataList;
 		result.success = true;
 		return result;
