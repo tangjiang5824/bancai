@@ -201,6 +201,11 @@ public class DesignlistService extends BaseService{
     }
 
 
+    @Transactional
+    public DataList getDesignlistByPosition(String projectId,String buildingId,String position){
+        return queryService.query("select * from designlist_product_info_view where projectId=? and buildingId=? and position=?"
+                ,projectId,buildingId,position);
+    }
 
     @Transactional
     public void saveDepartmentWorkerData(String id, String departmentId, String workerName,String tel,boolean exist){
