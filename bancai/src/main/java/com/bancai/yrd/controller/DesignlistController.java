@@ -495,9 +495,10 @@ public class DesignlistController {
     public WebResponse backStoreUploadExcel(MultipartFile uploadFile,String type) {
         WebResponse response = new WebResponse();
         try {
-            if(type==null){
+            if(type==null||type.trim().length()==0){
                 response.setSuccess(false);
                 response.setErrorCode(100); //退料类型错误
+                response.setMsg("未选择退料类型!");
                 return response;
             }
             UploadDataResult result = new UploadDataResult();
@@ -515,6 +516,7 @@ public class DesignlistController {
                 default:
                     response.setSuccess(false);
                     response.setErrorCode(100); //退料类型错误
+                    response.setMsg("退料类型错误!");
                     return response;
             }
             response.setSuccess(result.success);
