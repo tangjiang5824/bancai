@@ -536,6 +536,7 @@ public class DesignlistController {
             }
             response.setSuccess(result.success);
             response.setErrorCode(result.errorCode);
+            response.setMsg("存在错误信息");
             response.put("value",result.dataList);
             response.put("totalCount", result.dataList.size());
         } catch (Exception e) {
