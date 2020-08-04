@@ -246,7 +246,7 @@ Ext.define('project.project_create_backlist', {
 		var errorlistStore = Ext.create('Ext.data.Store',{
 			id: 'errorlistStore',
 			autoLoad: true,
-			fields: ['productName','position'],
+			fields: [],
 			//pageSize: itemsPerPage, // items per page
 			data:[],
 			editable:false,
@@ -260,40 +260,46 @@ Ext.define('project.project_create_backlist', {
 			dock: 'bottom',
 			columns:[
 				{
-					// dataIndex : '序号',
-					name : '序号',
+					dataIndex : '序号',
 					text : '序号',
-					width : 60,
-					value:'99',
-					renderer:function(value,metadata,record,rowIndex){
-						return　record_start_pop　+　1　+　rowIndex;
-					}
+					width : "80",
+					flex:1
+					// renderer:function(value,metadata,record,rowIndex){
+					// 	return　record_start_pop　+　1　+　rowIndex;
+					// }
 				},
 				{
-					text: '产品名称',
-					dataIndex: 'productName',
+					text: '品名',
+					dataIndex: '品名',
 					flex :1,
 					width:"80"
 				},
 				{
-					text: '位置',
-					dataIndex: 'position',
+					text: '退料数量',
+					dataIndex: '退料数量',
 					flex :1,
 					width:"80"
 				},
 				{
-					text: '产品名',
-					dataIndex: 'productName',
+					text: '收料仓库',
+					dataIndex: '收料仓库',
 					flex :1,
 					width:"80"
 				},
 				{
-					text: '错误原因',
+					text: '退料仓库',
+					dataIndex: '退料仓库',
 					flex :1,
-					dataIndex: 'errorCode',
-					renderer: function (value) {
-						return designlist.errorcode.type[value].name; // key-value
-					},
+					width:"80"
+				},
+				{
+					text: '备注',
+					dataIndex: '备注',
+					flex :1,
+					// dataIndex: 'errorCode',
+					// renderer: function (value) {
+					// 	return designlist.errorcode.type[value].name; // key-value
+					// },
 				}
 				//fields:['oldpanelId','oldpanelName','count'],specification
 
@@ -427,13 +433,6 @@ Ext.define('project.project_create_backlist', {
 												// buildingpositionId:positionId,
 											},
 											success : function(exceluploadform,response, action) {
-												var response1 = action;
-												console.log("response=========================>",response)
-												Ext.MessageBox.alert("提示", "上传成功!");
-												//上传成功
-												//回显
-												console.log(response.result['value']);
-												console.log("response1=========================>")
 												Ext.MessageBox.alert("提示", "上传成功!");
 												//重新加载数据
 												backlistStore.loadData(response.result['value']);
@@ -445,6 +444,19 @@ Ext.define('project.project_create_backlist', {
 												}else if(ob.errorCode==1000){
 													Ext.MessageBox.alert("错误", "上传失败！");
 												}else if(ob.errorCode==200){
+													Ext.Msg.show({
+														title: '提示',
+														message: '匹配失败，产品位置重复或品名不合法！\n是否查看具体错误数据',
+														buttons: Ext.Msg.YESNO,
+														icon: Ext.Msg.QUESTION,
+														fn: function (btn) {
+															if (btn === 'yes') {
+																//点击确认，显示重复的数据
+																errorlistStore.loadData(ob.value);
+																win_errorInfo_outbound.show();
+															}
+														}
+													});
 
 												}
 											}
@@ -775,33 +787,12 @@ Ext.define('project.project_create_backlist', {
 								var errorCode = jsonobj.errorCode;
 								var errorCount = jsonobj.errorCount;
 								if(success == false){
-									if(errorCode==100)
-
-
-									if(errorCode == 150){
-										//位置重复或品名不合法
-
-										// Ext.MessageBox.alert("提示","匹配失败，产品位置重复或品名不合法！请重新导入" );
-										Ext.Msg.show({
-											title: '提示',
-											message: '匹配失败，产品位置重复或品名不合法！\n是否查看具体错误数据',
-											buttons: Ext.Msg.YESNO,
-											icon: Ext.Msg.QUESTION,
-											fn: function (btn) {
-												if (btn === 'yes') {
-													//点击确认，显示重复的数据
-													errorlistStore.loadData(errorList);
-													win_errorInfo_outbound.show();
-												}
-											}
-										});
+									if(errorCode==1000){
+										Ext.MessageBox.alert("提示","未知错误！请联系管理员" );
+									}else {
+										Ext.MessageBox.alert("提示",jsonobj.Msg);
 									}
-									else if(errorCode == 300){
-										Ext.MessageBox.alert("提示","产品匹配失败！请重新导入" );
-									}
-									else if(errorCode == 1000){
-										Ext.MessageBox.alert("提示","匹配失败，未知错误！请重新导入" );
-									}
+
 								}else{
 									Ext.MessageBox.alert("提示","匹配成功" );
 								}
