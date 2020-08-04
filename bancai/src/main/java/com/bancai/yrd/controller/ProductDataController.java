@@ -53,6 +53,7 @@ public class ProductDataController {
             if(jsonArray.length()==0){
                 response.setSuccess(false);
                 response.setErrorCode(100); //提交的s为空
+                response.setMsg("提交的数据为空");
                 return response;
             }
             DataList errorList = new DataList();
@@ -86,6 +87,7 @@ public class ProductDataController {
                 response.setErrorCode(200);//提交的s存在错误内容
                 response.put("errorList",errorList);
                 response.put("errorCount",errorList.size());
+                response.setMsg("提交的数据存在错误内容");
                 return response;
             }
             boolean uploadResult = productDataService.productAddNewFormat(insertList,userId);
@@ -111,6 +113,7 @@ public class ProductDataController {
             if(jsonArray.length()==0){
                 response.setSuccess(false);
                 response.setErrorCode(100); //提交的s为空
+                response.setMsg("提交的数据为空");
                 return response;
             }
             DataList errorList = new DataList();
@@ -160,6 +163,7 @@ public class ProductDataController {
                 response.setErrorCode(200);//提交的s存在错误内容
                 response.put("errorList",errorList);
                 response.put("errorCount",errorList.size());
+                response.setMsg("提交的数据存在错误内容");
                 return response;
             }
             boolean uploadResult = productDataService.productAddNewInfo(insertList,userId);
@@ -218,6 +222,7 @@ public class ProductDataController {
             if(jsonArray.length()==0){
                 response.setSuccess(false);
                 response.setErrorCode(100); //提交的s为空
+                response.setMsg("提交的数据为空");
                 return response;
             }
             DataList errorList = new DataList();
@@ -250,6 +255,7 @@ public class ProductDataController {
                 response.setErrorCode(200);//提交的s存在错误内容
                 response.put("errorList",errorList);
                 response.put("errorCount",errorList.size());
+                response.setMsg("提交的数据存在错误内容");
                 return response;
             }
             System.out.println("[===checkBackproductUploadData==Complete=NoError]");
@@ -303,6 +309,7 @@ public class ProductDataController {
             if(jsonArray.length()==0){
                 response.setSuccess(false);
                 response.setErrorCode(100); //提交的s为空
+                response.setMsg("提交的数据为空");
                 return response;
             }
             DataList errorList = new DataList();
@@ -335,6 +342,7 @@ public class ProductDataController {
                 response.setErrorCode(200);//提交的s存在错误内容
                 response.put("errorList",errorList);
                 response.put("errorCount",errorList.size());
+                response.setMsg("提交的数据存在错误内容");
                 return response;
             }
             System.out.println("[===checkPreprocessUploadData==Complete=NoError]");
