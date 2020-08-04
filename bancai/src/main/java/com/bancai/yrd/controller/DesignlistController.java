@@ -342,10 +342,13 @@ public class DesignlistController {
      * 查询领料单
      * */
     @RequestMapping("/order/queryRequisitionOrder.do")
-    public WebResponse queryRequisitionOrder(String projectId, String operator, String timeStart, String timeEnd,Integer start,Integer limit){
+    public WebResponse queryRequisitionOrder(String projectId, String operator,String requisitionOrderId, String timeStart, String timeEnd,Integer start,Integer limit){
         mysqlcondition c=new mysqlcondition();
         if (null!=projectId&&projectId.length() != 0) {
             c.and(new mysqlcondition("projectId", "=", projectId));
+        }
+        if (null!=requisitionOrderId&&requisitionOrderId.length() != 0) {
+            c.and(new mysqlcondition("requisitionOrderId", "=", requisitionOrderId));
         }
         if (null!=operator&&operator.length() != 0) {
             c.and(new mysqlcondition("operator", "=", operator));
@@ -579,10 +582,21 @@ public class DesignlistController {
      * 查询退料单
      * */
     @RequestMapping("/backStore/queryReturnOrder.do")
-    public WebResponse queryReturnOrder(String projectId, String operator, String timeStart, String timeEnd,Integer start,Integer limit){
+    public WebResponse queryReturnOrder(String type,String projectId, String operator,String returnOrderId, String timeStart, String timeEnd,Integer start,Integer limit){
         mysqlcondition c=new mysqlcondition();
+        if (null!=type&&type.length() != 0) {
+            c.and(new mysqlcondition("type", "=", type));
+        }else {
+            WebResponse webResponse = new WebResponse();
+            webResponse.setSuccess(false);
+            webResponse.setErrorCode(100);//未获取到类型
+            return webResponse;
+        }
         if (null!=projectId&&projectId.length() != 0) {
             c.and(new mysqlcondition("projectId", "=", projectId));
+        }
+        if (null!=returnOrderId&&returnOrderId.length() != 0) {
+            c.and(new mysqlcondition("id", "=", returnOrderId));
         }
         if (null!=operator&&operator.length() != 0) {
             c.and(new mysqlcondition("operator", "=", operator));
@@ -612,6 +626,53 @@ public class DesignlistController {
         }
         return queryService.queryDataPage(start, limit, c, "return_order_detail");
     }
+
+    /*
+     * 确认退料完成
+     * */
+    @RequestMapping(value = "/order/finishReturnOrder.do")
+    public WebResponse returnOrderFinish(String s, String returnOrderId, String projectId, String operator, HttpSession session) throws JSONException {
+        WebResponse response = new WebResponse();
+        try {
+            JSONArray jsonArray = new JSONArray(s);
+            if(jsonArray.length()==0){
+                response.setSuccess(false);
+                response.setErrorCode(100);//接收到的s为空
+                return response;
+            }
+            if((returnOrderId==null)||(returnOrderId.length()==0)||(projectId==null)||(projectId.length()==0)){
+                response.setSuccess(false);
+                response.setErrorCode(200);//未收到退料单号或项目ID
+                return response;
+            }
+            if((operator==null)||(operator.length()==0)){
+                response.setSuccess(false);
+                response.setErrorCode(300);//未选择领料人
+                return response;
+            }
+            String userId = (String)session.getAttribute("userid");
+            DataList errorList = designlistService.checkFinishReturnOrder(jsonArray);
+            if(errorList.size()!=0){
+                response.put("errorList",errorList);
+                response.put("errorNum",errorList.size());
+                response.setSuccess(false);
+                response.setErrorCode(400);//存在错误输入
+                return response;
+            }
+//            designlistService.finishReturnOrder(jsonArray,returnOrderId,projectId,operator,userId);
+            response.setSuccess(true);
+        } catch (Exception e) {
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误
+            response.setMsg(e.getMessage());
+        }
+        return response;
+    }
+
+
+
+
+
 
 
 
