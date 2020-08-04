@@ -798,8 +798,16 @@ public class DesignlistService extends BaseService{
             //order count reduce
             //store log detail
             //order log detail
-            backStoreCountUpdate(store,storeId,count);
-            updateReturnOrderDetailCountReturn(returnOrderDetailId,count);
+            if(!storeId.equals("0")){
+                backStoreCountUpdate(store,storeId,count);
+                updateReturnOrderDetailCountReturn(returnOrderDetailId,count);
+            }else {
+                String totalArea =  jsonTemp.get("totalArea")+"";
+                String totalWeight =  jsonTemp.get("totalWeight")+"";
+                String warehouseName = jsonTemp.get("warehouseName")+"";
+                storeId = String.valueOf(backStoreCountInsert(store,count,infoId,totalArea,totalWeight,warehouseName));
+                updateReturnOrderDetailCountReturnAndStoreId(returnOrderDetailId,count,storeId);
+            }
             backStoreAddLogDetail(type,count,backWarehouseName,remark,infoId,storeId,String.valueOf(storeLogId));
             b=b&addReturnOrderLogDetail(String.valueOf(returnOrderLogId),returnOrderDetailId,count);
         }
@@ -814,8 +822,18 @@ public class DesignlistService extends BaseService{
         jo.update("update " + store + "_store set countStore=countStore+\"" + count +
                 "\",countUse=countUse+\""+count+"\" where id=\"" + storeId + "\"");
     }
+    private int backStoreCountInsert(String store,String count,String infoId,String totalArea,String totalWeight,String warehouseName){
+        return insertProjectService.insertDataToTable("insert into "+store+"_store ("+store+
+                "Id,countUse,countStore,totalArea,totalWeight,warehouseName) values (?,?,?,?,?,?)"
+                ,infoId,count,count,totalArea,totalWeight,warehouseName);
+
+    }
     private void updateReturnOrderDetailCountReturn(String detailId,String count){
         jo.update("update return_order_detail set countReturn=countReturn-\""+Double.parseDouble(count)+ "\" where id=\""+detailId+"\"");
+    }
+    private void updateReturnOrderDetailCountReturnAndStoreId(String detailId,String count,String storeId){
+        jo.update("update return_order_detail set countReturn=countReturn-\""+Double.parseDouble(count)+ "\",storeId=\""+storeId
+                +"\" where id=\""+detailId+"\"");
     }
     private boolean backStoreAddLogDetail(String type,String count,String backWarehouseName, String remark,
                                               String infoId, String storeId, String storeLogId){
