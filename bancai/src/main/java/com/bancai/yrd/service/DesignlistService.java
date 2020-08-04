@@ -664,8 +664,8 @@ public class DesignlistService extends BaseService{
     @Transactional
     public boolean createReturnOrder(JSONArray jsonArray,String type,String projectId,String buildingId,String description,String operator,String userId){
         boolean b = true;
-        int orderId = createReturnOrderBackId(type,projectId,buildingId,description,operator,userId);
-        int logId = createReturnOrderLogBackId(String.valueOf(orderId),userId,operator);
+        int orderId = addReturnOrderBackId(type,projectId,buildingId,description,operator,userId);
+        int logId = addReturnOrderLogBackId(String.valueOf(orderId),userId,operator,"1");
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonTemp = jsonArray.getJSONObject(i);
             String storeId = jsonTemp.get("storeId")+"";
@@ -679,29 +679,29 @@ public class DesignlistService extends BaseService{
             String totalArea = jsonTemp.get("totalArea")+"";
             String inventoryUnit = jsonTemp.get("inventoryUnit")+"";
             String remark = jsonTemp.get("remark")+"";
-            int detailId = createReturnOrderDetailBackId(String.valueOf(orderId),storeId,name,backWarehouseName,warehouseName,count,unitWeight,unitArea,
+            int detailId = addReturnOrderDetailBackId(String.valueOf(orderId),storeId,name,backWarehouseName,warehouseName,count,unitWeight,unitArea,
                     totalWeight,totalArea,inventoryUnit,remark);
-            b = b&createReturnOrderLogDetail(String.valueOf(logId),String.valueOf(detailId),count);
+            b = b&addReturnOrderLogDetail(String.valueOf(logId),String.valueOf(detailId),count);
         }
         return b;
     }
 
-    private int createReturnOrderBackId(String type,String projectId,String buildingId,String description,String operator,String userId){
+    private int addReturnOrderBackId(String type,String projectId,String buildingId,String description,String operator,String userId){
         return insertProjectService.insertDataToTable("insert into return_order (type,projectId,buildingId,description,operator,userId,status,time) values (?,?,?,?,?,?,?,?)"
                 , type,projectId,buildingId,description,operator,userId,"0",analyzeNameService.getTime());
     }
-    private int createReturnOrderLogBackId(String orderId,String userId,String operator){
+    private int addReturnOrderLogBackId(String orderId,String userId,String operator,String type){
         return insertProjectService.insertDataToTable("insert into return_order_log (returnOrderId,userId,operator,type,time) values (?,?,?,?,?)"
-                , orderId,userId,operator,"1",analyzeNameService.getTime());
+                , orderId,userId,operator,type,analyzeNameService.getTime());
     }
-    private int createReturnOrderDetailBackId(String orderId,String storeId,String name,String backWarehouseName,String warehouseName,String count,
+    private int addReturnOrderDetailBackId(String orderId,String storeId,String name,String backWarehouseName,String warehouseName,String count,
                                               String unitWeight ,String unitArea,String totalWeight,String totalArea,String inventoryUnit, String remark){
         return insertProjectService.insertDataToTable("insert into return_order_detail (returnOrderId,storeId,name,backWarehouseName,warehouseName" +
                 ",countAll,countReturn,unitWeight,unitArea,totalWeight,totalArea,inventoryUnit,remark) values (?,?,?,?,?,?,?,?,?,?,?,?,?)",
                 orderId,storeId,name,backWarehouseName,warehouseName,count,count,unitWeight,unitArea,
                 totalWeight,totalArea,inventoryUnit,remark);
     }
-    private boolean createReturnOrderLogDetail(String logId,String detailId,String count){
+    private boolean addReturnOrderLogDetail(String logId,String detailId,String count){
         return insertProjectService.insertIntoTableBySQL("insert into return_order_logdetail (returnOrderLogId,returnOrderDetailId,count) values (?,?,?)",
                 logId,detailId,count);
     }
@@ -757,92 +757,92 @@ public class DesignlistService extends BaseService{
         return errorList;
     }
 
-//    /**
-//     * 退料单内容退料
-//     */
-//    @Transactional
-//    public boolean finishReturnOrder(JSONArray jsonArray,String type, String returnOrderId, String projectId,String buildingId,String operator, String userId){
-//        String store = "";
-//        boolean b = true;
-//        switch (type){
-//            case "1":
-//                store = "backproduct";
-//                break;
-//            case "2":
-//                store = "preprocess";
-//                break;
-//            case "3":
-//                store = "oldpanel";
-//                break;
-//            case "4":
-//                store = "material";
-//                break;
-//        }
-//        //order log
-//        //store log
-//        int returnOrderLogId = createReturnOrderLogBackId("2",returnOrderId,userId,operator);
-//        int storeLogId = outboundStoreAddLogBackId(store,userId,operator,projectId);
-//        for (int i = 0; i < jsonArray.length(); i++) {
-//            JSONObject jsonTemp = jsonArray.getJSONObject(i);
-//            String requisitionOrderDetailId=jsonTemp.get("requisitionOrderDetailId")+"";
-//            String count = (jsonTemp.get("count")+"").trim();
-//            String storeId =  jsonTemp.get("storeId")+"";
-//            String infoId = jsonTemp.get("infoId")+"";
-//            String buildingId =  jsonTemp.get("buildingId")+"";
-//            String buildingpositionId = jsonTemp.get("buildingpositionId")+"";
-//            //store count reduce
-//            //order count reduce
-//            //store log detail
-//            //order log detail
-//            outboundStoreCountUpdate(store,storeId,count);
-//            outboundRequisitionCountUpdate(requisitionOrderDetailId,count);
-//            outboundStoreAddLogDetail(type,count,buildingId,buildingpositionId,infoId,storeId,String.valueOf(storeLogId));
-//            outboundRequisitionAddLogDetail(String.valueOf(requisitionOrderLogId),requisitionOrderDetailId,count);
-//        }
-//        return b;
-//    }
-//    private int outboundStoreAddLogBackId1(String store, String userId, String operator,String projectId){
-//        return insertProjectService.insertDataToTable("insert into " + store +
-//                        "_log (type,time,userId,operator,projectId,isrollback) values (?,?,?,?,?,?)",
-//                "1",analyzeNameService.getTime(),userId,operator,projectId,"1");
-//    }
-//    private void outboundStoreCountUpdate1(String store, String storeId, String count){
-//        jo.update("update " + store + "_store set countStore=countStore-\"" + count + "\" where id=\"" + storeId + "\"");
-//    }
-//    private void outboundRequisitionCountUpdate1(String requisitionOrderDetailId,String count){
-//        jo.update("update requisition_order_detail set countRec=countRec-\""+count+
-//                "\" where id=\""+requisitionOrderDetailId+"\"");
-//    }
-//    private boolean outboundStoreAddLogDetail1(String type,String count,String buildingId, String buildingpositionId,
-//                                              String infoId, String storeId, String storeLogId){
-//        String store = "";
-//        String info = "";
-//        switch (type){
-//            case "1":
-//                store = "backproduct";
-//                info = "product";
-//                break;
-//            case "2":
-//                store = "preprocess";
-//                info = "product";
-//                break;
-//            case "3":
-//                store = "oldpanel";
-//                info = "oldpanel";
-//                break;
-//            case "4":
-//                store = "material";
-//                info = "material";
-//                break;
-//        }
-//        return insertProjectService.insertIntoTableBySQL("insert into "+store+"_logdetail (isrollback,count,buildingId,buildingpositionId,"+
-//                        info+"Id,"+store+"storeId,"+store+"logId) values (?,?,?,?,?,?,?)",
-//                "1",count,buildingId,buildingpositionId,infoId,storeId,storeLogId);
-//    }
-//    private boolean outboundRequisitionAddLogDetail1(String requisitionOrderLogId,String requisitionOrderDetailId,String count){
-//        return insertProjectService.insertIntoTableBySQL("insert into requisition_order_logdetail (requisitionOrderLogId,requisitionOrderDetailId,count) values (?,?,?)",
-//                requisitionOrderLogId,requisitionOrderDetailId,count);
-//    }
+    /**
+     * 退料单内容退料
+     */
+    @Transactional
+    public boolean finishReturnOrder(JSONArray jsonArray,String type, String returnOrderId,String operator, String userId){
+        String store = "";
+        boolean b = true;
+        DataRow orderRow = queryService.query("select * from return_order where id=?",returnOrderId).get(0);
+        String projectId = orderRow.get("projectId").toString();
+        String buildingId = orderRow.get("buildingId").toString();
+        String description = orderRow.get("description").toString();
+        switch (type){
+            case "1":
+                store = "backproduct";
+                break;
+            case "2":
+                store = "preprocess";
+                break;
+            case "3":
+                store = "oldpanel";
+                break;
+            case "4":
+                store = "material";
+                break;
+        }
+        //order logszer
+        //store log
+        int returnOrderLogId = addReturnOrderLogBackId(returnOrderId,userId,operator,"2");
+        int storeLogId = backStoreAddLogBackId(store,userId,operator,projectId,buildingId,description);
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonTemp = jsonArray.getJSONObject(i);
+            String returnOrderDetailId=jsonTemp.get("returnOrderDetailId")+"";
+            String count = (jsonTemp.get("count")+"").trim();
+            String storeId =  jsonTemp.get("storeId")+"";
+            String infoId = jsonTemp.get("infoId")+"";
+            String backWarehouseName = jsonTemp.get("backWarehouseName")+"";
+            String remark = jsonTemp.get("remark")+"";
+            //store count reduce
+            //order count reduce
+            //store log detail
+            //order log detail
+            backStoreCountUpdate(store,storeId,count);
+            updateReturnOrderDetailCountReturn(returnOrderDetailId,count);
+            backStoreAddLogDetail(type,count,backWarehouseName,remark,infoId,storeId,String.valueOf(storeLogId));
+            b=b&addReturnOrderLogDetail(String.valueOf(returnOrderLogId),returnOrderDetailId,count);
+        }
+        return b;
+    }
+    private int backStoreAddLogBackId(String store, String userId, String operator,String projectId,String buildingId,String description){
+        return insertProjectService.insertDataToTable("insert into " + store +
+                        "_log (type,time,userId,operator,projectId,buildingId,description,isrollback) values (?,?,?,?,?,?)",
+                "2",analyzeNameService.getTime(),userId,operator,projectId,buildingId,description,"1");
+    }
+    private void backStoreCountUpdate(String store, String storeId, String count){
+        jo.update("update " + store + "_store set countStore=countStore+\"" + count +
+                "\",countUse=countUse+\""+count+"\" where id=\"" + storeId + "\"");
+    }
+    private void updateReturnOrderDetailCountReturn(String detailId,String count){
+        jo.update("update return_order_detail set countReturn=countReturn-\""+Double.parseDouble(count)+ "\" where id=\""+detailId+"\"");
+    }
+    private boolean backStoreAddLogDetail(String type,String count,String backWarehouseName, String remark,
+                                              String infoId, String storeId, String storeLogId){
+        String store = "";
+        String info = "";
+        switch (type){
+            case "1":
+                store = "backproduct";
+                info = "product";
+                break;
+            case "2":
+                store = "preprocess";
+                info = "product";
+                break;
+            case "3":
+                store = "oldpanel";
+                info = "oldpanel";
+                break;
+            case "4":
+                store = "material";
+                info = "material";
+                break;
+        }
+        return insertProjectService.insertIntoTableBySQL("insert into "+store+"_logdetail (isrollback,count,"+
+                        info+"Id,"+store+"storeId,"+store+"logId,backWarehouseName,remark) values (?,?,?,?,?,?,?)",
+                "1",count,infoId,storeId,storeLogId,backWarehouseName,remark);
+    }
 
 
 
