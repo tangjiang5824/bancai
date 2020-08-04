@@ -361,10 +361,10 @@ public class DesignlistController {
             c.and(new mysqlcondition("operator", "=", operator));
         }
         if (null!=timeStart&&timeStart.length() != 0) {
-            c.and(new mysqlcondition("timeStart", ">=", timeStart));
+            c.and(new mysqlcondition("time", ">=", timeStart));
         }
         if (null!=timeEnd&&timeEnd.length() != 0) {
-            c.and(new mysqlcondition("timeEnd", "<=", timeEnd));
+            c.and(new mysqlcondition("time", "<=", timeEnd));
         }
         return queryService.queryDataPage(start, limit, c, "requisition_order_view");
     }
@@ -619,18 +619,18 @@ public class DesignlistController {
             c.and(new mysqlcondition("buildingId", "=", projectId));
         }
         if (null!=returnOrderId&&returnOrderId.length() != 0) {
-            c.and(new mysqlcondition("id", "=", returnOrderId));
+            c.and(new mysqlcondition("returnOrderId", "=", returnOrderId));
         }
         if (null!=operator&&operator.length() != 0) {
             c.and(new mysqlcondition("operator", "=", operator));
         }
         if (null!=timeStart&&timeStart.length() != 0) {
-            c.and(new mysqlcondition("timeStart", ">=", timeStart));
+            c.and(new mysqlcondition("time", ">=", timeStart));
         }
         if (null!=timeEnd&&timeEnd.length() != 0) {
-            c.and(new mysqlcondition("timeEnd", "<=", timeEnd));
+            c.and(new mysqlcondition("time", "<=", timeEnd));
         }
-        return queryService.queryDataPage(start, limit, c, "return_order");
+        return queryService.queryDataPage(start, limit, c, "return_order_view");
     }
 
     /*
@@ -648,14 +648,14 @@ public class DesignlistController {
             response.setMsg("未获取到退料单号");
             return response;
         }
-        return queryService.queryDataPage(start, limit, c, "return_order_detail");
+        return queryService.queryDataPage(start, limit, c, "return_order_detail_view");
     }
 
     /*
      * 确认退料完成
      * */
     @RequestMapping(value = "/order/finishReturnOrder.do")
-    public WebResponse returnOrderFinish(String s, String type,String returnOrderId, String projectId,String buildingId,String operator, HttpSession session) throws JSONException {
+    public WebResponse returnOrderFinish(String s, String type,String returnOrderId,String operator, HttpSession session) throws JSONException {
         WebResponse response = new WebResponse();
         try {
             JSONArray jsonArray = new JSONArray(s);
@@ -665,10 +665,10 @@ public class DesignlistController {
                 response.setMsg("接收到的数据为空");
                 return response;
             }
-            if((type==null)||(type.length()==0)||(returnOrderId==null)||(returnOrderId.length()==0)||(projectId==null)||(projectId.length()==0)||(buildingId==null)||(buildingId.length()==0)){
+            if((type==null)||(type.length()==0)||(returnOrderId==null)||(returnOrderId.length()==0)){
                 response.setSuccess(false);
-                response.setErrorCode(200);//未收到退料单号或项目楼栋ID
-                response.setMsg("未获取到类型或退料单号或项目或楼栋");
+                response.setErrorCode(200);//未收到退料单号
+                response.setMsg("未获取到类型或退料单号");
                 return response;
             }
             if((operator==null)||(operator.length()==0)){
@@ -687,8 +687,8 @@ public class DesignlistController {
                 response.setMsg("存在错误输入");
                 return response;
             }
-//            boolean result = designlistService.finishReturnOrder(jsonArray,type,returnOrderId,projectId,buildingId,operator,userId);
-//            response.setSuccess(result);
+            boolean result = designlistService.finishReturnOrder(jsonArray,type,returnOrderId,operator,userId);
+            response.setSuccess(result);
         } catch (Exception e) {
             response.setSuccess(false);
             response.setErrorCode(1000); //未知错误
