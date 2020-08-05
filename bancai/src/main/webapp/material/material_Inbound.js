@@ -541,7 +541,6 @@ Ext.define('material.material_Inbound', {
                 handler : function() {
 
                     var operator = Ext.getCmp('operator').value;
-                    var inputTime=Ext.getCmp('inputTime').value;
                     // 取出grid的字段名字段类型
                     var select = Ext.getCmp('addDataGrid').getStore()
                         .getData();
@@ -570,8 +569,21 @@ Ext.define('material.material_Inbound', {
                             operator:operator
                         },
                         success : function(response) {
-                            //var message =Ext.decode(response.responseText).showmessage;
-                            Ext.MessageBox.alert("提示","入库成功" );
+                            var res = response.responseText;
+                            var jsonobj = JSON.parse(res);//将json字符串转换为对象
+                            console.log(jsonobj);
+                            console.log("success--------------",jsonobj.success);
+                            var success = jsonobj.success;
+                            var Msg=jsonobj.msg;
+                            if(success == false){
+                                //错误输入
+                                Ext.MessageBox.alert("提示",Msg);
+
+                            }else{
+                                Ext.MessageBox.alert("提示","入库成功" );
+                                //刷新
+                                Ext.getCmp('uploadRecordsMaterial').getStore().remove();
+                            }
                         },
                         failure : function(response) {
                             //var message =Ext.decode(response.responseText).showmessage;

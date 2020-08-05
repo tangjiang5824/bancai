@@ -132,15 +132,27 @@ public class MaterialController {
     }
 
     /*
-     * 录入单个原材料数据
+     * 录入原材料数据
      * 入库
      *
      * */
     @RequestMapping(value="/material/addData.do")
     @Transactional
-    public boolean addMaterialData(String s,Integer operator, HttpSession session) throws Exception {
-
+    public WebResponse addMaterialData(String s,Integer operator, HttpSession session) throws Exception {
+        WebResponse response=new WebResponse();
         JSONArray jsonArray =JSONArray.parseArray(s);
+        if(jsonArray.size()==0){
+            response.setErrorCode(100);
+            response.setSuccess(false);
+            response.setMsg("未输入原材料入库数据！");
+            return response;
+        }
+        if(operator==null){
+            response.setErrorCode(200);
+            response.setSuccess(false);
+            response.setMsg("请选择入库人！");
+            return response;
+        }
         String userId = (String)session.getAttribute("userid");
         MaterialLog log=new MaterialLog();
         //入库记录sql
@@ -158,6 +170,7 @@ public class MaterialController {
             MaterialLogdetail logdetail=new MaterialLogdetail();
             MaterialInfo material=null;
             String warehousename=null;
+            String description=null;
             Double totalweight=0.0;
             Double count=0.0;
             boolean flag=true;
@@ -165,8 +178,14 @@ public class MaterialController {
             if(null!=jsonTemp.get("materialId")&&!jsonTemp.get("materialId").equals(""))
             {
                 material=materialinfodao.findById(Integer.valueOf(jsonTemp.get("materialId")+"")).orElse(null);
-                store.setMaterialInfo(material);
             }
+            if(material==null){
+                if(null!=jsonTemp.get("materialName")&&!jsonTemp.get("materialName").equals("")) {
+                    List<MaterialInfo> materialInfos=materialinfodao.findByMaterialName(jsonTemp.get("materialName")+"");
+                    material=materialInfos.get(0);
+                }
+            }
+            store.setMaterialInfo(material);
             if(null!=jsonTemp.get("warehouseName")&&!jsonTemp.get("warehouseName").equals(""))
             {
                 warehousename=(jsonTemp.get("warehouseName")+"");
@@ -182,6 +201,11 @@ public class MaterialController {
             if(null!=jsonTemp.get("totalWeight")&&!jsonTemp.get("totalWeight").equals("")) {
                 totalweight=(Double.parseDouble(jsonTemp.get("totalWeight")+""));
                 store.setTotalWeight(totalweight);
+            }
+
+            if(null!=jsonTemp.get("description")&&!jsonTemp.get("description").equals("")) {
+                description=jsonTemp.get("description")+"";
+                store.setDescription(description);
             }
 
             Set<MaterialStore> materialStores = material.getMaterialStores();
@@ -209,7 +233,7 @@ public class MaterialController {
             mateialLogdetaildao.save(logdetail);
 
         }
-        return true;
+        return response;
     }
 
     //原材料仓库出库入库回滚

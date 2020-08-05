@@ -5,6 +5,7 @@ import com.bancai.cg.entity.MaterialLog;
 import com.bancai.cg.entity.MaterialLogdetail;
 import com.bancai.cg.entity.MaterialStore;
 import com.bancai.cg.service.InsertProjectService;
+import com.bancai.cg.util.TransferUtil;
 import com.bancai.domain.DataList;
 import com.bancai.domain.DataRow;
 import com.bancai.yrd.service.OldpanelDataService;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.Iterator;
 import java.util.List;
@@ -169,9 +171,11 @@ public class AllExcelService extends BaseService {
 		Excel excel = new Excel(inputStream);
 		dataList = excel.readExcelContent();
 		DataList errorlist=new DataList();
+		DataList retList=new DataList();
 		//新增JPA时改动
 //		System.out.println(dataList);
 		for (int i = 0; i < dataList.size(); i++) {
+			DataRow row=new DataRow();
 			int index=-1;
 			String materialName = dataList.get(i).get("原材料名") + "";
 			List<MaterialInfo> materialList=materialinfodao.findByMaterialName(materialName);
@@ -189,12 +193,59 @@ public class AllExcelService extends BaseService {
 				}
 			}
 			String warehouseName=dataList.get(i).get("仓库名称")+"";
-			String sql="select * from storeposition where ";
-
+			String sql="select * from storeposition where warehouseName=?";
+			if(queryService.query(sql,warehouseName).size()==0){
+				if(index!=-1){
+					StringBuilder errorMsg=new StringBuilder(errorlist.get(index).get("错误原因")+"");
+					if(warehouseName.equals("null")) errorMsg.append("仓库名为空； ");
+					else errorMsg.append("未找到对应仓库; ");
+					errorlist.get(index).put("错误原因",errorMsg.toString());
+				}else {
+					errorlist.add(dataList.get(i));
+					index=errorlist.size()-1;
+					if(warehouseName.equals("null")) errorlist.get(index).put("错误原因","仓库名为空； ");
+					else errorlist.get(index).put("错误原因","未找到对应仓库; ");
+				}
+			}
+			try{
+				Double totalweight=0.0;
+				if(dataList.get(i).get("总重")!=null){
+					totalweight=Double.valueOf((dataList.get(i).get("总重")+"").trim());
+				}
+				Double count=1.0;
+				if(dataList.get(i).get("数量")!=null)
+					count=Double.valueOf((dataList.get(i).get("数量")+"").trim());
+				double unitweight=totalweight/count;
+				unitweight = TransferUtil.keep2tail(unitweight);
+				//dataList.get(i).put("单重",unitweight);
+				row.put("count",count+"");
+				row.put("totalWeight",totalweight+"");
+				row.put("单重",unitweight);
+			}catch (Exception e){
+				if(index!=-1){
+					StringBuilder errorMsg=new StringBuilder(errorlist.get(index).get("错误原因")+"");
+					errorMsg.append("数量或者总重输入出错;  ");
+					errorlist.get(index).put("错误原因",errorMsg.toString());
+				}else{
+					errorlist.add(dataList.get(i));
+					index=errorlist.size()-1;
+					errorlist.get(index).put("错误原因","数量或者总重输入出错;  ");
+				}
+			}
+			row.put("序号",dataList.get(i).get("序号") +"");
+			row.put("materialName",dataList.get(i).get("原材料名") +"");
+			row.put("warehouseName",dataList.get(i).get("仓库名称") +"");
+			row.put("description",dataList.get(i).get("备注") +"");
+			retList.add(row);
 
 		}
-		result.dataList = dataList;
-		result.success = true;
+		if(errorlist.size()==0) {
+			result.dataList = retList;
+			result.success = true;
+		}else {
+			result.dataList = errorlist;
+			result.success = false;
+		}
 		return result;
 
 	}

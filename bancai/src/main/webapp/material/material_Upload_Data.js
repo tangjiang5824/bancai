@@ -47,8 +47,97 @@ Ext.define('material' +
 
         });
 
+        //错误提示，弹出框
+        var errorlistStore = Ext.create('Ext.data.Store',{
+            id: 'errorlistStore',
+            autoLoad: true,
+            fields: [],
+            //pageSize: itemsPerPage, // items per page
+            data:[],
+            editable:false,
+        });
+
+        //弹出框，出入库详细记录
+        var specific_errorlist_outbound=Ext.create('Ext.grid.Panel',{
+            id : 'specific_errorlist_outbound',
+            // tbar: toolbar_pop,
+            store:errorlistStore,//oldpanellogdetailList，store1的数据固定
+            dock: 'bottom',
+            columns:[
+                {
+                    dataIndex : '序号',
+                    text : '出错行',
+                    width : "80",
+                    flex:1
+                    // renderer:function(value,metadata,record,rowIndex){
+                    // 	return　record_start_pop　+　1　+　rowIndex;
+                    // }
+                },
+                {
+                    dataIndex: 'materialName',
+                    text: '原材料名',
+                    flex :1,
+                    width:"80"
+                },
+                {
+                    dataIndex: 'totalWeight',
+                    text: '总重',
+                    flex :1,
+                    width:"80"
+                },
+                {
+                    dataIndex: 'count',
+                    text: '数量',
+                    flex :1,
+                    width:"80"
+                },
+                {
+                    text: '仓库名称',
+                    dataIndex: 'warehouseName',
+                    flex :1,
+                    width:"80"
+                },
+                {
+                    text: '备注',
+                    dataIndex: 'description',
+                    flex :1,
+                    width:"80"
+                },
+                {
+                    text: '错误原因',
+                    dataIndex: '错误原因',
+                    flex :1,
+                    width:"280"
+                    // dataIndex: 'errorCode',
+                    // renderer: function (value) {
+                    // 	return designlist.errorcode.type[value].name; // key-value
+                    // },
+                }
+                //fields:['oldpanelId','oldpanelName','count'],specification
+
+            ],
+            flex:1,
+            //selType:'checkboxmodel',
+            plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
+                clicksToEdit : 2
+            })],
+        });
+
+        var win_errorInfo_outbound = Ext.create('Ext.window.Window', {
+            // id:'win_errorInfo_outbound',
+            title: '错误详情',
+            height: 500,
+            width: 750,
+            layout: 'fit',
+            closable : true,
+            draggable:true,
+            closeAction : 'hidden',
+            // tbar:toolbar_pop1,
+            items:specific_errorlist_outbound,
+        });
+
         var grid = Ext.create('Ext.grid.Panel',{
-            id: 'uploadRecordsMain',
+            id: 'uploadRecordsmaterial',
             store: MaterialStore,
             viewConfig : {
                 enableTextSelection : true,
@@ -72,15 +161,18 @@ Ext.define('material' +
                 // { text: '位置-列', dataIndex: 'columNo',flex :1 ,editor:{xtype : 'textfield', allowBlank : false}}
 
                 {
-                    dataIndex : '原材料品名',
-                    name : '原材料品名',
-                    text : '原材料品名',
+                    dataIndex : '序号',
+                    name : '序号',
+                    text : '序号',
+                    //width : 160,
+                    flex :1
+                },
+                {
+                    dataIndex : 'materialName',
+                    name : '原材料名',
+                    text : '原材料名',
                     //width : 110,
-                    flex :1,
-                    editor : {// 文本字段
-                        xtype : 'textfield',
-                        allowBlank : true   //允许文本框为空
-                    },
+                    flex :1
                     //defaultValue:"2333",
                 },
 
@@ -100,45 +192,38 @@ Ext.define('material' +
                     name : '单重',
                     text : '单重',
                     //width : 160,
-                    flex :1,
-                    editor : {
-                        xtype : 'textfield',
-                        allowBlank : false
-                    }
+                    flex :1
                 },{
-                    dataIndex : '总重',
+                    dataIndex : 'totalWeight',
                     name : '总重',
                     text : '总重',
-                    flex :1,
-                    //width : 160,
-                    editor : {
-                        xtype : 'textfield',
-                        allowBlank : false
-                    }
-                },
-                {
-                    dataIndex : '数量',
-                    name : '数量',
-                    text : '数量',
-                    flex :1,
-                    //width : 160,
-                    editor : {
-                        xtype : 'textfield',
-                        allowBlank : false
-                    }
+                    flex :1
 
                 },
                 {
-                    dataIndex : '仓库名称',
+                    dataIndex : 'count',
+                    name : '数量',
+                    text : '数量',
+                    flex :1
+                    //width : 160,
+
+                },
+                {
+                    dataIndex : 'warehouseName',
                     name : '仓库名称',
                     text : '仓库名称',
                     //width : 130,
-                    flex :1,
-                    editor : {// 文本字段
-                        xtype : 'textfield',
-                        allowBlank : true
-                    }
+                    flex :1
+
                 },
+                {
+                    dataIndex : 'description',
+                    name : '备注',
+                    text : '备注',
+                    //width : 130,
+                    flex :1
+
+                }
                 //
             ],
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
@@ -198,13 +283,12 @@ Ext.define('material' +
                                 fn : function(btn) {
                                     if (btn === 'yes') {
                                         //var check=Ext.getCmp("check").getValue();
-                                        var operator=Ext.getCmp("operator").getValue();
+                                       // var operator=Ext.getCmp("operator").getValue();
                                         form.submit({
                                             url : 'uploadMaterialExcel.do', //上传excel文件，并回显数据
                                             waitMsg : '正在上传...',
                                             params : {
-                                                tableName:tableName,
-                                                operator:operator,
+                                                // tableName:tableName
                                                 //materialtype:materialtype,
                                                 //check:check
                                             },
@@ -221,56 +305,20 @@ Ext.define('material' +
                                             failure : function(form, action) {
                                                 var response = action.result;
                                                 switch (response.errorCode) {
-                                                    case 0:
-                                                        Ext.MessageBox.alert("错误", "上传批次或者所属期错误，重新生成上传批次和所属期!");
-                                                        break;
-                                                    case 1:
-                                                        Ext.MessageBox.alert("错误", "上传文件中的批次与生成的上传批次不同，请检查上传文件!");
-                                                        me.showMsgGrid([ "name", "input", "expected" ], response.value, [ {
-                                                            text : "错误字段",
-                                                            dataIndex : "name",
-                                                            width : 100
-                                                        }, {
-                                                            text : "上传文件中的值",
-                                                            dataIndex : "input",
-                                                            width : 200
-                                                        }, {
-                                                            text : "期望值",
-                                                            dataIndex : "expected",
-                                                            width : 100
-                                                        } ]);
-                                                        break;
-                                                    case 2:
-                                                        Ext.MessageBox.alert("错误", "上传文件中的数据项与系统需要的不一致，请检查上传文件!");
-                                                        me.showMsgGrid([ "name", "value" ], response.value, [ {
-                                                            text : "错误描述",
-                                                            dataIndex : "name",
-                                                            width : 250
-                                                        }, {
-                                                            text : "错误字段",
-                                                            dataIndex : "value",
-                                                            width : 400
-                                                        } ]);
-                                                        break;
-                                                    case 3:
-                                                        Ext.MessageBox.alert("错误", "上传文件中的数据项与系统需要的不一致，请检查上传文件!");
-                                                        me.showMsgGrid([ "row", "col", "value", "type" ], response.value, [ {
-                                                            text : "出错行",
-                                                            dataIndex : "row",
-                                                            width : 100
-                                                        }, {
-                                                            text : "出错列",
-                                                            dataIndex : "col",
-                                                            width : 250
-                                                        }, {
-                                                            text : "出错值",
-                                                            dataIndex : "value",
-                                                            width : 250
-                                                        }, {
-                                                            text : "期望类型",
-                                                            dataIndex : "type",
-                                                            width : 250
-                                                        } ]);
+                                                    case 100:
+                                                        Ext.Msg.show({
+                                                            title: '提示',
+                                                            message: '匹配失败，产品位置重复或品名不合法！\n是否查看具体错误数据',
+                                                            buttons: Ext.Msg.YESNO,
+                                                            icon: Ext.Msg.QUESTION,
+                                                            fn: function (btn) {
+                                                                if (btn === 'yes') {
+                                                                    //点击确认，显示重复的数据
+                                                                    errorlistStore.loadData(response.errorlist);
+                                                                    win_errorInfo_outbound.show();
+                                                                }
+                                                            }
+                                                        });
                                                         break;
                                                     case 1000:
                                                         Ext.MessageBox.alert("错误", "上传文件出现未知错误，请检查上传文件格式！<br>若无法解决问题，请联系管理员！");
@@ -344,6 +392,7 @@ Ext.define('material' +
                 //     name: 'operator',
                 //     value: "",
                 // },
+                form,
                 {
                     fieldLabel : '入库人',
                     xtype : 'combo',
@@ -359,7 +408,71 @@ Ext.define('material' +
                     valueField : 'id',
                     editable : true,
                 },
-                form
+                {
+                    xtype : 'button',
+                    iconAlign : 'center',
+                    iconCls : 'rukuicon ',
+                    text : '确认入库',
+                    margin: '0 0 0 0',
+                    region:'center',
+                    bodyStyle: 'background:#fff;',
+                    handler : function() {
+
+                        // var projectId = "-1";
+                        // var buildingId = "-1";
+
+                        // 取出grid的字段名字段类型
+                        var select = Ext.getCmp('uploadRecordsmaterial').getStore()
+                            .getData();
+                        var s = new Array();
+                        select.each(function(rec) {
+                            //delete rec.data.id;
+                            s.push(JSON.stringify(rec.data));
+                            //alert(JSON.stringify(rec.data));//获得表格中的数据
+                        });
+                        console.log(s);
+                        //获取数据
+                        //获得当前操作时间
+                        //var sTime=Ext.Date.format(Ext.getCmp('startTime').getValue(), 'Y-m-d H:i:s');
+                        Ext.Ajax.request({
+                            url : '/material/addData.do', //原材料入库
+                            method:'POST',
+                            //submitEmptyText : false,
+                            params : {
+                                s : "[" + s + "]",
+                                // projectId : projectId,
+                                // buildingId : buildingId,
+                                operator: Ext.getCmp('operator').getValue(),
+                                // inputTime:Ext.getCmp('operator').getValue(),
+                            },
+                            success : function(response) {
+                                var res = response.responseText;
+                                var jsonobj = JSON.parse(res);//将json字符串转换为对象
+                                console.log(jsonobj);
+                                console.log("success--------------",jsonobj.success);
+                                console.log("errorList--------------",jsonobj['errorList']);
+                                var success = jsonobj.success;
+                                var Msg=jsonobj.msg;
+                                var errorCode = jsonobj.errorCode;
+                                if(success == false){
+                                    //错误输入
+                                    Ext.MessageBox.alert("提示",Msg);
+
+                                }else{
+                                    Ext.MessageBox.alert("提示","入库成功" );
+                                    //刷新
+                                    Ext.getCmp('uploadRecordsmaterial').getStore().remove();
+                                }
+
+                            },
+                            failure : function(response) {
+                                //var message =Ext.decode(response.responseText).showmessage;
+                                Ext.MessageBox.alert("提示","入库失败" );
+                            }
+                        });
+
+                    }
+                }
             ]
         });
         var toolbar1 = Ext.create('Ext.toolbar.Toolbar', {
