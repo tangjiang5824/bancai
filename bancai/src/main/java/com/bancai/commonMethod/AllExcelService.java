@@ -373,11 +373,11 @@ public class AllExcelService extends BaseService {
 			String inventoryUnit = infoRow.get("inventoryUnit")+"";
 			if((infoRow.get("unitWeight")!=null)&&(infoRow.get("unitWeight").toString().length()!=0)){
 				unitWeight = infoRow.get("unitWeight").toString();
-				totalWeight = String.valueOf(Double.parseDouble(unitWeight)*Double.parseDouble(count));
+				totalWeight = String.valueOf(TransferUtil.keep2tail(Double.parseDouble(unitWeight)*Double.parseDouble(count)));
 			}
 			if((infoRow.get("unitArea")!=null)&&(infoRow.get("unitArea").toString().length()!=0)){
 				unitArea = infoRow.get("unitArea").toString();
-				totalArea = String.valueOf(Double.parseDouble(unitArea)*Double.parseDouble(count));
+				totalArea = String.valueOf(TransferUtil.keep2tail(Double.parseDouble(unitArea)*Double.parseDouble(count)));
 			}
 			DataRow row = new DataRow();
 			row.put("name",name);

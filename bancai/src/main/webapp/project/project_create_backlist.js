@@ -133,7 +133,7 @@ Ext.define('project.project_create_backlist', {
 					}
 				},
 				{
-					dataIndex : 'productName',
+					dataIndex : 'name',
 					name : '品名',
 					text : '品名',
 					width : 200,
@@ -144,28 +144,18 @@ Ext.define('project.project_create_backlist', {
 					editable:false,
 					// flex:0.2
 				},
+				// {
+				// 	dataIndex : '编号',
+				// 	text:'编号',
+				// 	name:'编号',
+				// 	//width : 110,
+				// 	editor : {// 文本字段
+				// 		xtype : 'textfield',
+				// 		allowBlank : false,
+				// 	}
+				// },
 				{
-					dataIndex : '编号',
-					text:'编号',
-					name:'编号',
-					//width : 110,
-					editor : {// 文本字段
-						xtype : 'textfield',
-						allowBlank : false,
-					}
-				},
-				{
-					dataIndex : '单位',
-					text:'单位',
-					name:'单位',
-					//width : 110,
-					editor : {// 文本字段
-						xtype : 'textfield',
-						allowBlank : false,
-					}
-				},
-				{
-					dataIndex : '退库数量',
+					dataIndex : 'count',
 					text:'退库数量',
 					name:'退库数量',
 					//width : 110,
@@ -175,7 +165,7 @@ Ext.define('project.project_create_backlist', {
 					}
 				},
 				{
-					dataIndex : '退料仓库',
+					dataIndex : 'backWarehouseName',
 					text:'退料仓库',
 					name:'退料仓库',
 					//width : 110,
@@ -185,7 +175,7 @@ Ext.define('project.project_create_backlist', {
 					}
 				},
 				{
-					dataIndex : '收料仓库',
+					dataIndex : 'warehouseName',
 					text:'收料仓库',
 					name:'收料仓库',
 					//width : 110,
@@ -195,7 +185,17 @@ Ext.define('project.project_create_backlist', {
 					}
 				},
 				{
-					dataIndex : '单面积',
+					dataIndex : 'inventoryUnit',
+					text:'单位',
+					name:'单位',
+					//width : 110,
+					editor : {// 文本字段
+						xtype : 'textfield',
+						allowBlank : false,
+					}
+				},
+				{
+					dataIndex : 'unitArea',
 					text:'单面积',
 					name:'单面积',
 					//width : 110,
@@ -205,7 +205,7 @@ Ext.define('project.project_create_backlist', {
 					}
 				},
 				{
-					dataIndex : '单重',
+					dataIndex : 'unitWeight',
 					text:'单重',
 					name:'单重',
 					//width : 110,
@@ -215,12 +215,33 @@ Ext.define('project.project_create_backlist', {
 					}
 				},
 				{
-					dataIndex : '备注',
+					dataIndex : 'totalArea',
+					text:'总面积',
+					name:'总面积',
+					//width : 110,
+					editor : {// 文本字段
+						xtype : 'textfield',
+						allowBlank : false,
+					}
+				},
+				{
+					dataIndex : 'totalWeight',
+					text:'总重',
+					name:'总重',
+					//width : 110,
+					editor : {// 文本字段
+						xtype : 'textfield',
+						allowBlank : false,
+					}
+				},
+				{
+					dataIndex : 'remark',
 					name : '备注',
 					text : '备注',
 					width : 200,
 					// flex:0.2
-				},
+				}
+
 			],
 			viewConfig : {
 				plugins : {
@@ -281,14 +302,14 @@ Ext.define('project.project_create_backlist', {
 					width:"80"
 				},
 				{
-					text: '收料仓库',
-					dataIndex: '收料仓库',
+					text: '退料仓库',
+					dataIndex: '退料仓库',
 					flex :1,
 					width:"80"
 				},
 				{
-					text: '退料仓库',
-					dataIndex: '退料仓库',
+					text: '收料仓库',
+					dataIndex: '收料仓库',
 					flex :1,
 					width:"80"
 				},
@@ -429,7 +450,9 @@ Ext.define('project.project_create_backlist', {
 											url : 'backStore/uploadExcel.do',//projectId=' + projectId +'&buildingId=' + buildingId+'&positionId=' + positionId,//',//?projectId=\'+projectId+\'&buildingId=\'+buildingId上传excel文件，同时传入项目的id和楼栋的id
 											waitMsg : '正在上传...',
 											params : {
-												type:type
+												type:type,
+												projectId:projectId,
+												buildingId:buildingId
 												// buildingpositionId:positionId,
 											},
 											success : function(exceluploadform,response, action) {
@@ -439,7 +462,7 @@ Ext.define('project.project_create_backlist', {
 											},
 											failure : function(exceluploadform, response) {
 												var ob = response.result;
-												if(ob.errorCode==100){
+												if(ob.errorCode==100||ob.errorCode==300){
 													Ext.MessageBox.alert("错误", ob.msg);
 												}else if(ob.errorCode==1000){
 													Ext.MessageBox.alert("错误", "上传失败！");
@@ -773,6 +796,7 @@ Ext.define('project.project_create_backlist', {
 								// buildingpositionId:positionId,
 								description:back_reason,
 								operator:back_operator,
+								type:Ext.getCmp('back_optionType').getValue()
 								//backTime:backTime,
 								//type:back_type,
 							},
@@ -790,11 +814,11 @@ Ext.define('project.project_create_backlist', {
 									if(errorCode==1000){
 										Ext.MessageBox.alert("提示","未知错误！请联系管理员" );
 									}else {
-										Ext.MessageBox.alert("提示",jsonobj.Msg);
+										Ext.MessageBox.alert("提示",jsonobj.msg);
 									}
 
 								}else{
-									Ext.MessageBox.alert("提示","匹配成功" );
+									Ext.MessageBox.alert("提示","创建退料单成功！" );
 								}
 								//var message =Ext.decode(response.responseText).showmessage;
 								//刷新页面
@@ -802,7 +826,7 @@ Ext.define('project.project_create_backlist', {
 							failure : function(response) {
 								Ext.MessageBox.hide();
 								//var message =Ext.decode(response.responseText).showmessage;
-								Ext.MessageBox.alert("提示","匹配失败" );
+								Ext.MessageBox.alert("提示","创建退料单失败！" );
 							}
 						});
 					}
@@ -815,12 +839,12 @@ Ext.define('project.project_create_backlist', {
 		this.dockedItems=[{
 			xtype : 'toolbar',
 			dock : 'top',
-			items : [toolbar2]
+			items : [toolbar1]
 		},{
 			xtype : 'toolbar',
 			dock : 'top',
 			style:'border-width:0 0 0 0;',
-			items : [toolbar1]
+			items : [toolbar2]
 		},
 		{
 			xtype : 'toolbar',

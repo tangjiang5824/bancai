@@ -518,7 +518,7 @@ public class DesignlistController {
             }
             if(projectId==null||projectId.length()==0||buildingId==null||buildingId.length()==0){
                 response.setSuccess(false);
-                response.setErrorCode(200);
+                response.setErrorCode(300);
                 response.setMsg("未选择项目或楼栋");
                 return response;
             }
