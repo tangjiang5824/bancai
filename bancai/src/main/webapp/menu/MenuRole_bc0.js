@@ -45,6 +45,11 @@ Ext.define("menu.MenuRole_bc0", {
 					leaf : true
 				},
 				{
+					text : '旧板退料审核',
+					id : 'oldpanel.oldpanel_backcheck',
+					leaf : true
+				},
+				{
 					text : '旧板出入库记录查询',
 					id : 'oldpanel.oldpanel_Query_Records',//'oldpanel.oldpanel_Query_Records',
 					leaf : true
@@ -336,8 +341,13 @@ Ext.define("menu.MenuRole_bc0", {
 						leaf : true
 					},
 					{
-						text : '项目创建退库单',
+						text : '项目创建退料单',
 						id : 'project.project_create_backlist',
+						leaf : true
+					},
+					{
+						text : '项目退料单查询',
+						id : 'project.project_query_backlist',
 						leaf : true
 					},
 				]
