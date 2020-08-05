@@ -56,6 +56,7 @@ public class OldpanelDataController {
             if(jsonArray.length()==0){
                 response.setSuccess(false);
                 response.setErrorCode(100); //提交的s为空
+                response.setMsg("提交的数据为空");
                 return response;
             }
             DataList errorList = new DataList();
@@ -89,6 +90,7 @@ public class OldpanelDataController {
                 response.setErrorCode(200);//提交的s存在错误内容
                 response.put("errorList",errorList);
                 response.put("errorCount",errorList.size());
+                response.setMsg("提交的数据存在错误内容");
                 return response;
             }
             boolean uploadResult = oldpanelDataService.oldpanelAddNewFormat(insertList,userId);
@@ -140,6 +142,7 @@ public class OldpanelDataController {
             if(jsonArray.length()==0){
                 response.setSuccess(false);
                 response.setErrorCode(100); //提交的s为空
+                response.setMsg("提交的数据为空");
                 return response;
             }
             DataList errorList = new DataList();
@@ -189,6 +192,7 @@ public class OldpanelDataController {
                 response.setErrorCode(200);//提交的s存在错误内容
                 response.put("errorList",errorList);
                 response.put("errorCount",errorList.size());
+                response.setMsg("提交的数据存在错误内容");
                 return response;
             }
             boolean uploadResult = oldpanelDataService.oldpanelAddNewInfo(insertList,userId);
@@ -246,6 +250,7 @@ public class OldpanelDataController {
             if(jsonArray.length()==0){
                 response.setSuccess(false);
                 response.setErrorCode(100); //提交的s为空
+                response.setMsg("提交的数据为空");
                 return response;
             }
             DataList errorList = new DataList();
@@ -279,6 +284,7 @@ public class OldpanelDataController {
             if(!errorList.isEmpty()){
                 response.setSuccess(false);
                 response.setErrorCode(200);//提交的s存在错误内容
+                response.setMsg("提交的数据存在错误内容");
                 response.put("errorList",errorList);
                 response.put("errorCount",errorList.size());
                 return response;
@@ -308,11 +314,13 @@ public class OldpanelDataController {
             if(jsonArray.length()==0){
                 response.setSuccess(false);
                 response.setErrorCode(100); //提交的s为空
+                response.setMsg("提交的数据为空");
                 return response;
             }
             if((projectId==null)||(projectId.length()==0)||(buildingId==null)||(buildingId.length()==0)||(operator==null)||(operator.length()==0)||(description==null)||(description.length()==0)){
                 response.setSuccess(false);
                 response.setErrorCode(300); //项目或楼栋或退料原因或退料人为空
+                response.setMsg("未选择项目或楼栋或退料原因或退料人");
                 return response;
             }
             DataList errorList = new DataList();
@@ -352,6 +360,7 @@ public class OldpanelDataController {
                 response.setErrorCode(200);//提交的s存在错误内容
                 response.put("errorList",errorList);
                 response.put("errorCount",errorList.size());
+                response.setMsg("提交的数据存在错误内容");
                 return response;
             }
             System.out.println("[===checkOldpanelUploadData==Complete=NoError]");

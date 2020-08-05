@@ -130,22 +130,28 @@ public class MaterialDataController {
     @Transactional
     public WebResponse uploadMaterial(MultipartFile uploadFile, String tableName, Integer operator ,HttpSession session) {
         WebResponse response = new WebResponse();
-        String userid = (String) session.getAttribute("userid");
-        MaterialLog log=new MaterialLog();
-        if(userid!=null)
-        log.setUserId(Integer.parseInt(userid));
-        log.setTime(new Timestamp(new Date().getTime()));
-        log.setIsrollback(0);
-        log.setType(0);
-        log.setOperator(operator);
-        logdao.save(log);
+//        String userid = (String) session.getAttribute("userid");
+//        MaterialLog log=new MaterialLog();
+//        if(userid!=null)
+//        log.setUserId(Integer.parseInt(userid));
+//        log.setTime(new Timestamp(new Date().getTime()));
+//        log.setIsrollback(0);
+//        log.setType(0);
+//        log.setOperator(operator);
+//        logdao.save(log);
       //  JSONArray array = new JSONArray();
         try {
-            //UploadDataResult result = excelService.uploadExcelData(uploadFile.getInputStream(),userid,tableName);
-            UploadDataResult result = allExcelService.uploadExcelData(uploadFile.getInputStream(),userid,tableName,log);
-            response.put("value",result.dataList);
-            response.put("totalCount", result.dataList.size());
-
+            //UploadDataResult result = allExcelService.uploadExcelData(uploadFile.getInputStream(),userid,tableName,log);
+            UploadDataResult result = allExcelService.uploadExcelData(uploadFile.getInputStream());
+            if(result.success==true){
+                response.put("value",result.dataList);
+                response.put("totalCount", result.dataList.size());
+            }else {
+                response.setSuccess(false);
+                response.setErrorCode(100);
+                response.put("errorlist",result.dataList);
+                response.put("totalCount", result.dataList.size());
+            }
 
         } catch (IOException e) {
             e.printStackTrace();

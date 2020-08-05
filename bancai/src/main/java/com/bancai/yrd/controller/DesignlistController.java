@@ -115,6 +115,7 @@ public class DesignlistController {
                 response.put("errorCount",errorList.size());
                 response.setSuccess(false);
                 response.setErrorCode(150); //位置重复或品名不合法
+                response.setMsg("位置重复或品名不合法");
                 return response;
             } else {
                 designlistService.createDesignlistData(validList,userId,projectId,buildingId,buildingpositionId);
@@ -122,6 +123,7 @@ public class DesignlistController {
                 if(!matchDesignlist){
                     response.setSuccess(false);
                     response.setErrorCode(300); //匹配失败
+                    response.setMsg("匹配失败");
                     return response;
                 }
                 response.setSuccess(true);
@@ -179,11 +181,13 @@ public class DesignlistController {
             if((designlistlogId==null)||(designlistlogId.length()==0)){
                 response.setSuccess(false);
                 response.setErrorCode(100); //未获取到该行数据
+                response.setMsg("未获取到该行数据");
                 return response;
             }
             if(!designlistService.designlistCanRollback(designlistlogId)){
                 response.setSuccess(false);
                 response.setErrorCode(200); //已生成工单，或该清单不存在
+                response.setMsg("已生成工单，或该清单不存在");
                 return response;
             }
             //撤销
@@ -265,6 +269,7 @@ public class DesignlistController {
             if(jsonArray.length()==0){
                 response.setSuccess(false);
                 response.setErrorCode(100);//接收到的为空
+                response.setMsg("接收到的数据为空");
                 return response;
             }
             DataList createList = new DataList();
@@ -283,6 +288,7 @@ public class DesignlistController {
             if(createList.isEmpty()) {
                 response.setSuccess(false);
                 response.setErrorCode(200);//生成的领料单为空
+                response.setMsg("生成的领料单为空");
             }
             else
                 response.setSuccess(true);
@@ -305,6 +311,7 @@ public class DesignlistController {
             if(jsonArray.length()==0){
                 response.setSuccess(false);
                 response.setErrorCode(100);//接收到的为空
+                response.setMsg("接收到的数据为空");
                 return response;
             }
             String userId = (String)session.getAttribute("userid");
@@ -342,19 +349,22 @@ public class DesignlistController {
      * 查询领料单
      * */
     @RequestMapping("/order/queryRequisitionOrder.do")
-    public WebResponse queryRequisitionOrder(String projectId, String operator, String timeStart, String timeEnd,Integer start,Integer limit){
+    public WebResponse queryRequisitionOrder(String projectId, String operator,String requisitionOrderId, String timeStart, String timeEnd,Integer start,Integer limit){
         mysqlcondition c=new mysqlcondition();
         if (null!=projectId&&projectId.length() != 0) {
             c.and(new mysqlcondition("projectId", "=", projectId));
+        }
+        if (null!=requisitionOrderId&&requisitionOrderId.length() != 0) {
+            c.and(new mysqlcondition("requisitionOrderId", "=", requisitionOrderId));
         }
         if (null!=operator&&operator.length() != 0) {
             c.and(new mysqlcondition("operator", "=", operator));
         }
         if (null!=timeStart&&timeStart.length() != 0) {
-            c.and(new mysqlcondition("timeStart", ">=", timeStart));
+            c.and(new mysqlcondition("time", ">=", timeStart));
         }
         if (null!=timeEnd&&timeEnd.length() != 0) {
-            c.and(new mysqlcondition("timeEnd", "<=", timeEnd));
+            c.and(new mysqlcondition("time", "<=", timeEnd));
         }
         return queryService.queryDataPage(start, limit, c, "requisition_order_view");
     }
@@ -383,10 +393,11 @@ public class DesignlistController {
         if (null!=requisitionOrderId&&requisitionOrderId.length() != 0) {
             c.and(new mysqlcondition("requisitionOrderId", "=", requisitionOrderId));
         }else {
-            WebResponse webResponse = new WebResponse();
-            webResponse.setSuccess(false);
-            webResponse.setErrorCode(100);//未获取到领料单号
-            return webResponse;
+            WebResponse response = new WebResponse();
+            response.setSuccess(false);
+            response.setErrorCode(100);//未获取到领料单号
+            response.setMsg("未获取到领料单号");
+            return response;
         }
         if (null!=type&&type.length() != 0) {
             c.and(new mysqlcondition("type", "=", type));
@@ -431,16 +442,19 @@ public class DesignlistController {
             if(jsonArray.length()==0){
                 response.setSuccess(false);
                 response.setErrorCode(100);//接收到的s为空
+                response.setMsg("接收到的数据为空");
                 return response;
             }
             if((requisitionOrderId==null)||(requisitionOrderId.length()==0)||(projectId==null)||(projectId.length()==0)){
                 response.setSuccess(false);
                 response.setErrorCode(200);//未收到领料单号或项目ID
+                response.setMsg("未收到领料单号或项目ID");
                 return response;
             }
             if((operator==null)||(operator.length()==0)){
                 response.setSuccess(false);
                 response.setErrorCode(300);//未选择领料人
+                response.setMsg("未选择领料人");
                 return response;
             }
             String userId = (String)session.getAttribute("userid");
@@ -450,6 +464,7 @@ public class DesignlistController {
                 response.put("errorNum",errorList.size());
                 response.setSuccess(false);
                 response.setErrorCode(400);//存在错误输入
+                response.setMsg("存在错误输入");
                 return response;
             }
             designlistService.finishRequisitionOrder(jsonArray,requisitionOrderId,projectId,operator,userId);
@@ -492,31 +507,47 @@ public class DesignlistController {
      * 上传excel文件退料单
      * */
     @RequestMapping(value = "/backStore/uploadExcel.do")
-    public WebResponse backStoreUploadExcel(MultipartFile uploadFile,String type) {
+    public WebResponse backStoreUploadExcel(MultipartFile uploadFile,String type,String projectId,String buildingId) {
         WebResponse response = new WebResponse();
         try {
-            if(type==null){
+            if(type==null||type.length()==0){
                 response.setSuccess(false);
                 response.setErrorCode(100); //退料类型错误
+                response.setMsg("未选择退料类型");
                 return response;
             }
-            UploadDataResult result = new UploadDataResult();
+            if(projectId==null||projectId.length()==0||buildingId==null||buildingId.length()==0){
+                response.setSuccess(false);
+                response.setErrorCode(200);
+                response.setMsg("未选择项目或楼栋");
+                return response;
+            }
+            String typeName = "";
+            String originName = "";
             switch (type){
                 case "1":
+                    typeName = "backproduct";
+                    originName = "product";
                     break;
                 case "2":
+                    typeName = "preprocess";
+                    originName = "product";
                     break;
                 case "3":
-                    result = allExcelService.uploadBackOldpanelExcelData(uploadFile.getInputStream());
+                    typeName = "oldpanel";
+                    originName = "oldpanel";
                     break;
                 case "4":
-                    result = allExcelService.uploadBackMaterialExcelData(uploadFile.getInputStream());
+                    typeName = "material";
+                    originName = "material";
                     break;
                 default:
                     response.setSuccess(false);
                     response.setErrorCode(100); //退料类型错误
+                    response.setMsg("退料类型错误");
                     return response;
             }
+            UploadDataResult result = allExcelService.uploadBackExcelData(typeName,originName,projectId,buildingId,uploadFile.getInputStream());
             response.setSuccess(result.success);
             response.setErrorCode(result.errorCode);
             response.put("value",result.dataList);
@@ -542,26 +573,31 @@ public class DesignlistController {
             if(jsonArray.length()==0){
                 response.setSuccess(false);
                 response.setErrorCode(100);//接收到的s为空
+                response.setMsg("接收到的数据为空");
                 return response;
             }
             if((projectId==null)||(projectId.length()==0)||(buildingId==null)||(buildingId.length()==0)){
                 response.setSuccess(false);
                 response.setErrorCode(200);//未收到项目或楼栋ID
+                response.setMsg("未选择项目或楼栋");
                 return response;
             }
             if((operator==null)||(operator.length()==0)){
                 response.setSuccess(false);
                 response.setErrorCode(300);//未选择退料人
+                response.setMsg("未选择退料人");
                 return response;
             }
             if((description==null)||(description.length()==0)){
                 response.setSuccess(false);
                 response.setErrorCode(400);//未输入退料原因
+                response.setMsg("未输入退料原因");
                 return response;
             }
             if((type==null)||(type.length()==0)){
                 response.setSuccess(false);
                 response.setErrorCode(500);//未选择退料类型
+                response.setMsg("未选择退料类型");
                 return response;
             }
             String userId = (String)session.getAttribute("userid");
@@ -579,21 +615,36 @@ public class DesignlistController {
      * 查询退料单
      * */
     @RequestMapping("/backStore/queryReturnOrder.do")
-    public WebResponse queryReturnOrder(String projectId, String operator, String timeStart, String timeEnd,Integer start,Integer limit){
+    public WebResponse queryReturnOrder(String type,String projectId, String buildingId,String operator,String returnOrderId, String timeStart, String timeEnd,Integer start,Integer limit){
         mysqlcondition c=new mysqlcondition();
+        if (null!=type&&type.length() != 0) {
+            c.and(new mysqlcondition("type", "=", type));
+        }else {
+            WebResponse response = new WebResponse();
+            response.setSuccess(false);
+            response.setErrorCode(100);//未获取到类型
+            response.setMsg("未获取到类型");
+            return response;
+        }
         if (null!=projectId&&projectId.length() != 0) {
             c.and(new mysqlcondition("projectId", "=", projectId));
+        }
+        if (null!=buildingId&&buildingId.length() != 0) {
+            c.and(new mysqlcondition("buildingId", "=", projectId));
+        }
+        if (null!=returnOrderId&&returnOrderId.length() != 0) {
+            c.and(new mysqlcondition("returnOrderId", "=", returnOrderId));
         }
         if (null!=operator&&operator.length() != 0) {
             c.and(new mysqlcondition("operator", "=", operator));
         }
         if (null!=timeStart&&timeStart.length() != 0) {
-            c.and(new mysqlcondition("timeStart", ">=", timeStart));
+            c.and(new mysqlcondition("time", ">=", timeStart));
         }
         if (null!=timeEnd&&timeEnd.length() != 0) {
-            c.and(new mysqlcondition("timeEnd", "<=", timeEnd));
+            c.and(new mysqlcondition("time", "<=", timeEnd));
         }
-        return queryService.queryDataPage(start, limit, c, "return_order");
+        return queryService.queryDataPage(start, limit, c, "return_order_view");
     }
 
     /*
@@ -605,13 +656,65 @@ public class DesignlistController {
         if (null!=returnOrderId&&returnOrderId.length() != 0) {
             c.and(new mysqlcondition("returnOrderId", "=", returnOrderId));
         }else {
-            WebResponse webResponse = new WebResponse();
-            webResponse.setSuccess(false);
-            webResponse.setErrorCode(100);//未获取到退料单号
-            return webResponse;
+            WebResponse response = new WebResponse();
+            response.setSuccess(false);
+            response.setErrorCode(100);//未获取到退料单号
+            response.setMsg("未获取到退料单号");
+            return response;
         }
-        return queryService.queryDataPage(start, limit, c, "return_order_detail");
+        return queryService.queryDataPage(start, limit, c, "return_order_detail_view");
     }
+
+    /*
+     * 确认退料完成
+     * */
+    @RequestMapping(value = "/order/finishReturnOrder.do")
+    public WebResponse returnOrderFinish(String s, String type,String returnOrderId,String operator, HttpSession session) throws JSONException {
+        WebResponse response = new WebResponse();
+        try {
+            JSONArray jsonArray = new JSONArray(s);
+            if(jsonArray.length()==0){
+                response.setSuccess(false);
+                response.setErrorCode(100);//接收到的s为空
+                response.setMsg("接收到的数据为空");
+                return response;
+            }
+            if((type==null)||(type.length()==0)||(returnOrderId==null)||(returnOrderId.length()==0)){
+                response.setSuccess(false);
+                response.setErrorCode(200);//未收到退料单号
+                response.setMsg("未获取到类型或退料单号");
+                return response;
+            }
+            if((operator==null)||(operator.length()==0)){
+                response.setSuccess(false);
+                response.setErrorCode(300);//未选择退料人
+                response.setMsg("未选择退料人");
+                return response;
+            }
+            String userId = (String)session.getAttribute("userid");
+            DataList errorList = designlistService.checkFinishReturnOrder(jsonArray);
+            if(errorList.size()!=0){
+                response.put("errorList",errorList);
+                response.put("errorNum",errorList.size());
+                response.setSuccess(false);
+                response.setErrorCode(400);//存在错误输入
+                response.setMsg("存在错误输入");
+                return response;
+            }
+            boolean result = designlistService.finishReturnOrder(jsonArray,type,returnOrderId,operator,userId);
+            response.setSuccess(result);
+        } catch (Exception e) {
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误
+            response.setMsg(e.getMessage());
+        }
+        return response;
+    }
+
+
+
+
+
 
 
 

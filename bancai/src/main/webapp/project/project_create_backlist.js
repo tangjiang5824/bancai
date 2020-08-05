@@ -99,8 +99,8 @@ Ext.define('project.project_create_backlist', {
 			}
 		});
 
-		var designlistStore = Ext.create('Ext.data.Store',{
-			id: 'designlistStore',
+		var backlistStore = Ext.create('Ext.data.Store',{
+			id: 'backlistStore',
 			autoLoad: true,
 			fields: ['productName','position'],
 			//pageSize: itemsPerPage, // items per page
@@ -109,7 +109,7 @@ Ext.define('project.project_create_backlist', {
 		});
 		var grid = Ext.create("Ext.grid.Panel", {
 			id : 'backlist_DataGrid',
-			store : 'designlistStore',
+			store : 'backlistStore',
 			title:"退库材料信息",
 			columns : [
 				// {
@@ -234,7 +234,7 @@ Ext.define('project.project_create_backlist', {
 			selType : 'rowmodel',
 			dockedItems: [{
 				xtype: 'pagingtoolbar',
-				store: designlistStore,   // same store GridPanel is using
+				store: backlistStore,   // same store GridPanel is using
 				dock: 'bottom',
 				displayInfo: true,
 				displayMsg:'显示{0}-{1}条，共{2}条',
@@ -246,7 +246,7 @@ Ext.define('project.project_create_backlist', {
 		var errorlistStore = Ext.create('Ext.data.Store',{
 			id: 'errorlistStore',
 			autoLoad: true,
-			fields: ['productName','position'],
+			fields: [],
 			//pageSize: itemsPerPage, // items per page
 			data:[],
 			editable:false,
@@ -260,40 +260,46 @@ Ext.define('project.project_create_backlist', {
 			dock: 'bottom',
 			columns:[
 				{
-					// dataIndex : '序号',
-					name : '序号',
+					dataIndex : '序号',
 					text : '序号',
-					width : 60,
-					value:'99',
-					renderer:function(value,metadata,record,rowIndex){
-						return　record_start_pop　+　1　+　rowIndex;
-					}
+					width : "80",
+					flex:1
+					// renderer:function(value,metadata,record,rowIndex){
+					// 	return　record_start_pop　+　1　+　rowIndex;
+					// }
 				},
 				{
-					text: '产品名称',
-					dataIndex: 'productName',
+					text: '品名',
+					dataIndex: '品名',
 					flex :1,
 					width:"80"
 				},
 				{
-					text: '位置',
-					dataIndex: 'position',
+					text: '退料数量',
+					dataIndex: '退料数量',
 					flex :1,
 					width:"80"
 				},
 				{
-					text: '产品名',
-					dataIndex: 'productName',
+					text: '收料仓库',
+					dataIndex: '收料仓库',
 					flex :1,
 					width:"80"
 				},
 				{
-					text: '错误原因',
+					text: '退料仓库',
+					dataIndex: '退料仓库',
 					flex :1,
-					dataIndex: 'errorCode',
-					renderer: function (value) {
-						return designlist.errorcode.type[value].name; // key-value
-					},
+					width:"80"
+				},
+				{
+					text: '备注',
+					dataIndex: '备注',
+					flex :1,
+					// dataIndex: 'errorCode',
+					// renderer: function (value) {
+					// 	return designlist.errorcode.type[value].name; // key-value
+					// },
 				}
 				//fields:['oldpanelId','oldpanelName','count'],specification
 
@@ -318,14 +324,49 @@ Ext.define('project.project_create_backlist', {
 			items:specific_errorlist_outbound,
 		});
 
+		var optionTypeList = Ext.create('Ext.data.Store', {
+			fields: ['abbr', 'name'],
+			data : [
+				{"abbr":"1", "name":"成品退库"},
+				{"abbr":"2", "name":"预加工半成品库"},
+				{"abbr":"3", "name":"旧版库"},
+				{"abbr":"4", "name":"原材料库"}
+				//...
+			]
+		});
+		var optionType = Ext.create('Ext.form.ComboBox', {
+			fieldLabel: '退库类型',
+			name: 'back_optionType',
+			id: 'back_optionType',
+			store: optionTypeList,
+			queryMode: 'local',
+			displayField: 'name',
+			valueField: 'abbr',
+			margin : '0 20 0 40',
+			width: 160,
+			labelWidth: 60,
+			renderTo: Ext.getBody()
+		});
 
 		var exceluploadform = Ext.create("Ext.form.Panel", {
 			border : false,
-			items : [ {
+			items : [
+				// {
+				// 	xtype: 'textfield',
+				// 	fieldLabel: '退库类型',
+				// 	id: 'back_type',
+				// 	margin: '0 30 0 0',
+				// 	width: 390,
+				// 	labelWidth: 60,
+				// 	name: 'back_type',
+				// 	value: ""
+				//
+				// },
+				{
 				xtype : 'filefield',
 				width : 450,
 				labelWidth:45,
-				fieldLabel: '退库单',
+				fieldLabel: '',
 				margin: '1 0 0 0',
 				buttonText : 'Excel文件上传退库信息',
 				name : 'uploadFile',
@@ -379,33 +420,45 @@ Ext.define('project.project_create_backlist', {
 										{
 											setTimeout(f(i),i*500);//从点击时就开始计时，所以500*i表示每500ms就执行一次
 										}
+										var type=Ext.getCmp('back_optionType').getValue();
 
 										//上传数据
 										exceluploadform.submit({
 											//excel上传的接口
 											//url : 'project/Upload_Design_List_Excel.do？projectId='+projectId+'&buildingId='+buildingId,//上传excel文件，同时传入项目的id和楼栋的id
-											url : 'designlist/uploadExcel.do?',//projectId=' + projectId +'&buildingId=' + buildingId+'&positionId=' + positionId,//',//?projectId=\'+projectId+\'&buildingId=\'+buildingId上传excel文件，同时传入项目的id和楼栋的id
+											url : 'backStore/uploadExcel.do',//projectId=' + projectId +'&buildingId=' + buildingId+'&positionId=' + positionId,//',//?projectId=\'+projectId+\'&buildingId=\'+buildingId上传excel文件，同时传入项目的id和楼栋的id
 											waitMsg : '正在上传...',
 											params : {
-												projectId:projectId,
-												buildingId:buildingId,
+												type:type
 												// buildingpositionId:positionId,
 											},
 											success : function(exceluploadform,response, action) {
-												var response1 = action;
-												console.log("response=========================>",response)
-												Ext.MessageBox.alert("提示", "上传成功!");
-												//上传成功
-												//回显
-												console.log(response.result['value']);
-												console.log("response1=========================>")
 												Ext.MessageBox.alert("提示", "上传成功!");
 												//重新加载数据
-												designlistStore.loadData(response.result['value']);
+												backlistStore.loadData(response.result['value']);
 											},
-											failure : function(exceluploadform, action) {
-												var response = action.result;
-												Ext.MessageBox.alert("错误", "上传失败!");
+											failure : function(exceluploadform, response) {
+												var ob = response.result;
+												if(ob.errorCode==100){
+													Ext.MessageBox.alert("错误", ob.msg);
+												}else if(ob.errorCode==1000){
+													Ext.MessageBox.alert("错误", "上传失败！");
+												}else if(ob.errorCode==200){
+													Ext.Msg.show({
+														title: '提示',
+														message: '匹配失败，产品位置重复或品名不合法！\n是否查看具体错误数据',
+														buttons: Ext.Msg.YESNO,
+														icon: Ext.Msg.QUESTION,
+														fn: function (btn) {
+															if (btn === 'yes') {
+																//点击确认，显示重复的数据
+																errorlistStore.loadData(ob.value);
+																win_errorInfo_outbound.show();
+															}
+														}
+													});
+
+												}
 											}
 										});
 									}
@@ -605,19 +658,9 @@ Ext.define('project.project_create_backlist', {
 			dock : "top",
 			id : "toolbar1",
 			items : [   tableList1,
-						buildingName,
+						buildingName
 						// buildingPositionList,
-						//退库类型
-						{
-							xtype: 'textfield',
-							fieldLabel: '退库类型',
-							id: 'back_type',
-							margin: '0 30 0 0',
-							width: 390,
-							labelWidth: 60,
-							name: 'back_type',
-							value: ""
-						},
+
 
 					]//exceluploadform
 		});
@@ -631,6 +674,8 @@ Ext.define('project.project_create_backlist', {
 				// 	margin: '0 0 0 40',
 				// 	text:'选择文件:',
 				// },
+				//退库类型
+				optionType,
 				exceluploadform,
 			]//exceluploadform
 		});
@@ -680,19 +725,19 @@ Ext.define('project.project_create_backlist', {
 					editable : true,
 				},
 				//退库日期
-				{
-					xtype: 'datefield',
-					margin : '0 30 0 0',
-					fieldLabel: '退库日期',
-					id :'backTime',
-					width: 200,
-					labelWidth: 60,
-					name: 'backTime',
-					format : 'Y-m-d',
-					editable : false,
-					// value:Ext.util.Format.date(Ext.Date.add(new Date(),Ext.Date.MONTH,-1),"Y-m-d")
-					value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
-				},
+				// {
+				// 	xtype: 'datefield',
+				// 	margin : '0 30 0 0',
+				// 	fieldLabel: '退库日期',
+				// 	id :'backTime',
+				// 	width: 200,
+				// 	labelWidth: 60,
+				// 	name: 'backTime',
+				// 	format : 'Y-m-d',
+				// 	editable : false,
+				// 	// value:Ext.util.Format.date(Ext.Date.add(new Date(),Ext.Date.MONTH,-1),"Y-m-d")
+				// 	value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
+				// },
 				{
 					xtype : 'button',
 					text: '创建退库单',
@@ -713,12 +758,12 @@ Ext.define('project.project_create_backlist', {
 						//其他信息
 						var back_reason = Ext.getCmp("back_reason").getValue();
 						var back_operator = Ext.getCmp("back_operator").getValue();
-						var backTime = Ext.getCmp("backTime").getValue();
-						var back_type = Ext.getCmp("back_type").getValue();
+						// var backTime = Ext.getCmp("backTime").getValue();
+						// var back_type = Ext.getCmp("back_type").getValue();
 
 						//获取数据
 						Ext.Ajax.request({
-							// url : 'designlist/uploadData.do', //创建退库单
+							url : 'backStore/createReturnOrder.do', //创建退库单
 							method:'POST',
 							//submitEmptyText : false,
 							params : {
@@ -726,10 +771,10 @@ Ext.define('project.project_create_backlist', {
 								projectId:projectId,
 								buildingId:buildingId,
 								// buildingpositionId:positionId,
-								back_reason:back_reason,
-								back_operator:back_operator,
-								backTime:backTime,
-								type:back_type,
+								description:back_reason,
+								operator:back_operator,
+								//backTime:backTime,
+								//type:back_type,
 							},
 							success : function(response) {
 								var res = response.responseText;
@@ -742,30 +787,12 @@ Ext.define('project.project_create_backlist', {
 								var errorCode = jsonobj.errorCode;
 								var errorCount = jsonobj.errorCount;
 								if(success == false){
-									if(errorCode == 150){
-										//位置重复或品名不合法
+									if(errorCode==1000){
+										Ext.MessageBox.alert("提示","未知错误！请联系管理员" );
+									}else {
+										Ext.MessageBox.alert("提示",jsonobj.Msg);
+									}
 
-										// Ext.MessageBox.alert("提示","匹配失败，产品位置重复或品名不合法！请重新导入" );
-										Ext.Msg.show({
-											title: '提示',
-											message: '匹配失败，产品位置重复或品名不合法！\n是否查看具体错误数据',
-											buttons: Ext.Msg.YESNO,
-											icon: Ext.Msg.QUESTION,
-											fn: function (btn) {
-												if (btn === 'yes') {
-													//点击确认，显示重复的数据
-													errorlistStore.loadData(errorList);
-													win_errorInfo_outbound.show();
-												}
-											}
-										});
-									}
-									else if(errorCode == 300){
-										Ext.MessageBox.alert("提示","产品匹配失败！请重新导入" );
-									}
-									else if(errorCode == 1000){
-										Ext.MessageBox.alert("提示","匹配失败，未知错误！请重新导入" );
-									}
 								}else{
 									Ext.MessageBox.alert("提示","匹配成功" );
 								}
