@@ -8,6 +8,7 @@ import com.bancai.cg.service.InsertProjectService;
 import com.bancai.cg.util.TransferUtil;
 import com.bancai.domain.DataList;
 import com.bancai.domain.DataRow;
+import com.bancai.yrd.service.DesignlistService;
 import com.bancai.yrd.service.OldpanelDataService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,7 @@ public class AllExcelService extends BaseService {
 	@Autowired
 	private InsertProjectService insertProjectService;
 	@Autowired
-	private OldpanelDataService oldpanel_Data_Service;
+	private DesignlistService designlistService;
 
 	//JPA dao
 	@Autowired
@@ -288,40 +289,52 @@ public class AllExcelService extends BaseService {
 	}
 
 	/**
-	 * 旧板退料单上传数据
+	 * 退料单上传数据
 	 *
 	 * @param inputStream
 	 * @return
 	 * @throws IOException
 	 */
 	@Transactional
-	public UploadDataResult uploadBackOldpanelExcelData(InputStream inputStream) throws IOException {
+	public UploadDataResult uploadBackExcelData(String typeName,String originName,String projectId,String buildingId, InputStream inputStream) throws IOException {
 		UploadDataResult result = new UploadDataResult();
 		Excel excel = new Excel(inputStream);
 		DataList excelList = excel.readExcelContent();
 		Iterator it = excelList.iterator();
 		DataList dataList = new DataList();
 		DataList errorList = new DataList();
-		String sql_queryInfo = "select * from oldpanel_info where oldpanelName=?";
+		String sql_queryInfo = "select * from "+originName+"_info where "+originName+"Name=?";
 		String sql_queryWarehouse = "select * from storeposition where warehouseName=?";
-		String sql_queryStore = "select * from oldpanel_store where oldpanelId=?";
+		String sql_queryStore = "select * from "+typeName+"_store where "+originName+"Id=?";
 		while (it.hasNext()){
 			DataRow dataRow = (DataRow) it.next();
-			String oldpanelName = (dataRow.get("品名") + "").trim().toUpperCase();
+			String name = (dataRow.get("品名") + "").trim().toUpperCase();
 			String count = (dataRow.get("退料数量") + "").trim();
 			String backWarehouseName = (dataRow.get("退料仓库") + "").trim().toUpperCase();
 			String warehouseName = (dataRow.get("收料仓库") + "").trim().toUpperCase();
 			String remark = dataRow.get("备注") + "";
-			if(oldpanelName.length()==0){
-				it.remove();
-				continue;
-			} else if (oldpanelName.equals("合计")){
+			String position = (dataRow.get("编号") + "").trim().toUpperCase();
+			if((name.length()==0)||(name.equals("NULL"))){
+				if((!typeName.equals("backproduct"))||(position.length()==0)||(position.equals("NULL"))) {
+					it.remove();
+					continue;
+				}else {
+					DataList posList = designlistService.getDesignlistByPosition(projectId,buildingId,position);
+					if(posList.isEmpty()){
+						dataRow.put("errorType","编号有误或该项目楼栋中不存在此编号");
+						errorList.add(dataRow);
+						continue;
+					}else {
+						name = posList.get(0).get("productName").toString();
+					}
+				}
+			} else if (name.equals("合计")){
 				it.remove();
 				break;
 			}
-			DataList infoList = queryService.query(sql_queryInfo,oldpanelName);
+			DataList infoList = queryService.query(sql_queryInfo,name);
 			if(infoList.isEmpty()){
-				dataRow.put("errorType","找不到该品名旧板的基础信息");
+				dataRow.put("errorType","没有该品名的基础信息");
 				errorList.add(dataRow);
 				continue;
 			}
@@ -339,8 +352,8 @@ public class AllExcelService extends BaseService {
 				continue;
 			}
 			DataRow infoRow = infoList.get(0);
-			String oldpanelId = infoRow.get("id").toString();
-			DataList storeList = queryService.query(sql_queryStore,oldpanelId);
+			String infoId = infoRow.get("id").toString();
+			DataList storeList = queryService.query(sql_queryStore,infoId);
 			String storeId = "0";
 			if((!storeList.isEmpty())&&(warehouseName.equals("NULL")||warehouseName.length()==0)){
 				warehouseName = storeList.get(0).get("warehouseName").toString();
@@ -367,7 +380,7 @@ public class AllExcelService extends BaseService {
 				totalArea = String.valueOf(Double.parseDouble(unitArea)*Double.parseDouble(count));
 			}
 			DataRow row = new DataRow();
-			row.put("name",oldpanelName);
+			row.put("name",name);
 			row.put("backWarehouseName",backWarehouseName);
 			row.put("warehouseName",warehouseName);
 			row.put("count",count);
@@ -390,108 +403,6 @@ public class AllExcelService extends BaseService {
 		return result;
 	}
 
-	/**
-	 * 原材料退料单上传数据
-	 *
-	 * @param inputStream
-	 * @return
-	 * @throws IOException
-	 */
-	@Transactional
-	public UploadDataResult uploadBackMaterialExcelData(InputStream inputStream) throws IOException {
-		UploadDataResult result = new UploadDataResult();
-		Excel excel = new Excel(inputStream);
-		DataList excelList = excel.readExcelContent();
-		Iterator it = excelList.iterator();
-		DataList dataList = new DataList();
-		DataList errorList = new DataList();
-		String sql_queryInfo = "select * from material_info where materialName=?";
-		String sql_queryWarehouse = "select * from storeposition where warehouseName=?";
-		String sql_queryStore = "select * from material_store where materialId=?";
-		while (it.hasNext()){
-			DataRow dataRow = (DataRow) it.next();
-			String materialName = (dataRow.get("品名") + "").trim().toUpperCase();
-			String count = (dataRow.get("退料数量") + "").trim();
-			String backWarehouseName = (dataRow.get("退料仓库") + "").trim().toUpperCase();
-			String warehouseName = (dataRow.get("收料仓库") + "").trim().toUpperCase();
-			String remark = dataRow.get("备注") + "";
-			if(materialName.length()==0){
-				it.remove();
-				continue;
-			} else if (materialName.equals("合计")){
-				it.remove();
-				break;
-			}
-			DataList infoList = queryService.query(sql_queryInfo,materialName);
-			if(infoList.isEmpty()){
-				dataRow.put("errorType","找不到该品名原材料的基础信息");
-				errorList.add(dataRow);
-				continue;
-			}
-			if(((count.split("\\.").length==1)&&(!count.matches(isPureNumber)))||
-					((count.split("\\.").length==2)&&(
-							(!count.split("\\.")[0].matches(isPureNumber))||(!count.split("\\.")[1].matches(isPureNumber))
-					))||((count.split("\\.").length!=1)&&((count.split("\\.").length!=2)))){
-				dataRow.put("errorType","数量错误");
-				errorList.add(dataRow);
-				continue;
-			}
-			if(queryService.query(sql_queryWarehouse,backWarehouseName).isEmpty()){
-				dataRow.put("errorType","退料仓库有误");
-				errorList.add(dataRow);
-				continue;
-			}
-			DataRow infoRow = infoList.get(0);
-			String oldpanelId = infoRow.get("id").toString();
-			DataList storeList = queryService.query(sql_queryStore,oldpanelId);
-			String storeId = "0";
-			if((!storeList.isEmpty())&&(warehouseName.equals("NULL")||warehouseName.length()==0)){
-				warehouseName = storeList.get(0).get("warehouseName").toString();
-				storeId = storeList.get(0).get("id").toString();
-			}
-			else if(queryService.query(sql_queryWarehouse,warehouseName).isEmpty()){
-				dataRow.put("errorType","收料仓库有误");
-				errorList.add(dataRow);
-				continue;
-			}
-			if(!errorList.isEmpty())
-				continue;
-			String unitWeight = "";
-			String unitArea = "";
-			String totalWeight = "";
-			String totalArea = "";
-			String inventoryUnit = infoRow.get("inventoryUnit")+"";
-			if((infoRow.get("unitWeight")!=null)&&(infoRow.get("unitWeight").toString().length()!=0)){
-				unitWeight = infoRow.get("unitWeight").toString();
-				totalWeight = String.valueOf(Double.parseDouble(unitWeight)*Double.parseDouble(count));
-			}
-			if((infoRow.get("unitArea")!=null)&&(infoRow.get("unitArea").toString().length()!=0)){
-				unitArea = infoRow.get("unitArea").toString();
-				totalArea = String.valueOf(Double.parseDouble(unitArea)*Double.parseDouble(count));
-			}
-			DataRow row = new DataRow();
-			row.put("name",materialName);
-			row.put("backWarehouseName",backWarehouseName);
-			row.put("warehouseName",warehouseName);
-			row.put("count",count);
-			row.put("unitWeight",unitWeight);
-			row.put("unitArea",unitArea);
-			row.put("totalWeight",totalWeight);
-			row.put("totalArea",totalArea);
-			row.put("inventoryUnit",inventoryUnit);
-			row.put("remark",remark);
-			row.put("storeId",storeId);
-			dataList.add(row);
-		}
-		if(errorList.isEmpty()){
-			result.dataList = dataList;
-		}else {
-			result.dataList = errorList;
-			result.setSuccess(false);
-			result.setErrorCode(200);
-		}
-		return result;
-	}
 
 	@Transactional
 	public String findclassificationIdByName(String classificationName){

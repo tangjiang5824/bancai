@@ -507,26 +507,39 @@ public class DesignlistController {
      * 上传excel文件退料单
      * */
     @RequestMapping(value = "/backStore/uploadExcel.do")
-    public WebResponse backStoreUploadExcel(MultipartFile uploadFile,String type) {
+    public WebResponse backStoreUploadExcel(MultipartFile uploadFile,String type,String projectId,String buildingId) {
         WebResponse response = new WebResponse();
         try {
-            if(type==null||type.trim().length()==0){
+            if(type==null||type.length()==0){
                 response.setSuccess(false);
                 response.setErrorCode(100); //退料类型错误
                 response.setMsg("未选择退料类型");
                 return response;
             }
-            UploadDataResult result = new UploadDataResult();
+            if(projectId==null||projectId.length()==0||buildingId==null||buildingId.length()==0){
+                response.setSuccess(false);
+                response.setErrorCode(200);
+                response.setMsg("未选择项目或楼栋");
+                return response;
+            }
+            String typeName = "";
+            String originName = "";
             switch (type){
                 case "1":
+                    typeName = "backproduct";
+                    originName = "product";
                     break;
                 case "2":
+                    typeName = "preprocess";
+                    originName = "product";
                     break;
                 case "3":
-                    result = allExcelService.uploadBackOldpanelExcelData(uploadFile.getInputStream());
+                    typeName = "oldpanel";
+                    originName = "oldpanel";
                     break;
                 case "4":
-                    result = allExcelService.uploadBackMaterialExcelData(uploadFile.getInputStream());
+                    typeName = "material";
+                    originName = "material";
                     break;
                 default:
                     response.setSuccess(false);
@@ -534,9 +547,9 @@ public class DesignlistController {
                     response.setMsg("退料类型错误");
                     return response;
             }
+            UploadDataResult result = allExcelService.uploadBackExcelData(typeName,originName,projectId,buildingId,uploadFile.getInputStream());
             response.setSuccess(result.success);
             response.setErrorCode(result.errorCode);
-            response.setMsg("存在错误信息");
             response.put("value",result.dataList);
             response.put("totalCount", result.dataList.size());
         } catch (Exception e) {
