@@ -46,7 +46,7 @@ Ext.define('oldpanel.oldpanel_backcheck',{
         var tableList = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '项目名',
             labelWidth : 45,
-            width : '35%',
+            width : 550,
             margin : '0 10 0 0',
             id :  'projectName',
             name : '项目名称',
