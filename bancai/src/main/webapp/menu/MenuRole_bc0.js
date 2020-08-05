@@ -45,6 +45,11 @@ Ext.define("menu.MenuRole_bc0", {
 					leaf : true
 				},
 				{
+					text : '旧板退料审核',
+					id : 'oldpanel.oldpanel_backcheck',
+					leaf : true
+				},
+				{
 					text : '旧板出入库记录查询',
 					id : 'oldpanel.oldpanel_Query_Records',//'oldpanel.oldpanel_Query_Records',
 					leaf : true
@@ -82,6 +87,11 @@ Ext.define("menu.MenuRole_bc0", {
 				}, {
 						text : '原材料领料',
 						id : 'material.material_Receive',
+						leaf : true
+					},
+					{
+						text : '原材料退料审核',
+						id : 'material.material_backcheck',
 						leaf : true
 					},
 					{
@@ -126,6 +136,11 @@ Ext.define("menu.MenuRole_bc0", {
 						id : 'preprocess.preprocess_Receive',
 						leaf : true
 					},
+					{
+						text : '预加工半成品退料审核',
+						id : 'preprocess.preprocess_backcheck',
+						leaf : true
+					},
 				// 	{
 				// 	text : '预加工半成品出库',
 				// 	id : '',
@@ -155,6 +170,11 @@ Ext.define("menu.MenuRole_bc0", {
 					{
 						text : '退库成品领料',
 						id : 'backproduct.backproduct_Receive',
+						leaf : true
+					},
+					{
+						text : '退库成品退料审核',
+						id : 'backproduct.backproduct_backcheck',
 						leaf : true
 					},
 				// 	{
@@ -336,8 +356,13 @@ Ext.define("menu.MenuRole_bc0", {
 						leaf : true
 					},
 					{
-						text : '项目创建退库单',
+						text : '项目创建退料单',
 						id : 'project.project_create_backlist',
+						leaf : true
+					},
+					{
+						text : '项目退料单查询',
+						id : 'project.project_query_backlist',
 						leaf : true
 					},
 				]
