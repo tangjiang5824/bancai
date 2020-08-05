@@ -221,8 +221,8 @@ public class AllExcelService extends BaseService {
 			}
 //			String classificationName = dataRow.get("分类") + "";
 //			String inventoryUnit = dataRow.get("单位") + "";
-			String count = dataRow.get("入库数量") + "";
-			String warehouseName = dataRow.get("入库仓库") + "";
+			String count = (dataRow.get("入库数量") + "").trim().toUpperCase();
+			String warehouseName = (dataRow.get("入库仓库") + "").trim().toUpperCase();
 			DataRow row = new DataRow();
 			row.put("oldpanelName",oldpanelName);
 			row.put("warehouseName",warehouseName);
@@ -347,6 +347,48 @@ public class AllExcelService extends BaseService {
 		}
 		return result;
 	}
+
+
+	/**
+	 * 废料上传数据
+	 *
+	 * @param inputStream
+	 * @return
+	 * @throws IOException
+	 */
+	@Transactional
+	public UploadDataResult uploadWasteExcelData(InputStream inputStream) throws IOException {
+		UploadDataResult result = new UploadDataResult();
+		Excel excel = new Excel(inputStream);
+		DataList excelList = excel.readExcelContent();
+		Iterator it = excelList.iterator();
+		DataList dataList = new DataList();
+		while (it.hasNext()){
+			DataRow dataRow = (DataRow) it.next();
+			String wasteName = (dataRow.get("品名") + "").trim().toUpperCase();
+			if(wasteName.length()==0){
+				it.remove();
+				continue;
+			} else if (wasteName.equals("合计")){
+				it.remove();
+				break;
+			}
+			String inventoryUnit = (dataRow.get("单位") + "").trim().toUpperCase();
+			String count = (dataRow.get("入库量") + "").trim().toUpperCase();
+			String warehouseName = (dataRow.get("入库仓库") + "").trim().toUpperCase();
+			String remark = dataRow.get("备注") + "";
+			DataRow row = new DataRow();
+			row.put("wasteName",wasteName);
+			row.put("inventoryUnit",inventoryUnit);
+			row.put("warehouseName",warehouseName);
+			row.put("count",count);
+			row.put("remark",remark);
+			dataList.add(row);
+		}
+		result.dataList = dataList;
+		return result;
+	}
+
 
 
 	@Transactional

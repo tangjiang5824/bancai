@@ -371,6 +371,18 @@ public class ProductDataService extends BaseService{
                 productId,count,logId,storeId,"0");
     }
 
+    @Transactional
+    public DataList wasteAddInsertRowToInboundList(DataList insertList,String wasteName,String warehouseName,String inventoryUnit,String count,String remark){
+        DataRow row = new DataRow();
+        row.put("wasteName",wasteName);
+        row.put("warehouseName",warehouseName);
+        row.put("inventoryUnit",inventoryUnit);
+        row.put("count",count);
+        row.put("remark",remark);
+        insertList.add(row);
+        return insertList;
+    }
+
 //    /**
 //     * 添加数据,返回添加的产品id
 //     */

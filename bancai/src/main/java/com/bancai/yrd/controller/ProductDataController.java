@@ -4,6 +4,7 @@ import com.bancai.cg.service.InsertProjectService;
 import com.bancai.commonMethod.*;
 import com.bancai.db.mysqlcondition;
 import com.bancai.domain.DataList;
+import com.bancai.vo.UploadDataResult;
 import com.bancai.yrd.service.ProductDataService;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.bancai.service.TableService;
 import com.bancai.vo.WebResponse;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
 import java.text.ParseException;
@@ -386,6 +388,111 @@ public class ProductDataController {
         WebResponse wr=queryService.queryDataPage(start, limit, c, tableName);
         return wr;
     }
+
+    /*
+     * 上传excel文件废料入库单
+     * */
+    @RequestMapping(value = "/waste/uploadExcel.do")
+    public WebResponse wasteUploadExcel(MultipartFile uploadFile) {
+        WebResponse response = new WebResponse();
+        try {
+            UploadDataResult result = allExcelService.uploadWasteExcelData(uploadFile.getInputStream());
+            response.setSuccess(result.success);
+            response.setErrorCode(result.errorCode);
+            response.put("value",result.dataList);
+            response.put("totalCount", result.dataList.size());
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误
+            response.setMsg(e.getMessage());
+        }
+        //net.sf.json.JSONObject json= net.sf.json.JSONObject.fromObject(response);
+        return response;
+    }
+
+    /*
+     * 废料入库
+     * */
+    //produces = {"text/html;charset=UTF-8"}
+    @RequestMapping(value = "/waste/addData.do")
+    public WebResponse wasteAddData(String s,String operator,String projectId,String buildingId, HttpSession session) {
+        WebResponse response = new WebResponse();
+        try {
+            JSONArray jsonArray = new JSONArray(s);
+            String userId = (String) session.getAttribute("userid");
+            //检查
+            if(jsonArray.length()==0){
+                response.setSuccess(false);
+                response.setErrorCode(100); //提交的s为空
+                response.setMsg("提交的数据为空");
+                return response;
+            }
+            if((projectId==null)||(projectId.length()==0)||(buildingId==null)||(buildingId.length()==0)){
+                response.setSuccess(false);
+                response.setErrorCode(300);
+                response.setMsg("未选择项目或楼栋");
+                return response;
+            }
+            if((operator==null)||(operator.length()==0)){
+                response.setSuccess(false);
+                response.setErrorCode(400);
+                response.setMsg("未选择入库人");
+                return response;
+            }
+            DataList errorList = new DataList();
+            DataList insertList = new DataList();
+            HashMap<String,String> map = new HashMap<>();
+            System.out.println("[===checkWasteUploadData===]");
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonTemp = jsonArray.getJSONObject(i);
+                System.out.println("第" + i + "个:" + jsonTemp);
+                String id = jsonTemp.get("id")+"";
+                String wasteName = (jsonTemp.get("wasteName") + "").trim().toUpperCase();
+                String warehouseName = (jsonTemp.get("warehouseName") + "").trim().toUpperCase();
+                String inventoryUnit = (jsonTemp.get("inventoryUnit") + "").trim().toUpperCase();
+                String count = (jsonTemp.get("count") + "").trim();
+                String remark = jsonTemp.get("remark") + "";
+                map.put("wasteName",wasteName);
+                map.put("warehouseName",warehouseName);
+                map.put("inventoryUnit",inventoryUnit);
+                map.put("count",count);
+                map.put("remark",remark);
+                if(((count.split("\\.").length==1)&&(!count.matches(isPureNumber)))||
+                        ((count.split("\\.").length==2)&&(
+                                (!count.split("\\.")[0].matches(isPureNumber))||(!count.split("\\.")[1].matches(isPureNumber))
+                        ))||((count.split("\\.").length!=1)&&((count.split("\\.").length!=2))))
+                    errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"数量输入有误",map);
+                else if(analyzeNameService.isWarehouseNameNotExist(warehouseName))
+                    errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"仓库名不存在",map);
+                if(errorList.isEmpty())
+                    insertList = productDataService.wasteAddInsertRowToInboundList(insertList,wasteName,warehouseName,inventoryUnit,count,remark);
+            }
+            if(!errorList.isEmpty()){
+                response.setSuccess(false);
+                response.setErrorCode(200);//提交的s存在错误内容
+                response.setMsg("提交的数据存在错误内容");
+                response.put("errorList",errorList);
+                response.put("errorCount",errorList.size());
+                return response;
+            }
+            System.out.println("[===checkWasteUploadData==Complete=NoError]");
+//            boolean uploadResult= productDataService.insertWasteDataToStore(insertList,userId,operator,projectId,buildingId);
+//            response.setSuccess(uploadResult);
+        }catch (Exception e){
+            e.printStackTrace();
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误
+            response.setMsg(e.getMessage());
+        }
+        return response;
+    }
+
+
+
+
+
+
 
 
 
