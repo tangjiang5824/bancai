@@ -164,7 +164,7 @@ Ext.define('material.material_Receive',{
                 //     id :'picklistNum',
                 //     width: 180,
                 //     labelWidth: 30,
-                //     name: 'picklistNum',
+                //     name: 'picklistqNum',
                 //     value:"",
                 // },
                 {
