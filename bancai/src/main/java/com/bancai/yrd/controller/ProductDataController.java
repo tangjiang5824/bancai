@@ -4,6 +4,7 @@ import com.bancai.cg.service.InsertProjectService;
 import com.bancai.commonMethod.*;
 import com.bancai.db.mysqlcondition;
 import com.bancai.domain.DataList;
+import com.bancai.domain.DataRow;
 import com.bancai.vo.UploadDataResult;
 import com.bancai.yrd.service.ProductDataService;
 import org.apache.log4j.Logger;
@@ -458,7 +459,9 @@ public class ProductDataController {
                 map.put("inventoryUnit",inventoryUnit);
                 map.put("count",count);
                 map.put("remark",remark);
-                if(((count.split("\\.").length==1)&&(!count.matches(isPureNumber)))||
+                if(wasteName.equals("NULL")||wasteName.length()==0)
+                    errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"未输入品名",map);
+                else if(((count.split("\\.").length==1)&&(!count.matches(isPureNumber)))||
                         ((count.split("\\.").length==2)&&(
                                 (!count.split("\\.")[0].matches(isPureNumber))||(!count.split("\\.")[1].matches(isPureNumber))
                         ))||((count.split("\\.").length!=1)&&((count.split("\\.").length!=2))))
@@ -477,8 +480,8 @@ public class ProductDataController {
                 return response;
             }
             System.out.println("[===checkWasteUploadData==Complete=NoError]");
-//            boolean uploadResult= productDataService.insertWasteDataToStore(insertList,userId,operator,projectId,buildingId);
-//            response.setSuccess(uploadResult);
+            boolean uploadResult= productDataService.insertWasteDataToStore(insertList,userId,operator,projectId,buildingId);
+            response.setSuccess(uploadResult);
         }catch (Exception e){
             e.printStackTrace();
             response.setSuccess(false);
@@ -487,6 +490,80 @@ public class ProductDataController {
         }
         return response;
     }
+
+    /*
+     * 废料仓库记录查询
+     * */
+    @RequestMapping("/waste/queryLog.do")
+    public WebResponse queryReturnOrder(String type,String projectId, String buildingId,String operator,String timeStart, String timeEnd,Integer start,Integer limit){
+        mysqlcondition c=new mysqlcondition();
+        if (null!=type&&type.length() != 0) {
+            c.and(new mysqlcondition("type", "=", type));
+        }
+        if (null!=projectId&&projectId.length() != 0) {
+            c.and(new mysqlcondition("projectId", "=", projectId));
+        }
+        if (null!=buildingId&&buildingId.length() != 0) {
+            c.and(new mysqlcondition("buildingId", "=", projectId));
+        }
+        if (null!=operator&&operator.length() != 0) {
+            c.and(new mysqlcondition("operator", "=", operator));
+        }
+        if (null!=timeStart&&timeStart.length() != 0) {
+            c.and(new mysqlcondition("time", ">=", timeStart));
+        }
+        if (null!=timeEnd&&timeEnd.length() != 0) {
+            c.and(new mysqlcondition("time", "<=", timeEnd));
+        }
+        return queryService.queryDataPage(start, limit, c, "waste_log_view");
+    }
+
+    /*
+     * 废料仓库记录查询detail
+     * */
+    @RequestMapping("/waste/queryLogDetail.do")
+    public WebResponse queryReturnOrderDetail(String wasteLogId,Integer start,Integer limit){
+        mysqlcondition c=new mysqlcondition();
+        if (null!=wasteLogId&&wasteLogId.length() != 0) {
+            c.and(new mysqlcondition("wasteLogId", "=", wasteLogId));
+        }else {
+            WebResponse response = new WebResponse();
+            response.setSuccess(false);
+            response.setErrorCode(100);//未获取到退料单号
+            response.setMsg("未获取到该次记录");
+            return response;
+        }
+        return queryService.queryDataPage(start, limit, c, "waste_log_detail_view");
+    }
+
+    /*
+     * 废料入库撤销
+     * */
+    @RequestMapping("/waste/addDataRollback.do")
+    public WebResponse wasteAddDataRollback(String wasteLogId,String operator,HttpSession session){
+        WebResponse response = new WebResponse();
+        try {
+            DataRow row = analyzeNameService.canRollback("waste_log",wasteLogId);
+            if(!row.isEmpty()){
+                String userId = (String) session.getAttribute("userid");
+                String projectId = row.get("projectId").toString();
+                String buildingId = row.get("buildingId").toString();
+                boolean result = productDataService.rollbackWasteData(wasteLogId,operator,userId,projectId,buildingId);
+                response.setSuccess(result);
+            }else {
+                response.setSuccess(false);
+                response.setErrorCode(100);
+                response.setMsg("该次记录无法撤销");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误
+            response.setMsg(e.getMessage());
+        }
+        return response;
+    }
+
 
 
 

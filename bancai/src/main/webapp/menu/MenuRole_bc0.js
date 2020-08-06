@@ -226,6 +226,22 @@ Ext.define("menu.MenuRole_bc0", {
 				}]
 			}
 		]},
+		{
+			text : '废料仓库管理',
+			expanded : true,
+			children : [
+				{
+					text : '废料入库',
+					id : 'unuseMaterial.unuseMaterial_Inbound',
+					leaf : true
+				},
+				// {
+				// text : '成本统计',
+				// id : 'finance.statistics_cost',
+				// leaf : true
+				// } ,
+			]
+		},
 			// 	{
 			// 	text : '产品管理',
 			// 	expanded : true,

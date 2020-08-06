@@ -383,6 +383,75 @@ public class ProductDataService extends BaseService{
         return insertList;
     }
 
+    /*
+     * 废料入库
+     * */
+    @Transactional
+    public boolean insertWasteDataToStore(DataList insertList,String userId,String operator,String projectId,String buildingId){
+        boolean b = true;
+        int logId = wasteAddLogBackId("0",userId,operator,projectId,buildingId);
+        for (DataRow dataRow : insertList) {
+            String wasteName = dataRow.get("wasteName").toString();
+            String warehouseName = dataRow.get("warehouseName").toString();
+            String inventoryUnit = dataRow.get("inventoryUnit").toString();
+            String count = dataRow.get("count").toString();
+            String remark = dataRow.get("remark").toString();
+            DataList queryList = queryService.query("select * from waste_store where wasteName=? and warehouseName=? and inventoryUnit=?",
+                    wasteName,warehouseName,inventoryUnit);
+            if(queryList.isEmpty()){
+                int storeId = wasteAddStoreBackId(wasteName,warehouseName,inventoryUnit,count);
+                b = b&wasteAddLogDetail(String.valueOf(logId),String.valueOf(storeId),count,remark,"0");
+            }else {
+                String storeId = queryList.get(0).get("id").toString();
+                wasteUpdateStoreById(storeId,"+",count);
+                b = b&wasteAddLogDetail(String.valueOf(logId),storeId,count,remark,"0");
+            }
+        }
+        return b;
+    }
+
+    private int wasteAddLogBackId(String type,String userId,String operator,String projectId,String buildingId){
+        return insertProjectService.insertDataToTable("insert into waste_log (type,userId,operator,projectId,buildingId,time,isrollback) values (?,?,?,?,?,?,?)",
+                type,userId,operator,projectId,buildingId,analyzeNameService.getTime(),"0");
+    }
+    private int wasteAddStoreBackId(String wasteName,String warehouseName,String inventoryUnit,String count){
+        return insertProjectService.insertDataToTable("insert into waste_store (wasteName,warehouseName,inventoryUnit,count) values (?,?,?,?)",
+                wasteName,warehouseName,inventoryUnit,count);
+    }
+    private void wasteUpdateStoreById(String storeId,String method,String count){
+        jo.update("update waste_store set count=count"+method+"\""+count+"\" where id=\""+storeId+"\"");
+    }
+    private boolean wasteAddLogDetail(String logId,String storeId,String count,String remark,String value){
+        return insertProjectService.insertIntoTableBySQL("insert into waste_logdetail (wastelogId,wastestoreId,count,remark,value,isrollback) values (?,?,?,?,?,?)",
+                logId,storeId,count,remark,value,"0");
+    }
+    private void wasteUpdateLogdetailIsrollbackById(String detailId){
+        jo.update("update waste_logdetail set isrollback=1 where id=\""+detailId+"\"");
+    }
+    private void wasteUpdateLogIsrollbackById(String logId){
+        jo.update("update waste_log set isrollback=1 where id=\""+logId+"\"");
+    }
+    /*
+     * 废料入库撤销
+     * */
+    @Transactional
+    public boolean rollbackWasteData(String wasteLogId,String operator,String userId,String projectId,String buildingId){
+        boolean b = true;
+        wasteUpdateLogIsrollbackById(wasteLogId);
+        int logId = wasteAddLogBackId("3",userId,operator,projectId,buildingId);
+        DataList dataList = queryService.query("select * from waste_logdetail where wastelogId=? and isrollback=0",wasteLogId);
+        for (DataRow dataRow : dataList) {
+            String detailId = dataRow.get("id").toString();
+            String storeId = dataRow.get("wastestoreId").toString();
+            String count = dataRow.get("count").toString();
+            wasteUpdateLogdetailIsrollbackById(detailId);
+            wasteUpdateStoreById(storeId,"-",count);
+            b=b&wasteAddLogDetail(String.valueOf(logId),storeId,count,"","0");
+        }
+        return b;
+    }
+
+
 //    /**
 //     * 添加数据,返回添加的产品id
 //     */
