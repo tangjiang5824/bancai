@@ -67,11 +67,11 @@ Ext.define('project.management.queryproject',{
                 },
 
                 //下拉框默认返回的第一个值
-                render: function (combo) {//渲染
-                    combo.getStore().on("load", function (s, r, o) {
-                        combo.setValue(r[0].get('projectName'));//第一个值
-                    });
-                }
+                // render: function (combo) {//渲染
+                //     combo.getStore().on("load", function (s, r, o) {
+                //         combo.setValue(r[0].id);//第一个值
+                //     });
+                // }
             }
 
         });
@@ -93,7 +93,7 @@ Ext.define('project.management.queryproject',{
                 tableList,
                 {
                     xtype:'tbtext',
-                    text:'时间:',
+                    text:'项目时间:',
                     margin : '0 10 0 20',
                 },
                 {
@@ -104,6 +104,33 @@ Ext.define('project.management.queryproject',{
                     width: 100,
                     // labelWidth: 60,
                     name: 'startTime',
+                    value:"",
+                },{
+                    xtype:'tbtext',
+                    text:'---',
+                },
+                {
+                    xtype: 'monthfield',
+                    margin : '0 10 0 0',
+                    id :'endTime',
+                    width: 100,
+                    // labelWidth: 60,
+                    name: 'endTime',
+                    value:"",
+                },
+                {
+                    xtype:'tbtext',
+                    text:'项目计划时间:',
+                    margin : '0 10 0 20',
+                },
+                {
+                    xtype: 'monthfield',
+                    margin : '0 10 0 0',
+                    // fieldLabel: '',
+                    id :'proStartTime',
+                    width: 100,
+                    // labelWidth: 60,
+                    name: 'proStartTime',
                     value:"",
                 },{
                     xtype:'tbtext',
@@ -148,10 +175,70 @@ Ext.define('project.management.queryproject',{
                 //     value:"",
                 // },
                 {
-                    fieldLabel : '项目负责人',
+                    fieldLabel : '计划负责人',
                     xtype : 'combo',
-                    name : 'projectLeader',
-                    id : 'projectLeader',
+                    name : 'planLeader',
+                    id : 'planLeader',
+                    // disabled : true,
+                    // width:'95%',
+                    margin: '0 40 0 0',
+                    width: 180,
+                    labelWidth: 80,
+                    store : workerListStore,
+                    displayField : 'workerName',
+                    valueField : 'id',
+                    editable : true
+                },
+                {
+                    fieldLabel : '生产负责人',
+                    xtype : 'combo',
+                    name : 'produceLeader',
+                    id : 'produceLeader',
+                    // disabled : true,
+                    // width:'95%',
+                    margin: '0 40 0 0',
+                    width: 180,
+                    labelWidth: 80,
+                    store : workerListStore,
+                    displayField : 'workerName',
+                    valueField : 'id',
+                    editable : true,
+                },
+                {
+                    fieldLabel : '采购负责人',
+                    xtype : 'combo',
+                    name : 'purchaseLeader',
+                    id : 'purchaseLeader',
+                    // disabled : true,
+                    // width:'95%',
+                    margin: '0 40 0 0',
+                    width: 180,
+                    labelWidth: 80,
+                    store : workerListStore,
+                    displayField : 'workerName',
+                    valueField : 'id',
+                    editable : true,
+                },
+                {
+                    fieldLabel : '财务负责人',
+                    xtype : 'combo',
+                    name : 'financeLeader',
+                    id : 'financeLeader',
+                    // disabled : true,
+                    // width:'95%',
+                    margin: '0 40 0 0',
+                    width: 180,
+                    labelWidth: 80,
+                    store : workerListStore,
+                    displayField : 'workerName',
+                    valueField : 'id',
+                    editable : true,
+                },
+                {
+                    fieldLabel : '仓库负责人',
+                    xtype : 'combo',
+                    name : 'storeLeader',
+                    id : 'storeLeader',
                     // disabled : true,
                     // width:'95%',
                     margin: '0 40 0 0',
@@ -170,15 +257,21 @@ Ext.define('project.management.queryproject',{
                     margin: '0 0 0 15',
                     layout: 'right',
                     handler: function(){
-                        console.log("项目id：",Ext.getCmp('projectName').getValue())
+                        console.log("项目id：",Ext.getCmp('projectName').value)
                         console.log("项目名：",Ext.getCmp('projectName').rawValue)
                         Query_Project_Store.load({
                             params : {
-                                projectId:Ext.getCmp('projectName').getValue(),
+                                projectId:Ext.getCmp('projectName').value,
                                 projectName:Ext.getCmp('projectName').rawValue,//获取显示字段
                                 startTime:Ext.getCmp('startTime').getValue(),
-                                endTime:Ext.getCmp('proEndTime').getValue(),
-                                projectLeader:Ext.getCmp('projectLeader').getValue(),
+                                endTime:Ext.getCmp('endTime').getValue(),
+                                proStartTime:Ext.getCmp('proStartTime').getValue(),
+                                proEndTime:Ext.getCmp('proEndTime').getValue(),
+                                planLeader:Ext.getCmp('planLeader').getValue(),
+                                produceLeader:Ext.getCmp('produceLeader').getValue(),
+                                purchaseLeader:Ext.getCmp('purchaseLeader').getValue(),
+                                financeLeader:Ext.getCmp('financeLeader').getValue(),
+                                storeLeader:Ext.getCmp('storeLeader').getValue(),
                             }
                         });
                     }
@@ -225,16 +318,16 @@ Ext.define('project.management.queryproject',{
             pageSize: itemsPerPage, // items per page
             proxy:{
                 // url : "material/findAllBytableName.do?tableName="+tableName,
-                url:"project/findProjectAndBuilding.do",
+                url:"/project/findprojectBycondition.do",
                 type: 'ajax',
                 reader:{
                     type : 'json',
-                    rootProperty: 'project',
+                    rootProperty: 'value',
                     //totalProperty: 'totalCount'
                 },
                 params:{
-                    start: 0,
-                    limit: itemsPerPage
+                    // start: 0,
+                    // limit: itemsPerPage
                     //后面需要添加
                     //tableName:tableName,
                 }
@@ -269,7 +362,7 @@ Ext.define('project.management.queryproject',{
                     text : '楼栋名',
                     flex :1
                 },{
-                    dataIndex : 'buildingLeader',
+                    dataIndex : 'buildingLeaderName',
                     text : '楼栋负责人',
                     flex :1
                 }
@@ -385,9 +478,13 @@ Ext.define('project.management.queryproject',{
                 { text: '项目名称', dataIndex: 'projectName', flex :1 },
                 { text: '开始时间',  dataIndex: 'startTime' ,flex :1},
                 { text: '结束时间', dataIndex: 'endTime', flex :0.7 },
+                { text: '预计开始时间', dataIndex: 'proStartTime', flex :0.7 },
                 { text: '预计结束时间', dataIndex: 'proEndTime', flex :0.7 },
-                { text: '项目负责人',  dataIndex: 'planLeader' ,flex :1},
-                { text: '项目计划人', dataIndex: 'username', flex :1},
+                { text: '计划负责人',  dataIndex: 'planLeaderName' ,flex :1},
+                { text: '生产负责人', dataIndex: 'produceLeaderName', flex :1},
+                { text: '采购负责人', dataIndex: 'purchaseLeaderName', flex :1},
+                { text: '财务负责人', dataIndex: 'financeLeaderName', flex :1},
+                { text: '仓库负责人', dataIndex: 'storeLeaderName', flex :1},
 
             ],
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {

@@ -199,11 +199,11 @@ Ext.define('project.management.buildproject', {
                 {
                     xtype : 'monthfield',
                     margin : '0 10 0 0',
-                    fieldLabel : '开始时间',
+                    fieldLabel : '计划开始时间',
                     width : 180,
                     labelWidth : 80,
-                    id : "startTime",
-                    name : 'startTime',
+                    id : "proStartTime",
+                    name : 'proStartTime',
                     //align: 'right',
                     format : 'Y-m-d',
                     editable : false,
@@ -367,7 +367,7 @@ Ext.define('project.management.buildproject', {
                     });
 
                     //获取数据
-                    var sTime=Ext.Date.format(Ext.getCmp('startTime').getValue(), 'Y-m-d H:i:s');
+                    var sTime=Ext.Date.format(Ext.getCmp('proStartTime').getValue(), 'Y-m-d H:i:s');
 
                     Ext.Ajax.request({
                         url : 'generate_project.do', //createProject.do
@@ -376,13 +376,13 @@ Ext.define('project.management.buildproject', {
                         params : {
                             //tableName:tableName,
                             //materialType:materialtype,
-                            startTime:sTime,
-                            planLeader:Ext.getCmp('planLeader').getValue(),
-                            produceLeader:Ext.getCmp('produceLeader').getValue(),
+                            proStartTime:sTime,
+                            planLeaderId:Ext.getCmp('planLeader').getValue(),
+                            produceLeaderId:Ext.getCmp('produceLeader').getValue(),
                             proEndTime:Ext.getCmp('proEndTime').getValue(),
-                            purchaseLeader:Ext.getCmp('purchaseLeader').getValue(),
-                            financeLeader:Ext.getCmp('financeLeader').getValue(),
-                            storeLeader:Ext.getCmp('storeLeader').getValue(),
+                            purchaseLeaderId:Ext.getCmp('purchaseLeader').getValue(),
+                            financeLeaderId:Ext.getCmp('financeLeader').getValue(),
+                            storeLeaderId:Ext.getCmp('storeLeader').getValue(),
                             projectName:Ext.getCmp('projectName').getValue(),
                             isPreprocess:Ext.getCmp('isPreprocess').getValue(),//项目是否为预加工
                             s : "[" + s + "]",
