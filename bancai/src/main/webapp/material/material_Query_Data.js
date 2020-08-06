@@ -84,16 +84,16 @@ Ext.define('material.material_Query_Data',{
                     xtype:'tbtext',
                     text:'库存数量:',
                     margin : '0 10 0 20',
-                    itemId:'move_left',
+                    itemId:'move_left1',
                 },
                 {
                     xtype: 'textfield',
                     margin : '0 10 0 0',
                     // fieldLabel: '',
-                    id :'minCount',
+                    id :'countStore_min',
                     width: 100,
                     // labelWidth: 60,
-                    name: 'minCount',
+                    name: 'countStore_min',
                     value:"",
                 },{
                     xtype:'tbtext',
@@ -102,10 +102,38 @@ Ext.define('material.material_Query_Data',{
                 {
                     xtype: 'textfield',
                     margin : '0 10 0 0',
-                    id :'maxCount',
+                    id :'countStore_max',
                     width: 100,
                     // labelWidth: 60,
-                    name: 'maxCount',
+                    name: 'countStore_max',
+                    value:"",
+                },
+                {
+                    xtype:'tbtext',
+                    text:'可用数量:',
+                    margin : '0 10 0 20',
+                    itemId:'move_left',
+                },
+                {
+                    xtype: 'textfield',
+                    margin : '0 10 0 0',
+                    // fieldLabel: '',
+                    id :'countUse_min',
+                    width: 100,
+                    // labelWidth: 60,
+                    name: 'countUse_min',
+                    value:"",
+                },{
+                    xtype:'tbtext',
+                    text:'---',
+                },
+                {
+                    xtype: 'textfield',
+                    margin : '0 10 0 0',
+                    id :'countUse_max',
+                    width: 100,
+                    // labelWidth: 60,
+                    name: 'countUse_max',
                     value:"",
                 },
 
@@ -134,10 +162,13 @@ Ext.define('material.material_Query_Data',{
                                 // endTWidth : Ext.getCmp('endWidth').getValue(),
                                 // materialName:Ext.getCmp('materialName').getValue(),//获取id  Ext.getCmp('materialName').rawValue
                                 // materialName:Ext.getCmp('materialName').rawValue,//获取显示字段
-                                materialName:Ext.getCmp('materialName').rawValue,//获取显示字段
+                                tableName :"material_store_view",
+                                materialId:Ext.getCmp('materialName').getValue(),//获取显示字段
                                 // specification:Ext.getCmp('specification').getValue(),
-                                totalCount_min:Ext.getCmp('minCount').getValue(),
-                                totalCount_max:Ext.getCmp('maxCount').getValue(),
+                                countStore_min:Ext.getCmp('countStore_min').getValue(),
+                                countStore_max:Ext.getCmp('countStore_max').getValue(),
+                                countUse_min:Ext.getCmp('countUse_min').getValue(),
+                                countUse_max:Ext.getCmp('countUse_max').getValue(),
                                 warehouseName:Ext.getCmp('warehouseName').getValue(),
                             }
                         });
@@ -198,10 +229,12 @@ Ext.define('material.material_Query_Data',{
                         // startWidth:Ext.getCmp('startWidth').getValue(),
                         // endWidth:Ext.getCmp('endWidth').getValue(),
 
-                        materialName:Ext.getCmp('materialName').rawValue,
+                        materialId:Ext.getCmp('materialName').getValue(),//获取显示字段
                         // specification:Ext.getCmp('specification').getValue(),
-                        totalCount_min:Ext.getCmp('minCount').getValue(),
-                        totalCount_max:Ext.getCmp('maxCount').getValue(),
+                        countStore_min:Ext.getCmp('countStore_min').getValue(),
+                        countStore_max:Ext.getCmp('countStore_max').getValue(),
+                        countUse_min:Ext.getCmp('countUse_min').getValue(),
+                        countUse_max:Ext.getCmp('countUse_max').getValue(),
                         warehouseName:Ext.getCmp('warehouseName').getValue(),
                         //materialType:materialType
 
@@ -251,16 +284,31 @@ Ext.define('material.material_Query_Data',{
                     //width : 160,
                     flex :1,
 
-                },{
+                },
+                {
+                    dataIndex : 'unitArea',
+                    name : '单面积',
+                    text : '单面积',
+                    //width : 160,
+                    flex :1,
+
+                },
+                {
                     dataIndex : 'totalWeight',
                     name : '总重',
                     text : '总重',
                     flex :1,
                 },
                 {
-                    dataIndex : 'totalCount',
-                    name : '数量',
-                    text : '数量',
+                    dataIndex : 'countStore',
+                    name : '库存数量',
+                    text : '库存数量',
+                    flex :1,
+                },
+                {
+                    dataIndex : 'countUse',
+                    name : '可用数量',
+                    text : '可用数量',
                     flex :1,
                 },
                 {

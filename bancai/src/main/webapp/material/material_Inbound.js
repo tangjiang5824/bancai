@@ -129,99 +129,99 @@ Ext.define('material.material_Inbound', {
             matchFieldWidth: true,
             emptyText : "--请选择--",
             displayField: 'warehouseName',
-            valueField: 'id',
+            valueField: 'warehouseName',
             editable : false,
             store: storeNameList,
             listeners:{
                 select: function(combo, record, index) {
-                    var type = MaterialTypeList.rawValue;
-                    //console.log(MaterialTypeList.rawValue)//选择的值
-                    console.log(MaterialTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
-                    //选中后
-                    var select = record[0].data;
-                    var warehouseNo = select.warehouseNo;
-                    console.log(warehouseNo)
+                    // var type = MaterialTypeList.rawValue;
+                    // //console.log(MaterialTypeList.rawValue)//选择的值
+                    // console.log(MaterialTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
+                    // //选中后
+                    // var select = record[0].data;
+                    // var warehouseNo = select.warehouseNo;
+                    // console.log(warehouseNo)
 
                     //重新加载行选项
-                    var locationNameList_row = Ext.create('Ext.data.Store',{
-                        id:'locationNameList_row',
-                        fields : ['rowNum'],
-                        proxy : {
-                            type : 'ajax',
-                            url : 'material/findStorePosition.do?warehouseNo='+warehouseNo,
-                            reader : {
-                                type : 'json',
-                                rootProperty: 'rowNum',
-                            }
-                        },
-                        autoLoad : true
-                    });
-                    speificLocation_row.setStore(locationNameList_row);
+                    // var locationNameList_row = Ext.create('Ext.data.Store',{
+                    //     id:'locationNameList_row',
+                    //     fields : ['rowNum'],
+                    //     proxy : {
+                    //         type : 'ajax',
+                    //         url : 'material/findStorePosition.do?warehouseNo='+warehouseNo,
+                    //         reader : {
+                    //             type : 'json',
+                    //             rootProperty: 'rowNum',
+                    //         }
+                    //     },
+                    //     autoLoad : true
+                    // });
+                    // speificLocation_row.setStore(locationNameList_row);
 
                     //重新加载列选项
-                    var locationNameList_col = Ext.create('Ext.data.Store',{
-                        id:'locationNameList_col',
-                        fields : [ 'columnNum'],
-                        proxy : {
-                            type : 'ajax',
-                            url : 'material/findStorePosition.do?warehouseNo='+warehouseNo,
-                            reader : {
-                                type : 'json',
-                                rootProperty: 'columnNum',
-                            }
-                        },
-                        autoLoad : true
-                    });
-                    speificLocation_col.setStore(locationNameList_col);
+                    // var locationNameList_col = Ext.create('Ext.data.Store',{
+                    //     id:'locationNameList_col',
+                    //     fields : [ 'columnNum'],
+                    //     proxy : {
+                    //         type : 'ajax',
+                    //         url : 'material/findStorePosition.do?warehouseNo='+warehouseNo,
+                    //         reader : {
+                    //             type : 'json',
+                    //             rootProperty: 'columnNum',
+                    //         }
+                    //     },
+                    //     autoLoad : true
+                    // });
+                  //  speificLocation_col.setStore(locationNameList_col);
 
                 }
             }
         });
 
-        var speificLocation_row = Ext.create('Ext.form.ComboBox',{
-            fieldLabel : '行',
-            labelWidth : 20,
-            width : 100,
-            margin: '0 10 0 10',
-            id :  'speificLocation_row',
-            name : 'speificLocation_row',
-            matchFieldWidth: false,
-            //emptyText : "--请选择--",
-            displayField: 'rowNum',
-            valueField: 'rowNum',
-            editable : false,
-            //store: locationNameList_row,
-            listeners:{
-                select: function(combo, record, index) {
-                    var type = MaterialTypeList.rawValue;
-                    //console.log(MaterialTypeList.rawValue)//选择的值
-                    console.log(MaterialTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
-                    //console.log(record[0].data.materialName);
-                }
-            }
-        });
+        // var speificLocation_row = Ext.create('Ext.form.ComboBox',{
+        //     fieldLabel : '行',
+        //     labelWidth : 20,
+        //     width : 100,
+        //     margin: '0 10 0 10',
+        //     id :  'speificLocation_row',
+        //     name : 'speificLocation_row',
+        //     matchFieldWidth: false,
+        //     //emptyText : "--请选择--",
+        //     displayField: 'rowNum',
+        //     valueField: 'rowNum',
+        //     editable : false,
+        //     //store: locationNameList_row,
+        //     listeners:{
+        //         select: function(combo, record, index) {
+        //             var type = MaterialTypeList.rawValue;
+        //             //console.log(MaterialTypeList.rawValue)//选择的值
+        //             console.log(MaterialTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
+        //             //console.log(record[0].data.materialName);
+        //         }
+        //     }
+        // });
 
-        var speificLocation_col = Ext.create('Ext.form.ComboBox',{
-            fieldLabel : '列',
-            labelWidth : 20,
-            width : 100,
-            id :  'speificLocation_col',
-            name : 'speificLocation_col',
-            matchFieldWidth: false,
-            //emptyText : "--请选择--",
-            displayField: 'columnNum',
-            valueField: 'columnNum',
-            editable : false,
-            //store: locationNameList_col,
-            listeners:{
-                select: function(combo, record, index) {
-                    var type = MaterialTypeList.rawValue;
-                    //console.log(MaterialTypeList.rawValue)//选择的值
-                    console.log(MaterialTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
-                    //console.log(record[0].data.materialName);
-                }
-            }
-        });
+        // var speificLocation_col = Ext.create('Ext.form.ComboBox',{
+        //     fieldLabel : '列',
+        //     labelWidth : 20,
+        //     width : 100,
+        //     id :  'speificLocation_col',
+        //     name : 'speificLocation_col',
+        //     matchFieldWidth: false,
+        //     //emptyText : "--请选择--",
+        //     displayField: 'columnNum',
+        //     valueField: 'columnNum',
+        //     editable : false,
+        //     //store: locationNameList_col,
+        //     listeners:{
+        //         select: function(combo, record, index) {
+        //             var type = MaterialTypeList.rawValue;
+        //             //console.log(MaterialTypeList.rawValue)//选择的值
+        //             console.log(MaterialTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
+        //             //console.log(record[0].data.materialName);
+        //         }
+        //     }
+        // });
 
         //长1 长2 宽1 宽2 库存单位
         var toolbar = Ext.create('Ext.toolbar.Toolbar', {
@@ -329,6 +329,16 @@ Ext.define('material.material_Inbound', {
                     name: 'totalWeight',
                     value: "",
                 },
+                {
+                    xtype: 'textfield',
+                    margin: '0 10 0 40',
+                    fieldLabel: '总面积',
+                    id: 'totalArea',
+                    width: 180,
+                    labelWidth: 30,
+                    name: 'totalArea',
+                    value: "",
+                }
             ]
         });
         //成本 数量 存放位置
@@ -395,6 +405,7 @@ Ext.define('material.material_Inbound', {
                         var inventoryUnit = Ext.getCmp('inventoryUnit').getValue();
 
                         var totalWeight = Ext.getCmp('totalWeight').getValue();
+                        var totalArea = Ext.getCmp('totalArea').getValue();
                         var count = Ext.getCmp('count').getValue();
                         //存放位置，行列
                         var warehouseName = Ext.getCmp('storePosition').rawValue;
@@ -418,6 +429,7 @@ Ext.define('material.material_Inbound', {
                             'inventoryUnit' : inventoryUnit,
 
                             'totalWeight' : totalWeight,
+                            'totalArea':totalArea,
                             'count' : count,
                             'warehouseName' : warehouseName,
 
@@ -465,6 +477,7 @@ Ext.define('material.material_Inbound', {
                             //清除框里的数据
                             Ext.getCmp('materialName').setValue('');
                             Ext.getCmp('totalWeight').setValue('');
+                            Ext.getCmp('totalArea').setValue('');
                             Ext.getCmp('count').setValue('');
                             Ext.getCmp('storePosition').setValue('');
                         }else{
@@ -582,7 +595,7 @@ Ext.define('material.material_Inbound', {
                             }else{
                                 Ext.MessageBox.alert("提示","入库成功" );
                                 //刷新
-                                Ext.getCmp('uploadRecordsMaterial').getStore().remove();
+                                Ext.getCmp('addDataGrid').getStore().removeAll();
                             }
                         },
                         failure : function(response) {
@@ -646,6 +659,13 @@ Ext.define('material.material_Inbound', {
                     dataIndex : 'totalWeight',
                     name : 'totalWeight',
                     text : '总重',
+                    //width : 160,
+                    editor : {xtype : 'textfield', allowBlank : false,}
+                },
+                {
+                    dataIndex : 'totalArea',
+                    name : 'totalArea',
+                    text : '总面积',
                     //width : 160,
                     editor : {xtype : 'textfield', allowBlank : false,}
                 },

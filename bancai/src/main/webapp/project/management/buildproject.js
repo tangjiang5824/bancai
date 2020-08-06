@@ -307,7 +307,7 @@ Ext.define('project.management.buildproject', {
                     var ehrRecord = workerListStore.getAt(index);
                     var returnvalue = "";
                     if (ehrRecord) {
-                        returnvalue = ehrRecord.get('typeName');
+                        returnvalue = ehrRecord.get('workerName');
                     }
                     return returnvalue;
                 }
@@ -387,13 +387,16 @@ Ext.define('project.management.buildproject', {
                             isPreprocess:Ext.getCmp('isPreprocess').getValue(),//项目是否为预加工
                             s : "[" + s + "]",
                         },
-                        success : function(response) {
-                            var message =Ext.decode(response.responseText).showmessage;
-                            Ext.MessageBox.alert("提示",message );
+                        success : function(response,action) {
+                            //var message =Ext.decode(response.responseText).showmessage;
+                            var ob=JSON.parse(response.responseText);
+                            if(ob.success==false)
+                            Ext.MessageBox.alert("提示",ob.msg);
+                            else Ext.MessageBox.alert("提示","创建项目成功！");
                         },
                         failure : function(response) {
-                            var message =Ext.decode(response.responseText).showmessage;
-                            Ext.MessageBox.alert("提示",message );
+                            //var message =Ext.decode(response.responseText).showmessage;
+                            Ext.MessageBox.alert("提示","创建项目失败！" );
                         }
                     });
 

@@ -349,6 +349,19 @@ Ext.define('project.management.editProject',{
             autoCancel: false
         });
 
+        var buildingOwnerList=Ext.create('Ext.form.ComboBox',{
+            id :  'buildingOwnerList',
+            name : 'buildingOwnerList',
+            matchFieldWidth: true,
+            // emptyText : "--请选择--",
+            displayField: 'workerName',
+            valueField: 'id',
+            forceSelection: true,
+            editable : false,
+            triggerAction: 'all',
+            selectOnFocus:true,
+            store: workerListStore,
+        });
         //弹出表格，楼栋信息表
         var building_grid=Ext.create('Ext.grid.Panel',{
             id : 'building_grid',
@@ -374,13 +387,20 @@ Ext.define('project.management.editProject',{
                         allowBlank : true
                     }
                 },{
-                    dataIndex : 'buildingLeaderName',
+                    dataIndex : 'buildingLeader',
                     text : '楼栋负责人',
                     flex :1,
-                    editor : {
-                        xtype : 'textfield',
-                        allowBlank : true
+                    editor:buildingOwnerList,renderer:function(value, cellmeta, record){
+                        var index = workerListStore.find(buildingOwnerList.valueField,value);
+                        var ehrRecord = workerListStore.getAt(index);
+                        var returnvalue = "";
+                        if (ehrRecord) {
+                            returnvalue = ehrRecord.get('workerName');
+                        }
+                        return returnvalue;
                     }
+
+
                 },{
                     xtype:'actioncolumn',
                     text : '删除操作',
