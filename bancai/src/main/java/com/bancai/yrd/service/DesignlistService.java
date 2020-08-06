@@ -820,7 +820,7 @@ public class DesignlistService extends BaseService{
     }
     private int backStoreAddLogBackId(String store, String userId, String operator,String projectId,String buildingId,String description){
         return insertProjectService.insertDataToTable("insert into " + store +
-                        "_log (type,time,userId,operator,projectId,buildingId,description,isrollback) values (?,?,?,?,?,?)",
+                        "_log (type,time,userId,operator,projectId,buildingId,description,isrollback) values (?,?,?,?,?,?,?,?)",
                 "2",analyzeNameService.getTime(),userId,operator,projectId,buildingId,description,"1");
     }
     private void backStoreCountUpdate(String store, String storeId, String count){

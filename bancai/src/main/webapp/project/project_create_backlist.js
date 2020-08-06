@@ -2,7 +2,7 @@ Ext.define('project.project_create_backlist', {
 	extend : 'Ext.panel.Panel',
 	region : 'center',
 	layout : "fit",
-	title : '项目退库单',
+	title : '项目退料单',
 	initComponent : function() {
 		var me = this;
 		//定义表名
@@ -110,7 +110,7 @@ Ext.define('project.project_create_backlist', {
 		var grid = Ext.create("Ext.grid.Panel", {
 			id : 'backlist_DataGrid',
 			store : 'backlistStore',
-			title:"退库材料信息",
+			title:"退料材料信息",
 			columns : [
 				// {
 				// 	dataIndex : '产品编号',
@@ -156,8 +156,8 @@ Ext.define('project.project_create_backlist', {
 				// },
 				{
 					dataIndex : 'count',
-					text:'退库数量',
-					name:'退库数量',
+					text:'退料数量',
+					name:'退料数量',
 					//width : 110,
 					editor : {// 文本字段
 						xtype : 'textfield',
@@ -356,14 +356,14 @@ Ext.define('project.project_create_backlist', {
 			]
 		});
 		var optionType = Ext.create('Ext.form.ComboBox', {
-			fieldLabel: '退库类型',
+			fieldLabel: '退料类型',
 			name: 'back_optionType',
 			id: 'back_optionType',
 			store: optionTypeList,
 			queryMode: 'local',
 			displayField: 'name',
 			valueField: 'abbr',
-			margin : '0 20 0 40',
+			margin : '0 20 0 0',
 			width: 160,
 			labelWidth: 60,
 			renderTo: Ext.getBody()
@@ -389,7 +389,7 @@ Ext.define('project.project_create_backlist', {
 				labelWidth:45,
 				fieldLabel: '',
 				margin: '1 0 0 0',
-				buttonText : 'Excel文件上传退库信息',
+				buttonText : 'Excel文件上传退料信息',
 				name : 'uploadFile',
 				//id : 'uploadFile',
 				listeners : {
@@ -469,7 +469,7 @@ Ext.define('project.project_create_backlist', {
 												}else if(ob.errorCode==200){
 													Ext.Msg.show({
 														title: '提示',
-														message: '匹配失败，产品位置重复或品名不合法！\n是否查看具体错误数据',
+														message: '匹配失败，存在不合法材料记录！\n是否查看具体错误数据',
 														buttons: Ext.Msg.YESNO,
 														icon: Ext.Msg.QUESTION,
 														fn: function (btn) {
@@ -627,7 +627,7 @@ Ext.define('project.project_create_backlist', {
 			id :  'buildingName',
 			name : 'buildingName',
 			matchFieldWidth: false,
-			margin: '0 10 0 40',
+			margin: '0 0 0 40',
 			emptyText : "--请选择楼栋名--",
 			displayField: 'buildingName',
 			valueField: 'id',//楼栋的id
@@ -723,7 +723,7 @@ Ext.define('project.project_create_backlist', {
 			items : [
 				{
 					xtype: 'textfield',
-					fieldLabel: '退库原因',
+					fieldLabel: '退料原因',
 					id: 'back_reason',
 					margin: '0 30 0 0',
 					width: 390,
@@ -733,7 +733,7 @@ Ext.define('project.project_create_backlist', {
 				},
 				//退库人
 				{
-					fieldLabel : '退库人',
+					fieldLabel : '退料人',
 					xtype : 'combo',
 					name : 'back_operator',
 					id : 'back_operator',
@@ -763,7 +763,7 @@ Ext.define('project.project_create_backlist', {
 				// },
 				{
 					xtype : 'button',
-					text: '创建退库单',
+					text: '创建退料单',
 					width: 80,
 					margin: '0 0 0 0',
 					layout: 'right',
