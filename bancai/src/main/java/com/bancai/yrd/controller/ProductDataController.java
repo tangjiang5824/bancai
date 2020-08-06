@@ -458,7 +458,9 @@ public class ProductDataController {
                 map.put("inventoryUnit",inventoryUnit);
                 map.put("count",count);
                 map.put("remark",remark);
-                if(((count.split("\\.").length==1)&&(!count.matches(isPureNumber)))||
+                if(wasteName.equals("NULL")||wasteName.length()==0)
+                    errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"未输入品名",map);
+                else if(((count.split("\\.").length==1)&&(!count.matches(isPureNumber)))||
                         ((count.split("\\.").length==2)&&(
                                 (!count.split("\\.")[0].matches(isPureNumber))||(!count.split("\\.")[1].matches(isPureNumber))
                         ))||((count.split("\\.").length!=1)&&((count.split("\\.").length!=2))))
@@ -477,8 +479,8 @@ public class ProductDataController {
                 return response;
             }
             System.out.println("[===checkWasteUploadData==Complete=NoError]");
-//            boolean uploadResult= productDataService.insertWasteDataToStore(insertList,userId,operator,projectId,buildingId);
-//            response.setSuccess(uploadResult);
+            boolean uploadResult= productDataService.insertWasteDataToStore(insertList,userId,operator,projectId,buildingId);
+            response.setSuccess(uploadResult);
         }catch (Exception e){
             e.printStackTrace();
             response.setSuccess(false);
