@@ -19,6 +19,7 @@ Ext.define('unuseMaterial.unuseMaterial_Inbound', {
         var me = this;
         //var materialtype="1";
         var record_start = 0;
+        var itemsPerPage = 50;
         // var projectId = "-1";
         // var buildingId = "-1";
         Ext.define('Soims.model.application.ApplicationState', {
@@ -45,14 +46,14 @@ Ext.define('unuseMaterial.unuseMaterial_Inbound', {
         });
 
         var storePosition = Ext.create('Ext.form.ComboBox',{
-            fieldLabel : '入库仓库',
-            labelWidth : 60,
-            width : 200,
-            margin: '0 30 0 0',
+            // fieldLabel : '入库仓库',
+            // labelWidth : 60,
+            // width : 200,
+            // margin: '0 30 0 0',
             id :  'storePosition',
             name : 'storePosition',
             matchFieldWidth: true,
-            emptyText : "--请选择--",
+            // emptyText : "--请选择--",
             displayField: 'warehouseName',
             valueField: 'id',
             editable : false,
@@ -159,11 +160,13 @@ Ext.define('unuseMaterial.unuseMaterial_Inbound', {
                             'productName' : '',
                             'warehouseName':'',
                             'count' : '',
+                            'inventoryUnit':'',
+                            'remark':'',
                         }];
-                        Ext.getCmp('back_addDataGrid').getStore().loadData(data, true);
+                        Ext.getCmp('waste_addDataGrid').getStore().loadData(data, true);
                         //若品名未填则添加失败
                         // if (productName != ''&&count!= '') {
-                        //     Ext.getCmp('back_addDataGrid').getStore().loadData(data, true);
+                        //     Ext.getCmp('waste_addDataGrid').getStore().loadData(data, true);
                         //     //清除框里的数据
                         //     Ext.getCmp('productName').setValue('');
                         //     //Ext.getCmp('classification').setValue('');
@@ -189,7 +192,7 @@ Ext.define('unuseMaterial.unuseMaterial_Inbound', {
                     iconCls : 'rukuicon ',
                     text : '删除',
                     handler: function(){
-                        var sm = Ext.getCmp('back_addDataGrid').getSelectionModel();
+                        var sm = Ext.getCmp('waste_addDataGrid').getSelectionModel();
                         var oldpanelArr = sm.getSelection();
                         if (oldpanelArr.length != 0) {
                             Ext.Msg.confirm("提示", "共选中" + oldpanelArr.length + "条数据，是否确认删除？", function (btn) {
@@ -197,7 +200,7 @@ Ext.define('unuseMaterial.unuseMaterial_Inbound', {
                                     //先删除后台再删除前台
                                     //ajax 删除后台数据 成功则删除前台数据；失败则不删除前台数据
                                     //Extjs 4.x 删除
-                                    Ext.getCmp('back_addDataGrid').getStore().remove(oldpanelArr);
+                                    Ext.getCmp('waste_addDataGrid').getStore().remove(oldpanelArr);
                                 } else {
                                     return;
                                 }
@@ -213,8 +216,8 @@ Ext.define('unuseMaterial.unuseMaterial_Inbound', {
         });
 
         //错误提示，弹出框
-        var back_inb_errorlistStore = Ext.create('Ext.data.Store',{
-            id: 'back_inb_errorlistStore',
+        var waste_inb_errorlistStore = Ext.create('Ext.data.Store',{
+            id: 'waste_inb_errorlistStore',
             autoLoad: true,
             fields: ['productName','position'],
             //pageSize: itemsPerPage, // items per page
@@ -223,10 +226,10 @@ Ext.define('unuseMaterial.unuseMaterial_Inbound', {
         });
 
         //弹出框，出入库详细记录
-        var back_inb_errorlist_outbound=Ext.create('Ext.grid.Panel',{
-            id : 'back_inb_errorlist_outbound',
+        var waste_inb_errorlist_outbound=Ext.create('Ext.grid.Panel',{
+            id : 'waste_inb_errorlist_outbound',
             // tbar: toolbar_pop,
-            store:back_inb_errorlistStore,//oldpanellogdetailList，store1的数据固定
+            store:waste_inb_errorlistStore,//oldpanellogdetailList，store1的数据固定
             dock: 'bottom',
             columns:[
                 {
@@ -237,8 +240,8 @@ Ext.define('unuseMaterial.unuseMaterial_Inbound', {
                     sortable: false
                 },
                 {
-                    text: '退库成品名称',
-                    dataIndex: 'productName',
+                    text: '废料名称',
+                    dataIndex: 'wasteName',
                     flex :1,
                     width:"80"
                 },
@@ -255,6 +258,16 @@ Ext.define('unuseMaterial.unuseMaterial_Inbound', {
                     width:"80"
                 },
                 {
+                    text: '库存单位',
+                    flex :1,
+                    dataIndex: 'inventoryUnit',
+                },
+                {
+                    text: '备注',
+                    flex :1,
+                    dataIndex: 'remark',
+                },
+                {
                     text: '错误原因',
                     flex :1,
                     dataIndex: 'errorType',
@@ -269,8 +282,8 @@ Ext.define('unuseMaterial.unuseMaterial_Inbound', {
             })],
         });
 
-        var win_backinb_errorInfo_outbound = Ext.create('Ext.window.Window', {
-            // id:'win_backinb_errorInfo_outbound',
+        var win_wasteinb_errorInfo_outbound = Ext.create('Ext.window.Window', {
+            // id:'win_wasteinb_errorInfo_outbound',
             title: '错误详情',
             height: 500,
             width: 750,
@@ -279,7 +292,7 @@ Ext.define('unuseMaterial.unuseMaterial_Inbound', {
             draggable:true,
             closeAction : 'hidden',
             // tbar:toolbar_pop1,
-            items:back_inb_errorlist_outbound,
+            items:waste_inb_errorlist_outbound,
         });
 
         //职员信息
@@ -429,7 +442,7 @@ Ext.define('unuseMaterial.unuseMaterial_Inbound', {
                     bodyStyle: 'background:#fff;',
                     handler : function() {
                         // 取出grid的字段名字段类型
-                        var select = Ext.getCmp('back_addDataGrid').getStore()
+                        var select = Ext.getCmp('waste_addDataGrid').getStore()
                             .getData();
                         var s = new Array();
                         select.each(function(rec) {
@@ -442,7 +455,7 @@ Ext.define('unuseMaterial.unuseMaterial_Inbound', {
                         Ext.MessageBox.show(
                             {
                                 title:'请稍候',
-                                msg:'产品匹配中，请耐心等待...',
+                                msg:'数据上传中，请耐心等待...',
                                 progressText:'',    //进度条文本
                                 width:300,
                                 progress:true,
@@ -476,7 +489,7 @@ Ext.define('unuseMaterial.unuseMaterial_Inbound', {
                                 //关闭进度条
                                 Ext.MessageBox.hide();
 
-                                var res = response.responseText;
+                                 var res = response.responseText;
                                 var jsonobj = JSON.parse(res);//将json字符串转换为对象
                                 console.log(jsonobj);
                                 console.log("success--------------",jsonobj.success);
@@ -485,6 +498,7 @@ Ext.define('unuseMaterial.unuseMaterial_Inbound', {
                                 var errorList = jsonobj.errorList;
                                 var errorCode = jsonobj.errorCode;
                                 var errorCount = jsonobj.errorCount;
+
                                 if(success == false){
                                     //错误输入
                                     if(errorCode == 200){
@@ -492,18 +506,26 @@ Ext.define('unuseMaterial.unuseMaterial_Inbound', {
                                         // Ext.MessageBox.alert("提示","匹配失败，产品位置重复或品名不合法！请重新导入" );
                                         Ext.Msg.show({
                                             title: '提示',
-                                            message: '入库失败！存在错误内容',
+                                            message: '入库失败！提交的数据存在错误内容',
                                             buttons: Ext.Msg.YESNO,
                                             icon: Ext.Msg.QUESTION,
                                             fn: function (btn) {
                                                 if (btn === 'yes') {
                                                     //点击确认，显示重复的数据
-                                                    back_inb_errorlistStore.loadData(errorList);
-                                                    win_backinb_errorInfo_outbound.show();
-
+                                                    waste_inb_errorlistStore.loadData(errorList);
+                                                    win_wasteinb_errorInfo_outbound.show();
                                                 }
                                             }
                                         });
+                                    }
+                                    else if(errorCode == 100){
+                                        Ext.MessageBox.alert("提示","入库失败！提交的数据为空" );
+                                    }
+                                    else if(errorCode == 300){
+                                        Ext.MessageBox.alert("提示","入库失败！未选择项目或楼栋" );
+                                    }
+                                    else if(errorCode == 400){
+                                        Ext.MessageBox.alert("提示","入库失败！未选择入库人" );
                                     }
                                     else if(errorCode == 1000){
                                         Ext.MessageBox.alert("提示","入库失败，未知错误！请重新领取" );
@@ -551,10 +573,10 @@ Ext.define('unuseMaterial.unuseMaterial_Inbound', {
                                         //var check=Ext.getCmp("check").getValue();
 
                                         form.submit({
-                                            url : 'oldpanel/uploadExcel.do', //上传excel文件，并回显数据
+                                            url : 'waste/uploadExcel.do', //上传excel文件，并回显数据
                                             waitMsg : '正在上传...',
                                             params : {
-                                                tableName:tableName,
+                                                // tableName:tableName,
                                                 operator: Ext.getCmp('operator').getValue(),
                                                 //materialtype:materialtype,
                                                 //check:check
@@ -567,20 +589,16 @@ Ext.define('unuseMaterial.unuseMaterial_Inbound', {
                                             //     console.log(action.result['value']);
                                             //     Ext.MessageBox.alert("提示", "上传成功!");
                                             //     //重新加载数据
-                                            //     oldpanelStore.loadData(action.result['value']);
+                                            //     wasteStore.loadData(action.result['value']);
                                             // },
                                             success : function(exceluploadform,response, action) {
-                                                var response1 = action;
-                                                console.log("response=========================>",response)
+                                                console.log("response=========================>",response);
                                                 Ext.MessageBox.alert("提示", "上传成功!");
-                                                console.log(response.response.responseText);
-                                                var res = response.response.responseText;
-                                                var jsonobj = JSON.parse(res);
-                                                //上传成功
-                                                var success = jsonobj.success;
-                                                var dataList = jsonobj.dataList;
-                                                //回显
-                                                console.log("response1=========================>",dataList);
+                                                var List = response.result['value'];
+                                                console.log("List=========================>List",List)
+                                                var success =response.result['success'];
+
+                                                console.log("success=========================>success",success)
                                                 if(success == false){
                                                     //excel上传失败
                                                     Ext.Msg.show({
@@ -600,7 +618,7 @@ Ext.define('unuseMaterial.unuseMaterial_Inbound', {
                                                 }else{
                                                     Ext.MessageBox.alert("提示", "上传成功!");
                                                     //重新加载数据
-                                                    oldpanelStore.loadData(dataList);
+                                                    wasteStore.loadData(List);
                                                 }
                                                 // Ext.MessageBox.alert("提示", "上传成功!");
 
@@ -692,18 +710,38 @@ Ext.define('unuseMaterial.unuseMaterial_Inbound', {
                 ]
         });
 
-        var grid = Ext.create("Ext.grid.Panel", {
-            id : 'back_addDataGrid',
-            //dockedItems : [toolbar2],
-            store : {
-                // fields: ['材料名','品号', '长',"；类型","宽",'规格','库存单位','仓库编号','数量','成本','存放位置']
-                fields: ['productName','warehouseName','count']
-            },
+        var wasteStore = Ext.create('Ext.data.Store',{
+            id: 'wasteStore',
+            autoLoad: true,
+            fields: [],
+            pageSize: itemsPerPage, // items per page
+            data:[],
+        });
 
+        var grid = Ext.create("Ext.grid.Panel", {
+            id : 'waste_addDataGrid',
+            store:wasteStore,
             columns : [
-                {dataIndex : 'productName', text : '品名', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
-                {dataIndex : 'warehouseName', text : '入库仓库', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'wasteName', text : '品名', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
+                {   dataIndex : 'warehouseName',
+                    text : '入库仓库',
+                    flex :1,
+                    editor:storePosition,renderer:function(value, cellmeta, record){
+                        var index = storeNameList.find(storePosition.valueField,value);
+                        var ehrRecord = storeNameList.getAt(index);
+                        var returnvalue = "";
+                        if (ehrRecord) {
+                            returnvalue = ehrRecord.get('warehouseName');
+                        }
+                        return returnvalue;
+                    },
+                    render:{}
+
+                },
                 {dataIndex : 'count', text : '入库数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'inventoryUnit', text : '库存单位', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'remark', text : '备注', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+
                 // {
                 //     name : '操作',
                 //     text : '操作',
