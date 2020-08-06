@@ -226,6 +226,22 @@ Ext.define("menu.MenuRole_bc0", {
 				}]
 			}
 		]},
+		{
+			text : '废料仓库管理',
+			expanded : true,
+			children : [
+				{
+					text : '废料入库',
+					id : 'unuseMaterial.unuseMaterial_Inbound',
+					leaf : true
+				},
+				// {
+				// text : '成本统计',
+				// id : 'finance.statistics_cost',
+				// leaf : true
+				// } ,
+			]
+		},
 			// 	{
 			// 	text : '产品管理',
 			// 	expanded : true,
@@ -363,10 +379,6 @@ Ext.define("menu.MenuRole_bc0", {
 					{
 						text : '项目退料单查询',
 						id : 'project.project_query_backlist',
-						leaf : true
-					},{
-						text : '项目废料入库',
-						id : 'project.unuseMaterial_Inbound',
 						leaf : true
 					},
 				]
