@@ -31,6 +31,14 @@ public class AnalyzeNameService extends BaseService {
         return simpleDateFormat.format(date);
     }
     @Transactional
+    public DataRow canRollback(String tableName,String id){
+        DataList queryList = queryService.query("select * from "+tableName+" where id=?",id);
+        DataRow row = new DataRow();
+        if((!queryList.isEmpty())&&(queryList.get(0).get("isrollback").toString().equals("0")))
+            row = queryList.get(0);
+        return row;
+    }
+    @Transactional
     public DataList addErrorRowToErrorList(DataList errorList, String id, String errorType,HashMap<String,String> map){
         DataRow errorRow = new DataRow();
         errorRow.put("id",id);
