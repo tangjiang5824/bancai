@@ -364,6 +364,10 @@ Ext.define("menu.MenuRole_bc0", {
 						text : '项目退料单查询',
 						id : 'project.project_query_backlist',
 						leaf : true
+					},{
+						text : '项目废料入库',
+						id : 'project.unuseMaterial_Inbound',
+						leaf : true
 					},
 				]
 			},
