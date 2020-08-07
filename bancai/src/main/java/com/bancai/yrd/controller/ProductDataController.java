@@ -522,10 +522,10 @@ public class ProductDataController {
      * 废料仓库记录查询detail
      * */
     @RequestMapping("/waste/queryLogDetail.do")
-    public WebResponse queryReturnOrderDetail(String wasteLogId,Integer start,Integer limit){
+    public WebResponse queryReturnOrderDetail(String wastelogId,Integer start,Integer limit){
         mysqlcondition c=new mysqlcondition();
-        if (null!=wasteLogId&&wasteLogId.length() != 0) {
-            c.and(new mysqlcondition("wasteLogId", "=", wasteLogId));
+        if (null!=wastelogId&&wastelogId.length() != 0) {
+            c.and(new mysqlcondition("wasteLogId", "=", wastelogId));
         }else {
             WebResponse response = new WebResponse();
             response.setSuccess(false);
@@ -540,15 +540,21 @@ public class ProductDataController {
      * 废料入库撤销
      * */
     @RequestMapping("/waste/addDataRollback.do")
-    public WebResponse wasteAddDataRollback(String wasteLogId,String operator,HttpSession session){
+    public WebResponse wasteAddDataRollback(String wastelogId,String operator,HttpSession session){
         WebResponse response = new WebResponse();
         try {
-            DataRow row = analyzeNameService.canRollback("waste_log",wasteLogId);
+            DataRow row = analyzeNameService.canRollback("waste_log",wastelogId);
             if(!row.isEmpty()){
                 String userId = (String) session.getAttribute("userid");
                 String projectId = row.get("projectId").toString();
                 String buildingId = row.get("buildingId").toString();
-                boolean result = productDataService.rollbackWasteData(wasteLogId,operator,userId,projectId,buildingId);
+                String time = row.get("time").toString();
+                if(!analyzeNameService.isFitRollbackTime(time)){
+                    response.setSuccess(false);
+                    response.setErrorCode(200);
+                    response.setMsg("无法撤销，超过可撤销时间");
+                }
+                boolean result = productDataService.rollbackWasteData(wastelogId,operator,userId,projectId,buildingId);
                 response.setSuccess(result);
             }else {
                 response.setSuccess(false);
