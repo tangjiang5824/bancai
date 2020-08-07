@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -29,6 +30,14 @@ public class AnalyzeNameService extends BaseService {
         Date date = new Date();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return simpleDateFormat.format(date);
+    }
+    @Transactional
+    public boolean isFitRollbackTime(String time) throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = simpleDateFormat.parse(time);
+        Date now = simpleDateFormat.parse(getTime());
+        long cha = now.getTime() - date.getTime();
+        return cha * 1.0 / (1000 * 60 * 60) <=24;
     }
     @Transactional
     public DataRow canRollback(String tableName,String id){

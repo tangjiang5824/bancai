@@ -435,11 +435,11 @@ public class ProductDataService extends BaseService{
      * 废料入库撤销
      * */
     @Transactional
-    public boolean rollbackWasteData(String wasteLogId,String operator,String userId,String projectId,String buildingId){
+    public boolean rollbackWasteData(String wastelogId,String operator,String userId,String projectId,String buildingId){
         boolean b = true;
-        wasteUpdateLogIsrollbackById(wasteLogId);
+        wasteUpdateLogIsrollbackById(wastelogId);
         int logId = wasteAddLogBackId("3",userId,operator,projectId,buildingId);
-        DataList dataList = queryService.query("select * from waste_logdetail where wastelogId=? and isrollback=0",wasteLogId);
+        DataList dataList = queryService.query("select * from waste_logdetail where wastelogId=? and isrollback=0",wastelogId);
         for (DataRow dataRow : dataList) {
             String detailId = dataRow.get("id").toString();
             String storeId = dataRow.get("wastestoreId").toString();
