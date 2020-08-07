@@ -11,6 +11,7 @@ public class MaterialStore {
     private Integer id;
     private Double countStore;
     private Double totalWeight;
+    private Double totalArea;
     private String description;
     private Double countUse;
     private String warehouseName;
@@ -33,7 +34,13 @@ public class MaterialStore {
         this.warehouseName = warehouseName;
     }
 
+    public Double getTotalArea() {
+        return totalArea;
+    }
 
+    public void setTotalArea(Double totalArea) {
+        this.totalArea = totalArea;
+    }
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)

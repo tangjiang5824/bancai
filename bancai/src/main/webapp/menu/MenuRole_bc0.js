@@ -235,11 +235,11 @@ Ext.define("menu.MenuRole_bc0", {
 					id : 'unuseMaterial.unuseMaterial_Inbound',
 					leaf : true
 				},
-				// {
-				// text : '成本统计',
-				// id : 'finance.statistics_cost',
-				// leaf : true
-				// } ,
+				{
+					text : '废料库存查询',
+					id : 'unuseMaterial.unuseMaterial_Query_Data',
+					leaf : true
+				} ,
 			]
 		},
 			// 	{

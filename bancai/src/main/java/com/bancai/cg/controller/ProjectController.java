@@ -58,7 +58,6 @@ public class ProjectController {
      * @param s
      * @param session
      * @param projectName
-     * @param startTime
      * @param proEndTime
      * @param planLeaderId
      * @param produceLeaderId
@@ -68,7 +67,20 @@ public class ProjectController {
      * @return
      */
     @RequestMapping(value="/generate_project.do")
-    public void add_project(String s,HttpServletResponse response,HttpSession session,String projectName,String proStartTime,String proEndTime,String planLeaderId,String produceLeaderId,String purchaseLeaderId,String financeLeaderId,String storeLeaderId,String isPreprocess ) throws IOException, JSONException {
+    public WebResponse add_project(String s,HttpSession session,String projectName,String proStartTime,String proEndTime,String planLeaderId,String produceLeaderId,String purchaseLeaderId,String financeLeaderId,String storeLeaderId,String isPreprocess ) throws IOException, JSONException {
+        WebResponse response =new WebResponse();
+        if(projectName==null||projectName.trim().length()==0){
+            response.setSuccess(false);
+            response.setMsg("请输入项目名！");
+            response.setErrorCode(100);
+            return response;
+        }
+        if(isPreprocess==null||isPreprocess.trim().length()==0){
+            response.setSuccess(false);
+            response.setMsg("请选择是否为预加工项目！");
+            response.setErrorCode(200);
+            return response;
+        }
         JSONArray jsonArray = new JSONArray(s);
         String userid=null;
         if(session.getAttribute("userid")!=null)
@@ -79,13 +91,10 @@ public class ProjectController {
         try {
             int projectName_count=insertProjectService.queryisexist(sql_search);
             if (projectName_count!=0){
-                response.setCharacterEncoding("UTF-8");
-                response.setContentType("text/html");
-                response.getWriter().write("{'success':false,'showmessage':'项目名已经存在！操作失败'}");
-                response.setStatus(500);
-                response.getWriter().flush();
-                response.getWriter().close();
-                return ;
+                response.setMsg("项目名已经存在！操作失败");
+                response.setSuccess(false);
+                response.setErrorCode(500);
+                return response;
             }
         }catch (Exception e){
         e.printStackTrace();
@@ -107,12 +116,10 @@ public class ProjectController {
             //插入到planlist表的同时返回planlistid
             String BuildingId=insertProjectService.insertDataToTable(sql2,BuildingNo,BuildName,BuildOwner,projectId)+"";
         }
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType("text/html");
-        response.getWriter().write(
-                "{'success':true,'showmessage':'创建成功！'}");
-        response.getWriter().flush();
-        response.getWriter().close();
+
+        response.setSuccess(true);
+        response.setMsg("创建成功");
+        return response;
     }
 
     @RequestMapping("/com/bancai/cg/test.do")
@@ -277,25 +284,32 @@ public class ProjectController {
      * @throws IOException
      */
     @RequestMapping(value="/material/findStoreInfo.do")
-    public WebResponse findStoreInfo(String materialName,String count_min,String count_max,String warehouseName, Integer start, Integer limit,String tableName)  {
+    public WebResponse findStoreInfo(Integer materialId,String countStore_min,String countStore_max,String countUse_min,String countUse_max,String warehouseName, Integer start, Integer limit,String tableName)  {
 //        String tableName = "Store_view";
 //		System.out.println(startWidth);
 //		System.out.println(endWidth);
 //
         mysqlcondition c=new mysqlcondition();
-        if (null!=materialName&&materialName.length() != 0) {
-            c.and(new mysqlcondition("materialName", "=", materialName));
+        if (null!=materialId) {
+            c.and(new mysqlcondition("materialId", "=", materialId));
         }
-
-        if (null!=count_min&&count_min.length() != 0) {
-            c.and(new mysqlcondition("count", ">=", count_min));
+        if (null!=countUse_min&&countUse_min.length() != 0) {
+            c.and(new mysqlcondition("countUse", ">=", countUse_min));
         }
-        if (null!=count_max&&count_max.length() != 0) {
-            c.and(new mysqlcondition("count", "<=", count_max));
+        if (null!=countUse_max&&countUse_max.length() != 0) {
+            c.and(new mysqlcondition("countUse", "<=", countUse_max));
+        }
+        if (null!=countStore_min&&countStore_min.length() != 0) {
+            c.and(new mysqlcondition("countStore", ">=", countStore_min));
+        }
+        if (null!=countStore_max&&countStore_max.length() != 0) {
+            c.and(new mysqlcondition("countStore", "<=", countStore_max));
         }
         if (null!=warehouseName&&warehouseName.length() != 0) {
             c.and(new mysqlcondition("warehouseName", "=", warehouseName));
         }
+        //不显示库存数量为0的记录
+        c.and(new mysqlcondition("countStore", ">", 0));
         return queryAllService.queryDataPage(start, limit, c, tableName);
     }
 

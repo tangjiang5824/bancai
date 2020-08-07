@@ -171,6 +171,7 @@ public class MaterialController {
             MaterialInfo material=null;
             String warehousename=null;
             String description=null;
+            Double totalArea=0.0;
             Double totalweight=0.0;
             Double count=0.0;
             boolean flag=true;
@@ -201,6 +202,10 @@ public class MaterialController {
             if(null!=jsonTemp.get("totalWeight")&&!jsonTemp.get("totalWeight").equals("")) {
                 totalweight=(Double.parseDouble(jsonTemp.get("totalWeight")+""));
                 store.setTotalWeight(totalweight);
+            }
+            if(null!=jsonTemp.get("totalArea")&&!jsonTemp.get("totalArea").equals("")) {
+                totalArea=(Double.parseDouble(jsonTemp.get("totalArea")+""));
+                store.setTotalArea(totalArea);
             }
 
             if(null!=jsonTemp.get("description")&&!jsonTemp.get("description").equals("")) {
