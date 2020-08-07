@@ -480,6 +480,45 @@ public class OldpanelDataController {
 
     }
 
+    /*
+     * 旧板入库撤销
+     * */
+    @RequestMapping("/oldpanel/addDataRollback.do")
+    public WebResponse wasteAddDataRollback(String oldpanellogId,String operator,HttpSession session){
+        WebResponse response = new WebResponse();
+        try {
+            DataRow row = analyzeNameService.canRollback("oldpanel_log",oldpanellogId);
+            if(!row.isEmpty()){
+                String userId = (String) session.getAttribute("userid");
+                String projectId = row.get("projectId").toString();
+                String buildingId = row.get("buildingId").toString();
+                String time = row.get("time").toString();
+                if(!analyzeNameService.isFitRollbackTime(time)){
+                    response.setSuccess(false);
+                    response.setErrorCode(200);
+                    response.setMsg("无法撤销，超过可撤销时间");
+                }
+//                boolean result = productDataService.rollbackWasteData(wasteLogId,operator,userId,projectId,buildingId);
+//                response.setSuccess(result);
+            }else {
+                response.setSuccess(false);
+                response.setErrorCode(100);
+                response.setMsg("该次记录无法撤销");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误
+            response.setMsg(e.getMessage());
+        }
+        return response;
+    }
+
+
+
+
+
+
 
 
 }
