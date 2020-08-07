@@ -245,7 +245,7 @@ Ext.define("menu.MenuRole_bc0", {
 					leaf : true
 				} ,{
 					text : '废料记录撤销',
-					id : 'unuseMaterial.unuseMaterial_back_Records',
+					id : 'unuseMaterial.unuseMaterial_cancelRecords',
 					leaf : true
 				} ,{
 					text : '废料出库',
