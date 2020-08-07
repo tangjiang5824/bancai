@@ -415,11 +415,11 @@ public class ProductDataService extends BaseService{
                 type,userId,operator,projectId,buildingId,analyzeNameService.getTime(),"0");
     }
     private int wasteAddStoreBackId(String wasteName,String warehouseName,String inventoryUnit,String count){
-        return insertProjectService.insertDataToTable("insert into waste_store (wasteName,warehouseName,inventoryUnit,count) values (?,?,?,?)",
+        return insertProjectService.insertDataToTable("insert into waste_store (wasteName,warehouseName,inventoryUnit,countStore) values (?,?,?,?)",
                 wasteName,warehouseName,inventoryUnit,count);
     }
     private void wasteUpdateStoreById(String storeId,String method,String count){
-        jo.update("update waste_store set count=count"+method+"\""+count+"\" where id=\""+storeId+"\"");
+        jo.update("update waste_store set countStore=countStore"+method+"\""+count+"\" where id=\""+storeId+"\"");
     }
     private boolean wasteAddLogDetail(String logId,String storeId,String count,String remark,String value){
         return insertProjectService.insertIntoTableBySQL("insert into waste_logdetail (wastelogId,wastestoreId,count,remark,value,isrollback) values (?,?,?,?,?,?)",

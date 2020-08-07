@@ -495,7 +495,7 @@ public class ProductDataController {
      * 废料仓库记录查询
      * */
     @RequestMapping("/waste/queryLog.do")
-    public WebResponse queryReturnOrder(String type,String projectId, String buildingId,String operator,String timeStart, String timeEnd,Integer start,Integer limit){
+    public WebResponse queryWasteLog(String type,String projectId, String buildingId,String operator,String timeStart, String timeEnd,Integer start,Integer limit){
         mysqlcondition c=new mysqlcondition();
         if (null!=type&&type.length() != 0) {
             c.and(new mysqlcondition("type", "=", type));
@@ -522,7 +522,7 @@ public class ProductDataController {
      * 废料仓库记录查询detail
      * */
     @RequestMapping("/waste/queryLogDetail.do")
-    public WebResponse queryReturnOrderDetail(String wastelogId,Integer start,Integer limit){
+    public WebResponse queryWasteLogDetail(String wastelogId,Integer start,Integer limit){
         mysqlcondition c=new mysqlcondition();
         if (null!=wastelogId&&wastelogId.length() != 0) {
             c.and(new mysqlcondition("wasteLogId", "=", wastelogId));
@@ -570,6 +570,50 @@ public class ProductDataController {
         return response;
     }
 
+    /*
+     * 废料仓库库存查询
+     * */
+    @RequestMapping("/waste/queryStore.do")
+    public WebResponse queryWasteStore(String wasteName, String warehouseName,Integer start,Integer limit){
+        mysqlcondition c=new mysqlcondition();
+        if (null!=wasteName&&wasteName.trim().length() != 0) {
+            c.and(new mysqlcondition("wasteName", "=", wasteName.trim().toUpperCase()));
+        }
+        if (null!=warehouseName&&warehouseName.trim().length() != 0) {
+            c.and(new mysqlcondition("projectId", "=", warehouseName.trim().toUpperCase()));
+        }
+        return queryService.queryDataPage(start, limit, c, "waste_store");
+    }
+
+//    /*
+//     * 废料出库
+//     * */
+//    @RequestMapping("/waste/outStore.do")
+//    public WebResponse outWasteStore(String s, String operator,Integer start,Integer limit){
+//        mysqlcondition c=new mysqlcondition();
+//        if (null!=wasteName&&wasteName.trim().length() != 0) {
+//            c.and(new mysqlcondition("wasteName", "=", wasteName.trim().toUpperCase()));
+//        }
+//        if (null!=warehouseName&&warehouseName.trim().length() != 0) {
+//            c.and(new mysqlcondition("projectId", "=", warehouseName.trim().toUpperCase()));
+//        }
+//        return queryService.queryDataPage(start, limit, c, "waste_store");
+//    }
+//
+//    /*
+//     * 废料结算
+//     * */
+//    @RequestMapping("/waste/queryStore.do")
+//    public WebResponse queryWasteStore(String wasteName, String warehouseName,Integer start,Integer limit){
+//        mysqlcondition c=new mysqlcondition();
+//        if (null!=wasteName&&wasteName.trim().length() != 0) {
+//            c.and(new mysqlcondition("wasteName", "=", wasteName.trim().toUpperCase()));
+//        }
+//        if (null!=warehouseName&&warehouseName.trim().length() != 0) {
+//            c.and(new mysqlcondition("projectId", "=", warehouseName.trim().toUpperCase()));
+//        }
+//        return queryService.queryDataPage(start, limit, c, "waste_store");
+//    }
 
 
 
