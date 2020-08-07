@@ -331,11 +331,11 @@ Ext.define('material.material_Inbound', {
                 },
                 {
                     xtype: 'textfield',
-                    margin: '0 10 0 40',
+                    margin: '0 10 0 20',
                     fieldLabel: '总面积',
+                    width:180,
+                    labelWidth: 45,
                     id: 'totalArea',
-                    width: 180,
-                    labelWidth: 30,
                     name: 'totalArea',
                     value: "",
                 }
@@ -488,8 +488,34 @@ Ext.define('material.material_Inbound', {
 
 
                     }
+                },
+                {
+                    xtype : 'button',
+                    margin: '0 10 0 35',
+                    iconAlign : 'center',
+                    iconCls : 'rukuicon ',
+                    text : '删 除',
+                    width:60,
+                    handler: function(){
+                        var sm = Ext.getCmp('addDataGrid').getSelectionModel();
+                        var Arr = sm.getSelection();
+                        if (Arr.length != 0) {
+                            Ext.Msg.confirm("提示", "共选中" + Arr.length + "条数据，是否确认删除？", function (btn) {
+                                if (btn == 'yes') {
+                                    //先删除后台再删除前台
+                                    //ajax 删除后台数据 成功则删除前台数据；失败则不删除前台数据
+                                    //Extjs 4.x 删除
+                                    Ext.getCmp('addDataGrid').getStore().remove(Arr);
+                                } else {
+                                    return;
+                                }
+                            });
+                        } else {
+                            //Ext.Msg.confirm("提示", "无选中数据");
+                            Ext.Msg.alert("提示", "无选中数据");
+                        }
+                    }
                 }
-
             ]
         });
 
@@ -713,13 +739,13 @@ Ext.define('material.material_Inbound', {
                 //         allowBlank : true
                 //     }
                 // },
-                {
-                    // name : '操作',
-                    text : '操作',
-                    renderer:function(value, cellmeta){
-                        return "<INPUT type='button' value='删 除' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
-                    }
-                }
+                // {
+                //     // name : '操作',
+                //     text : '操作',
+                //     renderer:function(value, cellmeta){
+                //         return "<INPUT type='button' value='删 除' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
+                //     }
+                // }
             ],
             viewConfig : {
                 plugins : {
@@ -734,49 +760,49 @@ Ext.define('material.material_Inbound', {
         });
 
         //添加cell单击事件
-        grid.addListener('cellclick', cellclick);
-        function cellclick(grid, rowIndex, columnIndex, e) {
-            if (rowIndex < 0) {
-                return;
-            }
-            var fieldName = Ext.getCmp('addDataGrid').columns[columnIndex-1].text;
-
-            console.log("列名：",fieldName)
-            if (fieldName == "操作") {
-                //设置监听事件getSelectionModel().getSelection()
-                var sm = Ext.getCmp('addDataGrid').getSelectionModel();
-                var materialArr = sm.getSelection();
-                if (materialArr.length != 0) {
-                    Ext.Msg.confirm("提示", "共选中" + materialArr.length + "条数据，是否确认删除？", function (btn) {
-                        if (btn == 'yes') {
-                            //先删除后台再删除前台
-                            //ajax 删除后台数据 成功则删除前台数据；失败则不删除前台数据
-
-                            //Extjs 4.x 删除
-                            Ext.getCmp('addDataGrid').getStore().remove(materialArr);
-                        } else {
-                            return;
-                        }
-                    });
-                } else {
-                    //Ext.Msg.confirm("提示", "无选中数据");
-                    Ext.Msg.alert("提示", "无选中数据");
-                }
-            }
-
-
-            console.log("rowIndex:",rowIndex)
-            console.log("columnIndex:",columnIndex)
-            // var record = grid.getStore().getAt(rowIndex);
-            // var id = record.get('id');
-            // var fieldName = grid.getColumnModel().getDataIndex(columnIndex);
-            // if (fieldName == "c_reply") {
-            //     Ext.Msg.alert('c_reply', rowIndex + "  -  " + id);
-            // }else if (fieldName == "c_agree") {
-            //     Ext.Msg.alert('c_agree', rowIndex + "  -  " + id);
-            // }
-
-        }
+        // grid.addListener('cellclick', cellclick);
+        // function cellclick(grid, rowIndex, columnIndex, e) {
+        //     if (rowIndex < 0) {
+        //         return;
+        //     }
+        //     var fieldName = Ext.getCmp('addDataGrid').columns[columnIndex-1].text;
+        //
+        //     console.log("列名：",fieldName)
+        //     if (fieldName == "操作") {
+        //         //设置监听事件getSelectionModel().getSelection()
+        //         var sm = Ext.getCmp('addDataGrid').getSelectionModel();
+        //         var materialArr = sm.getSelection();
+        //         if (materialArr.length != 0) {
+        //             Ext.Msg.confirm("提示", "共选中" + materialArr.length + "条数据，是否确认删除？", function (btn) {
+        //                 if (btn == 'yes') {
+        //                     //先删除后台再删除前台
+        //                     //ajax 删除后台数据 成功则删除前台数据；失败则不删除前台数据
+        //
+        //                     //Extjs 4.x 删除
+        //                     Ext.getCmp('addDataGrid').getStore().remove(materialArr);
+        //                 } else {
+        //                     return;
+        //                 }
+        //             });
+        //         } else {
+        //             //Ext.Msg.confirm("提示", "无选中数据");
+        //             Ext.Msg.alert("提示", "无选中数据");
+        //         }
+        //     }
+        //
+        //
+        //     console.log("rowIndex:",rowIndex)
+        //     console.log("columnIndex:",columnIndex)
+        //     // var record = grid.getStore().getAt(rowIndex);
+        //     // var id = record.get('id');
+        //     // var fieldName = grid.getColumnModel().getDataIndex(columnIndex);
+        //     // if (fieldName == "c_reply") {
+        //     //     Ext.Msg.alert('c_reply', rowIndex + "  -  " + id);
+        //     // }else if (fieldName == "c_agree") {
+        //     //     Ext.Msg.alert('c_agree', rowIndex + "  -  " + id);
+        //     // }
+        //
+        // }
         this.dockedItems = [toolbar,
             //toobar,
             toolbar1, grid,toolbar3];

@@ -55,7 +55,7 @@ Ext.define('unuseMaterial.unuseMaterial_Inbound', {
             matchFieldWidth: true,
             // emptyText : "--请选择--",
             displayField: 'warehouseName',
-            valueField: 'id',
+            valueField: 'warehouseName',
             editable : false,
             store: storeNameList,
         });
@@ -86,7 +86,7 @@ Ext.define('unuseMaterial.unuseMaterial_Inbound', {
             store: oldPanelNameList,
             listeners:{
                 select: function(combo, record, index) {
-                    console.log(oldpanelTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
+                    // console.log(oldpanelTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
                     //console.log(record[0].data.materialName);
                 }
             }
@@ -120,7 +120,7 @@ Ext.define('unuseMaterial.unuseMaterial_Inbound', {
             listeners:{
                 select: function(combo, record, index) {
 
-                    console.log(classificationList.getValue());// MaterialTypeList.getValue()获得选择的类型
+                    // console.log(classificationList.getValue());// MaterialTypeList.getValue()获得选择的类型
                     //console.log(record[0].data.materialName);
                 }
             }
@@ -346,7 +346,7 @@ Ext.define('unuseMaterial.unuseMaterial_Inbound', {
                     //选中后
                     var select = record[0].data;
                     var id = select.id;//项目名对应的id
-                    console.log(id)
+                    //console.log(id)
                     //重新加载行选项
                     //表名
                     var tableName = 'building';
@@ -450,7 +450,7 @@ Ext.define('unuseMaterial.unuseMaterial_Inbound', {
                             s.push(JSON.stringify(rec.data));
                             //alert(JSON.stringify(rec.data));//获得表格中的数据
                         });
-                        console.log(s);
+                        //console.log(s);
                         //显示匹配进度
                         Ext.MessageBox.show(
                             {
@@ -477,7 +477,7 @@ Ext.define('unuseMaterial.unuseMaterial_Inbound', {
                                 operator: Ext.getCmp('operator').getValue(),
                             },
                             success : function(response) {
-                                console.log("12312312312321",response.responseText);
+                               // console.log("12312312312321",response.responseText);
                                 // if(response.responseText.includes("false"))
                                 // {
                                 //     Ext.MessageBox.alert("提示","入库失败，品名不规范" );
@@ -491,9 +491,9 @@ Ext.define('unuseMaterial.unuseMaterial_Inbound', {
 
                                  var res = response.responseText;
                                 var jsonobj = JSON.parse(res);//将json字符串转换为对象
-                                console.log(jsonobj);
-                                console.log("success--------------",jsonobj.success);
-                                console.log("errorList--------------",jsonobj['errorList']);
+                               // console.log(jsonobj);
+                               // console.log("success--------------",jsonobj.success);
+                               // console.log("errorList--------------",jsonobj['errorList']);
                                 var success = jsonobj.success;
                                 var errorList = jsonobj.errorList;
                                 var errorCode = jsonobj.errorCode;
@@ -528,7 +528,7 @@ Ext.define('unuseMaterial.unuseMaterial_Inbound', {
                                         Ext.MessageBox.alert("提示","入库失败！未选择入库人" );
                                     }
                                     else if(errorCode == 1000){
-                                        Ext.MessageBox.alert("提示","入库失败，未知错误！请重新领取" );
+                                        Ext.MessageBox.alert("提示","入库失败，未知错误！请联系管理员" );
                                     }
                                 }else{
                                     Ext.MessageBox.alert("提示","入库成功" );
@@ -592,13 +592,13 @@ Ext.define('unuseMaterial.unuseMaterial_Inbound', {
                                             //     wasteStore.loadData(action.result['value']);
                                             // },
                                             success : function(exceluploadform,response, action) {
-                                                console.log("response=========================>",response);
+                                              //  console.log("response=========================>",response);
                                                 Ext.MessageBox.alert("提示", "上传成功!");
                                                 var List = response.result['value'];
-                                                console.log("List=========================>List",List)
+                                              //  console.log("List=========================>List",List)
                                                 var success =response.result['success'];
 
-                                                console.log("success=========================>success",success)
+                                              //  console.log("success=========================>success",success)
                                                 if(success == false){
                                                     //excel上传失败
                                                     Ext.Msg.show({
@@ -727,6 +727,8 @@ Ext.define('unuseMaterial.unuseMaterial_Inbound', {
                     text : '入库仓库',
                     flex :1,
                     editor:storePosition,renderer:function(value, cellmeta, record){
+                     //   console.log(storeNameList.find('warehouseName','105'));
+                     //   console.log(storeNameList.find('id','1'));
                         var index = storeNameList.find(storePosition.valueField,value);
                         var ehrRecord = storeNameList.getAt(index);
                         var returnvalue = "";
