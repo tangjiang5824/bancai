@@ -7,20 +7,20 @@ Ext.define('unuseMaterial.unuseMaterial_Query_Data',{
         var itemsPerPage = 50;
 
         //原材料类型，下拉框显示
-        var MaterialTypeList = Ext.create('Ext.form.ComboBox',{
-            fieldLabel : '原材料品名',
-            labelWidth : 70,
-            width : 260,
-            id :  'materialName',
-            name : 'materialName',
-            matchFieldWidth: true,
-            // allowBlank:false,
-            emptyText : "--请选择--",
-            displayField: 'materialName',
-            valueField: 'id', //显示name
-            editable : true,
-            store: MaterialNameList,
-        });
+        // var MaterialTypeList = Ext.create('Ext.form.ComboBox',{
+        //     fieldLabel : '原材料品名',
+        //     labelWidth : 70,
+        //     width : 260,
+        //     id :  'materialName',
+        //     name : 'materialName',
+        //     matchFieldWidth: true,
+        //     // allowBlank:false,
+        //     emptyText : "--请选择--",
+        //     displayField: 'materialName',
+        //     valueField: 'id', //显示name
+        //     editable : true,
+        //     store: MaterialNameList,
+        // });
         var toolbar_top = Ext.create("Ext.toolbar.Toolbar", {
             // dock : "top",
             border:false,
@@ -45,7 +45,7 @@ Ext.define('unuseMaterial.unuseMaterial_Query_Data',{
                 //     name: 'mType',
                 //     value:"",
                 // },
-                MaterialTypeList,
+          //      MaterialTypeList,
                 // {
                 //     xtype: 'textfield',
                 //     margin : '0 10 0 40',
@@ -59,20 +59,20 @@ Ext.define('unuseMaterial.unuseMaterial_Query_Data',{
                 {
                     xtype: 'textfield',
                     margin : '0 10 0 0',
-                    // fieldLabel: '',
+                     fieldLabel: '废料名',
                     id :'wasteName',
-                    width: 100,
-                    // labelWidth: 60,
+                    width: 180,
+                    labelWidth: 60,
                     name: 'wasteName',
                     value:"",
                 },
                 {
                     xtype: 'textfield',
                     margin : '0 10 0 0',
-                    // fieldLabel: '',
+                    fieldLabel: '仓库名',
                     id :'warehouseName',
-                    width: 100,
-                    // labelWidth: 60,
+                    width: 180,
+                    labelWidth: 60,
                     name: 'warehouseName',
                     value:"",
                 },
@@ -128,7 +128,7 @@ Ext.define('unuseMaterial.unuseMaterial_Query_Data',{
             fields: [],
             pageSize: itemsPerPage, // items per page,每页显示的记录条数
             proxy:{
-                url : "material/findStoreInfo.do",
+                url : "waste/queryStore.do",
                 type: 'ajax',
                 reader:{
                     type : 'json',

@@ -576,11 +576,14 @@ public class ProductDataController {
     @RequestMapping("/waste/queryStore.do")
     public WebResponse queryWasteStore(String wasteName, String warehouseName,Integer start,Integer limit){
         mysqlcondition c=new mysqlcondition();
+//        if (null!=wasteName&&wasteName.trim().length() != 0) {
+//            c.and(new mysqlcondition("wasteName", "=", wasteName.trim().toUpperCase()));
+//        }
         if (null!=wasteName&&wasteName.trim().length() != 0) {
-            c.and(new mysqlcondition("wasteName", "=", wasteName.trim().toUpperCase()));
+            c.and(new mysqlcondition("wasteName", "like", "%"+wasteName.trim().toUpperCase()+"%"));
         }
         if (null!=warehouseName&&warehouseName.trim().length() != 0) {
-            c.and(new mysqlcondition("projectId", "=", warehouseName.trim().toUpperCase()));
+            c.and(new mysqlcondition("warehouseName", "=", warehouseName.trim().toUpperCase()));
         }
         return queryService.queryDataPage(start, limit, c, "waste_store");
     }
