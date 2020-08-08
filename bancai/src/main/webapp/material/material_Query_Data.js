@@ -265,7 +265,7 @@ Ext.define('material.material_Query_Data',{
 
                 },
                 {
-                    dataIndex : 'typeId',
+                    dataIndex : 'typeName',
                     text : '原材料类型',
                     flex :.6,
                 },
