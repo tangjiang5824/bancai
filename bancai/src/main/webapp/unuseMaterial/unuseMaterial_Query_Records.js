@@ -373,8 +373,8 @@ Ext.define('unuseMaterial.unuseMaterial_Query_Records',{
                     editor:{xtype : 'textfield', allowBlank : false},
                     renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')
                     },
-                { text: '项目名称', dataIndex: 'projectName', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-
+                { text: '项目名称', dataIndex: 'projectName', flex :1 },
+                { text: '楼栋名称', dataIndex: 'buildingName', flex :1 },
             ],
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 3
