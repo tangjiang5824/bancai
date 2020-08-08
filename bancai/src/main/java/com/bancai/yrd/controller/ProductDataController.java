@@ -542,6 +542,12 @@ public class ProductDataController {
     @RequestMapping("/waste/addDataRollback.do")
     public WebResponse wasteAddDataRollback(String wastelogId,String operator,HttpSession session){
         WebResponse response = new WebResponse();
+       if(operator==null||operator.trim().length()==0){
+           response.setErrorCode(300);
+           response.setMsg("请选择撤销人！");
+           response.setSuccess(false);
+           return  response;
+       }
         try {
             DataRow row = analyzeNameService.canRollback("waste_log",wastelogId);
             if(!row.isEmpty()){

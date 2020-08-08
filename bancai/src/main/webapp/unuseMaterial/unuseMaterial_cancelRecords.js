@@ -24,7 +24,7 @@ Ext.define('unuseMaterial.unuseMaterial_cancelRecords',{
 
         Ext.define('rollback.model.State', {
             statics: { // 关键
-                0: { value: '0', name: '-' },
+                0: { value: '0', name: '未撤销' },
                 1: { value: '1', name: '已撤销' },
             }
         });
@@ -178,7 +178,7 @@ Ext.define('unuseMaterial.unuseMaterial_cancelRecords',{
                 },
                 // projectName,
                 // buildingName,
-                optionType,
+               // optionType,
                 {
                     xtype:'tbtext',
                     text:'操作时间:',
@@ -186,7 +186,7 @@ Ext.define('unuseMaterial.unuseMaterial_cancelRecords',{
                 },
                 {
                     xtype : 'datefield',
-                    margin : '0 30 0 0',
+                    margin : '0 0 0 0',
                     // fieldLabel : '开始时间',
                     width : 120,
                     // labelWidth : 60,
@@ -225,7 +225,7 @@ Ext.define('unuseMaterial.unuseMaterial_cancelRecords',{
                                 startTime:Ext.getCmp('startTime').getValue(),
                                 projectId:Ext.getCmp('projectName').getValue(),
                                 buildingId:Ext.getCmp('buildingName').getValue(),
-                                type:Ext.getCmp('optionType').getValue(),
+                                type:0,
                                 // tableName:tableName_material_records,
                             }
                         });
@@ -248,14 +248,12 @@ Ext.define('unuseMaterial.unuseMaterial_cancelRecords',{
                     totalProperty: 'totalCount'
                 },
                 params:{
-                    start: 0,
-                    limit: itemsPerPage,
                     operator : Ext.getCmp('operator').getValue(),//获取用户名
                     endTime : Ext.getCmp('endTime').getValue(),
                     startTime:Ext.getCmp('startTime').getValue(),
                     projectId:Ext.getCmp('projectName').getValue(),
                     buildingId:Ext.getCmp('buildingName').getValue(),
-                    type:Ext.getCmp('optionType').getValue(),
+                    type:0,
                     // tableName:tableName_material_records,
                 }
             },
@@ -267,7 +265,7 @@ Ext.define('unuseMaterial.unuseMaterial_cancelRecords',{
                         startTime:Ext.getCmp('startTime').getValue(),
                         projectId:Ext.getCmp('projectName').getValue(),
                         buildingId:Ext.getCmp('buildingName').getValue(),
-                        type:Ext.getCmp('optionType').getValue(),
+                        type:0,
                         // tableName:tableName_material_records,
                     });
                 }
@@ -316,7 +314,10 @@ Ext.define('unuseMaterial.unuseMaterial_cancelRecords',{
                     dataIndex: 'remark'
                 },{
                     text: '是否撤销',
-                    dataIndex: 'isrollback'
+                    dataIndex: 'isrollback',
+                    renderer: function (value) {
+                        return rollback.model.State[value].name; // key-value
+                    }
                 },
 
                 //fields:['oldpanelId','oldpanelName','count'],specification
@@ -336,9 +337,114 @@ Ext.define('unuseMaterial.unuseMaterial_cancelRecords',{
             }
         });
 
+        //弹出框的表头
+        var toolbar_pop = Ext.create('Ext.toolbar.Toolbar', {
+            dock : "top",
+            id:'toolbar_pop',
+            items: [
+
+                {
+                    //保存logid的值
+                    xtype: 'tbtext',
+                    id:'log_id',
+                    iconAlign: 'center',
+                    iconCls: 'rukuicon ',
+                    text: ' ',//默认为空
+                    region: 'center',
+                    bodyStyle: 'background:#fff;',
+                    hidden:true
+                },
+                {
+                    //保存是否回滚的值
+                    xtype: 'tbtext',
+                    id:'is_rollback',
+                    iconAlign: 'center',
+                    iconCls: 'rukuicon ',
+                    text: ' ',//默认为空
+                    region: 'center',
+                    bodyStyle: 'background:#fff;',
+                    hidden:true
+                },
+                {
+                    xtype: 'combo',
+                    margin : '0 40 0 0',
+                    fieldLabel: '撤销人',
+                    id :'operator_back',
+                    width: 150,
+                    labelWidth: 45,
+                    store : workerListStore,
+                    displayField : 'workerName',
+                    valueField : 'id'
+                },
+                // {
+                //     xtype : 'datefield',
+                //     margin : '0 40 0 0',
+                //     fieldLabel : '回滚时间',
+                //     width : 180,
+                //     labelWidth : 60,
+                //     id : "backTime",
+                //     name : 'backTime',
+                //     format : 'Y-m-d',
+                //     editable : false,
+                //     //value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
+                // },
+
+                {
+                    xtype : 'button',
+                    text: '撤销所有记录',
+                    width: 100,
+                    margin: '0 0 0 40',
+                    layout: 'right',
+                    handler: function(){
+                        var wastelogId = Ext.getCmp("log_id").text;
+                        var is_rollback = Ext.getCmp("is_rollback").text;
+                        var operator = Ext.getCmp("operator_back").getValue();
+                        // console.log("id为：----",is_rollback)
+                        //    material/backMaterialstore.do
+                        if (is_rollback != 1){
+                            Ext.Msg.show({
+                                title: '操作确认',
+                                message: '将撤销废料库入库数据，选择“是”否确认？',
+                                buttons: Ext.Msg.YESNO,
+                                icon: Ext.Msg.QUESTION,
+                                fn: function (btn) {
+                                    if (btn === 'yes') {
+                                        Ext.Ajax.request({
+                                            url:"waste/addDataRollback.do",  //入库记录撤销
+                                            params:{
+                                                operator:operator,  //回滚操作人
+                                                wastelogId:wastelogId,
+                                              //  type:0  //撤销出库1
+                                            },
+                                            success:function (response) {
+                                                //console.log(response.responseText);
+                                                var ob=JSON.parse(response.responseText);
+                                                if(ob.success==false){
+                                                    Ext.MessageBox.alert("提示", ob.msg);
+                                                }else
+                                                Ext.MessageBox.alert("提示", "撤销成功!");
+                                            },
+                                            failure : function(response){
+                                                Ext.MessageBox.alert("提示", "撤销失败!");
+                                            }
+                                        })
+                                    }
+                                }
+                            });
+
+                        }
+                        else{
+                            Ext.Msg.alert('错误', '该条记录已撤销！')
+                        }
+                    }
+                }
+
+            ]
+        });
         var waste_Records_win = Ext.create('Ext.window.Window', {
             // id:'waste_Records_win',
             title: '废料出入库详细信息',
+            tbar:toolbar_pop,
             height: 500,
             width: 650,
             layout: 'fit',
@@ -357,7 +463,7 @@ Ext.define('unuseMaterial.unuseMaterial_cancelRecords',{
             },
             columns : [
                 // { text: '原材料领料记录单编号', dataIndex: 'id', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '操作员',  dataIndex: 'operator' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
+                { text: '操作员',  dataIndex: 'workerName' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
                 {   text: '操作类型',
                     dataIndex: 'type' ,
                     flex :1,
@@ -374,6 +480,15 @@ Ext.define('unuseMaterial.unuseMaterial_cancelRecords',{
                     renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')
                     },
                 { text: '项目名称', dataIndex: 'projectName', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
+                { text: '楼栋名称', dataIndex: 'buildingName', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
+                {
+                    text: '记录是否撤销',
+                    dataIndex: 'isrollback',
+                    flex: 1,
+                    renderer: function (value) {
+                        return rollback.model.State[value].name; // key-value
+                    }
+                }
 
             ],
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
@@ -402,8 +517,7 @@ Ext.define('unuseMaterial.unuseMaterial_cancelRecords',{
                     var wasteLogId = select.wasteLogId
                     //操作类型opType
                     var opType = select.type;
-                    console.log(id);
-                    console.log(opType)
+                    var  isrollback= select.isrollback;
                     var materiallogdetailList = Ext.create('Ext.data.Store',{
                         //id,materialName,length,width,materialType,number
                         fields:['materialName','length','width','materialType','count'],
@@ -419,6 +533,8 @@ Ext.define('unuseMaterial.unuseMaterial_cancelRecords',{
                         },
                         autoLoad : true
                     });
+                    Ext.getCmp("toolbar_pop").items.items[0].setText(wasteLogId); //设置log id的值\
+                    Ext.getCmp("toolbar_pop").items.items[1].setText(isrollback);//设置isrollback的值
                     // 根据出入库0/1，决定弹出框表格列名
                     var col = waste_Records_specific_grid.columns[1];
                     if(opType == 1){
