@@ -18,7 +18,7 @@ Ext.define('preprocess.preprocess_Query_Records',{
     initComponent: function(){
         var itemsPerPage = 50;
         var tableName="material";
-        var tableName_pre_records='preprocess_log';
+        var tableName_pre_records='preprocess_log_view';
         //var materialType="1";
         //操作类型：枚举类型
         Ext.define('Soims.model.application.ApplicationState', {
@@ -309,7 +309,7 @@ Ext.define('preprocess.preprocess_Query_Records',{
             },
             columns : [
                 // { text: '原材料领料记录单编号', dataIndex: 'id', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '操作员',  dataIndex: 'operator' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
+                { text: '操作员',  dataIndex: 'workerName' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
                 {   text: '操作类型',
                     dataIndex: 'type' ,
                     flex :1,

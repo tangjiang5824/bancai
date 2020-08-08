@@ -338,6 +338,8 @@ public class MaterialController {
         object.put("material_logdetail",list);
         return object.toJSONString();
     }
+
+
     @RequestMapping("/project/addAndupdateBuiling.do")
     @Transactional
     public boolean addAndupdateBuiling(Integer projectId,Integer id,String buildingNo,String buildingName,String buildingLeader){

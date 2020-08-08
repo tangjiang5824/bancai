@@ -2,7 +2,7 @@ Ext.define('product.product_Query_Records',{
     extend:'Ext.panel.Panel',
     region: 'center',
     layout:'fit',
-    title: '原材料出入库记录查询',
+    title: '产品成品出入库记录查询',
     reloadPage : function() {
         var p = Ext.getCmp('functionPanel');
         p.removeAll();
@@ -18,7 +18,7 @@ Ext.define('product.product_Query_Records',{
     initComponent: function(){
         var itemsPerPage = 50;
         var tableName="material";
-        var tableName_pro_records='product_log';
+        var tableName_pro_records='product_log_view';
         //var materialType="1";
         //操作类型：枚举类型
         Ext.define('Soims.model.application.ApplicationState', {
@@ -290,7 +290,7 @@ Ext.define('product.product_Query_Records',{
 
         var pro_Query_Records_win_showmaterialData = Ext.create('Ext.window.Window', {
             // id:'pro_Query_Records_win_showmaterialData',
-            title: '预加工半成品出入库详细信息',
+            title: '产品成品出入库详细信息',
             height: 500,
             width: 650,
             layout: 'fit',
@@ -309,7 +309,7 @@ Ext.define('product.product_Query_Records',{
             },
             columns : [
                 // { text: '原材料领料记录单编号', dataIndex: 'id', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '操作员',  dataIndex: 'operator' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
+                { text: '操作员',  dataIndex: 'workerName' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
                 {   text: '操作类型',
                     dataIndex: 'type' ,
                     flex :1,
