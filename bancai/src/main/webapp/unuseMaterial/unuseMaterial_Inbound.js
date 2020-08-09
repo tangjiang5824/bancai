@@ -532,8 +532,10 @@ Ext.define('unuseMaterial.unuseMaterial_Inbound', {
                                     }
                                 }else{
                                     Ext.MessageBox.alert("提示","入库成功" );
-                                }
 
+                                    //重新加载表格
+                                    Ext.getCmp('waste_addDataGrid').getStore().removeAll();
+                                }
                             },
                             failure : function(response) {
                                 //关闭进度条

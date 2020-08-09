@@ -482,21 +482,17 @@ Ext.define('unuseMaterial.unuseMaterial_outBound',{
                         console.log('1===========')
                         var select = Ext.getCmp('waste_operateGrid').getStore()
                             .getData();
-                        // console.log(select)
-                        var projectId = Ext.getCmp('project_Id').getValue();
+
                         var s = new Array();
                         select.each(function(rec) {
                             s.push(JSON.stringify(rec.data));
                         });
-                        console.log(s)
-                        console.log('2===========')
                         var operator = Ext.getCmp('operator_pick').getValue();
-                        console.log('2===========',operator)
                         //判断条件：若无数据或者没有操作人员则报错，不能提交
                         if(s.length != 0 && operator != null ){
                             //获取数据
                             Ext.Ajax.request({
-                                // url : 'order/finishRequisitionOrder.do', //领料
+                                url : 'waste/outStore.do', //领料
                                 method:'POST',
                                 // submitEmptyText : false,
                                 params : {
