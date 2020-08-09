@@ -42,7 +42,6 @@ public class OldpanelDataController {
     private AnalyzeNameService analyzeNameService;
 
     Logger log = Logger.getLogger(OldpanelDataController.class);
-    private static String isPureNumber = "[0-9]+";
 
     /*
      * 新增旧板品名格式
@@ -78,7 +77,7 @@ public class OldpanelDataController {
                 map.put("format4",format4);
                 if((typeId.equals("null"))||(typeId.length()==0))
                     errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"未选择类型",map);
-                else if((format.length()!=4)||(!format.matches(isPureNumber)))
+                else if((format.length()!=4)||(analyzeNameService.isStringNotPureNumber(format)))
                     errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"格式错误或选择不完全",map);
                 else if(analyzeNameService.isFormatExist("oldpanel",typeId,format)!=0)
                     errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"此格式已存在",map);
@@ -163,15 +162,9 @@ public class OldpanelDataController {
                 map.put("remark",remark);
                 if(analyzeNameService.isInfoExist("oldpanel",oldpanelName)!=0)
                     errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"已经存在这种旧板",map);
-                else if(((unitWeight.split("\\.").length==1)&&(!unitWeight.matches(isPureNumber)))||
-                        ((unitWeight.split("\\.").length==2)&&(
-                                (!unitWeight.split("\\.")[0].matches(isPureNumber))||(!unitWeight.split("\\.")[1].matches(isPureNumber))
-                        ))||((unitWeight.split("\\.").length!=1)&&((unitWeight.split("\\.").length!=2))))
+                else if(analyzeNameService.isStringNotNonnegativeNumber(unitWeight))
                     errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"重量输入有误",map);
-                else if(((unitArea.split("\\.").length==1)&&(!unitArea.matches(isPureNumber)))||
-                        ((unitArea.split("\\.").length==2)&&(
-                                (!unitArea.split("\\.")[0].matches(isPureNumber))||(!unitArea.split("\\.")[1].matches(isPureNumber))
-                        ))||((unitArea.split("\\.").length!=1)&&((unitArea.split("\\.").length!=2))))
+                else if(analyzeNameService.isStringNotNonnegativeNumber(unitArea))
                     errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"面积输入有误",map);
                 else{
                     String[] a = analyzeNameService.analyzeOldpanelName(oldpanelName);
@@ -269,7 +262,7 @@ public class OldpanelDataController {
                 map.put("warehouseName",warehouseName);
                 map.put("count",count);
                 map.put("remark",remark);
-                if((!count.matches(isPureNumber))||(Integer.parseInt(count)<=0))
+                if(analyzeNameService.isStringNotPositiveInteger(count))
                     errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"输入数量不为正整数",map);
                 else if(analyzeNameService.isWarehouseNameNotExist(warehouseName))
                     errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"仓库名不存在",map);
@@ -343,7 +336,7 @@ public class OldpanelDataController {
                 map.put("warehouseName",warehouseName);
                 map.put("count",count);
                 map.put("remark",remark);
-                if((!count.matches(isPureNumber))||(Integer.parseInt(count)<=0))
+                if(analyzeNameService.isStringNotPositiveInteger(count))
                     errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"输入数量不为正整数",map);
                 else if(analyzeNameService.isWarehouseNameNotExist(warehouseName))
                     errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"仓库名不存在",map);
@@ -493,7 +486,7 @@ public class OldpanelDataController {
                 String projectId = row.get("projectId").toString();
                 String buildingId = row.get("buildingId").toString();
                 String time = row.get("time").toString();
-                if(!analyzeNameService.isFitRollbackTime(time)){
+                if(analyzeNameService.isNotFitRollbackTime(time)){
                     response.setSuccess(false);
                     response.setErrorCode(200);
                     response.setMsg("无法撤销，超过可撤销时间");

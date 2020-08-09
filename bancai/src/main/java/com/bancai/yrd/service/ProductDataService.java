@@ -12,6 +12,8 @@ import com.bancai.commonMethod.QueryAllService;
 import com.bancai.domain.DataList;
 import com.bancai.domain.DataRow;
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -389,7 +391,7 @@ public class ProductDataService extends BaseService{
     @Transactional
     public boolean insertWasteDataToStore(DataList insertList,String userId,String operator,String projectId,String buildingId){
         boolean b = true;
-        int logId = wasteAddLogBackId("0",userId,operator,projectId,buildingId);
+        int logId = wasteAddLogBackId("0",userId,operator,projectId,buildingId,"0");
         for (DataRow dataRow : insertList) {
             String wasteName = dataRow.get("wasteName").toString();
             String warehouseName = dataRow.get("warehouseName").toString();
@@ -410,9 +412,9 @@ public class ProductDataService extends BaseService{
         return b;
     }
 
-    private int wasteAddLogBackId(String type,String userId,String operator,String projectId,String buildingId){
+    private int wasteAddLogBackId(String type,String userId,String operator,String projectId,String buildingId,String isrollback){
         return insertProjectService.insertDataToTable("insert into waste_log (type,userId,operator,projectId,buildingId,time,isrollback) values (?,?,?,?,?,?,?)",
-                type,userId,operator,projectId,buildingId,analyzeNameService.getTime(),"0");
+                type,userId,operator,projectId,buildingId,analyzeNameService.getTime(),isrollback);
     }
     private int wasteAddStoreBackId(String wasteName,String warehouseName,String inventoryUnit,String count){
         return insertProjectService.insertDataToTable("insert into waste_store (wasteName,warehouseName,inventoryUnit,countStore) values (?,?,?,?)",
@@ -421,9 +423,9 @@ public class ProductDataService extends BaseService{
     private void wasteUpdateStoreById(String storeId,String method,String count){
         jo.update("update waste_store set countStore=countStore"+method+"\""+count+"\" where id=\""+storeId+"\"");
     }
-    private boolean wasteAddLogDetail(String logId,String storeId,String count,String remark,String value){
-        return insertProjectService.insertIntoTableBySQL("insert into waste_logdetail (wastelogId,wastestoreId,count,remark,value,isrollback) values (?,?,?,?,?,?)",
-                logId,storeId,count,remark,value,"0");
+    private boolean wasteAddLogDetail(String logId,String storeId,String count,String remark,String isrollback){
+        return insertProjectService.insertIntoTableBySQL("insert into waste_logdetail (wastelogId,wastestoreId,count,remark,isrollback) values (?,?,?,?,?)",
+                logId,storeId,count,remark,isrollback);
     }
     private void wasteUpdateLogdetailIsrollbackById(String detailId){
         jo.update("update waste_logdetail set isrollback=1 where id=\""+detailId+"\"");
@@ -438,7 +440,7 @@ public class ProductDataService extends BaseService{
     public boolean rollbackWasteData(String wastelogId,String operator,String userId,String projectId,String buildingId){
         boolean b = true;
         wasteUpdateLogIsrollbackById(wastelogId);
-        int logId = wasteAddLogBackId("3",userId,operator,projectId,buildingId);
+        int logId = wasteAddLogBackId("3",userId,operator,projectId,buildingId,"1");
         DataList dataList = queryService.query("select * from waste_logdetail where wastelogId=? and isrollback=0",wastelogId);
         for (DataRow dataRow : dataList) {
             String detailId = dataRow.get("id").toString();
@@ -446,11 +448,47 @@ public class ProductDataService extends BaseService{
             String count = dataRow.get("count").toString();
             wasteUpdateLogdetailIsrollbackById(detailId);
             wasteUpdateStoreById(storeId,"-",count);
-            b=b&wasteAddLogDetail(String.valueOf(logId),storeId,count,"","0");
+            b=b&wasteAddLogDetail(String.valueOf(logId),storeId,count,"","1");
         }
         return b;
     }
 
+
+    /*
+     * 废料出库
+     * */
+    @Transactional
+    public boolean wasteOutStore(JSONArray jsonArray,String operator,String userId){
+        boolean b = true;
+        int logId = wasteAddLogBackId("1",userId,operator,null,null,"1");
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonTemp = jsonArray.getJSONObject(i);
+            String count = (jsonTemp.get("count")+"").trim();
+            String storeId = jsonTemp.get("id")+"";
+            wasteUpdateStoreById(storeId,"-",count);
+            b = b&wasteAddLogDetail(String.valueOf(logId),storeId,count,"","1");
+        }
+        return b;
+    }
+    /*
+     * 废料结算
+     * */
+    @Transactional
+    public boolean addWasteSettleData(JSONArray jsonArray,String userId,String operator,String projectId,String buildingId){
+        boolean b = true;
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonTemp = jsonArray.getJSONObject(i);
+            String account = (jsonTemp.get("account")+"").trim();
+            String remark = jsonTemp.get("remark")+"";
+            b=b&insertWasteSettleData(userId,operator,projectId,buildingId,account,remark);
+        }
+        return b;
+    }
+
+    private boolean insertWasteSettleData(String userId,String operator,String projectId,String buildingId,String account,String remark){
+        return insertProjectService.insertIntoTableBySQL("insert into waste_settle_account (userId,operator,projectId,buildingId,account,remark,time) values (?,?,?,?,?,?,?)",
+                userId,operator,projectId,buildingId,account,remark,analyzeNameService.getTime());
+    }
 
 //    /**
 //     * 添加数据,返回添加的产品id

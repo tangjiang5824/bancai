@@ -42,7 +42,6 @@ public class ProductDataController {
     private ProductDataService productDataService;
 
     Logger log = Logger.getLogger(ProductDataController.class);
-    private static String isPureNumber = "[0-9]+";
 
     /*
      * 新增产品品名格式
@@ -78,7 +77,7 @@ public class ProductDataController {
                 map.put("format4",format4);
                 if((typeId.equals("null"))||(typeId.length()==0))
                     errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"未选择类型",map);
-                else if((typeId.length()!=4)||(!typeId.matches(isPureNumber)))
+                else if((typeId.length()!=4)||(analyzeNameService.isStringNotPureNumber(typeId)))
                     errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"格式错误或选择不完全",map);
                 else if(analyzeNameService.isFormatExist("product",typeId,format)!=0)
                     errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"此格式已存在",map);
@@ -137,15 +136,9 @@ public class ProductDataController {
                 map.put("remark",remark);
                 if(analyzeNameService.isInfoExist("product",productName)!=0)
                     errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"已经存在这种产品",map);
-                else if(((unitWeight.split("\\.").length==1)&&(!unitWeight.matches(isPureNumber)))||
-                        ((unitWeight.split("\\.").length==2)&&(
-                                (!unitWeight.split("\\.")[0].matches(isPureNumber))||(!unitWeight.split("\\.")[1].matches(isPureNumber))
-                        ))||((unitWeight.split("\\.").length!=1)&&((unitWeight.split("\\.").length!=2))))
+                else if(analyzeNameService.isStringNotNonnegativeNumber(unitWeight))
                     errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"重量输入有误",map);
-                else if(((unitArea.split("\\.").length==1)&&(!unitArea.matches(isPureNumber)))||
-                        ((unitArea.split("\\.").length==2)&&(
-                                (!unitArea.split("\\.")[0].matches(isPureNumber))||(!unitArea.split("\\.")[1].matches(isPureNumber))
-                        ))||((unitArea.split("\\.").length!=1)&&((unitArea.split("\\.").length!=2))))
+                else if(analyzeNameService.isStringNotNonnegativeNumber(unitArea))
                     errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"面积输入有误",map);
                 else{
                     String[] a = analyzeNameService.analyzeProductName(productName);
@@ -241,7 +234,7 @@ public class ProductDataController {
                 map.put("productName",productName);
                 map.put("warehouseName",warehouseName);
                 map.put("count",count);
-                if((!count.matches(isPureNumber))||(Integer.parseInt(count)<=0))
+                if(analyzeNameService.isStringNotPositiveInteger(count))
                     errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"输入数量不为正整数",map);
                 else if(analyzeNameService.isWarehouseNameNotExist(warehouseName))
                     errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"仓库名不存在",map);
@@ -328,7 +321,7 @@ public class ProductDataController {
                 map.put("productName",productName);
                 map.put("warehouseName",warehouseName);
                 map.put("count",count);
-                if((!count.matches(isPureNumber))||(Integer.parseInt(count)<=0))
+                if(analyzeNameService.isStringNotPositiveInteger(count))
                     errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"输入数量不为正整数",map);
                 else if(analyzeNameService.isWarehouseNameNotExist(warehouseName))
                     errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"仓库名不存在",map);
@@ -461,10 +454,7 @@ public class ProductDataController {
                 map.put("remark",remark);
                 if(wasteName.equals("NULL")||wasteName.length()==0)
                     errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"未输入品名",map);
-                else if(((count.split("\\.").length==1)&&(!count.matches(isPureNumber)))||
-                        ((count.split("\\.").length==2)&&(
-                                (!count.split("\\.")[0].matches(isPureNumber))||(!count.split("\\.")[1].matches(isPureNumber))
-                        ))||((count.split("\\.").length!=1)&&((count.split("\\.").length!=2))))
+                else if(analyzeNameService.isStringNotNonnegativeNumber(count))
                     errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"数量输入有误",map);
                 else if(analyzeNameService.isWarehouseNameNotExist(warehouseName))
                     errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"仓库名不存在",map);
@@ -549,7 +539,7 @@ public class ProductDataController {
                 String projectId = row.get("projectId").toString();
                 String buildingId = row.get("buildingId").toString();
                 String time = row.get("time").toString();
-                if(!analyzeNameService.isFitRollbackTime(time)){
+                if(analyzeNameService.isNotFitRollbackTime(time)){
                     response.setSuccess(false);
                     response.setErrorCode(200);
                     response.setMsg("无法撤销，超过可撤销时间");
@@ -585,36 +575,133 @@ public class ProductDataController {
         return queryService.queryDataPage(start, limit, c, "waste_store");
     }
 
-//    /*
-//     * 废料出库
-//     * */
-//    @RequestMapping("/waste/outStore.do")
-//    public WebResponse outWasteStore(String s, String operator,Integer start,Integer limit){
-//        mysqlcondition c=new mysqlcondition();
-//        if (null!=wasteName&&wasteName.trim().length() != 0) {
-//            c.and(new mysqlcondition("wasteName", "=", wasteName.trim().toUpperCase()));
-//        }
-//        if (null!=warehouseName&&warehouseName.trim().length() != 0) {
-//            c.and(new mysqlcondition("projectId", "=", warehouseName.trim().toUpperCase()));
-//        }
-//        return queryService.queryDataPage(start, limit, c, "waste_store");
-//    }
-//
-//    /*
-//     * 废料结算
-//     * */
-//    @RequestMapping("/waste/queryStore.do")
-//    public WebResponse queryWasteStore(String wasteName, String warehouseName,Integer start,Integer limit){
-//        mysqlcondition c=new mysqlcondition();
-//        if (null!=wasteName&&wasteName.trim().length() != 0) {
-//            c.and(new mysqlcondition("wasteName", "=", wasteName.trim().toUpperCase()));
-//        }
-//        if (null!=warehouseName&&warehouseName.trim().length() != 0) {
-//            c.and(new mysqlcondition("projectId", "=", warehouseName.trim().toUpperCase()));
-//        }
-//        return queryService.queryDataPage(start, limit, c, "waste_store");
-//    }
+    /*
+     * 废料出库
+     * */
+    @RequestMapping("/waste/outStore.do")
+    public WebResponse outWasteStore(String s, String operator,HttpSession session){
+        WebResponse response = new WebResponse();
+        try {
+            JSONArray jsonArray = new JSONArray(s);
+            String userId = (String) session.getAttribute("userid");
+            //检查
+            if(jsonArray.length()==0){
+                response.setSuccess(false);
+                response.setErrorCode(100); //提交的s为空
+                response.setMsg("提交的数据为空");
+                return response;
+            }
+            if((operator==null)||(operator.length()==0)) {
+                response.setSuccess(false);
+                response.setErrorCode(300);
+                response.setMsg("未选择出库人");
+                return response;
+            }
+            DataList errorList = analyzeNameService.checkCountALessThanCountBInJsonArray(jsonArray,"count","countStore");
+            if(errorList.size()!=0){
+                response.put("errorList",errorList);
+                response.put("errorNum",errorList.size());
+                response.setSuccess(false);
+                response.setErrorCode(400);//存在错误输入
+                response.setMsg("存在错误输入");
+                return response;
+            }
+            boolean result = productDataService.wasteOutStore(jsonArray,operator,userId);
+            response.setSuccess(result);
+        }catch (Exception e){
+            e.printStackTrace();
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误
+            response.setMsg(e.getMessage());
+        }
+        return response;
+    }
 
+    /*
+     * 废料结算
+     * */
+    @RequestMapping("/waste/settleAccount.do")
+    public WebResponse settleAccountWaste(String s, String operator,String projectId, String buildingId,HttpSession session){
+        WebResponse response = new WebResponse();
+        try {
+            JSONArray jsonArray = new JSONArray(s);
+            String userId = (String) session.getAttribute("userid");
+            //检查
+            if(jsonArray.length()==0){
+                response.setSuccess(false);
+                response.setErrorCode(100); //提交的s为空
+                response.setMsg("提交的数据为空");
+                return response;
+            }
+            if((projectId==null)||(projectId.length()==0)||(buildingId==null)||(buildingId.length()==0)){
+                response.setSuccess(false);
+                response.setErrorCode(300);
+                response.setMsg("未选择项目或楼栋");
+                return response;
+            }
+            if((operator==null)||(operator.length()==0)){
+                response.setSuccess(false);
+                response.setErrorCode(400);
+                response.setMsg("未选择结算人");
+                return response;
+            }
+            DataList errorList = new DataList();
+            HashMap<String,String> map = new HashMap<>();
+            System.out.println("[===checkWasteSettleData===]");
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonTemp = jsonArray.getJSONObject(i);
+                System.out.println("第" + i + "个:" + jsonTemp);
+                String id = jsonTemp.get("id")+"";
+                String account = (jsonTemp.get("account") + "").trim();
+                String remark = jsonTemp.get("remark") + "";
+                map.put("account",account);
+                map.put("remark",remark);
+                if(analyzeNameService.isStringNotNumber(account))
+                    errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"结算金额输入有误",map);
+                }
+            if(!errorList.isEmpty()){
+                response.setSuccess(false);
+                response.setErrorCode(200);//提交的s存在错误内容
+                response.setMsg("提交的数据存在错误内容");
+                response.put("errorList",errorList);
+                response.put("errorCount",errorList.size());
+                return response;
+            }
+            System.out.println("[===checkWasteSettleData==Complete=NoError]");
+            boolean uploadResult= productDataService.addWasteSettleData(jsonArray,userId,operator,projectId,buildingId);
+            response.setSuccess(uploadResult);
+        }catch (Exception e){
+            e.printStackTrace();
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误
+            response.setMsg(e.getMessage());
+        }
+        return response;
+    }
+
+    /*
+     * 废料结算查询
+     * */
+    @RequestMapping("/waste/querySettle.do")
+    public WebResponse queryWasteSettle(String projectId, String buildingId,String operator,String timeStart, String timeEnd,Integer start,Integer limit){
+        mysqlcondition c=new mysqlcondition();
+        if (null!=projectId&&projectId.length() != 0) {
+            c.and(new mysqlcondition("projectId", "=", projectId));
+        }
+        if (null!=buildingId&&buildingId.length() != 0) {
+            c.and(new mysqlcondition("buildingId", "=", projectId));
+        }
+        if (null!=operator&&operator.length() != 0) {
+            c.and(new mysqlcondition("operator", "=", operator));
+        }
+        if (null!=timeStart&&timeStart.length() != 0) {
+            c.and(new mysqlcondition("time", ">=", timeStart));
+        }
+        if (null!=timeEnd&&timeEnd.length() != 0) {
+            c.and(new mysqlcondition("time", "<=", timeEnd));
+        }
+        return queryService.queryDataPage(start, limit, c, "waste_settle_account");
+    }
 
 
 

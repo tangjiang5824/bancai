@@ -26,7 +26,6 @@ import java.util.*;
 @Service
 public class DesignlistService extends BaseService{
     private Logger log = Logger.getLogger(DesignlistService.class);
-    private static String isPureNumber = "[0-9]+";
     @Autowired
     private QueryAllService queryService;
     @Autowired
@@ -502,56 +501,6 @@ public class DesignlistService extends BaseService{
     }
 
     /**
-     * 领料单领料检查
-     */
-    @Transactional
-    public DataList checkFinishRequisitionOrder(JSONArray jsonArray){
-        System.out.println("[===checkFinishRequisitionOrder===]");
-        DataList errorList = new DataList();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonTemp = jsonArray.getJSONObject(i);
-            String count = (jsonTemp.get("count")+"").trim();
-            String countRec = jsonTemp.get("countRec")+"";
-            if((count.equals("null"))||(count.length()==0)){
-                DataRow errorRow = new DataRow();
-                errorRow.put("id",jsonTemp.get("id").toString());
-                errorRow.put("errorType","未输入领取数量");//未输入领取数量
-                errorList.add(errorRow);
-            }else if((count.split("\\.").length==1)) {//无小数点
-                if(!count.matches(isPureNumber)){
-                    DataRow errorRow = new DataRow();
-                    errorRow.put("id",jsonTemp.get("id").toString());
-                    errorRow.put("errorType","错误输入");//输入的不是一个非负数
-                    errorList.add(errorRow);
-                }else if(Double.parseDouble(count)>Double.parseDouble(countRec)){
-                    DataRow errorRow = new DataRow();
-                    errorRow.put("id",jsonTemp.get("id").toString());
-                    errorRow.put("errorType","超出可领数量");//超出可领数量
-                    errorList.add(errorRow);
-                }
-            }else if((count.split("\\.").length==2)) {//有小数点
-                if((!count.split("\\.")[0].matches(isPureNumber))||(!count.split("\\.")[1].matches(isPureNumber))){
-                    DataRow errorRow = new DataRow();
-                    errorRow.put("id",jsonTemp.get("id").toString());
-                    errorRow.put("errorType","错误输入");//输入的不是一个非负数
-                    errorList.add(errorRow);
-                }else if(Double.parseDouble(count)>Double.parseDouble(countRec)){
-                    DataRow errorRow = new DataRow();
-                    errorRow.put("id",jsonTemp.get("id").toString());
-                    errorRow.put("errorType","超出可领数量");//超出可领数量
-                    errorList.add(errorRow);
-                }
-            }else {
-                DataRow errorRow = new DataRow();
-                errorRow.put("id",jsonTemp.get("id").toString());
-                errorRow.put("errorType","错误输入");//输入的不是一个非负数
-                errorList.add(errorRow);
-            }
-        }
-        System.out.println("[===result:errorNum===]"+errorList.size());
-        return errorList;
-    }
-    /**
      * 领料单内容领料
      */
     @Transactional
@@ -709,57 +658,6 @@ public class DesignlistService extends BaseService{
     private boolean addReturnOrderLogDetail(String logId,String detailId,String count){
         return insertProjectService.insertIntoTableBySQL("insert into return_order_logdetail (returnOrderLogId,returnOrderDetailId,count) values (?,?,?)",
                 logId,detailId,count);
-    }
-
-    /**
-     * 退料单退料检查
-     */
-    @Transactional
-    public DataList checkFinishReturnOrder(JSONArray jsonArray){
-        System.out.println("[===checkFinishReturnOrder===]");
-        DataList errorList = new DataList();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonTemp = jsonArray.getJSONObject(i);
-            String count = (jsonTemp.get("count")+"").trim();
-            String countRec = jsonTemp.get("countReturn")+"";
-            if((count.equals("null"))||(count.length()==0)){
-                DataRow errorRow = new DataRow();
-                errorRow.put("id",jsonTemp.get("id").toString());
-                errorRow.put("errorType","未输入确认退料数量");//未输入确认退料数量
-                errorList.add(errorRow);
-            }else if((count.split("\\.").length==1)) {//无小数点
-                if(!count.matches(isPureNumber)){
-                    DataRow errorRow = new DataRow();
-                    errorRow.put("id",jsonTemp.get("id").toString());
-                    errorRow.put("errorType","错误输入");//输入的不是一个非负数
-                    errorList.add(errorRow);
-                }else if(Double.parseDouble(count)>Double.parseDouble(countRec)){
-                    DataRow errorRow = new DataRow();
-                    errorRow.put("id",jsonTemp.get("id").toString());
-                    errorRow.put("errorType","超出可退数量");//超出可退数量
-                    errorList.add(errorRow);
-                }
-            }else if((count.split("\\.").length==2)) {//有小数点
-                if((!count.split("\\.")[0].matches(isPureNumber))||(!count.split("\\.")[1].matches(isPureNumber))){
-                    DataRow errorRow = new DataRow();
-                    errorRow.put("id",jsonTemp.get("id").toString());
-                    errorRow.put("errorType","错误输入");//输入的不是一个非负数
-                    errorList.add(errorRow);
-                }else if(Double.parseDouble(count)>Double.parseDouble(countRec)){
-                    DataRow errorRow = new DataRow();
-                    errorRow.put("id",jsonTemp.get("id").toString());
-                    errorRow.put("errorType","超出可退数量");//超出可退数量
-                    errorList.add(errorRow);
-                }
-            }else {
-                DataRow errorRow = new DataRow();
-                errorRow.put("id",jsonTemp.get("id").toString());
-                errorRow.put("errorType","错误输入");//输入的不是一个非负数
-                errorList.add(errorRow);
-            }
-        }
-        System.out.println("[===result:errorNum===]"+errorList.size());
-        return errorList;
     }
 
     /**

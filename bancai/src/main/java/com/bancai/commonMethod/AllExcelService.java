@@ -32,7 +32,6 @@ import java.util.Set;
 @Service
 public class AllExcelService extends BaseService {
 	private Logger log = Logger.getLogger(AllExcelService.class);
-	private static String isPureNumber = "[0-9]+";
 	@Autowired
 	private TableService tableService;
 	@Autowired
@@ -41,6 +40,8 @@ public class AllExcelService extends BaseService {
 	private InsertProjectService insertProjectService;
 	@Autowired
 	private DesignlistService designlistService;
+	@Autowired
+	private AnalyzeNameService analyzeNameService;
 
 	//JPA dao
 	@Autowired
@@ -338,10 +339,7 @@ public class AllExcelService extends BaseService {
 				errorList.add(dataRow);
 				continue;
 			}
-			if(((count.split("\\.").length==1)&&(!count.matches(isPureNumber)))||
-					((count.split("\\.").length==2)&&(
-							(!count.split("\\.")[0].matches(isPureNumber))||(!count.split("\\.")[1].matches(isPureNumber))
-					))||((count.split("\\.").length!=1)&&((count.split("\\.").length!=2)))){
+			if(analyzeNameService.isStringNotNonnegativeNumber(count)){
 				dataRow.put("errorType","数量错误");
 				errorList.add(dataRow);
 				continue;

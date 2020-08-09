@@ -2,6 +2,7 @@ package com.bancai.yrd.controller;
 
 import com.bancai.cg.service.InsertProjectService;
 import com.bancai.commonMethod.AllExcelService;
+import com.bancai.commonMethod.AnalyzeNameService;
 import com.bancai.commonMethod.PanelMatchService;
 import com.bancai.commonMethod.QueryAllService;
 import com.bancai.db.mysqlcondition;
@@ -44,8 +45,9 @@ public class DesignlistController {
     private InsertProjectService insertProjectService;
     @Autowired
     private AllExcelService allExcelService;
+    @Autowired
+    private AnalyzeNameService analyzeNameService;
 
-    private static String isPureNumber = "[0-9]+";
     Logger log=Logger.getLogger(DesignlistController.class);
 
     /*
@@ -209,7 +211,7 @@ public class DesignlistController {
         workerName = workerName.trim();
         tel = tel.trim();
         boolean exist = false;
-        if(id.matches(isPureNumber)){
+        if(!analyzeNameService.isStringNotPureNumber(id)){
             DataList list = queryService.query("select * from department_worker where id=?",id);
             if(!list.isEmpty())
                 exist = true;
@@ -458,7 +460,7 @@ public class DesignlistController {
                 return response;
             }
             String userId = (String)session.getAttribute("userid");
-            DataList errorList = designlistService.checkFinishRequisitionOrder(jsonArray);
+            DataList errorList = analyzeNameService.checkCountALessThanCountBInJsonArray(jsonArray,"count","countRec");
             if(errorList.size()!=0){
                 response.put("errorList",errorList);
                 response.put("errorNum",errorList.size());
@@ -692,7 +694,7 @@ public class DesignlistController {
                 return response;
             }
             String userId = (String)session.getAttribute("userid");
-            DataList errorList = designlistService.checkFinishReturnOrder(jsonArray);
+            DataList errorList = analyzeNameService.checkCountALessThanCountBInJsonArray(jsonArray,"count","countReturn");
             if(errorList.size()!=0){
                 response.put("errorList",errorList);
                 response.put("errorNum",errorList.size());
