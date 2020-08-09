@@ -1,24 +1,13 @@
-Ext.define('preprocess.preprocess_Query_Records',{
+Ext.define('unuseMaterial.unuseMaterial_Query_Records',{
     extend:'Ext.panel.Panel',
     region: 'center',
     layout:'fit',
-    title: '预加工半成品出入库记录查询',
-    reloadPage : function() {
-        var p = Ext.getCmp('functionPanel');
-        p.removeAll();
-        cmp = Ext.create("data.UploadDataTest");
-        p.add(cmp);
-    },
-    clearGrid : function() {
-        var msgGrid = Ext.getCmp("msgGrid");
-        if (msgGrid != null || msgGrid != undefined)
-            this.remove(msgGrid);
-    },
-
+    title: '废料出入库记录查询',
     initComponent: function(){
         var itemsPerPage = 50;
         var tableName="material";
-        var tableName_pre_records='preprocess_log_view';
+
+        var tableName_material_records = 'material_log';
         //var materialType="1";
         //操作类型：枚举类型
         Ext.define('Soims.model.application.ApplicationState', {
@@ -30,6 +19,13 @@ Ext.define('preprocess.preprocess_Query_Records',{
                 4: { value: '4', name: '撤销出库' },
                 5: { value: '5', name: '撤销退库' },
                 null: { value: 'null', name: '无' },
+            }
+        });
+
+        Ext.define('rollback.model.State', {
+            statics: { // 关键
+                0: { value: '0', name: '-' },
+                1: { value: '1', name: '已撤销' },
             }
         });
 
@@ -49,7 +45,7 @@ Ext.define('preprocess.preprocess_Query_Records',{
         var projectName = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '项目名',
             labelWidth : 45,
-            width : '35%',
+            width : 550,
             id :  'projectName',
             name : 'projectName',
             matchFieldWidth: true,
@@ -59,11 +55,60 @@ Ext.define('preprocess.preprocess_Query_Records',{
             editable : true,
             store: projectListStore,
             listeners:{
-                select: function(combo, record, index) {
-                    console.log(record[0].data.projectName);
+                //下拉框默认返回的第一个值
+                // render : function(combo) {//渲染
+                //     combo.getStore().on("load", function(s, r, o) {
+                //         // combo.setValue(r[0].get('projectName'));//第一个值
+                //     });
+                // },
+                select:function (combo, record) {
+                    //选中后
+                    var select = record[0].data;
+                    var id = select.id;//项目名对应的id
+                    console.log(id)
+                    //重新加载行选项
+                    //表名
+                    var tableName = 'building';
+                    //属性名
+                    var projectId = 'projectId';
+
+                    var tableListStore2 = Ext.create('Ext.data.Store',{
+                        fields : [ 'buildingName'],
+                        proxy : {
+                            type : 'ajax',
+                            url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName='+tableName+'&columnName='+projectId+'&columnValue='+id,//根据项目id查询对应的楼栋名
+                            reader : {
+                                type : 'json',
+                                rootProperty: 'building',
+                            }
+                        },
+                        autoLoad : true,
+                        listeners:{
+                            load:function () {
+                                Ext.getCmp('buildingName').setValue("");
+                            }
+                        }
+                    });
+                    //buildingName,下拉框重新加载数据
+                    buildingName.setStore(tableListStore2);
                 }
             }
+        });
 
+        var buildingName = Ext.create('Ext.form.ComboBox',{
+            fieldLabel : '楼栋名',
+            labelWidth : 45,
+            width : 300,
+            id :  'buildingName',
+            name : 'buildingName',
+            matchFieldWidth: false,
+            margin: '0 0 0 40',
+            emptyText : "--请选择楼栋名--",
+            displayField: 'buildingName',
+            valueField: 'id',//楼栋的id
+            editable : false,
+            autoLoad: true,
+            //store: tableListStore2,
         });
 
         //出库or入库选择
@@ -77,15 +122,16 @@ Ext.define('preprocess.preprocess_Query_Records',{
             ]
         });
 
+        //出入库
         var optionType = Ext.create('Ext.form.ComboBox', {
             fieldLabel: '操作类型',
-            name: 'preprocess_query_records_optionType',
-            id: 'preprocess_query_records_optionType',
+            name: 'optionType',
+            id: 'optionType',
             store: optionTypeList,
             queryMode: 'local',
             displayField: 'name',
             valueField: 'abbr',
-            margin : '0 20 0 40',
+            margin : '0 30 0 0',
             width: 160,
             labelWidth: 60,
             renderTo: Ext.getBody()
@@ -105,7 +151,14 @@ Ext.define('preprocess.preprocess_Query_Records',{
             autoLoad : true
         });
 
-        var toobar = Ext.create('Ext.toolbar.Toolbar',{
+        var toolbar_top = Ext.create('Ext.toolbar.Toolbar',{
+            dock: 'top',
+            items: [
+                projectName,
+                buildingName,
+            ]
+        });
+        var toolbar = Ext.create('Ext.toolbar.Toolbar',{
             dock: 'top',
             items: [
                 {
@@ -115,7 +168,7 @@ Ext.define('preprocess.preprocess_Query_Records',{
                     id : 'operator',
                     // disabled : true,
                     // width:'95%',
-                    margin: '0 40 0 0',
+                    margin: '0 30 0 0',
                     width: 150,
                     labelWidth: 45,
                     store : workerListStore,
@@ -123,26 +176,17 @@ Ext.define('preprocess.preprocess_Query_Records',{
                     valueField : 'id',
                     editable : true,
                 },
-                // {
-                //     xtype: 'textfield',
-                //     margin : '0 20 0 5',
-                //     fieldLabel: '操作员',
-                //     id :'operator',
-                //     width: 150,
-                //     labelWidth: 50,
-                //     name: 'operator',
-                //     value:"",
-                // },
-                projectName,
+                // projectName,
+                // buildingName,
                 optionType,
                 {
                     xtype:'tbtext',
                     text:'操作时间:',
-                    margin : '0 0 0 20',
+                    margin : '0 30 0 0',
                 },
                 {
                     xtype : 'datefield',
-                    margin : '0 0 0 0',
+                    margin : '0 30 0 0',
                     // fieldLabel : '开始时间',
                     width : 120,
                     // labelWidth : 60,
@@ -157,7 +201,7 @@ Ext.define('preprocess.preprocess_Query_Records',{
                 },
                 {
                     xtype : 'datefield',
-                    margin : '0 0 0 0',
+                    margin : '0 30 0 0',
                     // fieldLabel : '结束时间',
                     width : 120,
                     // labelWidth : 60,
@@ -171,17 +215,18 @@ Ext.define('preprocess.preprocess_Query_Records',{
                     xtype : 'button',
                     text: '查询操作记录',
                     width: 100,
-                    margin: '0 0 0 15',
+                    // margin: '0 30 0 15',
                     layout: 'right',
                     handler: function(){
-                        preprocess_Query_Records_store.load({
+                        waste_Query_Records_Store.load({
                             params : {
                                 operator : Ext.getCmp('operator').getValue(),
                                 endTime : Ext.getCmp('endTime').getValue(),
                                 startTime:Ext.getCmp('startTime').getValue(),
                                 projectId:Ext.getCmp('projectName').getValue(),
-                                type:Ext.getCmp('preprocess_query_records_optionType').getValue(),
-                                tableName:tableName_pre_records,
+                                buildingId:Ext.getCmp('buildingName').getValue(),
+                                type:Ext.getCmp('optionType').getValue(),
+                                // tableName:tableName_material_records,
                             }
                         });
                     }
@@ -189,15 +234,13 @@ Ext.define('preprocess.preprocess_Query_Records',{
             ]
         });
 
-
-        var preprocess_Query_Records_store = Ext.create('Ext.data.Store',{
-            id: 'preprocess_Query_Records_store',
+        var waste_Query_Records_Store = Ext.create('Ext.data.Store',{
+            id: 'waste_Query_Records_Store',
             autoLoad: true,
             fields: [],
             pageSize: itemsPerPage, // items per page
             proxy:{
-                url : "material/material_query_records.do",
-                //url : 'material/findAllbyTableNameAndOnlyOneCondition.do?',//获取同类型的原材料
+                url : "waste/queryLog.do",
                 type: 'ajax',
                 reader:{
                     type : 'json',
@@ -211,8 +254,9 @@ Ext.define('preprocess.preprocess_Query_Records',{
                     endTime : Ext.getCmp('endTime').getValue(),
                     startTime:Ext.getCmp('startTime').getValue(),
                     projectId:Ext.getCmp('projectName').getValue(),
-                    type:Ext.getCmp('preprocess_query_records_optionType').getValue(),
-                    tableName:tableName_pre_records,
+                    buildingId:Ext.getCmp('buildingName').getValue(),
+                    type:Ext.getCmp('optionType').getValue(),
+                    // tableName:tableName_material_records,
                 }
             },
             listeners : {
@@ -222,12 +266,12 @@ Ext.define('preprocess.preprocess_Query_Records',{
                         endTime : Ext.getCmp('endTime').getValue(),
                         startTime:Ext.getCmp('startTime').getValue(),
                         projectId:Ext.getCmp('projectName').getValue(),
-                        type:Ext.getCmp('preprocess_query_records_optionType').getValue(),
-                        tableName:tableName_pre_records,
+                        buildingId:Ext.getCmp('buildingName').getValue(),
+                        type:Ext.getCmp('optionType').getValue(),
+                        // tableName:tableName_material_records,
                     });
                 }
             }
-
         });
 
         var sampleData=[{
@@ -236,41 +280,45 @@ Ext.define('preprocess.preprocess_Query_Records',{
             count:'2',
             specification:'ttt',
         }];
-        var preprocess_Query_Records_store1=Ext.create('Ext.data.Store',{
-            id: 'preprocess_Query_Records_store1',
+        var waste_Query_Records_Store1=Ext.create('Ext.data.Store',{
+            id: 'waste_Query_Records_Store1',
             fields:['原材料名称','数量'],
             data:sampleData
         });
 
 
         //弹出框
-        var preprocess_Query_Records_specific_data_grid=Ext.create('Ext.grid.Panel',{
-            id : 'preprocess_Query_Records_specific_data_grid',
-            store:preprocess_Query_Records_store1,//oldpanellogdetailList，store1的数据固定
+        var waste_Records_specific_grid=Ext.create('Ext.grid.Panel',{
+            id : 'waste_Records_specific_grid',
+            store:waste_Query_Records_Store1,//oldpanellogdetailList，store1的数据固定
             dock: 'bottom',
             columns:[
                 {
-                    text: '产品名',
-                    dataIndex: 'productName',
+                    text: '废料名',
+                    dataIndex: 'wasteName',
                     flex :1,
                     width:"80"
+                },{
+                    text: '库存单位',
+                    dataIndex: 'inventoryUnit'
                 },
-                // {
-                //     text: '长',
-                //     dataIndex: 'length'
-                // },{
-                //     text: '类型',
-                //     dataIndex: 'materialType'
-                // },{
-                //     text: '宽',
-                //     dataIndex: 'width'
-                // },
                 {
                     // id:'outOrinNum',
                     text: '数量',
                     flex :1,
                     dataIndex: 'count'
-                }
+                },
+                {
+                    text: '仓库',
+                    dataIndex: 'warehouseName'
+                },{
+                    text: '备注',
+                    dataIndex: 'remark'
+                },{
+                    text: '是否撤销',
+                    dataIndex: 'isrollback'
+                },
+
                 //fields:['oldpanelId','oldpanelName','count'],specification
 
             ],
@@ -288,21 +336,21 @@ Ext.define('preprocess.preprocess_Query_Records',{
             }
         });
 
-        var preprocess_Query_Records_win_showmaterialData = Ext.create('Ext.window.Window', {
-            // id:'preprocess_Query_Records_win_showmaterialData',
-            title: '预加工半成品出入库详细信息',
+        var waste_Records_win = Ext.create('Ext.window.Window', {
+            // id:'waste_Records_win',
+            title: '废料出入库详细信息',
             height: 500,
             width: 650,
             layout: 'fit',
             closable : true,
             draggable:true,
             closeAction : 'hidden',
-            items:preprocess_Query_Records_specific_data_grid,
+            items:waste_Records_specific_grid,
         });
 
         var grid = Ext.create('Ext.grid.Panel',{
             id: 'material_Query_Records_Main',
-            store: preprocess_Query_Records_store,
+            store: waste_Query_Records_Store,
             viewConfig : {
                 enableTextSelection : true,
                 editable:true
@@ -324,17 +372,17 @@ Ext.define('preprocess.preprocess_Query_Records',{
                     flex :1 ,
                     editor:{xtype : 'textfield', allowBlank : false},
                     renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')
-                },
-                { text: '项目名称', dataIndex: 'projectName', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-
+                    },
+                { text: '项目名称', dataIndex: 'projectName', flex :1 },
+                { text: '楼栋名称', dataIndex: 'buildingName', flex :1 },
             ],
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 3
             })],
-            tbar:toobar,
+            // tbar:toobar,
             dockedItems:[{
                 xtype: 'pagingtoolbar',
-                store: preprocess_Query_Records_store,   // same store GridPanel is using
+                store: waste_Query_Records_Store,   // same store GridPanel is using
                 dock: 'bottom',
                 displayInfo: true,
                 displayMsg:'显示{0}-{1}条，共{2}条',
@@ -351,29 +399,28 @@ Ext.define('preprocess.preprocess_Query_Records',{
                 itemdblclick: function(me, record, item, index){
                     console.log("records----:",record);
                     var select = record.data;
-                    var id = select.id;
+                    var wasteLogId = select.wasteLogId
                     //操作类型opType
                     var opType = select.type;
                     console.log(id);
                     console.log(opType)
-                    var preprocesslogdetailList = Ext.create('Ext.data.Store',{
+                    var materiallogdetailList = Ext.create('Ext.data.Store',{
                         //id,materialName,length,width,materialType,number
                         fields:['materialName','length','width','materialType','count'],
                         //fields:['materialName','length','materialType','width','count'],//'oldpanelId','oldpanelName','count'
-                        //fields:['materialName','length','materialType','width','count'],//'oldpanelId','oldpanelName','count'
                         proxy : {
                             type : 'ajax',
-                            // url: 'material/findMaterialLogdetails.do?materiallogId=' + id,
-                            url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName=preprocess_logdetail_productName&columnName=preprocesslogId&columnValue='+id,//获取同类型的原材料
+                            url: 'waste/queryLogDetail.do?wastelogId=' + wasteLogId,
+                            // url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName=material_logdetail&columnName=materiallogId&columnValue='+id,//获取同类型的原材料
                             reader : {
                                 type : 'json',
-                                rootProperty: 'preprocess_logdetail_productName',
+                                rootProperty: 'value',
                             },
                         },
                         autoLoad : true
                     });
                     // 根据出入库0/1，决定弹出框表格列名
-                    var col = preprocess_Query_Records_specific_data_grid.columns[1];
+                    var col = waste_Records_specific_grid.columns[1];
                     if(opType == 1){
                         col.setText("出库数量");
                     }
@@ -383,13 +430,24 @@ Ext.define('preprocess.preprocess_Query_Records',{
                     else{
                         col.setText("入库数量");
                     }
-
-                    preprocess_Query_Records_specific_data_grid.setStore(preprocesslogdetailList);
-                    console.log(preprocesslogdetailList);
-                    preprocess_Query_Records_win_showmaterialData.show();
+                    waste_Records_specific_grid.setStore(materiallogdetailList);
+                    console.log(materiallogdetailList);
+                    waste_Records_win.show();
                 }
             }
         });
+        this.dockedItems=[{
+            xtype : 'toolbar',
+            dock : 'top',
+            items : [toolbar_top]
+        },
+            {
+                xtype : 'toolbar',
+                dock : 'top',
+                style:'border-width:0 0 0 0;',
+                items : [toolbar]
+            },
+        ];
 
         this.items = [grid];
         this.callParent(arguments);

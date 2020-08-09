@@ -239,6 +239,18 @@ Ext.define("menu.MenuRole_bc0", {
 					text : '废料库存查询',
 					id : 'unuseMaterial.unuseMaterial_Query_Data',
 					leaf : true
+				} ,{
+					text : '废料记录查询',
+					id : 'unuseMaterial.unuseMaterial_Query_Records',
+					leaf : true
+				} ,{
+					text : '废料记录撤销',
+					id : 'unuseMaterial.unuseMaterial_cancelRecords',
+					leaf : true
+				} ,{
+					text : '废料出库',
+					id : 'unuseMaterial.unuseMaterial_outBound',
+					leaf : true
 				} ,
 			]
 		},

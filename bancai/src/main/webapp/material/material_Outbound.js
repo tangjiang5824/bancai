@@ -396,7 +396,7 @@ Ext.define('material.material_Outbound',{
             store: material_inBoundRecords_Store,
             title: "入库详细记录",
             columns : [
-                {   text: '录入人员',  dataIndex: 'operator' ,flex :1},
+                {   text: '录入人员',  dataIndex: 'workerName' ,flex :1},
                 {   text: '入库/出库',
                     dataIndex: 'type' ,
                     flex :1,
@@ -667,10 +667,11 @@ Ext.define('material.material_Outbound',{
                     //fields:['materialName','length','materialType','width','count'],//'oldpanelId','oldpanelName','count'
                     proxy: {
                         type: 'ajax',
-                        url: 'material/findMaterialLogdetails.do?materiallogId=' + id,//获取同一批出入库的原材料
+                       // url: 'material/findMaterialLogdetails.do?materiallogId=' + id,//获取同一批出入库的原材料
+                        url: '/material/findAllbyTableNameAndOnlyOneCondition.do?tableName=material_logdetail_view&&columnName=materiallogId&&columnValue='+id,
                         reader: {
                             type: 'json',
-                            rootProperty: 'material_logdetail',
+                            rootProperty: 'material_logdetail_view',
                         },
                     },
                     autoLoad: true

@@ -532,6 +532,12 @@ public class ProductDataController {
     @RequestMapping("/waste/addDataRollback.do")
     public WebResponse wasteAddDataRollback(String wastelogId,String operator,HttpSession session){
         WebResponse response = new WebResponse();
+       if(operator==null||operator.trim().length()==0){
+           response.setErrorCode(300);
+           response.setMsg("请选择撤销人！");
+           response.setSuccess(false);
+           return  response;
+       }
         try {
             DataRow row = analyzeNameService.canRollback("waste_log",wastelogId);
             if(!row.isEmpty()){
@@ -566,11 +572,14 @@ public class ProductDataController {
     @RequestMapping("/waste/queryStore.do")
     public WebResponse queryWasteStore(String wasteName, String warehouseName,Integer start,Integer limit){
         mysqlcondition c=new mysqlcondition();
+//        if (null!=wasteName&&wasteName.trim().length() != 0) {
+//            c.and(new mysqlcondition("wasteName", "=", wasteName.trim().toUpperCase()));
+//        }
         if (null!=wasteName&&wasteName.trim().length() != 0) {
-            c.and(new mysqlcondition("wasteName", "=", wasteName.trim().toUpperCase()));
+            c.and(new mysqlcondition("wasteName", "like", "%"+wasteName.trim().toUpperCase()+"%"));
         }
         if (null!=warehouseName&&warehouseName.trim().length() != 0) {
-            c.and(new mysqlcondition("projectId", "=", warehouseName.trim().toUpperCase()));
+            c.and(new mysqlcondition("warehouseName", "=", warehouseName.trim().toUpperCase()));
         }
         return queryService.queryDataPage(start, limit, c, "waste_store");
     }
