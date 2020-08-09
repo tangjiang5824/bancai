@@ -338,6 +338,17 @@ Ext.define('unuseMaterial.unuseMaterial_outBound',{
                     //width : 130,
                     flex :1,
                 },
+                {
+                    dataIndex : 'count',
+                    name : '出库数量',
+                    text : '出库数量',
+                    //width : 130,
+                    flex :1,
+                    editor : {
+                                xtype : 'textfield',
+                                allowBlank : true
+                            }
+                },
 
                 // {
                 //     dataIndex:'countRec',
@@ -530,7 +541,7 @@ Ext.define('unuseMaterial.unuseMaterial_outBound',{
                                                         // m_receive_errorlistStore.loadData(errorList);
                                                         // win_mrec_errorInfo_outbound.show();
 
-                                                        Ext.MessageBox.alert("提示","领取失败！标红的行数据存在问题！\n 请检查后重新领料！" );
+                                                        Ext.MessageBox.alert("提示","出库失败！标红的行数据存在问题！\n 请检查后重新领料！" );
                                                         //添加错误原因
                                                         // var column = Ext.create('Ext.grid.column.Column', {
                                                         //     dataIndex:'',
@@ -565,39 +576,41 @@ Ext.define('unuseMaterial.unuseMaterial_outBound',{
                                         }
                                         else if(errorCode == 100){
                                             Ext.MessageBox.hide();
-                                            Ext.MessageBox.alert("提示","领取失败！未选择领取材料" );
+                                            Ext.MessageBox.alert("提示","出库失败！提交的数据为空" );
                                         }
-                                        else if(errorCode == 200){
-                                            Ext.MessageBox.hide();
-                                            Ext.MessageBox.alert("提示","领取失败！未收到领料单号或项目ID" );
-                                        }
+                                        // else if(errorCode == 200){
+                                        //     Ext.MessageBox.hide();
+                                        //     Ext.MessageBox.alert("提示","领取失败！未收到领料单号或项目ID" );
+                                        // }
                                         else if(errorCode == 300){
                                             Ext.MessageBox.hide();
-                                            Ext.MessageBox.alert("提示","领取失败！未选择领料人" );
+                                            Ext.MessageBox.alert("提示","出库失败！未选择出库人" );
                                         }
                                         else if(errorCode == 1000){
                                             Ext.MessageBox.hide();
-                                            Ext.MessageBox.alert("提示","领取失败，未知错误！请重新领取" );
+                                            Ext.MessageBox.alert("提示","出库失败，未知错误！请重新领取" );
                                         }
                                     }else{
                                         Ext.MessageBox.hide();
-                                        Ext.MessageBox.alert("提示","领取成功" );
+                                        Ext.MessageBox.alert("提示","出库成功" );
 
+                                        console.log('=================1');
                                         //  领料页面重置
-                                        Ext.getCmp('operator').setValue("");
+                                        // Ext.getCmp('operator').setValue("");
                                         pickList.removeAll();
-
+                                        console.log('=================2');
                                         //  领料单查询重新加载
                                         grid_query_waste.getStore().load();
+                                        console.log('=================3');
                                     }
                                 },
                                 failure : function(response) {
                                     //var message =Ext.decode(response.responseText).showmessage;
-                                    Ext.MessageBox.alert("提示","领取失败" );
+                                    Ext.MessageBox.alert("提示","出库失败" );
                                 }
                             });
                         }else {
-                            Ext.MessageBox.alert("提示","没有数据或领料人！" );
+                            Ext.MessageBox.alert("提示","没有数据或操作人！" );
                         }
                     }
                 }
@@ -641,6 +654,13 @@ Ext.define('unuseMaterial.unuseMaterial_outBound',{
                     dataIndex : 'warehouseName',
                     name : '仓库名称',
                     text : '仓库名称',
+                    //width : 130,
+                    flex :1,
+                },
+                {
+                    dataIndex : 'count',
+                    name : '出库数量',
+                    text : '出库数量',
                     //width : 130,
                     flex :1,
                 },

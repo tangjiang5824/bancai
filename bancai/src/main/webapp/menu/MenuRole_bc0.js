@@ -252,6 +252,16 @@ Ext.define("menu.MenuRole_bc0", {
 					id : 'unuseMaterial.unuseMaterial_outBound',
 					leaf : true
 				} ,
+				{
+					text : '废料结算',
+					id : 'unuseMaterial.unuseMaterial_settleAccount',
+					leaf : true
+				} ,
+				{
+					text : '废料结算查询',
+					id : 'unuseMaterial.unuseMaterial_query_settle',
+					leaf : true
+				} ,
 			]
 		},
 			// 	{
