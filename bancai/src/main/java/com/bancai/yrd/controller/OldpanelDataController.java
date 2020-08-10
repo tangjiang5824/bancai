@@ -234,7 +234,7 @@ public class OldpanelDataController {
      * */
     //produces = {"text/html;charset=UTF-8"}
     @RequestMapping(value = "/oldpanel/addData.do")
-    public WebResponse oldpanelAddData(String s,String operator,String inputTime, HttpSession session) {
+    public WebResponse oldpanelAddData(String s,String operator,HttpSession session) {
         WebResponse response = new WebResponse();
         try {
             JSONArray jsonArray = new JSONArray(s);
@@ -283,7 +283,7 @@ public class OldpanelDataController {
                 return response;
             }
             System.out.println("[===checkOldpanelUploadData==Complete=NoError]");
-            boolean uploadResult= oldpanelDataService.insertOldpanelDataToStore(insertList,userId,operator,inputTime);
+            boolean uploadResult= oldpanelDataService.insertOldpanelDataToStore(insertList,userId,operator);
             response.setSuccess(uploadResult);
         }catch (Exception e){
             e.printStackTrace();
@@ -298,7 +298,7 @@ public class OldpanelDataController {
      * */
     //produces = {"text/html;charset=UTF-8"}
     @RequestMapping(value = "/oldpanel/backData.do")
-    public WebResponse oldpanelBackData(String s, String projectId, String buildingId, String operator,String description,String inputTime, HttpSession session) {
+    public WebResponse oldpanelBackData(String s, String projectId, String buildingId, String operator,String description, HttpSession session) {
         WebResponse response = new WebResponse();
         try {
             JSONArray jsonArray = new JSONArray(s);
@@ -357,7 +357,7 @@ public class OldpanelDataController {
                 return response;
             }
             System.out.println("[===checkOldpanelUploadData==Complete=NoError]");
-            boolean uploadResult= oldpanelDataService.insertOldpanelDataBackStore(insertList,userId,operator,projectId,buildingId,description,inputTime);
+            boolean uploadResult= oldpanelDataService.insertOldpanelDataBackStore(insertList,userId,operator,projectId,buildingId,description);
             response.setSuccess(uploadResult);
         }catch (Exception e){
             e.printStackTrace();
@@ -473,11 +473,34 @@ public class OldpanelDataController {
 
     }
 
+    /**
+     * 下拉获取旧板基础信息
+     * @param response
+     * @throws IOException
+     */
+    @RequestMapping(value="/oldpanel/findOldpanelInfo.do")
+    public void findOldpanelInfo(HttpServletResponse response,String start,String limit) throws IOException, JSONException {
+        if(null==start) start="0";
+        if(null==limit) limit="50";
+        DataList infoList = queryService.query("select * from oldpanel_info limit "+start+","+limit);
+        //写回前端
+        JSONObject object = new JSONObject();
+        JSONArray array = new JSONArray(infoList);
+        object.put("infoList", array);
+        // System.out.println("类型1：--"+array.getClass().getName().toString());
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html");
+        response.getWriter().write(object.toString());
+        response.getWriter().flush();
+        response.getWriter().close();
+
+    }
+
     /*
      * 旧板入库撤销
      * */
     @RequestMapping("/oldpanel/addDataRollback.do")
-    public WebResponse wasteAddDataRollback(String oldpanellogId,String operator,HttpSession session){
+    public WebResponse oldpanelAddDataRollback(String oldpanellogId,String operator,HttpSession session){
         WebResponse response = new WebResponse();
         try {
             DataRow row = analyzeNameService.canRollback("oldpanel_log",oldpanellogId);
@@ -491,8 +514,8 @@ public class OldpanelDataController {
                     response.setErrorCode(200);
                     response.setMsg("无法撤销，超过可撤销时间");
                 }
-//                boolean result = productDataService.rollbackWasteData(wasteLogId,operator,userId,projectId,buildingId);
-//                response.setSuccess(result);
+                boolean result = oldpanelDataService.rollbackOldpanelAddData(oldpanellogId,operator,userId,projectId,buildingId);
+                response.setSuccess(result);
             }else {
                 response.setSuccess(false);
                 response.setErrorCode(100);

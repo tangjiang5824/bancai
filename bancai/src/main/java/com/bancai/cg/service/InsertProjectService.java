@@ -69,8 +69,7 @@ public class InsertProjectService extends BaseService {
     @Transactional
     public DataList findOldpanelType(String start,String limit){
         String sql = "select * from oldpaneltype limit "+start+","+limit;
-        DataList typelist = queryService.query(sql);
-        return typelist;
+        return queryService.query(sql);
 
     }
     @Transactional

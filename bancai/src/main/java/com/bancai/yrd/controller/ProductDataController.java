@@ -19,6 +19,7 @@ import com.bancai.vo.WebResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -204,93 +205,7 @@ public class ProductDataController {
         }
         return true;
     }
-    /*
-     * 退库成品添加单个数据
-     * */
-    //produces = {"text/html;charset=UTF-8"}
-    @RequestMapping(value = "/backproduct/addData.do")
-    public WebResponse backproductAddData(String s, String projectId, String buildingId, String operator, HttpSession session) {
-        WebResponse response = new WebResponse();
-        try {
-            JSONArray jsonArray = new JSONArray(s);
-            String userId = (String) session.getAttribute("userid");
-            //检查
-            if(jsonArray.length()==0){
-                response.setSuccess(false);
-                response.setErrorCode(100); //提交的s为空
-                response.setMsg("提交的数据为空");
-                return response;
-            }
-            DataList errorList = new DataList();
-            DataList insertList = new DataList();
-            HashMap<String,String> map = new HashMap<>();
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonTemp = jsonArray.getJSONObject(i);
-                System.out.println("第" + i + "个:" + jsonTemp);
-                String id = jsonTemp.get("id")+"";
-                String productName = (jsonTemp.get("productName") + "").trim().toUpperCase();
-                String warehouseName = (jsonTemp.get("warehouseName") + "").trim().toUpperCase();
-                String count = (jsonTemp.get("count") + "").trim();
-                map.put("productName",productName);
-                map.put("warehouseName",warehouseName);
-                map.put("count",count);
-                if(analyzeNameService.isStringNotPositiveInteger(count))
-                    errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"输入数量不为正整数",map);
-                else if(analyzeNameService.isWarehouseNameNotExist(warehouseName))
-                    errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"仓库名不存在",map);
-                else {
-                    String [] productId = analyzeNameService.isInfoExistBackUnit("product",productName);
-                    if(productId==null)
-                        errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"没有该产品的基础信息",map);
-                    else
-                        insertList = productDataService.productAddInsertRowToInboundList(insertList,productId[0],warehouseName,count,productId[1],productId[2]);
-                }
-            }
-            if(!errorList.isEmpty()){
-                response.setSuccess(false);
-                response.setErrorCode(200);//提交的s存在错误内容
-                response.put("errorList",errorList);
-                response.put("errorCount",errorList.size());
-                response.setMsg("提交的数据存在错误内容");
-                return response;
-            }
-            System.out.println("[===checkBackproductUploadData==Complete=NoError]");
-            boolean uploadResult= productDataService.insertProductDataToStore("backproduct",insertList,userId,operator,projectId,buildingId);
-            response.setSuccess(uploadResult);
-        }catch (Exception e){
-            e.printStackTrace();
-            response.setSuccess(false);
-            response.setErrorCode(1000); //未知错误
-            response.setMsg(e.getMessage());
-        }
-        return response;
-//        JSONArray jsonArray = new JSONArray(s);
-//        String userId = (String) session.getAttribute("userid");
-//        Date date = new Date();
-//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//        String sql_backLog = "insert into backproduct_log (type,userId,time,projectId,buildingId,operator,isrollback) values(?,?,?,?,?,?,?)";
-//        int backproductlogId = insertProjectService.insertDataToTable(sql_backLog, "2", userId, simpleDateFormat.format(date)
-//                , projectId, buildingId, operator,"0");
-//        for (int i = 0; i < jsonArray.length(); i++) {
-//            JSONObject jsonTemp = jsonArray.getJSONObject(i);
-//            //获得第i条数据的各个属性值
-//            System.out.println("第" + i + "个:userid=" + userId + "---" + jsonTemp);
-//            String productName = (jsonTemp.get("productName") + "").toUpperCase().trim();
-//            String warehouseName = jsonTemp.get("warehouseName") + "";
-//            String count = jsonTemp.get("count") + "";
-//            int[] productId = productDataService.backProduct(productName, warehouseName, count);
-//            if (productId[0] == 0) {
-//                return false;
-//            }
-//            String sql_addLogDetail = "insert into backproduct_logdetail (productId,count,backproductlogId,backproductstoreId,isrollback) values (?,?,?,?,?)";
-//            boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLogDetail, String.valueOf(productId[0]),
-//                    count, String.valueOf(backproductlogId),String.valueOf(productId[1]),"0");
-//            if (!is_log_right) {
-//                return false;
-//            }
-//        }
-//        return true;
-    }
+
     /*
      * 预加工半成品添加单个数据
      * */
@@ -318,9 +233,11 @@ public class ProductDataController {
                 String productName = (jsonTemp.get("productName") + "").trim().toUpperCase();
                 String warehouseName = (jsonTemp.get("warehouseName") + "").trim().toUpperCase();
                 String count = (jsonTemp.get("count") + "").trim();
+                String remark = (jsonTemp.get("remark") + "").trim();
                 map.put("productName",productName);
                 map.put("warehouseName",warehouseName);
                 map.put("count",count);
+                map.put("remark",remark);
                 if(analyzeNameService.isStringNotPositiveInteger(count))
                     errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"输入数量不为正整数",map);
                 else if(analyzeNameService.isWarehouseNameNotExist(warehouseName))
@@ -330,7 +247,7 @@ public class ProductDataController {
                     if(productId==null)
                         errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"没有该产品的基础信息",map);
                     else
-                        insertList = productDataService.productAddInsertRowToInboundList(insertList,productId[0],warehouseName,count,productId[1],productId[2]);
+                        insertList = productDataService.productAddInsertRowToInboundList(insertList,productId[0],warehouseName,count,productId[1],productId[2],remark);
                 }
             }
             if(!errorList.isEmpty()){
@@ -345,6 +262,115 @@ public class ProductDataController {
             boolean uploadResult= productDataService.insertProductDataToStore("preprocess",insertList,userId,operator,projectId,buildingId);
             response.setSuccess(uploadResult);
         }catch (Exception e){
+            e.printStackTrace();
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误
+            response.setMsg(e.getMessage());
+        }
+        return response;
+    }
+
+
+    /*
+     * 退库成品添加单个数据
+     * */
+    //produces = {"text/html;charset=UTF-8"}
+    @RequestMapping(value = "/backproduct/addData.do")
+    public WebResponse backproductAddData(String s, String projectId, String buildingId, String operator, HttpSession session) {
+        WebResponse response = new WebResponse();
+        try {
+            JSONArray jsonArray = new JSONArray(s);
+            String userId = (String) session.getAttribute("userid");
+            //检查
+            if(jsonArray.length()==0){
+                response.setSuccess(false);
+                response.setErrorCode(100); //提交的s为空
+                response.setMsg("提交的数据为空");
+                return response;
+            }
+            DataList errorList = new DataList();
+            DataList insertList = new DataList();
+            HashMap<String,String> map = new HashMap<>();
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonTemp = jsonArray.getJSONObject(i);
+                System.out.println("第" + i + "个:" + jsonTemp);
+                String id = jsonTemp.get("id")+"";
+                String productName = (jsonTemp.get("productName") + "").trim().toUpperCase();
+                String warehouseName = (jsonTemp.get("warehouseName") + "").trim().toUpperCase();
+                String count = (jsonTemp.get("count") + "").trim();
+                String remark = (jsonTemp.get("remark") + "").trim();
+                map.put("productName",productName);
+                map.put("warehouseName",warehouseName);
+                map.put("count",count);
+                map.put("remark",remark);
+                if(analyzeNameService.isStringNotPositiveInteger(count))
+                    errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"输入数量不为正整数",map);
+                else if(analyzeNameService.isWarehouseNameNotExist(warehouseName))
+                    errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"仓库名不存在",map);
+                else {
+                    String [] productId = analyzeNameService.isInfoExistBackUnit("product",productName);
+                    if(productId==null)
+                        errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"没有该产品的基础信息",map);
+                    else
+                        insertList = productDataService.productAddInsertRowToInboundList(insertList,productId[0],warehouseName,count,productId[1],productId[2],remark);
+                }
+            }
+            if(!errorList.isEmpty()){
+                response.setSuccess(false);
+                response.setErrorCode(200);//提交的s存在错误内容
+                response.put("errorList",errorList);
+                response.put("errorCount",errorList.size());
+                response.setMsg("提交的数据存在错误内容");
+                return response;
+            }
+            System.out.println("[===checkBackproductUploadData==Complete=NoError]");
+            boolean uploadResult= productDataService.insertProductDataToStore("backproduct",insertList,userId,operator,projectId,buildingId);
+            response.setSuccess(uploadResult);
+        }catch (Exception e){
+            e.printStackTrace();
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误
+            response.setMsg(e.getMessage());
+        }
+        return response;
+    }
+
+    /*
+     * 预加工上传excel文件
+     * */
+
+    //produces = {"text/html;charset=UTF-8"}
+    @RequestMapping(value = "/preprocess/uploadExcel.do")
+    public WebResponse uploadPreprocess(MultipartFile uploadFile) {
+        WebResponse response = new WebResponse();
+        try {
+            UploadDataResult result = allExcelService.uploadPreprocessExcelData(uploadFile.getInputStream());
+            response.put("dataList",result.dataList);
+            response.put("listSize", result.dataList.size());
+            response.setSuccess(true);
+        } catch (IOException e) {
+            e.printStackTrace();
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误
+            response.setMsg(e.getMessage());
+        }
+        return response;
+    }
+
+    /*
+     * 退库成品上传excel文件
+     * */
+
+    //produces = {"text/html;charset=UTF-8"}
+    @RequestMapping(value = "/backproduct/uploadExcel.do")
+    public WebResponse uploadBackproduct(MultipartFile uploadFile) {
+        WebResponse response = new WebResponse();
+        try {
+            UploadDataResult result = allExcelService.uploadBackproductExcelData(uploadFile.getInputStream());
+            response.put("dataList",result.dataList);
+            response.put("listSize", result.dataList.size());
+            response.setSuccess(true);
+        } catch (IOException e) {
             e.printStackTrace();
             response.setSuccess(false);
             response.setErrorCode(1000); //未知错误

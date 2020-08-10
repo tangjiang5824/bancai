@@ -279,10 +279,90 @@ public class AllExcelService extends BaseService {
 //			String inventoryUnit = dataRow.get("单位") + "";
 			String count = (dataRow.get("入库数量") + "").trim().toUpperCase();
 			String warehouseName = (dataRow.get("入库仓库") + "").trim().toUpperCase();
+			String remark = (dataRow.get("备注") + "").trim();
 			DataRow row = new DataRow();
 			row.put("oldpanelName",oldpanelName);
 			row.put("warehouseName",warehouseName);
 			row.put("count",count);
+			row.put("remark",remark);
+			dataList.add(row);
+		}
+		result.dataList = dataList;
+		return result;
+	}
+	/**
+	 * 预加工上传数据
+	 *
+	 * @param inputStream
+	 * @return
+	 * @throws IOException
+	 */
+	@Transactional
+	public UploadDataResult uploadPreprocessExcelData(InputStream inputStream) throws IOException {
+		UploadDataResult result = new UploadDataResult();
+		Excel excel = new Excel(inputStream);
+		DataList excelList = excel.readExcelContent();
+		Iterator it = excelList.iterator();
+		DataList dataList = new DataList();
+		while (it.hasNext()){
+			DataRow dataRow = (DataRow) it.next();
+			String productName = (dataRow.get("品名") + "").trim().toUpperCase();
+			if(productName.length()==0){
+				it.remove();
+				continue;
+			} else if (productName.equals("合计")){
+				it.remove();
+				break;
+			}
+//			String classificationName = dataRow.get("分类") + "";
+//			String inventoryUnit = dataRow.get("单位") + "";
+			String count = (dataRow.get("入库数量") + "").trim().toUpperCase();
+			String warehouseName = (dataRow.get("入库仓库") + "").trim().toUpperCase();
+			String remark = (dataRow.get("备注") + "").trim();
+			DataRow row = new DataRow();
+			row.put("productName",productName);
+			row.put("warehouseName",warehouseName);
+			row.put("count",count);
+			row.put("remark",remark);
+			dataList.add(row);
+		}
+		result.dataList = dataList;
+		return result;
+	}
+	/**
+	 * 退库成品上传数据
+	 *
+	 * @param inputStream
+	 * @return
+	 * @throws IOException
+	 */
+	@Transactional
+	public UploadDataResult uploadBackproductExcelData(InputStream inputStream) throws IOException {
+		UploadDataResult result = new UploadDataResult();
+		Excel excel = new Excel(inputStream);
+		DataList excelList = excel.readExcelContent();
+		Iterator it = excelList.iterator();
+		DataList dataList = new DataList();
+		while (it.hasNext()){
+			DataRow dataRow = (DataRow) it.next();
+			String productName = (dataRow.get("品名") + "").trim().toUpperCase();
+			if(productName.length()==0){
+				it.remove();
+				continue;
+			} else if (productName.equals("合计")){
+				it.remove();
+				break;
+			}
+//			String classificationName = dataRow.get("分类") + "";
+//			String inventoryUnit = dataRow.get("单位") + "";
+			String count = (dataRow.get("入库数量") + "").trim().toUpperCase();
+			String warehouseName = (dataRow.get("入库仓库") + "").trim().toUpperCase();
+			String remark = (dataRow.get("备注") + "").trim();
+			DataRow row = new DataRow();
+			row.put("productName",productName);
+			row.put("warehouseName",warehouseName);
+			row.put("count",count);
+			row.put("remark",remark);
 			dataList.add(row);
 		}
 		result.dataList = dataList;
