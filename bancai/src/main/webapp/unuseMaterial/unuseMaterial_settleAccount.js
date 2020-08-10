@@ -125,7 +125,7 @@ Ext.define('unuseMaterial.unuseMaterial_settleAccount', {
             valueField: 'id',//楼栋的id
             editable : false,
             autoLoad: true,
-            allowBlank:false,
+            // allowBlank:false,
             blankText  : "楼栋不能为空",
             //store: tableListStore2,
             listeners: {
@@ -165,151 +165,39 @@ Ext.define('unuseMaterial.unuseMaterial_settleAccount', {
             id:'formMain',
             autoHeight: true,
             autoWidth: true,
-            layout: 'form',
+            // layout: 'form',
             border: false,
             bodyStyle:'text-align:center;',
             // height:700,
             // baseCls : 'my-panel-no-border',  //去掉边框
-            //居中
-            // layout: {
-            //     align: 'middle',
-            //     pack: 'center',
-            //     type: 'vbox'
-            // },
+            // 居中
+            layout: {
+                align: 'middle',
+                pack: 'center',
+                type: 'vbox'
+            },
 
             items: [
-            // {
-            //     columnWidth: .3,
-            //     rowHeight:200,
-            //     xtype: 'fieldset',
-            //     title: '基本信息',
-            //     layout: 'form',
-            //     defaults: {anchor: '95%'},
-            //     style: 'margin-left: 5px;padding-left: 5px;',
-            //     width:500,
-            //     bodyStyle:'text-align:center;margin-top:5px;',
-            //     // 第一列中的表项
-            //     // style:"margin-top:50px;",
-            //     fieldDefaults:{
-            //         labelAlign:'right',
-            //         labelWidth:80,
-            //     },
-            //     items:[
-            //         {
-            //         xtype: 'container',
-            //         layout:'column',
-            //         style:"margin-top:5px;",
-            //         items:[{
-            //             xtype: 'container',
-            //             columnWidth:.6,
-            //             layout: 'form',
-            //             height:30,
-            //             border:true,
-            //             style:"margin-left:10px;",
-            //             items:[
-            //                 // {
-            //                 //         xtype: 'textfield',
-            //                 //         margin: '0 40 0 0',
-            //                 //         fieldLabel: '退库人',
-            //                 //         id: 'operator',
-            //                 //         // width: 140,
-            //                 //         // labelWidth: 50,
-            //                 //         name: 'operator',
-            //                 //         value: "",
-            //                 //         allowBlank:false,
-            //                 //         blankText  : "退库人姓名不能为空"
-            //                 //     },
-            //                 {
-            //                     fieldLabel : '出库人',
-            //                     xtype : 'combo',
-            //                     name : 'operator',
-            //                     id : 'operator',
-            //                     // disabled : true,
-            //                     // width:'95%',
-            //                     margin: '0 40 0 0',
-            //                     width: 150,
-            //                     labelWidth: 45,
-            //                     store : workerListStore,
-            //                     displayField : 'workerName',
-            //                     valueField : 'id',
-            //                     editable : true,
-            //                     allowBlank:false,
-            //                     blankText  : "退库人姓名不能为空"
-            //                 },
-            //             ]}]},
-            //         // {
-            //         //     xtype: 'container',
-            //         //     layout:'column',
-            //         //     items:[{
-            //         //         xtype: 'container',
-            //         //         columnWidth:.6,
-            //         //         layout: 'form',
-            //         //         height:40,
-            //         //         border:true,
-            //         //         items:[{
-            //         //             xtype: 'datefield',
-            //         //             margin: '0 10 0 0',
-            //         //             fieldLabel: '退库时间',
-            //         //             id: 'backTime',
-            //         //             labelWidth : 60,
-            //         //             width : 180,
-            //         //             height:80,
-            //         //             name: 'backTime',
-            //         //             value: "",
-            //         //             format : 'Y-m-d',
-            //         //             editable : false,
-            //         //             matchFieldWidth: true,
-            //         //             style:"margin-top:50px;",
-            //         //         }
-            //         //         ]}]},
-            //
-            //         ]
-            // },
                 {
                 columnWidth: .3,
                 xtype: 'fieldset',
                 title: '项目废料结算信息',
                 layout: 'form',
                 defaults: {anchor: '95%'},
-                style: 'margin-left: 5px;padding-left: 5px;',
+                style: 'margin-left: 5px;margin-bottom: 50px;padding-left: 5px;',
                 width:500,
+                height:250,
                 // 第二列中的表项
                 bodyStyle:'text-align:center;',
                 items:[
-                    //行的宽度
-
-                    // {xtype: 'container',
-                    //     layout:'column',
-                    //     items:[{
-                    //         xtype: 'container',
-                    //         columnWidth:1,
-                    //         layout: 'form',
-                    //         height:30,
-                    //         border:true,
-                    //         items:[projectList]
-                    //     }]
-                    // },
-                    // {
-                    //     xtype: 'container',
-                    //     layout:'column',
-                    //     items:[{
-                    //         xtype: 'container',
-                    //         columnWidth:.5,
-                    //         layout: 'form',
-                    //         height:30,
-                    //         border:true,
-                    //         items:[buildingName]
-                    //     }]
-                    // },
-                    //
                     {
-                        fieldLabel : '出库人',
+                        fieldLabel : '结算人',
                         xtype : 'combo',
                         name : 'operator',
                         id : 'operator',
                         // disabled : true,
                         // width:'95%',
-                        margin: '0 40 0 0',
+                        margin: '20 0 0 0',
                         width: 150,
                         labelWidth: 45,
                         store : workerListStore,
@@ -332,29 +220,60 @@ Ext.define('unuseMaterial.unuseMaterial_settleAccount', {
                         value: "",
                         allowBlank:false,
                     },
+                    {
+                        xtype: 'textarea',
+                        margin: '0 10 0 40',
+                        fieldLabel: '备注',
+                        id: 'remark',
+                        width: 140,
+                        labelWidth: 30,
+                        name: 'remark',
+                        value: "",
+                        // allowBlank:false,
+                    },
+                    {
+                        xtype:'button',
+                        layout:'center',
+                        margin: '10 0 0 0',
+                        text:'添加',
+                        handler:function() {
+                            Ext.getCmp('formMain').getForm().submit({
+                                url: 'waste/settleAccount.do', //原材料退库
+                                method: 'POST',
+                                //submitEmptyText : false,
+                                success: function (response) {
+                                    //var message =Ext.decode(response.responseText).showmessage;
+                                    Ext.MessageBox.alert("提示", "添加成功");
+                                },
+                                failure: function (response) {
+                                    //var message =Ext.decode(response.responseText).showmessage;
+                                    Ext.MessageBox.alert("提示", "添加失败");
+                                }
+                            })
+                        }
+                    }
                 ]
             }],
-            buttonAlign:"left",
-            buttons :  [{
-                    text: "添加",
-                    // formBind:true,//将表单和button绑定
-                    handler : function(btn) { // 按钮响应函数
-                        Ext.getCmp('formMain').getForm().submit({
-                            url: 'material/backmaterial.do', //原材料退库
-                            method: 'POST',
-                            //submitEmptyText : false,
-
-                            success: function (response) {
-                                //var message =Ext.decode(response.responseText).showmessage;
-                                Ext.MessageBox.alert("提示", "添加成功");
-                            },
-                            failure: function (response) {
-                                //var message =Ext.decode(response.responseText).showmessage;
-                                Ext.MessageBox.alert("提示", "添加失败");
-                            }
-                        })
-                    },
-                }]
+            buttonAlign:"right",
+            // buttons :  [{
+            //         text: "添加",
+            //         // formBind:true,//将表单和button绑定
+            //         handler : function(btn) { // 按钮响应函数
+            //             Ext.getCmp('formMain').getForm().submit({
+            //                 url: 'waste/settleAccount.do', //原材料退库
+            //                 method: 'POST',
+            //                 //submitEmptyText : false,
+            //                 success: function (response) {
+            //                     //var message =Ext.decode(response.responseText).showmessage;
+            //                     Ext.MessageBox.alert("提示", "添加成功");
+            //                 },
+            //                 failure: function (response) {
+            //                     //var message =Ext.decode(response.responseText).showmessage;
+            //                     Ext.MessageBox.alert("提示", "添加失败");
+            //                 }
+            //             })
+            //         },
+            //     }]
         });
         var form = new Ext.form.FieldSet({
             // title: '新建原材料退库表',
@@ -374,14 +293,14 @@ Ext.define('unuseMaterial.unuseMaterial_settleAccount', {
         });
 
         // this.tbar = toolbar0;
-        this.dockedItems = [
-            // {
-            //     xtype : 'toolbar',
-            //     dock : 'top',
-            //     items : [toolbar0]
-            // },
-            form];
-        // this.items = [ archive_form ];
+        // this.dockedItems = [
+        //     // {
+        //     //     xtype : 'toolbar',
+        //     //     dock : 'top',
+        //     //     items : [toolbar0]
+        //     // },
+        //     form];
+        this.items = [ archive_form ];
         this.callParent(arguments);
 
     }
