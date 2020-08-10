@@ -474,15 +474,8 @@ public class ProductDataService extends BaseService{
      * 废料结算
      * */
     @Transactional
-    public boolean addWasteSettleData(JSONArray jsonArray,String userId,String operator,String projectId,String buildingId){
-        boolean b = true;
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonTemp = jsonArray.getJSONObject(i);
-            String account = (jsonTemp.get("account")+"").trim();
-            String remark = jsonTemp.get("remark")+"";
-            b=b&insertWasteSettleData(userId,operator,projectId,buildingId,account,remark);
-        }
-        return b;
+    public boolean addWasteSettleData(String account,String remark,String userId,String operator,String projectId,String buildingId){
+        return insertWasteSettleData(userId,operator,projectId,buildingId,account,remark);
     }
 
     private boolean insertWasteSettleData(String userId,String operator,String projectId,String buildingId,String account,String remark){

@@ -630,16 +630,22 @@ public class ProductDataController {
      * 废料结算
      * */
     @RequestMapping("/waste/settleAccount.do")
-    public WebResponse settleAccountWaste(String s, String operator,String projectId, String buildingId,HttpSession session){
+    public WebResponse settleAccountWaste(String account,String remark, String operator,String projectId, String buildingId,HttpSession session){
         WebResponse response = new WebResponse();
         try {
-            JSONArray jsonArray = new JSONArray(s);
             String userId = (String) session.getAttribute("userid");
             //检查
-            if(jsonArray.length()==0){
+            account = (account+"").trim();
+            if((account.equals("null"))||(account.length()==0)){
                 response.setSuccess(false);
                 response.setErrorCode(100); //提交的s为空
                 response.setMsg("提交的数据为空");
+                return response;
+            }
+            if(analyzeNameService.isStringNotNumber(account)){
+                response.setSuccess(false);
+                response.setErrorCode(200);
+                response.setMsg("结算金额错误输入");
                 return response;
             }
             if((projectId==null)||(projectId.length()==0)||(buildingId==null)||(buildingId.length()==0)){
@@ -654,30 +660,8 @@ public class ProductDataController {
                 response.setMsg("未选择结算人");
                 return response;
             }
-            DataList errorList = new DataList();
-            HashMap<String,String> map = new HashMap<>();
-            System.out.println("[===checkWasteSettleData===]");
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonTemp = jsonArray.getJSONObject(i);
-                System.out.println("第" + i + "个:" + jsonTemp);
-                String id = jsonTemp.get("id")+"";
-                String account = (jsonTemp.get("account") + "").trim();
-                String remark = jsonTemp.get("remark") + "";
-                map.put("account",account);
-                map.put("remark",remark);
-                if(analyzeNameService.isStringNotNumber(account))
-                    errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"结算金额输入有误",map);
-                }
-            if(!errorList.isEmpty()){
-                response.setSuccess(false);
-                response.setErrorCode(200);//提交的s存在错误内容
-                response.setMsg("提交的数据存在错误内容");
-                response.put("errorList",errorList);
-                response.put("errorCount",errorList.size());
-                return response;
-            }
             System.out.println("[===checkWasteSettleData==Complete=NoError]");
-            boolean uploadResult= productDataService.addWasteSettleData(jsonArray,userId,operator,projectId,buildingId);
+            boolean uploadResult= productDataService.addWasteSettleData(account,remark,userId,operator,projectId,buildingId);
             response.setSuccess(uploadResult);
         }catch (Exception e){
             e.printStackTrace();
