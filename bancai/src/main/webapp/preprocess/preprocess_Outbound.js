@@ -1,4 +1,4 @@
-Ext.define('material.material_Outbound',{
+Ext.define('preprocess.preprocess_Outbound',{
     extend:'Ext.panel.Panel',
     region: 'center',
     layout:'fit',

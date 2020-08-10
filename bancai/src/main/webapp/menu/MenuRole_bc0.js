@@ -25,11 +25,11 @@ Ext.define("menu.MenuRole_bc0", {
 					id : 'oldpanel.old_Upload_Data',
 					leaf : true
 				} ,
-				// 	{
-				// 	text : '旧板出库',
-				// 	id : 'oldpanel.oldpanel_Outbound',
-				// 	leaf : true
-				// },
+					{
+					text : '旧板出库',
+					id : 'oldpanel.oldpanel_Outbound',
+					leaf : true
+				},
 					{
 					text : '旧板库存查询',
 					id : 'oldpanel.Old_Query_Data',
@@ -141,15 +141,15 @@ Ext.define("menu.MenuRole_bc0", {
 						id : 'preprocess.preprocess_backcheck',
 						leaf : true
 					},
-				// 	{
-				// 	text : '预加工半成品出库',
-				// 	id : '',
-				// 	leaf : true
-				// },
 					{
-					text : '预加工半成品出入库记录查询',
-					id : 'preprocess.preprocess_Query_Records',
-					leaf : true
+						text : '预加工半成品入库撤销',
+						id : 'preprocess.preprocess_Outbound',
+						leaf : true
+					},
+					{
+						text : '预加工半成品出入库记录查询',
+						id : 'preprocess.preprocess_Query_Records',
+						leaf : true
 				}, {
 					text : '预加工半成品出入库记录统计',
 					id : '',
@@ -177,11 +177,11 @@ Ext.define("menu.MenuRole_bc0", {
 						id : 'backproduct.backproduct_backcheck',
 						leaf : true
 					},
-				// 	{
-				// 	text : '退库成品出库',
-				// 	id : 'backproduct.backproduct_Outbound',
-				// 	leaf : true
-				// },
+					{
+					text : '退库成品入库撤销',
+					id : 'backproduct.backproduct_Outbound',
+					leaf : true
+				},
 					{
 					text : '退库成品出入库记录查询',
 					id : 'backproduct.backproduct_Query_Records',
