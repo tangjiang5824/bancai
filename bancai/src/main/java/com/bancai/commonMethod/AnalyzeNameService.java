@@ -42,7 +42,7 @@ public class AnalyzeNameService extends BaseService {
         Date date = simpleDateFormat.parse(time);
         Date now = simpleDateFormat.parse(getTime());
         long cha = now.getTime() - date.getTime();
-        return cha * 1.0 / (1000 * 60 * 60) >24;
+        return cha * 1.0 / (1000 * 60 * 60) >1;
     }
     @Transactional
     public boolean isStringNotNonnegativeNumber(String str){ return !str.matches(isNonnegativeNumber); }
@@ -54,6 +54,8 @@ public class AnalyzeNameService extends BaseService {
     public boolean isStringNotPureWord(String str){ return !str.matches(isPureWord); }
     @Transactional
     public boolean isStringNotPositiveInteger(String str){ return !str.matches(isPositiveInteger); }
+    @Transactional
+    public void updateIsrollbackToOneById(String tableName,String id){ jo.update("update "+tableName+" set isrollback=1 where id=\""+id+"\""); }
     @Transactional
     public DataList checkCountALessThanCountBInJsonArray(JSONArray jsonArray,String countA,String countB){
         System.out.println("[===checkCount===]");
@@ -86,7 +88,7 @@ public class AnalyzeNameService extends BaseService {
     public DataRow canRollback(String tableName,String id){
         DataList queryList = queryService.query("select * from "+tableName+" where id=?",id);
         DataRow row = new DataRow();
-        if((!queryList.isEmpty())&&(queryList.get(0).get("isrollback").toString().equals("0")))
+        if((!queryList.isEmpty())&&((queryList.get(0).get("isrollback")+"").equals("0")))
             row = queryList.get(0);
         return row;
     }

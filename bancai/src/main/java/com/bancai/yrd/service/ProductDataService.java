@@ -67,13 +67,14 @@ public class ProductDataService extends BaseService{
     }
 
     @Transactional
-    public DataList productAddInsertRowToInboundList(DataList insertList,String productId,String warehouseName,String count,String unitWeight,String unitArea){
+    public DataList productAddInsertRowToInboundList(DataList insertList,String productId,String warehouseName,String count,String unitWeight,String unitArea,String remark){
         DataRow row = new DataRow();
         row.put("productId",productId);
         row.put("warehouseName",warehouseName);
         row.put("count",count);
         row.put("unitWeight",unitWeight);
         row.put("unitArea",unitArea);
+        row.put("remark",remark);
         insertList.add(row);
         return insertList;
     }
@@ -342,6 +343,7 @@ public class ProductDataService extends BaseService{
         String productId = dataRow.get("productId").toString();
         String warehouseName = dataRow.get("warehouseName").toString();
         String count = dataRow.get("count").toString();
+        String remark = dataRow.get("remark").toString();
         String totalWeight = "";
         String totalArea = "";
         if(dataRow.get("unitWeight")!=null)
@@ -369,8 +371,8 @@ public class ProductDataService extends BaseService{
                     "\",totalWeight=\""+totalWeight+ "\" where id=\""+storeId+"\"");
         }
         return insertProjectService.insertIntoTableBySQL(
-                "insert into "+method+"_logdetail (productId,count,"+method+"logId,"+method+"storeId,isrollback) values (?,?,?,?,?)",
-                productId,count,logId,storeId,"0");
+                "insert into "+method+"_logdetail (productId,count,"+method+"logId,"+method+"storeId,isrollback,remark) values (?,?,?,?,?,?)",
+                productId,count,logId,storeId,"0",remark);
     }
 
     @Transactional
@@ -427,26 +429,20 @@ public class ProductDataService extends BaseService{
         return insertProjectService.insertIntoTableBySQL("insert into waste_logdetail (wastelogId,wastestoreId,count,remark,isrollback) values (?,?,?,?,?)",
                 logId,storeId,count,remark,isrollback);
     }
-    private void wasteUpdateLogdetailIsrollbackById(String detailId){
-        jo.update("update waste_logdetail set isrollback=1 where id=\""+detailId+"\"");
-    }
-    private void wasteUpdateLogIsrollbackById(String logId){
-        jo.update("update waste_log set isrollback=1 where id=\""+logId+"\"");
-    }
     /*
      * 废料入库撤销
      * */
     @Transactional
     public boolean rollbackWasteData(String wastelogId,String operator,String userId,String projectId,String buildingId){
         boolean b = true;
-        wasteUpdateLogIsrollbackById(wastelogId);
+        analyzeNameService.updateIsrollbackToOneById("waste_log",wastelogId);
         int logId = wasteAddLogBackId("3",userId,operator,projectId,buildingId,"1");
         DataList dataList = queryService.query("select * from waste_logdetail where wastelogId=? and isrollback=0",wastelogId);
         for (DataRow dataRow : dataList) {
             String detailId = dataRow.get("id").toString();
             String storeId = dataRow.get("wastestoreId").toString();
             String count = dataRow.get("count").toString();
-            wasteUpdateLogdetailIsrollbackById(detailId);
+            analyzeNameService.updateIsrollbackToOneById("waste_logdetail",detailId);
             wasteUpdateStoreById(storeId,"-",count);
             b=b&wasteAddLogDetail(String.valueOf(logId),storeId,count,"","1");
         }
