@@ -374,6 +374,45 @@ public class ProductDataService extends BaseService{
                 "insert into "+method+"_logdetail (productId,count,"+method+"logId,"+method+"storeId,isrollback,remark) values (?,?,?,?,?,?)",
                 productId,count,logId,storeId,"0",remark);
     }
+    /*
+     * 预加工入库撤销
+     * */
+    @Transactional
+    public boolean rollbackProductData(String method,String logId,String operator,String userId,String projectId,String buildingId){
+        boolean b = true;
+        analyzeNameService.updateIsrollbackToOneById(method+"_log",logId);
+        int rollbackLogId = productAddLogBackId(method,"3",userId,operator,projectId,buildingId,"1");
+        DataList dataList = queryService.query("select * from "+method+"_logdetail where "+method+"logId=? and isrollback=0",logId);
+        for (DataRow dataRow : dataList) {
+            String detailId = dataRow.get("id").toString();
+            String storeId = dataRow.get(method+"storeId").toString();
+            String count = dataRow.get("count").toString();
+            analyzeNameService.updateIsrollbackToOneById(method+"_logdetail",detailId);
+            b=b&productUpdateRollbackStoreById(method,storeId,count,String.valueOf(rollbackLogId));
+        }
+        return b;
+    }
+    private int productAddLogBackId(String method,String type,String userId,String operator,String projectId,String buildingId,String isrollback){
+        return insertProjectService.insertDataToTable("insert into "+method+"_log (type,userId,operator,projectId,buildingId,time,isrollback) values (?,?,?,?,?,?,?)",
+                type,userId,operator,projectId,buildingId,analyzeNameService.getTime(),isrollback);
+    }
+    private boolean productUpdateRollbackStoreById(String method,String storeId,String count,String logId){
+        DataRow dataRow = queryService.query("select * from "+method+"_info_store_type where storeId=?",storeId).get(0);
+        String totalWeight = "";
+        String totalArea = "";
+        String countStore = dataRow.get("countStore").toString();
+        String productId = dataRow.get("productId").toString();
+        if((dataRow.get("unitWeight")!=null)&&(dataRow.get("unitWeight").toString().length()!=0))
+            totalWeight = String.valueOf((Double.parseDouble(countStore)-(Double.parseDouble(count)))*Double.parseDouble(dataRow.get("unitWeight").toString()));
+        if((dataRow.get("unitArea")!=null)&&(dataRow.get("unitArea").toString().length()!=0))
+            totalArea = String.valueOf((Double.parseDouble(countStore)-(Double.parseDouble(count)))*Double.parseDouble(dataRow.get("unitArea").toString()));
+        jo.update("update "+method+"_store set countUse=countUse-\""+count+
+                "\",countStore=countStore-\""+count+"\",totalArea=\""+ totalArea +
+                "\",totalWeight=\""+totalWeight+ "\" where id=\""+storeId+"\"");
+        return insertProjectService.insertIntoTableBySQL(
+                "insert into "+method+"_logdetail (productId,count,"+method+"logId,"+method+"storeId,isrollback) values (?,?,?,?,?)",
+                productId,count,logId,storeId,"1");
+    }
 
     @Transactional
     public DataList wasteAddInsertRowToInboundList(DataList insertList,String wasteName,String warehouseName,String inventoryUnit,String count,String remark){
@@ -422,8 +461,8 @@ public class ProductDataService extends BaseService{
         return insertProjectService.insertDataToTable("insert into waste_store (wasteName,warehouseName,inventoryUnit,countStore) values (?,?,?,?)",
                 wasteName,warehouseName,inventoryUnit,count);
     }
-    private void wasteUpdateStoreById(String storeId,String method,String count){
-        jo.update("update waste_store set countStore=countStore"+method+"\""+count+"\" where id=\""+storeId+"\"");
+    private void wasteUpdateStoreById(String storeId,String compute,String count){
+        jo.update("update waste_store set countStore=countStore"+compute+"\""+count+"\" where id=\""+storeId+"\"");
     }
     private boolean wasteAddLogDetail(String logId,String storeId,String count,String remark,String isrollback){
         return insertProjectService.insertIntoTableBySQL("insert into waste_logdetail (wastelogId,wastestoreId,count,remark,isrollback) values (?,?,?,?,?)",
