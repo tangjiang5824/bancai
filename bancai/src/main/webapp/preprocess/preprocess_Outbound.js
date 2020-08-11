@@ -36,8 +36,8 @@ Ext.define('preprocess.preprocess_Outbound',{
         //操作类型：枚举类型
         Ext.define('preprocess.oepration.state', {
             statics: { // 关键
-                0: { value: '0', name: '未回滚' },
-                1: { value: '1', name: '已回滚' },
+                0: { value: '0', name: '未撤销' },
+                1: { value: '1', name: '已撤销' },
             }
         });
 
@@ -265,7 +265,7 @@ Ext.define('preprocess.preprocess_Outbound',{
 
                 {
                     xtype : 'button',
-                    text: '回滚所有记录',
+                    text: '撤销所有记录',
                     width: 100,
                     margin: '0 0 0 40',
                     layout: 'right',
@@ -278,13 +278,13 @@ Ext.define('preprocess.preprocess_Outbound',{
                         if (is_rollback != 1){
                             Ext.Msg.show({
                                 title: '操作确认',
-                                message: '将回滚数据，选择“是”否确认？',
+                                message: '将撤销数据，选择“是”否确认？',
                                 buttons: Ext.Msg.YESNO,
                                 icon: Ext.Msg.QUESTION,
                                 fn: function (btn) {
                                     if (btn === 'yes') {
                                         Ext.Ajax.request({
-                                            url:"preprocess/backpreprocessstore.do",  //入库记录撤销
+                                            url:"preprocess/addDataRollback.do",  //入库记录撤销
                                             params:{
                                                 operator:operator,  //回滚操作人
                                                 preprocesslogId:preprocess_logId,
@@ -292,10 +292,14 @@ Ext.define('preprocess.preprocess_Outbound',{
                                             },
                                             success:function (response) {
                                                 //console.log(response.responseText);
-                                                Ext.MessageBox.alert("提示", "回滚成功!");
+                                                var ob=JSON.parse(response.responseText);
+                                                if(ob.success==false)
+                                                    Ext.MessageBox.alert("提示", ob.msg);
+                                                else
+                                                    Ext.MessageBox.alert("提示", "撤销成功!");
                                             },
                                             failure : function(response){
-                                                Ext.MessageBox.alert("提示", "回滚失败!");
+                                                Ext.MessageBox.alert("提示", "撤销失败!");
                                             }
                                         })
                                     }
@@ -304,7 +308,7 @@ Ext.define('preprocess.preprocess_Outbound',{
 
                         }
                         else{
-                            Ext.Msg.alert('错误', '该条记录已回滚！')
+                            Ext.Msg.alert('错误', '该条记录已撤销！')
                         }
                     }
                 }
@@ -351,7 +355,7 @@ Ext.define('preprocess.preprocess_Outbound',{
 
         var preprocess_Query_Records_win_showpreprocessData = Ext.create('Ext.window.Window', {
             id:'preprocess_Query_Records_win_showpreprocessData',
-            title: '原材料出入库记录回滚',
+            title: '预加工半成品出入库记录撤销',
             height: 500,
             width: 650,
             layout: 'fit',
@@ -395,7 +399,7 @@ Ext.define('preprocess.preprocess_Outbound',{
                         return "<INPUT type='button' value='查看' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
                     }
                 },
-                {   text: '记录是否回滚',
+                {   text: '记录是否撤销',
                     dataIndex: 'isrollback',
                     flex :1 ,
                     renderer: function (value) {
