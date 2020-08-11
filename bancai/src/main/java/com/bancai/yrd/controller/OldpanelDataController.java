@@ -506,8 +506,12 @@ public class OldpanelDataController {
             DataRow row = analyzeNameService.canRollback("oldpanel_log",oldpanellogId);
             if(!row.isEmpty()){
                 String userId = (String) session.getAttribute("userid");
-                String projectId = row.get("projectId").toString();
-                String buildingId = row.get("buildingId").toString();
+                String projectId = null;
+                if(row.get("projectId")!=null)
+                    projectId = row.get("projectId").toString();
+                String buildingId = null;
+                if(row.get("buildingId")!=null)
+                    buildingId = row.get("buildingId").toString();
                 String time = row.get("time").toString();
                 if(analyzeNameService.isNotFitRollbackTime(time)){
                     response.setSuccess(false);
