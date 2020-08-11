@@ -502,12 +502,22 @@ public class OldpanelDataController {
     @RequestMapping("/oldpanel/addDataRollback.do")
     public WebResponse oldpanelAddDataRollback(String oldpanellogId,String operator,HttpSession session){
         WebResponse response = new WebResponse();
+        if(operator==null||operator.trim().length()==0){
+            response.setSuccess(false);
+            response.setMsg("请选择撤销操作人!");
+            response.setErrorCode(300);
+            return response;
+        }
         try {
             DataRow row = analyzeNameService.canRollback("oldpanel_log",oldpanellogId);
             if(!row.isEmpty()){
                 String userId = (String) session.getAttribute("userid");
-                String projectId = row.get("projectId").toString();
-                String buildingId = row.get("buildingId").toString();
+                String projectId=null;
+                String buildingId=null;
+                if(row.get("projectId")!=null)
+                projectId = row.get("projectId").toString();
+                if(row.get("buildingId")!=null)
+                buildingId = row.get("buildingId").toString();
                 String time = row.get("time").toString();
                 if(analyzeNameService.isNotFitRollbackTime(time)){
                     response.setSuccess(false);

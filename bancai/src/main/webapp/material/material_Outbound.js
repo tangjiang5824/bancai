@@ -266,28 +266,18 @@ Ext.define('material.material_Outbound',{
                     hidden:true
                 },
                 {
-                    xtype: 'textfield',
+                    xtype: 'combo',
                     margin : '0 40 0 0',
-                    fieldLabel: '回滚人',
+                    fieldLabel: '撤销人',
                     id :'operator_back',
+                    store : workerListStore,
+                    displayField : 'workerName',
+                    valueField : 'id',
                     width: 150,
                     labelWidth: 50,
                     name: 'operator_back',
                     value:"",
                 },
-                {
-                    xtype : 'datefield',
-                    margin : '0 40 0 0',
-                    fieldLabel : '回滚时间',
-                    width : 180,
-                    labelWidth : 60,
-                    id : "backTime",
-                    name : 'backTime',
-                    format : 'Y-m-d',
-                    editable : false,
-                    //value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
-                },
-
                 {
                     xtype : 'button',
                     text: '撤销所有记录',
