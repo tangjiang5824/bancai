@@ -269,7 +269,94 @@ public class ProductDataController {
         }
         return response;
     }
+//    /*
+//     * 预加工仓库记录查询
+//     * */
+//    @RequestMapping("/preprocess/queryLog.do")
+//    public WebResponse queryPreprocessLog(String type,String projectId, String buildingId,String operator,String timeStart, String timeEnd,Integer start,Integer limit){
+//        mysqlcondition c=new mysqlcondition();
+//        if (null!=type&&type.length() != 0) {
+//            c.and(new mysqlcondition("type", "=", type));
+//        }
+//        if (null!=projectId&&projectId.length() != 0) {
+//            c.and(new mysqlcondition("projectId", "=", projectId));
+//        }
+//        if (null!=buildingId&&buildingId.length() != 0) {
+//            c.and(new mysqlcondition("buildingId", "=", projectId));
+//        }
+//        if (null!=operator&&operator.length() != 0) {
+//            c.and(new mysqlcondition("operator", "=", operator));
+//        }
+//        if (null!=timeStart&&timeStart.length() != 0) {
+//            c.and(new mysqlcondition("time", ">=", timeStart));
+//        }
+//        if (null!=timeEnd&&timeEnd.length() != 0) {
+//            c.and(new mysqlcondition("time", "<=", timeEnd));
+//        }
+//        return queryService.queryDataPage(start, limit, c, "preprocess_log_view");
+//    }
+//
+//    /*
+//     * 预加工仓库记录查询detail
+//     * */
+//    @RequestMapping("/preprocess/queryLogDetail.do")
+//    public WebResponse queryPreprocessLogDetail(String wastelogId,Integer start,Integer limit){
+//        mysqlcondition c=new mysqlcondition();
+//        if (null!=wastelogId&&wastelogId.length() != 0) {
+//            c.and(new mysqlcondition("wasteLogId", "=", wastelogId));
+//        }else {
+//            WebResponse response = new WebResponse();
+//            response.setSuccess(false);
+//            response.setErrorCode(100);//未获取到退料单号
+//            response.setMsg("未获取到该次记录");
+//            return response;
+//        }
+//        return queryService.queryDataPage(start, limit, c, "preprocess_log_detail_view");
+//    }
 
+    /*
+     * 预加工入库撤销
+     * */
+    @RequestMapping("/preprocess/addDataRollback.do")
+    public WebResponse preprocessAddDataRollback(String preprocesslogId,String operator,HttpSession session){
+        WebResponse response = new WebResponse();
+        if(operator==null||operator.trim().length()==0){
+            response.setErrorCode(300);
+            response.setMsg("请选择撤销人！");
+            response.setSuccess(false);
+            return response;
+        }
+        try {
+            DataRow row = analyzeNameService.canRollback("preprocess_log",preprocesslogId);
+            if(!row.isEmpty()){
+                String userId = (String) session.getAttribute("userid");
+                String projectId = null;
+                if(row.get("projectId")!=null)
+                    projectId = row.get("projectId").toString();
+                String buildingId = null;
+                if(row.get("buildingId")!=null)
+                    buildingId = row.get("buildingId").toString();
+                String time = row.get("time").toString();
+                if(analyzeNameService.isNotFitRollbackTime(time)){
+                    response.setSuccess(false);
+                    response.setErrorCode(200);
+                    response.setMsg("无法撤销，超过可撤销时间");
+                }
+                boolean result = productDataService.rollbackProductData("preprocess",preprocesslogId,operator,userId,projectId,buildingId);
+                response.setSuccess(result);
+            }else {
+                response.setSuccess(false);
+                response.setErrorCode(100);
+                response.setMsg("该次记录无法撤销");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误
+            response.setMsg(e.getMessage());
+        }
+        return response;
+    }
 
     /*
      * 退库成品添加单个数据
@@ -326,6 +413,50 @@ public class ProductDataController {
             System.out.println("[===checkBackproductUploadData==Complete=NoError]");
             boolean uploadResult= productDataService.insertProductDataToStore("backproduct",insertList,userId,operator,projectId,buildingId);
             response.setSuccess(uploadResult);
+        }catch (Exception e){
+            e.printStackTrace();
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误
+            response.setMsg(e.getMessage());
+        }
+        return response;
+    }
+
+    /*
+     * 退库成品入库撤销
+     * */
+    @RequestMapping("/backproduct/addDataRollback.do")
+    public WebResponse backproductAddDataRollback(String backproductlogId,String operator,HttpSession session){
+        WebResponse response = new WebResponse();
+        if(operator==null||operator.trim().length()==0){
+            response.setErrorCode(300);
+            response.setMsg("请选择撤销人！");
+            response.setSuccess(false);
+            return response;
+        }
+        try {
+            DataRow row = analyzeNameService.canRollback("backproduct_log",backproductlogId);
+            if(!row.isEmpty()){
+                String userId = (String) session.getAttribute("userid");
+                String projectId = null;
+                if(row.get("projectId")!=null)
+                    projectId = row.get("projectId").toString();
+                String buildingId = null;
+                if(row.get("buildingId")!=null)
+                    buildingId = row.get("buildingId").toString();
+                String time = row.get("time").toString();
+                if(analyzeNameService.isNotFitRollbackTime(time)){
+                    response.setSuccess(false);
+                    response.setErrorCode(200);
+                    response.setMsg("无法撤销，超过可撤销时间");
+                }
+                boolean result = productDataService.rollbackProductData("backproduct",backproductlogId,operator,userId,projectId,buildingId);
+                response.setSuccess(result);
+            }else {
+                response.setSuccess(false);
+                response.setErrorCode(100);
+                response.setMsg("该次记录无法撤销");
+            }
         }catch (Exception e){
             e.printStackTrace();
             response.setSuccess(false);
