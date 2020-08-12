@@ -266,28 +266,18 @@ Ext.define('material.material_Outbound',{
                     hidden:true
                 },
                 {
-                    xtype: 'textfield',
+                    xtype: 'combo',
                     margin : '0 40 0 0',
-                    fieldLabel: '回滚人',
+                    fieldLabel: '撤销人',
                     id :'operator_back',
+                    store : workerListStore,
+                    displayField : 'workerName',
+                    valueField : 'id',
                     width: 150,
                     labelWidth: 50,
                     name: 'operator_back',
                     value:"",
                 },
-                {
-                    xtype : 'datefield',
-                    margin : '0 40 0 0',
-                    fieldLabel : '回滚时间',
-                    width : 180,
-                    labelWidth : 60,
-                    id : "backTime",
-                    name : 'backTime',
-                    format : 'Y-m-d',
-                    editable : false,
-                    //value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
-                },
-
                 {
                     xtype : 'button',
                     text: '撤销所有记录',
@@ -303,7 +293,7 @@ Ext.define('material.material_Outbound',{
                         if (is_rollback != 1){
                             Ext.Msg.show({
                                 title: '操作确认',
-                                message: '将回滚数据，选择“是”否确认？',
+                                message: '将撤销数据，选择“是”否确认？',
                                 buttons: Ext.Msg.YESNO,
                                 icon: Ext.Msg.QUESTION,
                                 fn: function (btn) {
@@ -317,10 +307,14 @@ Ext.define('material.material_Outbound',{
                                             },
                                             success:function (response) {
                                                 //console.log(response.responseText);
-                                                Ext.MessageBox.alert("提示", "回滚成功!");
+                                                var ob=JSON.parse(response.responseText);
+                                                if(ob.success==false)
+                                                    Ext.MessageBox.alert("提示", ob.msg);
+                                                else
+                                                    Ext.MessageBox.alert("提示", "撤销成功!");
                                             },
                                             failure : function(response){
-                                                Ext.MessageBox.alert("提示", "回滚失败!");
+                                                Ext.MessageBox.alert("提示", "撤销失败!");
                                             }
                                         })
                                     }
@@ -329,7 +323,7 @@ Ext.define('material.material_Outbound',{
 
                         }
                         else{
-                            Ext.Msg.alert('错误', '该条记录已回滚！')
+                            Ext.Msg.alert('错误', '该条记录已撤销！')
                         }
                     }
                 }
