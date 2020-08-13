@@ -138,39 +138,50 @@ public class DesignlistService extends BaseService{
     }
     @Transactional
     public boolean deleteDesignListLog(String designlistlogId,String userId){
+        boolean b = true;
         DataList list = queryService.query("select * from designlist where designlistlogId=?",designlistlogId);
-        if(list.isEmpty())
-            return true;
-        else {
-            Date date=new Date();
-            SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        if(!list.isEmpty()){
             for (DataRow dataRow : list) {
                 String designlistId = dataRow.get("id").toString();
-                deleteDesignList(designlistId);
+                b=b&deleteDesignList(designlistId);
             }
             jo.update("update designlist_log set isrollback=1,userId=\""+userId+
-                    "\",time=\""+simpleDateFormat.format(date)+"\" where id=\""+designlistlogId+"\"");
-            return true;
+                    "\",time=\""+analyzeNameService.getTime()+"\" where id=\""+designlistlogId+"\"");
         }
+        return b;
     }
 
     @Transactional
     public boolean deleteDesignList(String designlistId){
+        boolean b =true;
         DataList list = queryService.query("select * from query_match_result where designlistId=?",designlistId);
-        if(list.isEmpty())
-            return true;
-        else {
+        if(!list.isEmpty()){
             for (DataRow dataRow : list) {
                 String matchResultId = dataRow.get("id").toString();
                 int type = Integer.parseInt(dataRow.get("materialMadeBy").toString());
                 int storeId = Integer.parseInt(dataRow.get("matchId").toString());
                 double count = Double.parseDouble(dataRow.get("count").toString());
-                designlistMatchResultBackStore(type, storeId, count);
+                b=b&designlistMatchResultBackStore(type, storeId, count);
                 designlistDeleteById("match_result", matchResultId);
             }
             designlistDeleteById("designlist",designlistId);
-            return true;
         }
+        return b;
+    }
+
+    @Transactional
+    public boolean designlistDeleteMatchResult(JSONArray jsonArray){
+        boolean b = true;
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonTemp = jsonArray.getJSONObject(i);
+            String matchResultId = jsonTemp.get("matchResultId").toString();
+            double count = Double.parseDouble(jsonTemp.get("count").toString());
+            int storeId = Integer.parseInt(jsonTemp.get("matchId").toString());
+            int type = Integer.parseInt(jsonTemp.get("madeBy").toString());
+            designlistDeleteById("match_result", matchResultId);
+            b=b&designlistMatchResultBackStore(type, storeId, count);
+        }
+        return b;
     }
 
     private boolean designlistMatchResultBackStore(int type,int storeId,double count){
