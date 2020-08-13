@@ -1,8 +1,10 @@
 Ext.define('project.result.designlist_match_result',{
-    extend:'Ext.panel.Panel',
+    // extend:'Ext.panel.Panel',
+    extend:'Ext.tab.Panel',
+    id:'result_tabpanel',
     region: 'center',
     layout:'fit',
-    title: '产品匹配结果查询',
+    // title: '产品匹配结果查询',
     initComponent: function(){
 
         var itemsPerPage = 50;
@@ -596,6 +598,7 @@ Ext.define('project.result.designlist_match_result',{
         });
 
         var grid = Ext.create('Ext.grid.Panel',{
+            title: '项目产品匹配结果',
             id: 'all_match_result_dataGrid',
             // model : "filedInfo",
             store: allpanel_Store,
@@ -629,14 +632,34 @@ Ext.define('project.result.designlist_match_result',{
                 hideGroupedHeader : true//隐藏当前分组的表头
             } ],
 
-            dockedItems: [{
-                xtype: 'pagingtoolbar',
-                store: allpanel_Store,   // same store GridPanel is using
-                dock: 'bottom',
-                displayInfo: true,
-                displayMsg:'显示{0}-{1}条，共{2}条',
-                emptyMsg:'无数据'
-            }],
+            // dockedItems: [{
+            //     xtype: 'pagingtoolbar',
+            //     store: allpanel_Store,   // same store GridPanel is using
+            //     dock: 'bottom',
+            //     displayInfo: true,
+            //     displayMsg:'显示{0}-{1}条，共{2}条',
+            //     emptyMsg:'无数据'
+            // }],
+            //设置panel多行tbar
+            dockedItems:[{
+                    xtype : 'toolbar',
+                    dock : 'top',
+                    items : [toobar]
+                },{
+                    xtype : 'toolbar',
+                    dock : 'top',
+                    items : [toobar2]
+                },
+                //分页
+                {
+                    xtype: 'pagingtoolbar',
+                    store: allpanel_Store,   // same store GridPanel is using
+                    dock: 'bottom',
+                    displayInfo: true,
+                    displayMsg:'显示{0}-{1}条，共{2}条',
+                    emptyMsg:'无数据'
+                }
+            ],
             listeners: {
                 // validateedit : function(editor, e) {
                 //     var field=e.field
@@ -674,48 +697,65 @@ Ext.define('project.result.designlist_match_result',{
                         Ext.Msg.alert('错误', '请选择要修改的数据');
                     else
                     {
-                        // var projectMatch_List = Ext.create('Ext.data.Store',{
-                        //     //id,materialName,length,width,materialType,number
-                        //     fields:['buildingNo','buildingName','buildingLeader'],
-                        //     proxy : {
-                        //         type : 'ajax',
-                        //         url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName='+tableName+'&columnName='+columnName+'&columnValue='+designlistId,//获取同类型的原材料  +'&pickNum='+pickNum
-                        //         reader : {
-                        //             type : 'json',
-                        //             rootProperty: 'query_match_result',
-                        //         },
-                        //         // params:{
-                        //         //     materialName:materialName,
-                        //         //     // start: 0,
-                        //         //     // limit: itemsPerPage
-                        //         // }
-                        //     },
-                        //     autoLoad : true
+                        // //修改匹配结果
+                        // var edit = Ext.create('project.result.matchResultEdit',{
+                        //     //页面传参数
+                        //     designlistId:designlistId,
+                        //     // projectMatch_List:projectMatch_List,
                         // });
-
-                        var edit = Ext.create('project.result.matchResultEdit',{
-                            //页面传参数
-                            designlistId:designlistId,
-                            // projectMatch_List:projectMatch_List,
+                        // edit.show();
+                        var edit_panel = Ext.create('project.result.matchResult_Edit_panel',{
+                                //页面传参数
+                                designlistId:designlistId,
+                                // projectMatch_List:projectMatch_List,
                         });
-                        edit.show();
+
+                        //另一个tab页面
+                        var tabPanel = Ext.getCmp('result_tabpanel');
+                        var tabs = Ext.getCmp('editPanel');
+                        if(!tabs){
+                            var t = tabPanel.add({
+                                // title:requisitionOrderId+'领料单明细',
+                                title:'产品匹配结果修改',
+                                id:'editPanel',
+                                layout:'fit',
+                                items:[edit_panel],
+                                closable:true,
+                                closeAction:'hide',
+                                autoDestroy: true,
+                            });
+                            tabPanel.setActiveTab(t);
+                        }
+                        else{
+                            tabs.show();
+                        }
+
+                        //关闭
+                        tabPanel.on('beforeremove', function(tabs, tab) {
+                            // console.log("beforeremove----",tabs)
+                            // tabPanel.remove(tab);
+                            // Ext.getCmp("pick_tabpanel").remove(Ext.getCmp("myPanel"));
+                            return false;
+                        });
+
+
                     }
 
                 }
             }
         });
 
-        //设置panel多行tbar
-        this.dockedItems=[{
-            xtype : 'toolbar',
-            dock : 'top',
-            items : [toobar]
-        },{
-            xtype : 'toolbar',
-            dock : 'top',
-            items : [toobar2]
-        }
-        ];
+        // //设置panel多行tbar
+        // this.dockedItems=[{
+        //     xtype : 'toolbar',
+        //     dock : 'top',
+        //     items : [toobar]
+        // },{
+        //     xtype : 'toolbar',
+        //     dock : 'top',
+        //     items : [toobar2]
+        // }
+        // ];
 
         this.items = [grid];
         this.callParent(arguments);
