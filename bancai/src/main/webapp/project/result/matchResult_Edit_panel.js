@@ -7,7 +7,7 @@ Ext.define('project.result.matchResult_Edit_panel', {
 //	closeAction : 'close',
 	height: 500,
 	width: 650,
-	closable : true,
+	// closable : true,
 	bodyStyle : 'padding:5 5 5 5',
 	initComponent : function() {
 		var me = this;
@@ -15,6 +15,24 @@ Ext.define('project.result.matchResult_Edit_panel', {
 		var tableName = 'query_match_result';
 		var columnName = 'designlistId';
 		var columnValue = me.designlistId;
+
+		var designlistId = me.designlistId;//父页面传过来的参数
+
+		var productName_show = me.productName_show;
+		var	positionName_show = me.positionName_show;
+		var	projectName_show = me.projectName_show;
+		var	buildingName_show = me.buildingName_show;
+
+
+		//原件类型：枚举类型
+		Ext.define('material.model.typeName', {
+			statics: { // 关键s
+				1: { value: '1', name: '退库成品' },
+				2: { value: '2', name: '预加工半产品' },
+				3: { value: '3', name: '旧板' },
+				4: { value: '4', name: '原材料' },
+			}
+		});
 
 		var projectMatch_List = Ext.create('Ext.data.Store',{
 			//id,materialName,length,width,materialType,number
@@ -58,10 +76,11 @@ Ext.define('project.result.matchResult_Edit_panel', {
 			fields : [ 'typeName'],
 			proxy : {
 				type : 'ajax',
-				url : '/material/findAllBytableName.do?tableName=backproduct_info_store_type',
+				// url : '/material/findAllBytableName.do?tableName=backproduct_info_store_type',
+				url:'store/findAllStoreInfo.do?typeName=backproduct',
 				reader : {
 					type : 'json',
-					rootProperty: 'backproduct_info_store_type',
+					rootProperty: 'infoList',//rootProperty: 'backproduct_info_store_type',
 				},
 			},
 			autoLoad : true
@@ -71,10 +90,11 @@ Ext.define('project.result.matchResult_Edit_panel', {
 			fields : [ 'typeName'],
 			proxy : {
 				type : 'ajax',
-				url : '/material/findAllBytableName.do?tableName=preprocess_info_store_type',
+				// url : '/material/findAllBytableName.do?tableName=preprocess_info_store_type',
+				url:'store/findAllStoreInfo.do?typeName=preprocess',
 				reader : {
 					type : 'json',
-					rootProperty: 'preprocess_info_store_type',
+					rootProperty: 'infoList',//preprocess_info_store_type
 				},
 			},
 			autoLoad : true
@@ -84,10 +104,11 @@ Ext.define('project.result.matchResult_Edit_panel', {
 			fields : [ 'typeName'],
 			proxy : {
 				type : 'ajax',
-				url : '/material/findAllBytableName.do?tableName=oldpanel_info_store_type',
+				// url : '/material/findAllBytableName.do?tableName=oldpanel_info_store_type',
+				url:'store/findAllStoreInfo.do?typeName=oldpanel',
 				reader : {
 					type : 'json',
-					rootProperty: 'oldpanel_info_store_type',
+					rootProperty: 'infoList',//rootProperty: 'oldpanel_info_store_type',
 				},
 			},
 			autoLoad : true
@@ -97,84 +118,85 @@ Ext.define('project.result.matchResult_Edit_panel', {
 			fields : [ 'typeName'],
 			proxy : {
 				type : 'ajax',
-				url : '/material/findAllBytableName.do?tableName=material_store_view',
+				// url : '/material/findAllBytableName.do?tableName=material_store_view',
+				url:'store/findAllStoreInfo.do?typeName=material',
 				reader : {
 					type : 'json',
-					rootProperty: 'material_store_view',
+					rootProperty: 'infoList',//rootProperty: 'material_store_view',
 				},
 			},
 			autoLoad : true
 		});
 
-		var form = Ext.create('Ext.form.Panel', {
-			items : [ {
-				xtype : 'textfield',
-				id : 'workerName_p',
-				name : 'workerName_p',
-				fieldLabel : '职员名称',
-				disabled : true,
-				width:'95%',
-				editable : false
-			}, {
-				xtype : 'textfield',
-				name : 'tel_p',
-				id : 'tel_p',
-				width:'95%',
-				fieldLabel : '电话'
-			},
-				// departmentList,
-				{
-					fieldLabel : '部门名称',
-					xtype : 'combo',
-					name : 'departmentId',
-					id : 'departmentId',
-					// disabled : true,
-					width:'95%',
-					store : departmentListStore,
-					displayField : 'departmentName',
-					valueField : 'id',
-					editable : true,
-				}
-
-			],
-			buttons : [ {
-				text : '更新',
-				handler : function() {
-					// console.log(me.roleId);
-					if (form.isValid()) {
-						var workerName = Ext.getCmp("workerName_p").getValue();
-						var tel = Ext.getCmp("tel_p").getValue();
-
-						// console.log("--------------------Id:",Ext.getCmp("departmentId").value)
-						var departmentId = Ext.getCmp("departmentId").getValue();
-						form.submit({
-							url : 'department/addOrUpdateWorkerInfo.do',
-							waitMsg : '正在更新...',
-							params : {
-								id:me.userId,//新增id为字符串
-								// s : "[" + s + "]",
-								workerName:workerName,
-								tel:tel,
-								departmentId:departmentId
-							},
-							success : function(form, action) {
-								Ext.Msg.alert('消息', '更新成功！');
-								me.close();
-								Ext.getCmp('addWorkerGrid').store.load({
-									params : {
-										start : 0,
-										limit : itemsPerPage
-									}
-								});
-							},
-							failure : function(form, action) {
-								Ext.Msg.alert('消息', '更新失败！');
-							}
-						});
-					}
-				}
-			} ]
-		});
+		// var form = Ext.create('Ext.form.Panel', {
+		// 	items : [ {
+		// 		xtype : 'textfield',
+		// 		id : 'workerName_p',
+		// 		name : 'workerName_p',
+		// 		fieldLabel : '职员名称',
+		// 		disabled : true,
+		// 		width:'95%',
+		// 		editable : false
+		// 	}, {
+		// 		xtype : 'textfield',
+		// 		name : 'tel_p',
+		// 		id : 'tel_p',
+		// 		width:'95%',
+		// 		fieldLabel : '电话'
+		// 	},
+		// 		// departmentList,
+		// 		{
+		// 			fieldLabel : '部门名称',
+		// 			xtype : 'combo',
+		// 			name : 'departmentId',
+		// 			id : 'departmentId',
+		// 			// disabled : true,
+		// 			width:'95%',
+		// 			store : departmentListStore,
+		// 			displayField : 'departmentName',
+		// 			valueField : 'id',
+		// 			editable : true,
+		// 		}
+		//
+		// 	],
+		// 	buttons : [ {
+		// 		text : '更新',
+		// 		handler : function() {
+		// 			// console.log(me.roleId);
+		// 			if (form.isValid()) {
+		// 				var workerName = Ext.getCmp("workerName_p").getValue();
+		// 				var tel = Ext.getCmp("tel_p").getValue();
+		//
+		// 				// console.log("--------------------Id:",Ext.getCmp("departmentId").value)
+		// 				var departmentId = Ext.getCmp("departmentId").getValue();
+		// 				form.submit({
+		// 					url : 'department/addOrUpdateWorkerInfo.do',
+		// 					waitMsg : '正在更新...',
+		// 					params : {
+		// 						id:me.userId,//新增id为字符串
+		// 						// s : "[" + s + "]",
+		// 						workerName:workerName,
+		// 						tel:tel,
+		// 						departmentId:departmentId
+		// 					},
+		// 					success : function(form, action) {
+		// 						Ext.Msg.alert('消息', '更新成功！');
+		// 						me.close();
+		// 						Ext.getCmp('addWorkerGrid').store.load({
+		// 							params : {
+		// 								start : 0,
+		// 								limit : itemsPerPage
+		// 							}
+		// 						});
+		// 					},
+		// 					failure : function(form, action) {
+		// 						Ext.Msg.alert('消息', '更新失败！');
+		// 					}
+		// 				});
+		// 			}
+		// 		}
+		// 	} ]
+		// });
 
 		//板材类型选择
 		var storeTypeListStore = Ext.create('Ext.data.Store', {
@@ -310,7 +332,7 @@ Ext.define('project.result.matchResult_Edit_panel', {
 					name : 'back_store',
 					id : 'back_store',
 					// disabled : true,
-					width:200,
+					width:350,
 					labelWidth : 45,
 					store : backListStore,
 					margin : '0 40 0 0',
@@ -324,7 +346,10 @@ Ext.define('project.result.matchResult_Edit_panel', {
 							var id = select.id;//项目名对应的id
 							console.log('select===================....',select);
 							var count_Use = select.countUse;
-							Ext.getCmp('countUse').setValue(count_Use);
+							var storeId_back = select.storeId;
+							Ext.getCmp('countUse_back').setValue(count_Use);
+							Ext.getCmp('storeId_back').setValue(storeId_back);
+
 						}
 					}
 				},
@@ -332,11 +357,24 @@ Ext.define('project.result.matchResult_Edit_panel', {
 					xtype: 'textfield',
 					margin : '0 40 0 0',
 					fieldLabel: '现可用数量',
-					id :'countUse',
+					id :'countUse_back',
 					width: 180,
 					labelWidth: 80,
-					name: 'countUse',
+					name: 'countUse_back',
 					value:"",
+					editable : false,//不可修改
+					disabled : true,//隐藏显示
+				},
+				{
+					xtype: 'textfield',
+					margin : '0 40 0 0',
+					fieldLabel: '',
+					id :'storeId_back',
+					width: 180,
+					labelWidth: 80,
+					name: 'storeId_back',
+					value:"",
+					hidden:true,
 				},
 				{
 					xtype: 'textfield',
@@ -359,6 +397,10 @@ Ext.define('project.result.matchResult_Edit_panel', {
 						var data = [{
 							'name' : Ext.getCmp("back_store").rawValue,
 							'count' : Ext.getCmp("back_count").getValue(),
+							'type':'1',//材料类型
+							'typeName':'backproduct',
+							'id':'-1', //新增的matchresultId
+							'storeId':Ext.getCmp("storeId_back").getValue(),
 						}];
 						//Ext.getCmp('addDataGrid')返回定义的对象
 						Ext.getCmp('oneProject_match_grid').getStore().loadData(data,
@@ -388,14 +430,50 @@ Ext.define('project.result.matchResult_Edit_panel', {
 					name : 'pre_store',
 					id : 'pre_store',
 					// disabled : true,
-					width:200,
+					width:350,
 					labelWidth : 45,
 					store : preprocessListStore,
 					margin : '0 40 0 0',
 					displayField : 'productName',
 					valueField : 'id',
 					editable : true,
-				},{
+					listeners: {
+						select:function (combo, record) {
+							//选中后
+							var select = record[0].data;
+							var id = select.id;//项目名对应的id
+							console.log('select===================....',select);
+							var count_Use = select.countUse;
+							var storeId_pre = select.storeId;
+							Ext.getCmp('storeId_pre').setValue(storeId_pre);
+							Ext.getCmp('countUse_pre').setValue(count_Use);
+						}
+					}
+				},
+				{
+					xtype: 'textfield',
+					margin : '0 40 0 0',
+					fieldLabel: '现可用数量',
+					id :'countUse_pre',
+					width: 180,
+					labelWidth: 80,
+					name: 'countUse_pre',
+					value:"",
+					editable : false,//不可修改
+					disabled : true,//隐藏显示
+				},
+				{
+					xtype: 'textfield',
+					margin : '0 40 0 0',
+					fieldLabel: '',
+					id :'storeId_pre',
+					width: 180,
+					labelWidth: 80,
+					name: 'storeId_pre',
+					value:"",
+					hidden:true,
+				},
+				{
 					xtype: 'textfield',
 					margin : '0 40 0 0',
 					fieldLabel: '数量',
@@ -414,6 +492,10 @@ Ext.define('project.result.matchResult_Edit_panel', {
 						var data = [{
 							'name' : Ext.getCmp("pre_store").rawValue,
 							'count' : Ext.getCmp("pre_count").getValue(),
+							'type':'2',
+							'typeName':'preprocess',
+							'id':'-1', //新增的matchresultId
+							'storeId':Ext.getCmp("storeId_pre").getValue(),
 						}];
 						//Ext.getCmp('addDataGrid')返回定义的对象
 						Ext.getCmp('oneProject_match_grid').getStore().loadData(data,
@@ -440,14 +522,50 @@ Ext.define('project.result.matchResult_Edit_panel', {
 					name : 'old_store',
 					id : 'old_store',
 					// disabled : true,
-					width:200,
+					width:350,
 					labelWidth : 45,
 					store : oldListStore,
 					margin : '0 40 0 0',
 					displayField : 'oldpanelName',
 					valueField : 'id',
 					editable : true,
-				},{
+					listeners: {
+						select:function (combo, record) {
+							//选中后
+							var select = record[0].data;
+							var id = select.id;//项目名对应的id
+							console.log('select===================....',select);
+							var count_Use = select.countUse;
+							var storeId_old = select.storeId;
+							Ext.getCmp('storeId_old').setValue(storeId_old);
+							Ext.getCmp('countUse_old').setValue(count_Use);
+						}
+					}
+				},
+				{
+					xtype: 'textfield',
+					margin : '0 40 0 0',
+					fieldLabel: '现可用数量',
+					id :'countUse_old',
+					width: 180,
+					labelWidth: 80,
+					name: 'countUse_old',
+					value:"",
+					editable : false,//不可修改
+					disabled : true,//隐藏显示
+				},
+				{
+					xtype: 'textfield',
+					margin : '0 40 0 0',
+					fieldLabel: '',
+					id :'storeId_old',
+					width: 180,
+					labelWidth: 80,
+					name: 'storeId_old',
+					value:"",
+					hidden:true,
+				},
+				{
 					xtype: 'textfield',
 					margin : '0 40 0 0',
 					fieldLabel: '数量',
@@ -466,6 +584,10 @@ Ext.define('project.result.matchResult_Edit_panel', {
 						var data = [{
 							'name' : Ext.getCmp("old_store").rawValue,
 							'count' : Ext.getCmp("old_count").getValue(),
+							'type':'3',
+							'typeName':'oldpanel',
+							'id':'-1', //新增的matchresultId
+							'storeId':Ext.getCmp("storeId_old").getValue(),
 						}];
 						//Ext.getCmp('addDataGrid')返回定义的对象
 						Ext.getCmp('oneProject_match_grid').getStore().loadData(data,
@@ -493,14 +615,50 @@ Ext.define('project.result.matchResult_Edit_panel', {
 					name : 'material_store',
 					id : 'material_store',
 					// disabled : true,
-					width:200,
+					width:350,
 					labelWidth : 45,
 					margin : '0 40 0 0',
 					store : materialListStore,
 					displayField : 'materialName',
 					valueField : 'id',
 					editable : true,
-				},{
+					listeners: {
+						select:function (combo, record) {
+							//选中后
+							var select = record[0].data;
+							var id = select.id;//项目名对应的id
+							console.log('select===================....',select);
+							var count_Use = select.countUse;
+							var storeId_material = select.storeId;
+							Ext.getCmp('storeId_material').setValue(storeId_material);
+							Ext.getCmp('countUse_material').setValue(count_Use);
+						}
+					}
+				},
+				{
+					xtype: 'textfield',
+					margin : '0 40 0 0',
+					fieldLabel: '现可用数量',
+					id :'countUse_material',
+					width: 180,
+					labelWidth: 80,
+					name: 'countUse_material',
+					value:"",
+					editable : false,//不可修改
+					disabled : true,//隐藏显示
+				},
+				{
+					xtype: 'textfield',
+					margin : '0 40 0 0',
+					fieldLabel: '',
+					id :'storeId_material',
+					width: 180,
+					labelWidth: 80,
+					name: 'storeId_material',
+					value:"",
+					hidden:true,
+				},
+				{
 					xtype: 'textfield',
 					margin : '0 40 0 0',
 					fieldLabel: '数量',
@@ -519,6 +677,10 @@ Ext.define('project.result.matchResult_Edit_panel', {
 						var data = [{
 							'name' : Ext.getCmp("material_store").rawValue,
 							'count' : Ext.getCmp("material_count").getValue(),
+							'type':'4',
+							'typeName':'material',
+							'id':'-1', //新增的matchresultId
+							'storeId':Ext.getCmp("storeId_material").getValue(),
 						}];
 						//Ext.getCmp('addDataGrid')返回定义的对象
 						Ext.getCmp('oneProject_match_grid').getStore().loadData(data,
@@ -533,6 +695,61 @@ Ext.define('project.result.matchResult_Edit_panel', {
 		});
 
 		//更新产品匹配信息
+		var toolbar_4 = Ext.create('Ext.toolbar.Toolbar', {
+			dock: "top",
+			id: 'toolbar_4',
+			items: [
+				{
+					xtype: 'textfield',
+					margin : '0 40 0 0',
+					fieldLabel: '产品名称',
+					id :'productName_show',
+					width: 300,
+					labelWidth: 60,
+					name: 'productName_show',
+					value:"",
+					editable : false,//不可修改
+					disabled : true,//隐藏显示
+				},{
+					xtype: 'textfield',
+					margin : '0 40 0 0',
+					fieldLabel: '位置',
+					id :'positionName_show',
+					width: 150,
+					labelWidth: 35,
+					name: 'positionName_show',
+					value:"",
+					editable : false,//不可修改
+					disabled : true,//隐藏显示
+				},
+				{
+					xtype: 'textfield',
+					margin : '0 40 0 0',
+					fieldLabel: '所属项目',
+					id :'project_show',
+					width: 500,
+					labelWidth: 60,
+					name: 'project_show',
+					value:"",
+					editable : false,//不可修改
+					disabled : true,//隐藏显示
+				},
+				{
+					xtype: 'textfield',
+					// margin : '0 40 0 0',
+					fieldLabel: '楼栋',
+					id :'building_show',
+					width: 200,
+					labelWidth: 35,
+					name: 'building_show',
+					value:"",
+					editable : false,//不可修改
+					disabled : true,//隐藏显示
+				},
+			]
+		});
+
+		//更新产品匹配信息
 		var toolbar_5 = Ext.create('Ext.toolbar.Toolbar', {
 			dock : "top",
 			id:'toolbar_5',
@@ -542,7 +759,146 @@ Ext.define('project.result.matchResult_Edit_panel', {
 					iconAlign : 'center',
 					iconCls : 'rukuicon ',
 					text : '更新信息',
+					handler: function(){
+						var select = Ext.getCmp('oneProject_match_grid').getStore()
+							.getData();
+
+						var s = new Array();
+						select.each(function(rec) {
+							s.push(JSON.stringify(rec.data));
+						});
+
+						console.log('s===================,,,',s);
+
+						Ext.Ajax.request({
+							url:"designlist/changeMatchResult.do",  //匹配结果修改
+							params:{
+								designlistId: designlistId,
+								s: "[" + s + "]",
+
+							},
+							success:function (response) {
+								console.log('response=====================??',response)
+
+								var res = response.responseText;
+								var jsonobj = JSON.parse(res);//将json字符串转换为对象
+								console.log(jsonobj);
+								console.log("success--------------",jsonobj.success);
+								// console.log("errorList--------------",jsonobj['errorList']);
+								var success = jsonobj.success;
+								// var errorList = jsonobj.errorList;
+								var errorCode = jsonobj.errorCode;
+								// var errorCount = jsonobj.errorNum;
+								if(success == false){
+									if(errorCode == 1000){
+										Ext.MessageBox.alert("提示", "匹配结果更新失败! 未知错误");
+									}
+
+								}else{
+									//删除成功
+									Ext.MessageBox.alert("提示", "匹配结果更新成功!");
+									Ext.getCmp('oneProject_match_grid').getStore().load();
+								}
+							},
+							failure : function(response){
+								Ext.MessageBox.alert("提示", "匹配结果更新失败!");
+							}
+						})
+
+					}
 				},
+
+				//删除一条记录
+				{
+					xtype : 'button',
+					margin: '0 10 0 35',
+					iconAlign : 'center',
+					iconCls : 'rukuicon ',
+					text : '删 除',
+					width:60,
+					handler: function(){
+						var sm = Ext.getCmp('oneProject_match_grid').getSelectionModel();
+						var rec = sm.getSelection();
+
+						console.log("删除数据-----------：",rec[0].data)
+						console.log("删除：",rec[0].data.id)
+
+						var s = new Array();
+
+						s.push(JSON.stringify(rec[0].data));
+
+
+						console.log("删除数据ss-----------：",s)
+
+						//匹配结果id
+						var matchResultId = rec[0].data.id;//matchResultId
+						var count = rec[0].data.count;
+						var matchId = rec[0].data.matchId;
+						var madeBy = rec[0].data.materialMadeBy;//matchResultId
+
+						if (rec.length != 0) {
+							//删除新增的，还未添加到数据库中的数据.直接移除
+							if(matchResultId == -1){
+								Ext.getCmp('oneProject_match_grid').getStore().remove(rec);
+							}
+							else{
+								Ext.Msg.confirm("提示", "共选中" + rec.length + "条数据，是否确认删除？", function (btn) {
+									if (btn == 'yes') {
+										//先删除后台再删除前台
+										//ajax 删除后台数据 成功则删除前台数据；失败则不删除前台数据
+										//Extjs 4.x 删除
+										// Ext.getCmp('oneProject_match_grid').getStore().remove(Arr);
+										Ext.Ajax.request({
+											url:"designlist/deleteMatchResult.do",  //删除楼栋信息
+											params:{
+												// buildingId:buildingId,
+												// matchResultId:matchResultId,
+												// count:count,
+												// matchId:matchId,
+												// madeBy:madeBy,
+												s: "[" + s + "]",
+											},
+											success:function (response) {
+												console.log('response=====================??',response)
+
+												var res = response.responseText;
+												var jsonobj = JSON.parse(res);//将json字符串转换为对象
+												console.log(jsonobj);
+												console.log("success--------------",jsonobj.success);
+												// console.log("errorList--------------",jsonobj['errorList']);
+												var success = jsonobj.success;
+												// var errorList = jsonobj.errorList;
+												var errorCode = jsonobj.errorCode;
+												// var errorCount = jsonobj.errorNum;
+												if(success == false){
+													if(errorCode == 1000){
+														Ext.MessageBox.alert("提示", "删除失败！ 未知错误，请联系管理员！");
+													}
+
+												}else{
+													//删除成功
+													Ext.MessageBox.alert("提示", "删除成功!");
+													Ext.getCmp('oneProject_match_grid').getStore().remove(rec);
+												}
+											},
+											failure : function(response){
+												Ext.MessageBox.alert("提示", "删除失败!");
+											}
+										})
+
+									} else {
+										return;
+									}
+								});
+							}
+
+						} else {
+							//Ext.Msg.confirm("提示", "无选中数据");
+							Ext.Msg.alert("提示", "无选中数据");
+						}
+
+					}
+				}
 			]
 		});
 
@@ -553,91 +909,116 @@ Ext.define('project.result.matchResult_Edit_panel', {
 			style:"text-align:center;",
 			// store:me.projectMatch_List,//specificMaterialList，store1的数据固定projectMatch_List
 			store:projectMatch_List,
-			title:'匹配信息',
-			tbar:toolbar_5,
-			// dock: 'bottom',
-			// bbar:toolbar4,
+			title:'产品匹配信息',
+			// tbar:toolbar_5,
+			dockedItems:[
+				{
+					xtype : 'toolbar',
+					dock : 'top',
+					items : [toolbar_4]
+				},{
+					xtype : 'toolbar',
+					dock : 'top',
+					items : [toolbar_5]
+				},
+			],
 			columns:[
 				{
 					text: '材料名',
 					dataIndex: 'name',
 					flex :1,
-					editor : {
-						xtype : 'textfield',
-						allowBlank : true
-					}
+
 				},{
 					dataIndex : 'count',
 					text : '数量',
 					flex :1,
-					editor : {
-						xtype : 'textfield',
-						allowBlank : true
-					}
-				},{
-					xtype:'actioncolumn',
-					text : '删除操作',
-					width:100,
-					style:"text-align:center;",
-					items: [
-						//修改按钮
-						// {
-						//     icon: 'extjs/imgs/edit.png',  // Use a URL in the icon config
-						//     tooltip: 'Edit',
-						//     style:"margin-right:20px;",
-						//     handler: function(grid, rowIndex, colIndex) {
-						//         // var records = grid.getSelectionModel();
-						//         // var rec = records.getSelection();
-						//
-						//         var rec = grid.getStore().getAt(rowIndex);
-						//         console.log("当前修改选中：",rec)
-						//         // Ext.getCmp('oneProject_match_grid').getStore().remove(rec);
-						//     }
-						// },
-						//删除按钮
-						{
-							icon: 'extjs/imgs/delete.png',
-							tooltip: 'Delete',
-							style:"margin-right:20px;",
-							handler: function(grid, rowIndex, colIndex) {
-								var rec = grid.getStore().getAt(rowIndex);
-								console.log("删除：",rec.data.id)
-								//楼栋id
-								var buildingId = rec.data.id;
-								//弹框提醒
-								Ext.Msg.show({
-									title: '操作确认',
-									message: '将删除数据，选择“是”否确认？',
-									buttons: Ext.Msg.YESNO,
-									icon: Ext.Msg.QUESTION,
-									fn: function (btn) {
-										if (btn === 'yes') {
-											Ext.Ajax.request({
-												// url:"material/backMaterialstore.do",  //删除楼栋信息
-												params:{
-													buildingId:buildingId,
-												},
-												success:function (response) {
-													Ext.MessageBox.alert("提示", "删除成功!");
-													Ext.getCmp('oneProject_match_grid').getStore().remove(rec);
-												},
-												failure : function(response){
-													Ext.MessageBox.alert("提示", "删除失败!");
-												}
-											})
-										}
-									}
-								});
-								// alert("Terminate " + rec.get('firstname'));
-							}
-						}]
-					// name : '操作',
-					// text : '操作',
-					// renderer:function(value, cellmeta){
-					//     return "<INPUT type='button' value='删除' style='font-size: 6px;height:20px;width:35px;'>";
-					//     // return "<INPUT type='button' value='删 除' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
-					// }
-				}
+				},
+				{
+					dataIndex : 'materialMadeBy',
+					text : '材料类型',
+					flex :1,
+					renderer: function (value) {
+						return material.model.typeName[value].name; // key-value
+					},
+				},
+
+				{
+					dataIndex : 'type',
+					text : 'type',
+					flex :1,
+					hidden:true,
+				},
+				{
+					dataIndex : 'typeName',
+					text : 'typeName',
+					flex :1,
+					hidden:true,
+				},
+				{
+					dataIndex : 'id',
+					text : 'matchResultId',
+					flex :1,
+					hidden:true,
+				},
+				{
+					dataIndex : 'storeId',
+					text : 'storeId',
+					flex :1,
+					hidden:true,
+				},
+
+				// {
+				// 	xtype:'actioncolumn',
+				// 	text : '删除操作',
+				// 	width:100,
+				// 	style:"text-align:center;",
+				// 	items: [
+				// 		//删除按钮
+				// 		{
+				// 			icon: 'extjs/imgs/delete.png',
+				// 			tooltip: 'Delete',
+				// 			style:"margin-right:20px;",
+				// 			handler: function(grid, rowIndex, colIndex) {
+				// 				var rec = grid.getStore().getAt(rowIndex);
+				//
+				// 				console.log("删除数据-----------：",rec.data)
+				// 				console.log("删除：",rec.data.id)
+				// 				//匹配结果id
+				// 				var matchResultId = rec.data.id;//matchResultId
+				// 				var count = rec.data.count;
+				// 				var matchId = rec.data.matchId;
+				// 				var madeBy = rec.data.materialMadeBy;//matchResultId
+				// 				//弹框提醒
+				// 				Ext.Msg.show({
+				// 					title: '操作确认',
+				// 					message: '将删除数据，选择“是”否确认？',
+				// 					buttons: Ext.Msg.YESNO,
+				// 					icon: Ext.Msg.QUESTION,
+				// 					fn: function (btn) {
+				// 						if (btn === 'yes') {
+				// 							Ext.Ajax.request({
+				// 								url:"designlist/deleteMatchResult.do",  //删除楼栋信息
+				// 								params:{
+				// 									// buildingId:buildingId,
+				// 									matchResultId:matchResultId,
+				// 									count:count,
+				// 									matchId:matchId,
+				// 									madeBy:madeBy,
+				// 								},
+				// 								success:function (response) {
+				// 									Ext.MessageBox.alert("提示", "删除成功!");
+				// 									Ext.getCmp('oneProject_match_grid').getStore().remove(rec);
+				// 								},
+				// 								failure : function(response){
+				// 									Ext.MessageBox.alert("提示", "删除失败!");
+				// 								}
+				// 							})
+				// 						}
+				// 					}
+				// 				});
+				// 			}
+				// 		}]
+				// }
 			],
 			flex:1,
 			//selType:'checkboxmodel',
@@ -730,12 +1111,12 @@ Ext.define('project.result.matchResult_Edit_panel', {
 		this.items = [ oneProject_match_grid ];
 		this.callParent(arguments);
 
-		console.log("designlistId-------",me.designlistId)
+		// Ext.getCmp('toolbar_4').items.items[0].setValue(productName_show);
 
-		//获取负页面的值
-		Ext.getCmp('departmentId').setValue(me.departmentId);//id
-
-
+		Ext.getCmp('productName_show').setValue(productName_show);
+		Ext.getCmp('positionName_show').setValue(positionName_show);
+		Ext.getCmp('project_show').setValue(projectName_show);
+		Ext.getCmp('building_show').setValue(buildingName_show);
 
 
 		// Ext.Ajax.request({

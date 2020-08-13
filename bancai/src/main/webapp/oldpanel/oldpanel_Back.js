@@ -46,8 +46,8 @@ Ext.define('oldpanel.oldpanel_Back', {
         var storePosition = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '仓库名',
             labelWidth : 50,
-            width : 200,
-            margin: '0 10 0 20',
+            width : 210,
+            margin: '0 40 0 0',
             id :  'storePosition',
             name : 'storePosition',
             matchFieldWidth: false,
@@ -111,7 +111,8 @@ Ext.define('oldpanel.oldpanel_Back', {
         var projectNameList = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '项目名',
             labelWidth : 60,
-            width : '35%',
+            margin: '0 40 0 0',
+            width : 550,
             id :  'projectName',
             name : 'projectName',
             matchFieldWidth: true,
@@ -199,28 +200,6 @@ Ext.define('oldpanel.oldpanel_Back', {
             editable : false,
             autoLoad: true,
             //store: tableListStore2,
-            listeners: {
-                load:function () {
-
-
-                    // // projectName:Ext.getCmp('projectName').getValue();
-                    // // buildingName:Ext.getCmp('buildingName').getValue();
-                    // Ext.Ajax.request({
-                    // 	url:'project/getSelectedBuildingName.do',
-                    // 	params:{
-                    // 		//projectName:Ext.getCmp('projectName').getValue(),
-                    // 		buildingName:Ext.getCmp('buildingName').getValue(),
-                    // 	},
-                    // 	success:function (response,config) {
-                    // 		//alert("combox1把数据传到后台成功");
-                    // 	},
-                    // 	failure:function (form, action) {
-                    // 		//alert("combox1把数据传到后台成功");
-                    // 	}
-                    // })
-
-                }
-            }
         });
 
         var classificationListStore = Ext.create('Ext.data.Store',{
@@ -259,14 +238,15 @@ Ext.define('oldpanel.oldpanel_Back', {
         var toolbar1 = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
             items: [
-                projectNameList,buildingName,
+                projectNameList,
+                buildingName,
             ]
         });
         var toolbar2 = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
             items: [
                 {xtype: 'textfield', fieldLabel: '旧板品名', id: 'oldpanelName', width: 300, labelWidth: 60,
-                    //margin: '0 10 0 40',
+                    margin: '0 40 0 0',
                     name: 'oldpanelNo', value: ""},
                 //{xtype: 'textfield', fieldLabel: '重量', id: 'weight', width: 190, labelWidth: 30, margin: '0 10 0 50', name: 'weight', value: ""},
                 //{xtype: 'textfield', fieldLabel: '仓库名称', id: 'warehouseNo', width: 220, labelWidth: 60, margin: '0 10 0 50', name: 'warehouseNo', value: ""},
@@ -284,10 +264,10 @@ Ext.define('oldpanel.oldpanel_Back', {
                 // },
                 // speificLocation_row,
                 // speificLocation_col,
-                {xtype: 'textfield', fieldLabel: '入库数量', id: 'count', width: 190, labelWidth: 30,  name: 'count', value: ""},
+                {xtype: 'textfield', fieldLabel: '入库数量', id: 'count', width: 190, labelWidth: 65, margin: '0 40 0 0',  name: 'count', value: ""},
 
                 {xtype : 'button',
-                    margin: '0 10 0 70',
+                    margin: '0 40 0 0',
                     iconAlign : 'center',
                     iconCls : 'rukuicon ',
                     text : '添加',

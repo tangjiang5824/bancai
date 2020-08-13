@@ -174,10 +174,10 @@ public class DesignlistService extends BaseService{
         boolean b = true;
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonTemp = jsonArray.getJSONObject(i);
-            String matchResultId = jsonTemp.get("matchResultId").toString();
+            String matchResultId = jsonTemp.get("id").toString();
             double count = Double.parseDouble(jsonTemp.get("count").toString());
             int storeId = Integer.parseInt(jsonTemp.get("matchId").toString());
-            int type = Integer.parseInt(jsonTemp.get("madeBy").toString());
+            int type = Integer.parseInt(jsonTemp.get("materialMadeBy").toString());
             designlistDeleteById("match_result", matchResultId);
             b=b&designlistMatchResultBackStore(type, storeId, count);
         }
@@ -222,7 +222,7 @@ public class DesignlistService extends BaseService{
         DataList errorList = new DataList();
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonTemp = jsonArray.getJSONObject(i);
-            String matchResultId = jsonTemp.get("matchResultId").toString();
+            String matchResultId = jsonTemp.get("id").toString();
             if(!matchResultId.equals("-1"))
                 continue;
             String count = jsonTemp.get("count")+"";

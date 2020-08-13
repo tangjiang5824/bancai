@@ -517,11 +517,11 @@ Ext.define("menu.MenuRole_bc0", {
 						id : 'product.product_Format_Input',
 						leaf : true
 					},
-					{
-						text: 'scscscscscscscsc',
-						id :'product.product_Basic_Info_Input_2',
-						leaf : true
-					}
+					// {
+					// 	text: 'scscscscscscscsc',
+					// 	id :'product.product_Basic_Info_Input_2',
+					// 	leaf : true
+					// }
 					]
 				},{
 					//

@@ -692,6 +692,11 @@ Ext.define('project.result.designlist_match_result',{
                     //选择的产品id
                     var designlistId = record.get('designlistId');
 
+                    var projectName_show = record.get('projectName');
+                    var buildingName_show = record.get('buildingName');
+                    var positionName_show = record.get('positionName');
+                    var productName_show = record.get('productName');
+
                     console.log('11111',designlistId)
                     if(select.length==0)
                         Ext.Msg.alert('错误', '请选择要修改的数据');
@@ -706,7 +711,11 @@ Ext.define('project.result.designlist_match_result',{
                         // edit.show();
                         var edit_panel = Ext.create('project.result.matchResult_Edit_panel',{
                                 //页面传参数
-                                designlistId:designlistId,
+                            designlistId:designlistId,
+                            productName_show:productName_show,
+                            positionName_show:positionName_show,
+                            projectName_show:projectName_show,
+                            buildingName_show:buildingName_show,
                                 // projectMatch_List:projectMatch_List,
                         });
 
