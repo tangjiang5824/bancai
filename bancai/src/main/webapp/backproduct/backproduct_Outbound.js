@@ -34,26 +34,44 @@ Ext.define('backproduct.backproduct_Outbound',{
         });
         //枚举
         //操作类型：枚举类型
-        Ext.define('oldpanel.oepration.state', {
+        Ext.define('backproduct.oepration.state', {
             statics: { // 关键
-                0: { value: '0', name: '未回滚' },
-                null: { value: '0', name: '未回滚' },
-                1: { value: '1', name: '已回滚' },
+                0: { value: '0', name: '未撤销' },
+                null: { value: '0', name: '未撤销' },
+                1: { value: '1', name: '已撤销' },
             }
         });
 
+        //职员信息
+        var workerListStore = Ext.create('Ext.data.Store',{
+            fields : [ 'typeName'],
+            proxy : {
+                type : 'ajax',
+                url : '/material/findAllBytableName.do?tableName=department_worker',
+                reader : {
+                    type : 'json',
+                    rootProperty: 'department_worker',
+                },
+            },
+            autoLoad : true
+        });
         var toolbar = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
             items: [
                 {
-                    xtype: 'textfield',
-                    margin : '0 40 0 0',
-                    fieldLabel: '入库人',
-                    id :'operator',
+                    fieldLabel : '入库人',
+                    xtype : 'combo',
+                    name : 'operator',
+                    id : 'operator',
+                    // disabled : true,
+                    // width:'95%',
+                    margin: '0 40 0 0',
                     width: 150,
-                    labelWidth: 50,
-                    name: 'operator',
-                    value:"",
+                    labelWidth: 45,
+                    store : workerListStore,
+                    displayField : 'workerName',
+                    valueField : 'id',
+                    editable : true,
                 },
                 {
                     xtype : 'datefield',
@@ -86,7 +104,7 @@ Ext.define('backproduct.backproduct_Outbound',{
                     margin: '0 0 0 40',
                     layout: 'right',
                     handler: function(){
-                        oldpanel_inBoundRecords_Store.load({
+                        backproduct_inBoundRecords_Store.load({
                             params : {
                                 // operator : Ext.getCmp('operator').getValue(),
                                 operator : Ext.getCmp('operator').getValue(),//获取操作员名
@@ -101,13 +119,13 @@ Ext.define('backproduct.backproduct_Outbound',{
             ]
         });
 
-        var oldpanel_inBoundRecords_Store = Ext.create('Ext.data.Store',{
-            id: 'oldpanel_inBoundRecords_Store',
+        var backproduct_inBoundRecords_Store = Ext.create('Ext.data.Store',{
+            id: 'backproduct_inBoundRecords_Store',
             autoLoad: true,
             fields: [],
             pageSize: itemsPerPage, // items per page
             proxy:{
-                url : "oldpanel/outbound_query_records.do",
+                url : "material/material_query_records.do?tableName=backproduct_log_view",
                 type: 'ajax',
                 reader:{
                     type : 'json',
@@ -170,62 +188,69 @@ Ext.define('backproduct.backproduct_Outbound',{
                     hidden:true
                 },
                 {
-                    xtype: 'textfield',
+                    xtype: 'combo',
                     margin : '0 40 0 0',
-                    fieldLabel: '回滚人',
+                    fieldLabel: '撤销人',
                     id :'operator_back',
+                    store : workerListStore,
+                    displayField : 'workerName',
+                    valueField : 'id',
                     width: 150,
                     labelWidth: 50,
                     name: 'operator_back',
                     value:"",
                 },
-                {
-                    xtype : 'datefield',
-                    margin : '0 40 0 0',
-                    fieldLabel : '回滚时间',
-                    width : 180,
-                    labelWidth : 60,
-                    id : "backTime",
-                    name : 'backTime',
-                    format : 'Y-m-d',
-                    editable : false,
-                    //value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
-                },
+                // {
+                //     xtype : 'datefield',
+                //     margin : '0 40 0 0',
+                //     fieldLabel : '回滚时间',
+                //     width : 180,
+                //     labelWidth : 60,
+                //     id : "backTime",
+                //     name : 'backTime',
+                //     format : 'Y-m-d',
+                //     editable : false,
+                //     //value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
+                // },
 
                 {
                     xtype : 'button',
-                    text: '回滚所有记录',
+                    text: '撤销所有记录',
                     width: 100,
                     margin: '0 0 0 40',
                     layout: 'right',
                     handler: function(){
-                        var oldpanel_logId = Ext.getCmp("log_id").text;
+                        var backproduct_logId = Ext.getCmp("log_id").text;
                         var is_rollback = Ext.getCmp("is_rollback").text;
                         var operator = Ext.getCmp("operator_back").getValue();
                         if (is_rollback != 1){
                             Ext.Msg.show({
                                 title: '操作确认',
-                                message: '将回滚数据，选择“是”否确认？',
+                                message: '将撤销数据，选择“是”否确认？',
                                 buttons: Ext.Msg.YESNO,
                                 icon: Ext.Msg.QUESTION,
                                 fn: function (btn) {
                                     if (btn === 'yes') {
                                         Ext.Ajax.request({
-                                            url:"oldpanel/backOldpanelStore.do",  //入库记录撤销
+                                            url:"backproduct/addDataRollback.do",  //入库记录撤销
                                             params:{
                                                 operator:operator,  //回滚操作人
-                                                oldpanellogId:oldpanel_logId,
+                                                backproductlogId:backproduct_logId,
                                                 type:0  //撤销出库1
                                             },
                                             success:function (response) {
                                                 //console.log(response.responseText);
-                                                Ext.MessageBox.alert("提示", "回滚成功!");
+                                                var ob=JSON.parse(response.responseText);
+                                                if(ob.success==false)
+                                                    Ext.MessageBox.alert("提示", ob.msg);
+                                                else
+                                                    Ext.MessageBox.alert("提示", "撤销成功!");
                                                 //location="javascript:location.reload()";
-                                                oldpanel_inBoundRecords_Store.load();
+                                                backproduct_inBoundRecords_Store.load();
                                                 //oldpanel_Query_Records_specific_data_grid.close();
                                             },
                                             failure : function(response){
-                                                Ext.MessageBox.alert("提示", "回滚失败!");
+                                                Ext.MessageBox.alert("提示", "撤销失败!");
                                             }
                                         })
                                     }
@@ -234,7 +259,7 @@ Ext.define('backproduct.backproduct_Outbound',{
 
                         }
                         else{
-                            Ext.Msg.alert('错误', '该条记录已回滚！')
+                            Ext.Msg.alert('错误', '该条记录已撤销！')
                         }
                     }
                 }
@@ -243,14 +268,14 @@ Ext.define('backproduct.backproduct_Outbound',{
         });
 
         //弹出框，出入库详细记录
-        var oldpanel_Query_Records_specific_data_grid=Ext.create('Ext.grid.Panel',{
-            id : 'oldpanel_Query_Records_specific_data_grid',
+        var backproduct_Query_Records_specific_data_grid=Ext.create('Ext.grid.Panel',{
+            id : 'backproduct_Query_Records_specific_data_grid',
             tbar: toolbar_pop,
             dock: 'bottom',
             columns:[
                 {
-                    text: '旧板品名',
-                    dataIndex: 'oldpanelName',
+                    text: '产品名',
+                    dataIndex: 'productName',
                     flex :1,
                     width:"80"
                 },
@@ -261,8 +286,6 @@ Ext.define('backproduct.backproduct_Outbound',{
                     flex :1,
                     dataIndex: 'count'
                 }
-                //fields:['oldpanelId','oldpanelName','count'],specification
-
             ],
             flex:1,
             //selType:'checkboxmodel',
@@ -278,16 +301,16 @@ Ext.define('backproduct.backproduct_Outbound',{
             // }
         });
 
-        var oldpanel_Query_Records_win_showoldpanelData = Ext.create('Ext.window.Window', {
-            id:'oldpanel_Query_Records_win_showoldpanelData',
-            title: '原材料出入库记录回滚',
+        var backproduct_Query_Records_win_showbackproductData = Ext.create('Ext.window.Window', {
+            id:'backproduct_Query_Records_win_showbackproductData',
+            title: '退库成品出入库记录撤销',
             height: 500,
             width: 650,
             layout: 'fit',
             closable : true,
             draggable:true,
             closeAction : 'close',
-            items:oldpanel_Query_Records_specific_data_grid,
+            items:backproduct_Query_Records_specific_data_grid,
         });
 
         var grid = Ext.create("Ext.grid.Panel", {
@@ -297,10 +320,10 @@ Ext.define('backproduct.backproduct_Outbound',{
             //     fields :['projectId','类型','长1','宽1','数量','成本','行','列','库存单位','仓库编号','规格','原材料名称']
             // },
             // tbar:toolbar,
-            store: oldpanel_inBoundRecords_Store,
+            store: backproduct_inBoundRecords_Store,
             title: "入库详细记录",
             columns : [
-                {   text: '录入人员',  dataIndex: 'operator' ,flex :1},
+                {   text: '录入人员',  dataIndex: 'workerName' ,flex :1},
                 {   text: '入库/出库',
                     dataIndex: 'type' ,
                     flex :1,
@@ -329,7 +352,7 @@ Ext.define('backproduct.backproduct_Outbound',{
                     flex :1 ,
                     //defaultValue:0,
                     renderer: function (value) {
-                        return oldpanel.oepration.state[value].name; // key-value
+                        return backproduct.oepration.state[value].name; // key-value
                     },
                 },
             ],
@@ -343,7 +366,7 @@ Ext.define('backproduct.backproduct_Outbound',{
 
             dockedItems:[{
                 xtype: 'pagingtoolbar',
-                store: oldpanel_inBoundRecords_Store,   // same store GridPanel is using
+                store: backproduct_inBoundRecords_Store,   // same store GridPanel is using
                 dock: 'bottom',
                 displayInfo: true,
                 displayMsg:'显示{0}-{1}条，共{2}条',
@@ -377,25 +400,25 @@ Ext.define('backproduct.backproduct_Outbound',{
 
             if (fieldName == "操作") {
 
-                var oldpanellogdetailList = Ext.create('Ext.data.Store', {
-                    fields: ['oldpanelName', //'length', 'width','materialType',
+                var backproductlogdetailList = Ext.create('Ext.data.Store', {
+                    fields: ['productName', //'length', 'width','materialType',
                          'count'],
                     proxy: {
                         type: 'ajax',
-                        url: 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName=oldpanel_logdetail_oldpanelName&columnName=oldpanellogId&columnValue=' + id,//获取同一批出入库的原材料
+                        url: 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName=backproduct_logdetail_productName&columnName=backproductlogId&columnValue=' + id,//获取同一批出入库的原材料
                         reader: {
                             type: 'json',
-                            rootProperty: 'oldpanel_logdetail_oldpanelName',
+                            rootProperty: 'backproduct_logdetail_productName',
                         },
                     },
                     autoLoad: true
                 });
-                var col = oldpanel_Query_Records_specific_data_grid.columns[1];
+                var col = backproduct_Query_Records_specific_data_grid.columns[1];
 
                 Ext.getCmp("toolbar_pop").items.items[0].setText(id); //设置log id的值
                 Ext.getCmp("toolbar_pop").items.items[1].setText(isrollback);
-                oldpanel_Query_Records_specific_data_grid.setStore(oldpanellogdetailList);
-                Ext.getCmp('oldpanel_Query_Records_win_showoldpanelData').show();
+                backproduct_Query_Records_specific_data_grid.setStore(backproductlogdetailList);
+                Ext.getCmp('backproduct_Query_Records_win_showbackproductData').show();
 
 
             }
