@@ -17,44 +17,45 @@ Ext.define("menu.MenuRole_bc0", {
 				expanded : true,
 				children : [
 					{
-					text : '旧板入库',
+					text : '入库',
 					id : 'oldpanel.oldpanel_Inbound',
 					leaf : true
 				} ,{
-					text : '旧板批量入库',
+					text : '批量入库',
 					id : 'oldpanel.old_Upload_Data',
 					leaf : true
 				} ,
 					{
-					text : '旧板出库',
+					text : '特殊出库',
 					id : 'oldpanel.oldpanel_Outbound',
 					leaf : true
 				},
 					{
-					text : '旧板库存查询',
+					text : '库存查询',
 					id : 'oldpanel.Old_Query_Data',
 					leaf : true
-				}, {
-					text : '旧板退库',
-					id : 'oldpanel.oldpanel_Back',
-					leaf : true
 				},
+				// 	{
+				// 	text : '旧板退库',
+				// 	id : 'oldpanel.oldpanel_Back',
+				// 	leaf : true
+				// },
 				{
-					text : '旧板领料',
+					text : '领料',
 					id : 'oldpanel.oldpanel_Receive',
 					leaf : true
 				},
 				{
-					text : '旧板退料审核',
+					text : '退料',
 					id : 'oldpanel.oldpanel_backcheck',
 					leaf : true
 				},
 				{
-					text : '旧板出入库记录查询',
+					text : '出入库记录查询',
 					id : 'oldpanel.oldpanel_Query_Records',//'oldpanel.oldpanel_Query_Records',
 					leaf : true
 				}, {
-					text : '旧板出入库记录统计',
+					text : '出入库记录统计',
 					id : 'oldpanel.oldpanel_Statistics_Records',
 					leaf : true
 				}]
@@ -63,95 +64,100 @@ Ext.define("menu.MenuRole_bc0", {
 				expanded : true,
 				children : [
 					{
-					text : '原材料入库',
+					text : '入库',
 					id : 'material.material_Inbound',
 					leaf : true
 				} ,
+
 					{
-					text : '原材料出库',
-					id : 'material.material_Outbound',
-					leaf : true
-				},
-					{
-					text : '原材料批量入库',
+					text : '批量入库',
 					id : 'material.material_Upload_Data',
 					leaf : true
 				}, {
-					text : '原材料数据查询',
+						text : '特殊出库',
+						id : 'material.material_Outbound',
+						leaf : true
+					},
+					{
+					text : '库存查询',
 					id : 'material.material_Query_Data',
 					leaf : true
-				}, {
-					text : '原材料退库',
-					id : 'material.material_Back',
-					leaf : true
-				}, {
-						text : '原材料领料',
+				},
+				// 	{
+				// 	text : '原材料退库',
+				// 	id : 'material.material_Back',
+				// 	leaf : true
+				// },
+					{
+						text : '领料',
 						id : 'material.material_Receive',
 						leaf : true
 					},
 					{
-						text : '原材料退料审核',
+						text : '退料',
 						id : 'material.material_backcheck',
 						leaf : true
 					},
 					{
-					text : '原材料出入库记录查询',
+					text : '出入库记录查询',
 					id : 'material.material_Query_Records',//'material.material_Query_Records',
 					leaf : true
 				}, {
-					text : '原材料出入库记录统计',
+					text : '出入库记录统计',
 					id : 'material.material_Statistics_Records',
 					leaf : true
 				}, {
-					text : '原材料预警',
+					text : '库存预警',
 					id : 'material.material_Warning',
 					leaf : true
 				}, {
-					text : '原材料报警',
+					text : '库存报警',
 					id : 'material.material_Alarm',
 					leaf : true
 				}]
 			}, {
 				text : '预加工仓库管理',
 				expanded : true,
-				children : [ {
-					text : '半成品预加工',
-					id : '',
-					leaf : true
-				}, {
-					text : '预加工半成品入库',
+				children : [
+				// 	{
+				// 	text : '半成品预加工',
+				// 	id : '',
+				// 	leaf : true
+				// },
+					{
+					text : '入库',
 					id : 'preprocess.preprocess_Inbound',
 					leaf : true
 				} ,{
-					text : '预加工半成品批量入库',
+					text : '批量入库',
 					id : 'preprocess.preprocess_Upload_Data',
 					leaf : true
 				} ,{
-					text : '预加工半成品库存查询',
+					text : '库存查询',
 					id : 'preprocess.preprocess_Query_Data',
 					leaf : true
 				},
 					{
-						text : '预加工半成品领料',
+						text : '领料',
 						id : 'preprocess.preprocess_Receive',
 						leaf : true
 					},
 					{
-						text : '预加工半成品退料审核',
+						text : '退料',
 						id : 'preprocess.preprocess_backcheck',
 						leaf : true
 					},
 					{
-						text : '预加工半成品入库撤销',
+						text : '入库撤销',
 						id : 'preprocess.preprocess_Outbound',
 						leaf : true
 					},
 					{
-						text : '预加工半成品出入库记录查询',
+						text : '出入库记录查询',
 						id : 'preprocess.preprocess_Query_Records',
 						leaf : true
 				}, {
-					text : '预加工半成品出入库记录统计',
+					text : '出入库记录统计',
 					id : '',
 					leaf : true
 				}]
@@ -159,35 +165,35 @@ Ext.define("menu.MenuRole_bc0", {
 				text : '退库成品仓库管理',
 				expanded : true,
 				children : [  {
-					text : '退库成品入库',
+					text : '入库',
 					id : 'backproduct.backproduct_Inbound',
 					leaf : true
 				} ,{
-					text : '退库成品库存查询',
+					text : '库存查询',
 					id : 'backproduct.backproduct_Query_Data',
 					leaf : true
 				},
 					{
-						text : '退库成品领料',
+						text : '领料',
 						id : 'backproduct.backproduct_Receive',
 						leaf : true
 					},
 					{
-						text : '退库成品退料审核',
+						text : '退料',
 						id : 'backproduct.backproduct_backcheck',
 						leaf : true
 					},
 					{
-					text : '退库成品入库撤销',
+					text : '入库撤销',
 					id : 'backproduct.backproduct_Outbound',
 					leaf : true
 				},
 					{
-					text : '退库成品出入库记录查询',
+					text : '出入库记录查询',
 					id : 'backproduct.backproduct_Query_Records',
 					leaf : true
 				}, {
-					text : '退库成品出入库记录统计',
+					text : '出入库记录统计',
 					id : 'backproduct.backproduct_Statistics_Records',
 					leaf : true
 				}]
@@ -206,7 +212,7 @@ Ext.define("menu.MenuRole_bc0", {
 				// 	leaf : true
 				// } ,
 					{
-					text : '产品成品库存查询',
+					text : '库存查询',
 					id : 'product.product_Query_Data',
 					leaf : true
 				},
@@ -216,11 +222,11 @@ Ext.define("menu.MenuRole_bc0", {
 				// 	leaf : true
 				// },
 					{
-					text : '产品成品出入库记录查询',
+					text : '出入库记录查询',
 					id : 'product.product_Query_Records',
 					leaf : true
 				}, {
-					text : '产品成品出入库记录统计',
+					text : '出入库记录统计',
 					id : 'product.product_Statistics_Records',
 					leaf : true
 				}]
@@ -231,16 +237,16 @@ Ext.define("menu.MenuRole_bc0", {
 			expanded : true,
 			children : [
 				{
-					text : '废料入库',
+					text : '入库',
 					id : 'unuseMaterial.unuseMaterial_Inbound',
 					leaf : true
 				},
 				{
-					text : '废料库存查询',
+					text : '库存查询',
 					id : 'unuseMaterial.unuseMaterial_Query_Data',
 					leaf : true
 				} ,{
-					text : '废料记录查询',
+					text : '出入库记录查询',
 					id : 'unuseMaterial.unuseMaterial_Query_Records',
 					leaf : true
 				} ,{

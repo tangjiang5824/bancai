@@ -165,7 +165,7 @@ Ext.define('project.project_query_worksheet',{
                     text : '操作',
                     flex :1 ,
                     renderer:function(value, cellmeta){
-                        return "<INPUT type='button' value='查询明细' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
+                        return "<INPUT type='button' value='工单详情' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
                     }
                 },
 
@@ -215,7 +215,7 @@ Ext.define('project.project_query_worksheet',{
                     Ext.getCmp("toolbar_pop").items.items[0].setText(workorderlogId);//修改id为win_num的值，动态显示在窗口中
                     // //传rowNum响应的行号:index+1
                     // Ext.getCmp("toolbar5").items.items[2].setText(index+1)
-                    specific_workorder_outbound.setStore(specific_worksheet_List);
+                    specific_workorder_outbound_query.setStore(specific_worksheet_List);
                     win_showworkorder_outbound.show();
                 }
 
@@ -223,18 +223,18 @@ Ext.define('project.project_query_worksheet',{
 
         });
 
-        var toolbar_pop1 = Ext.create('Ext.toolbar.Toolbar', {
+        var toolbar_pop_query = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
-            id:'toolbar_pop1',
+            id:'toolbar_pop_query',
             items: [
                 {
                     xtype: 'textfield',
                     margin : '0 40 0 0',
                     fieldLabel: '工单号',
-                    id :'worksheet_Id',
+                    id :'worksheet_Id_query',
                     width: 250,
                     labelWidth: 50,
-                    name: 'worksheet_Id',
+                    name: 'worksheet_Id_query',
                     value:"",
                     editable : false,//不可修改
                     disabled : true,//隐藏显示
@@ -243,10 +243,10 @@ Ext.define('project.project_query_worksheet',{
                     xtype: 'textfield',
                     margin : '0 40 0 0',
                     fieldLabel: '所属项目',
-                    id :'projectName_Id',
+                    id :'projectName_Id_query',
                     width : 380,
                     labelWidth : 60,
-                    name: 'projectName_Id',
+                    name: 'projectName_Id_query',
                     value:"",
                     editable : false,//不可修改
                     disabled : true,//隐藏显示
@@ -255,8 +255,8 @@ Ext.define('project.project_query_worksheet',{
         });
 
         //弹出框，出入库详细记录
-        var specific_workorder_outbound=Ext.create('Ext.grid.Panel',{
-            id : 'specific_workorder_outbound',
+        var specific_workorder_outbound_query=Ext.create('Ext.grid.Panel',{
+            id : 'specific_workorder_outbound_query',
             // store:material_Query_Records_store1,//oldpanellogdetailList，store1的数据固定
             dock: 'bottom',
             columns:[
@@ -309,8 +309,8 @@ Ext.define('project.project_query_worksheet',{
             closable : true,
             draggable:true,
             closeAction : 'hidden',
-            tbar:toolbar_pop1,
-            items:specific_workorder_outbound,
+            tbar:toolbar_pop_query,
+            items:specific_workorder_outbound_query,
         });
 
 
@@ -348,15 +348,15 @@ Ext.define('project.project_query_worksheet',{
                     },
                     autoLoad : true
                 });
-                Ext.getCmp("toolbar_pop1").items.items[0].setValue(worksheetNum);//修改id为win_num的值，动态显示在窗口中
-                Ext.getCmp("toolbar_pop1").items.items[1].setValue(projectName);//修改id为win_num的值，动态显示在窗口中
+                Ext.getCmp("toolbar_pop_query").items.items[0].setValue(worksheetNum);//修改id为win_num的值，动态显示在窗口中
+                Ext.getCmp("toolbar_pop_query").items.items[1].setValue(projectName);//修改id为win_num的值，动态显示在窗口中
 
-                Ext.getCmp("toolbar_pop").items.items[0].setText(workorderlogId);//修改id为win_num的值，动态显示在窗口中
-                Ext.getCmp("toolbar_pop").items.items[1].setText(isActive);//修改id为win_num的值，动态显示在窗口中
+                // Ext.getCmp("toolbar_pop").items.items[0].setText(workorderlogId);//修改id为win_num的值，动态显示在窗口中
+                // Ext.getCmp("toolbar_pop").items.items[1].setText(isActive);//修改id为win_num的值，动态显示在窗口中
 
                 // //传rowNum响应的行号:index+1
                 // Ext.getCmp("toolbar5").items.items[2].setText(index+1)
-                specific_workorder_outbound.setStore(specific_worksheet_List);
+                specific_workorder_outbound_query.setStore(specific_worksheet_List);
                 win_showworkorder_outbound.show();
             }
         }

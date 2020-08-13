@@ -795,7 +795,6 @@ Ext.define('project.result.matchResult_Edit_panel', {
 									}
 
 								}else{
-									//删除成功
 									Ext.MessageBox.alert("提示", "匹配结果更新成功!");
 									Ext.getCmp('oneProject_match_grid').getStore().load();
 								}

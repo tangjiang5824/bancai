@@ -17,6 +17,7 @@ Ext.define('backproduct.backproduct_Inbound', {
 
     initComponent : function() {
         var me = this;
+        var itemsPerPage = 50;
         //var materialtype="1";
         var record_start = 0;
         var projectId = "-1";
@@ -45,16 +46,16 @@ Ext.define('backproduct.backproduct_Inbound', {
         });
 
         var storePosition = Ext.create('Ext.form.ComboBox',{
-            fieldLabel : '仓库名',
+            // fieldLabel : '仓库名',
             labelWidth : 50,
             width : 200,
-            margin: '0 10 0 20',
+            // margin: '0 10 0 20',
             id :  'storePosition',
             name : 'storePosition',
             matchFieldWidth: true,
-            emptyText : "--请选择--",
+            // emptyText : "--请选择--",
             displayField: 'warehouseName',
-            valueField: 'id',
+            valueField: 'warehouseName',
             editable : false,
             store: storeNameList,
         });
@@ -130,78 +131,59 @@ Ext.define('backproduct.backproduct_Inbound', {
         var toolbar2 = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
             items: [
-                {xtype: 'textfield', fieldLabel: '产品品名', id: 'productName', width: 300, labelWidth: 60,
-                    //margin: '0 10 0 40',
-                    name: 'productName', value: ""},
-                //{xtype: 'textfield', fieldLabel: '重量', id: 'weight', width: 190, labelWidth: 30, margin: '0 10 0 50', name: 'weight', value: ""},
-                //{xtype: 'textfield', fieldLabel: '仓库名称', id: 'warehouseNo', width: 220, labelWidth: 60, margin: '0 10 0 50', name: 'warehouseNo', value: ""},
-                //{xtype: 'textfield', fieldLabel: '存放位置', id: 'position', width: 220, labelWidth: 60, margin: '0 10 0 50', name: 'position', value: ""},
-                storePosition,
-                // {
-                //     xtype:'tbtext',
-                //     text:'存放位置:',
-                //     margin: '0 0 0 20',
-                //     //id: 'number',
-                //     width: 60,
-                //     //labelWidth: 30,
-                //     //name: 'number',
-                //     //value: "",
-                // },
-                // speificLocation_row,
-                // speificLocation_col,
-                {xtype: 'textfield', fieldLabel: '入库数量', id: 'count', margin: '0 10 0 30', width: 190, labelWidth: 60,  name: 'count', value: ""},
+                {
+                    xtype:'tbtext',
+                    text:'<strong>单条录入:</strong>',
+                    margin: '0 40 0 0',
+                },
+                // {xtype: 'textfield', fieldLabel: '产品品名', id: 'productName', width: 300, labelWidth: 60,
+                //     //margin: '0 10 0 40',
+                //     name: 'productName', value: ""},
+                // //{xtype: 'textfield', fieldLabel: '重量', id: 'weight', width: 190, labelWidth: 30, margin: '0 10 0 50', name: 'weight', value: ""},
+                // //{xtype: 'textfield', fieldLabel: '仓库名称', id: 'warehouseNo', width: 220, labelWidth: 60, margin: '0 10 0 50', name: 'warehouseNo', value: ""},
+                // //{xtype: 'textfield', fieldLabel: '存放位置', id: 'position', width: 220, labelWidth: 60, margin: '0 10 0 50', name: 'position', value: ""},
+                // storePosition,
+                // {xtype: 'textfield', fieldLabel: '入库数量', id: 'count', margin: '0 10 0 30', width: 190, labelWidth: 60,  name: 'count', value: ""},
 
                 {   xtype : 'button',
-                    margin: '0 10 0 30',
+                    margin: '0 40 0 0',
                     iconAlign : 'center',
                     iconCls : 'rukuicon ',
-                    text : '添加',
+                    text : '添加记录',
                     handler: function(){
-                        //var classificationName = Ext.getCmp('classification').getValue();
-                        var productName = Ext.getCmp('productName').getValue();
-                        //var inventoryUnit = Ext.getCmp('inventoryUnit').getValue();
-                        var count = Ext.getCmp('count').getValue();
-                        //var unitWeight = Ext.getCmp('unitWeight').getValue();
-                        //var unitArea = Ext.getCmp('unitArea').getValue();
-                        //var remark = Ext.getCmp('remark').getValue();
-                        var warehouseName = Ext.getCmp('storePosition').rawValue;
+                        // var productName = Ext.getCmp('productName').getValue();
+                        // var count = Ext.getCmp('count').getValue();
+                        // var warehouseName = Ext.getCmp('storePosition').rawValue;
                         var data = [{
-                            'productName' : productName,
-                            //'classificationName':classificationName,
-                            //'inventoryUnit' : inventoryUnit,
-                            //'unitArea' : unitArea,
-                            //'unitWeight' : unitWeight,
-                            'warehouseName':warehouseName,
-                            //'remark' : remark,
-                            'count' : count,
+                            'productName' : '',
+                            'warehouseName':'',
+                            'remark' : '',
+                            'count' : '',
                         }];
+
+                        Ext.getCmp('back_addDataGrid').getStore().loadData(data, true);
                         //点击查询获得输入的数据
                         // console.log(Ext.getCmp('length').getValue());
                         // console.log(Ext.getCmp('cost').getValue());
                         //若品名未填则添加失败
-                        if (productName != ''&&count!= '') {
-                            Ext.getCmp('back_addDataGrid').getStore().loadData(data, true);
-                            //清除框里的数据
-                            Ext.getCmp('productName').setValue('');
-                            //Ext.getCmp('classification').setValue('');
-                            //Ext.getCmp('inventoryUnit').setValue('');
-                            //Ext.getCmp('unitWeight').setValue('');
-                            //Ext.getCmp('unitArea').setValue('');
-                            Ext.getCmp('count').setValue('');
-                            Ext.getCmp('storePosition').setValue('');
-                            //Ext.getCmp('remark').setValue('');
-                            Ext.getCmp('operator').setValue('');
-                        }else{
-                            Ext.MessageBox.alert("警告","品名、入库数量不能为空",function(r) {
-                                //    r = cancel||ok
-                            });
-                        }
+                        // if (productName != ''&&count!= '') {
+                        //     Ext.getCmp('back_addDataGrid').getStore().loadData(data, true);
+                        //     //清除框里的数据
+                        //     Ext.getCmp('productName').setValue('');
+                        //     Ext.getCmp('count').setValue('');
+                        //     Ext.getCmp('storePosition').setValue('');
+                        //     Ext.getCmp('operator').setValue('');
+                        // }else{
+                        //     Ext.MessageBox.alert("警告","品名、入库数量不能为空",function(r) {
+                        //         //    r = cancel||ok
+                        //     });
+                        // }
                     }
                 },
                 //删除行数据
                 {
                     xtype : 'button',
-                    margin: '0 10 0 30',
+                    margin: '0 0 0 0',
                     iconAlign : 'center',
                     iconCls : 'rukuicon ',
                     text : '删除',
@@ -228,6 +210,154 @@ Ext.define('backproduct.backproduct_Inbound', {
 
             ]
         });
+
+        //上传数据文件按钮
+        var form = Ext.create("Ext.form.Panel", {
+            border : false,
+            items : [ {
+                xtype : 'filefield',
+                width : 400,
+                margin: '1 0 0 0',
+                buttonText : '上传数据文件',
+                name : 'uploadFile',
+                //id : 'uploadFile',
+                listeners : {
+                    change : function(file, value, eOpts) {
+                        if (value.indexOf('.xls',value.length-4)==-1) {
+                            Ext.Msg.alert('错误', '文件格式错误，请重新选择xls格式的文件！')
+                        } else {
+                            Ext.Msg.show({
+                                title : '操作确认',
+                                message : '将上传数据，选择“是”否确认？',
+                                buttons : Ext.Msg.YESNO,
+                                icon : Ext.Msg.QUESTION,
+                                fn : function(btn) {
+                                    if (btn === 'yes') {
+                                        //var check=Ext.getCmp("check").getValue();
+
+                                        form.submit({
+                                            url : 'backproduct/uploadExcel.do', //上传excel文件，并回显数据，退库成品批量上传
+                                            waitMsg : '正在上传...',
+
+                                            success : function(exceluploadform,response, action) {
+                                                 console.log("response=========================>",response);
+                                                Ext.MessageBox.alert("提示", "上传成功!");
+                                                var List = response.result['dataList'];
+                                                //  console.log("List=========================>List",List)
+                                                var success =response.result['success'];
+
+                                                //  console.log("success=========================>success",success)
+                                                if(success == false){
+                                                    //excel上传失败
+                                                    Ext.Msg.show({
+                                                        title: '提示',
+                                                        message: 'Excel上传失败！存在错误内容',
+                                                        buttons: Ext.Msg.YESNO,
+                                                        icon: Ext.Msg.QUESTION,
+                                                        fn: function (btn) {
+                                                            if (btn === 'yes') {
+                                                                //点击确认，显示重复的数据
+                                                                // old_up_errorlistStore.loadData(errorList);
+                                                                // win_oldup_errorInfo_outbound.show();
+                                                            }
+                                                        }
+                                                    });
+
+                                                }else{
+                                                    Ext.MessageBox.alert("提示", "上传成功!");
+                                                    //重新加载数据
+                                                    backStore.loadData(List);
+                                                }
+                                                // Ext.MessageBox.alert("提示", "上传成功!");
+
+                                            },
+
+                                            failure : function(form, action) {
+                                                var response = action.result;
+                                                switch (response.errorCode) {
+                                                    case 0:
+                                                        Ext.MessageBox.alert("错误", "上传批次或者所属期错误，重新生成上传批次和所属期!");
+                                                        break;
+                                                    case 1:
+                                                        Ext.MessageBox.alert("错误", "上传文件中的批次与生成的上传批次不同，请检查上传文件!");
+                                                        me.showMsgGrid([ "name", "input", "expected" ], response.value, [ {
+                                                            text : "错误字段",
+                                                            dataIndex : "name",
+                                                            width : 100
+                                                        }, {
+                                                            text : "上传文件中的值",
+                                                            dataIndex : "input",
+                                                            width : 200
+                                                        }, {
+                                                            text : "期望值",
+                                                            dataIndex : "expected",
+                                                            width : 100
+                                                        } ]);
+                                                        break;
+                                                    case 2:
+                                                        Ext.MessageBox.alert("错误", "上传文件中的数据项与系统需要的不一致，请检查上传文件!");
+                                                        me.showMsgGrid([ "name", "value" ], response.value, [ {
+                                                            text : "错误描述",
+                                                            dataIndex : "name",
+                                                            width : 250
+                                                        }, {
+                                                            text : "错误字段",
+                                                            dataIndex : "value",
+                                                            width : 400
+                                                        } ]);
+                                                        break;
+                                                    case 3:
+                                                        Ext.MessageBox.alert("错误", "上传文件中的数据项与系统需要的不一致，请检查上传文件!");
+                                                        me.showMsgGrid([ "row", "col", "value", "type" ], response.value, [ {
+                                                            text : "出错行",
+                                                            dataIndex : "row",
+                                                            width : 100
+                                                        }, {
+                                                            text : "出错列",
+                                                            dataIndex : "col",
+                                                            width : 250
+                                                        }, {
+                                                            text : "出错值",
+                                                            dataIndex : "value",
+                                                            width : 250
+                                                        }, {
+                                                            text : "期望类型",
+                                                            dataIndex : "type",
+                                                            width : 250
+                                                        } ]);
+                                                        break;
+                                                    case 1000:
+                                                        Ext.MessageBox.alert("错误", "上传文件出现未知错误，请检查上传文件格式！<br>若无法解决问题，请联系管理员！");
+                                                        Ext.MessageBox.alert("错误原因", response.msg);
+                                                        break;
+                                                    default:
+                                                        Ext.MessageBox.alert("错误", "服务器异常，请检查网络连接，或者联系管理员");
+                                                }
+
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
+            },
+            ]
+        });
+
+        var toolbar4 = Ext.create('Ext.toolbar.Toolbar', {
+            dock : "top",
+            items : [
+                {
+                    xtype:'tbtext',
+                    text:'<strong>批量上传:</strong>',
+                    margin: '0 40 0 0',
+                },
+                form,
+            ]
+        });
+
 
         //错误提示，弹出框
         var back_inb_errorlistStore = Ext.create('Ext.data.Store',{
@@ -263,7 +393,7 @@ Ext.define('backproduct.backproduct_Inbound', {
                     text: '仓库名称',
                     dataIndex: 'warehouseName',
                     flex :1,
-                    width:"80"
+                    width:"80",
                 },
                 {
                     text: '入库数量',
@@ -373,7 +503,7 @@ Ext.define('backproduct.backproduct_Inbound', {
                         Ext.MessageBox.show(
                             {
                                 title:'请稍候',
-                                msg:'产品匹配中，请耐心等待...',
+                                msg:'数据上传中，请耐心等待...',
                                 progressText:'',    //进度条文本
                                 width:300,
                                 progress:true,
@@ -396,14 +526,7 @@ Ext.define('backproduct.backproduct_Inbound', {
                             },
                             success : function(response) {
                                 console.log("12312312312321",response.responseText);
-                                // if(response.responseText.includes("false"))
-                                // {
-                                //     Ext.MessageBox.alert("提示","入库失败，品名不规范" );
-                                // }
-                                // //var message =Ext.decode(response.responseText).showmessage;
-                                // else{
-                                //     Ext.MessageBox.alert("提示","入库成功" );
-                                // }
+
                                 //关闭进度条
                                 Ext.MessageBox.hide();
 
@@ -431,13 +554,12 @@ Ext.define('backproduct.backproduct_Inbound', {
                                                     //点击确认，显示重复的数据
                                                     back_inb_errorlistStore.loadData(errorList);
                                                     win_backinb_errorInfo_outbound.show();
-
                                                 }
                                             }
                                         });
                                     }
                                     else if(errorCode == 1000){
-                                        Ext.MessageBox.alert("提示","入库失败，未知错误！请重新领取" );
+                                        Ext.MessageBox.alert("提示","入库失败，未知错误！请重新入库" );
                                     }
                                 }else{
                                     Ext.MessageBox.alert("提示","入库成功" );
@@ -458,15 +580,18 @@ Ext.define('backproduct.backproduct_Inbound', {
         });
 
 
+        var backStore = Ext.create('Ext.data.Store',{
+            id: 'backStore',
+            autoLoad: true,
+            fields: [],
+            pageSize: itemsPerPage, // items per page
+            data:[],
+        });
 
         var grid = Ext.create("Ext.grid.Panel", {
             id : 'back_addDataGrid',
             //dockedItems : [toolbar2],
-            store : {
-                // fields: ['材料名','品号', '长',"；类型","宽",'规格','库存单位','仓库编号','数量','成本','存放位置']
-                fields: ['productName','warehouseName','count']
-            },
-
+            store : backStore,
             columns : [
                 // {
                 //     // dataIndex : '序号',
@@ -479,8 +604,26 @@ Ext.define('backproduct.backproduct_Inbound', {
                 //     }
                 // },
                 {dataIndex : 'productName', text : '产品名称', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
-                {dataIndex : 'warehouseName', text : '仓库名称', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {
+                    dataIndex : 'warehouseName',
+                    text : '仓库名称',
+                    flex :1,
+                    editor:storePosition,renderer:function(value, cellmeta, record){
+                        //   console.log(storeNameList.find('warehouseName','105'));
+                        //   console.log(storeNameList.find('id','1'));
+                        var index = storeNameList.find(storePosition.valueField,value);
+                        var ehrRecord = storeNameList.getAt(index);
+                        var returnvalue = "";
+                        if (ehrRecord) {
+                            returnvalue = ehrRecord.get('warehouseName');
+                        }
+                        return returnvalue;
+                    },
+                    render:{}
+                },
                 {dataIndex : 'count', text : '入库数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'remark', text : '备注', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+
                 // {
                 //     name : '操作',
                 //     text : '操作',
@@ -532,11 +675,26 @@ Ext.define('backproduct.backproduct_Inbound', {
         //     }
         // };
 
-        this.dockedItems = [
-            //toolbar,
-            //toobar,toolbar1,
-            toolbar2, grid, toolbar3];
-        //this.items = [ me.grid ];
+        this.dockedItems=[{
+            xtype : 'toolbar',
+            dock : 'top',
+            items : [toolbar2]
+        },
+            {
+                xtype : 'toolbar',
+                dock : 'top',
+                style:'border-width:0 0 0 0;',
+                items : [toolbar4]
+            },
+            {
+                xtype : 'toolbar',
+                dock : 'top',
+                style:'border-width:0 0 0 0;',
+                items : [toolbar3]
+            },
+        ];
+
+        this.items = [ grid ];
         this.callParent(arguments);
 
     }
