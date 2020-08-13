@@ -764,35 +764,34 @@ public class DesignlistController {
     /*
      * 修改匹配结果
      * */
-//    @RequestMapping(value = "/designlist/changeMatchResult.do")
-//    public WebResponse changeDesignlistMatchResult(String s, String designlistId) throws JSONException {
-//        WebResponse response = new WebResponse();
-//        try {
-//            JSONArray jsonArray = new JSONArray(s);
-//            if(jsonArray.length()==0){
-//                response.setSuccess(false);
-//                response.setErrorCode(100);//接收到的s为空
-//                response.setMsg("接收到的数据为空");
-//                return response;
-//            }
-//            DataList errorList = analyzeNameService.checkCountALessThanCountBInJsonArray(jsonArray,"count","countReturn");
-//            if(errorList.size()!=0){
-//                response.put("errorList",errorList);
-//                response.put("errorNum",errorList.size());
-//                response.setSuccess(false);
-//                response.setErrorCode(400);//存在错误输入
-//                response.setMsg("存在错误输入");
-//                return response;
-//            }
-//            boolean result = designlistService.finishReturnOrder(jsonArray,type,returnOrderId,operator,userId);
-//            response.setSuccess(result);
-//        } catch (Exception e) {
-//            response.setSuccess(false);
-//            response.setErrorCode(1000); //未知错误
-//            response.setMsg(e.getMessage());
-//        }
-//        return response;
-//    }
+    @RequestMapping(value = "/designlist/changeMatchResult.do")
+    public WebResponse changeDesignlistMatchResult(String s, String designlistId) throws JSONException {
+        WebResponse response = new WebResponse();
+        try {
+            JSONArray jsonArray = new JSONArray(s);
+            if(jsonArray.length()==0){
+                response.setSuccess(false);
+                response.setErrorCode(100);//接收到的s为空
+                response.setMsg("接收到的数据为空");
+                return response;
+            }
+            DataList result = designlistService.addMatchResultBackErrorList(jsonArray,designlistId);
+            if (result.size()>0){
+                response.put("errorList",result);
+                response.put("errorNum",result.size());
+                response.setSuccess(false);
+                response.setErrorCode(400);//存在错误输入
+                response.setMsg("存在错误输入");
+                return response;
+            }
+            response.setSuccess(true);
+        } catch (Exception e) {
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误
+            response.setMsg(e.getMessage());
+        }
+        return response;
+    }
 
 
 
