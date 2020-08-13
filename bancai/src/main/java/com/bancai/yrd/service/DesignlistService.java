@@ -218,6 +218,57 @@ public class DesignlistService extends BaseService{
     }
 
     @Transactional
+    public DataList addMatchResultBackErrorList(JSONArray jsonArray,String designlistId){
+        DataList errorList = new DataList();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonTemp = jsonArray.getJSONObject(i);
+            String matchResultId = jsonTemp.get("matchResultId").toString();
+            if(!matchResultId.equals("-1"))
+                continue;
+            String count = jsonTemp.get("count")+"";
+            String storeId = jsonTemp.get("storeId").toString();
+            String name = jsonTemp.get("name").toString();
+            String type = jsonTemp.get("type").toString();
+            String typeName = jsonTemp.get("typeName").toString();
+            if((analyzeNameService.isStringNotNonnegativeNumber(count))||(Double.parseDouble(count)==0)){
+                addMatchResultErrorRow(errorList,name,type,count,"数量输入错误");
+                continue;
+            }
+            DataList infoList = queryService.query("select * from "+typeName+"_info_store_type where storeId=?",storeId);
+            if(infoList.isEmpty()){
+                addMatchResultErrorRow(errorList,name,type,count,"找不到该库存id");
+                continue;
+            }
+            double countUse = Double.parseDouble(infoList.get(0).get("countUse").toString());
+            if(Double.parseDouble(count)>countUse){
+                addMatchResultErrorRow(errorList,name,type,count,"库存数量不足");
+                continue;
+            }
+            countUse = countUse-Double.parseDouble(count);
+            updateStoreCountUse(typeName,countUse,storeId);
+            if(!addChangeMatchResult(designlistId,storeId,count,name,type))
+                addMatchResultErrorRow(errorList,name,type,count,"添加匹配结果失败");
+        }
+        return errorList;
+    }
+
+    private void addMatchResultErrorRow(DataList errorList, String name, String type, String count,String errorType){
+        DataRow errorRow = new DataRow();
+        errorRow.put("name",name);
+        errorRow.put("type",type);
+        errorRow.put("count",count);
+        errorRow.put("errorType",errorType);
+        errorList.add(errorRow);
+    }
+    private void updateStoreCountUse(String storeName, double countUse, String id){
+        jo.update("update "+storeName+"_store set countUse=\"" + countUse + "\" where id=\"" + id+"\"");
+    }
+    private boolean addChangeMatchResult(String designlistId,String storeId,String count,String name,String type){
+        return insertProjectService.insertIntoTableBySQL("insert into match_result (designlistId,matchId,count,name,madeBy,isCompleteMatch) values (?,?,?,?,?,?)",
+                designlistId,storeId,count,name,type,"2");
+    }
+
+    @Transactional
     public void saveDepartmentWorkerData(String id, String departmentId, String workerName,String tel,boolean exist){
         if(exist){
             String sql1 = "update department_worker set departmentId=\""+departmentId+"\",workerName=\""+workerName+"\",tel=\""+tel+"\" where id=\""+id+"\"";
