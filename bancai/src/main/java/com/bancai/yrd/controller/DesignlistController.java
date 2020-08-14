@@ -713,6 +713,85 @@ public class DesignlistController {
         return response;
     }
 
+    /**
+     * 下拉获取仓库信息
+     * @param response
+     */
+    @RequestMapping(value="/store/findAllStoreInfo.do")
+    public void findAllStoreInfo(HttpServletResponse response,String typeName) throws JSONException {
+        try{
+            if((typeName!=null)&&(typeName.length()!=0)){
+                DataList infoList = queryService.query("select * from "+typeName+"_info_store_type where countUse>=1");
+                //写回前端
+                JSONObject object = new JSONObject();
+                JSONArray array = new JSONArray(infoList);
+                object.put("infoList", array);
+                // System.out.println("类型1：--"+array.getClass().getName().toString());
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("text/html");
+                response.getWriter().write(object.toString());
+                response.getWriter().flush();
+                response.getWriter().close();
+            }
+        }catch (Exception ignored){
+        }
+    }
+
+    /*
+     * 匹配结果删除行
+     * */
+    @RequestMapping(value = "/designlist/deleteMatchResult.do")
+    public WebResponse deleteDesignlistMatchResult(String s) throws JSONException {
+        WebResponse response = new WebResponse();
+        try {
+            JSONArray jsonArray = new JSONArray(s);
+            if(jsonArray.length()==0){
+                response.setSuccess(false);
+                response.setErrorCode(100);//接收到的s为空
+                response.setMsg("接收到的数据为空");
+                return response;
+            }
+            boolean result = designlistService.designlistDeleteMatchResult(jsonArray);
+            response.setSuccess(result);
+        } catch (Exception e) {
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误
+            response.setMsg(e.getMessage());
+        }
+        return response;
+    }
+
+    /*
+     * 修改匹配结果
+     * */
+    @RequestMapping(value = "/designlist/changeMatchResult.do")
+    public WebResponse changeDesignlistMatchResult(String s, String designlistId) throws JSONException {
+        WebResponse response = new WebResponse();
+        try {
+            JSONArray jsonArray = new JSONArray(s);
+            if(jsonArray.length()==0){
+                response.setSuccess(false);
+                response.setErrorCode(100);//接收到的s为空
+                response.setMsg("接收到的数据为空");
+                return response;
+            }
+            DataList result = designlistService.addMatchResultBackErrorList(jsonArray,designlistId);
+            if (result.size()>0){
+                response.put("errorList",result);
+                response.put("errorNum",result.size());
+                response.setSuccess(false);
+                response.setErrorCode(400);//存在错误输入
+                response.setMsg("存在错误输入");
+                return response;
+            }
+            response.setSuccess(true);
+        } catch (Exception e) {
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误
+            response.setMsg(e.getMessage());
+        }
+        return response;
+    }
 
 
 

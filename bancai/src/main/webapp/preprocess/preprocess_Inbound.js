@@ -129,6 +129,7 @@ Ext.define('preprocess.preprocess_Inbound', {
                 // speificLocation_row,
                 // speificLocation_col,
                 {xtype: 'textfield', fieldLabel: '入库数量', id: 'count', margin: '0 0 0 20', width: 190, labelWidth: 60,  name: 'count', value: ""},
+                {xtype: 'textfield', fieldLabel: '备注', id: 'remark', margin: '0 10 0 30',width: 190, labelWidth: 30,  name: 'remark', value: ""},
 
                 {xtype : 'button',
                     margin: '0 10 0 70',
@@ -142,7 +143,7 @@ Ext.define('preprocess.preprocess_Inbound', {
                         var count = Ext.getCmp('count').getValue();
                         //var unitWeight = Ext.getCmp('unitWeight').getValue();
                         //var unitArea = Ext.getCmp('unitArea').getValue();
-                        //var remark = Ext.getCmp('remark').getValue();
+                        var remark = Ext.getCmp('remark').getValue();
                         var warehouseName = Ext.getCmp('storePosition').getValue();
                         var data = [{
                             'productName' : productName,
@@ -151,7 +152,7 @@ Ext.define('preprocess.preprocess_Inbound', {
                             //'unitArea' : unitArea,
                             //'unitWeight' : unitWeight,
                             'warehouseName':warehouseName,
-                            //'remark' : remark,
+                            'remark' : remark,
                             'count' : count,
                         }];
                         //点击查询获得输入的数据
@@ -340,14 +341,8 @@ Ext.define('preprocess.preprocess_Inbound', {
                 {dataIndex : 'productName', text : '产品名称', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
                 {dataIndex : 'warehouseName', text : '仓库名称', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'count', text : '入库数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {
-                    name : '操作',
-                    text : '操作',
-                    renderer:function(value, cellmeta){
-                        return "<INPUT type='button' value='删 除' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
-                    }
-                }
-
+                //
+                {dataIndex : 'remark', text : '备注', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
             ],
             viewConfig : {
                 plugins : {

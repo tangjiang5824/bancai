@@ -66,8 +66,8 @@ Ext.define('preprocess.preprocess_Upload_Data', {
                     sortable: false
                 },
                 {
-                    text: '旧板名称',
-                    dataIndex: 'oldpanelName',
+                    text: '预加工产品名称',
+                    dataIndex: 'productName',
                     flex :1,
                     width:"80"
                 },
@@ -122,6 +122,8 @@ Ext.define('preprocess.preprocess_Upload_Data', {
                 {dataIndex : 'productName', text : '产品名称', flex :1, editor : {xtype : 'textfield',allowBlank : false,}},
                 {dataIndex : 'warehouseName', text : '仓库名称', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'count', text : '入库数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'remark', text : '备注', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+
             ],
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 3

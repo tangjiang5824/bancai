@@ -54,9 +54,9 @@ Ext.define('product.product_Basic_Info_Input', {
         });
         var classificationList = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '分类',
-            labelWidth : 30,
-            width : 230,
-            margin: '0 10 0 10',
+            width: 220,
+            labelWidth: 30,
+            margin: '0 40 0 0',
             id :  'classification',
             name : 'classification',
             matchFieldWidth: false,
@@ -351,14 +351,28 @@ Ext.define('product.product_Basic_Info_Input', {
             dock : "top",
             items: [
                 //oldpanelTypeList,
-                {xtype: 'textfield', fieldLabel: '产品品名', id: 'productName', width: 300, labelWidth: 60,
-                    //margin: '0 10 0 40',
-                    name: 'productName', value: ""},
+                {
+                    xtype: 'textfield',
+                    fieldLabel: '产品品名',
+                    id: 'productName',
+                    width: 350,
+                    labelWidth: 60,
+                    margin: '0 40 0 0',
+                    name: 'productName',
+                    value: ""
+                },
                 classificationList,
 
-                {xtype: 'textfield', fieldLabel: '库存单位', id: 'inventoryUnit', width: 220, labelWidth: 60,
+                {
+                    xtype: 'textfield',
+                    fieldLabel: '库存单位',
+                    id: 'inventoryUnit',
+                    width: 220,
+                    labelWidth: 60,
                     //margin: '0 10 0 40',
-                    name: 'inventoryUnit', value: ""},
+                    name: 'inventoryUnit',
+                    value: ""
+                },
                 // {xtype: 'textfield', fieldLabel: '仓库名称', id: 'warehouseName', width: 220, labelWidth: 60,
                 //     //margin: '0 10 0 40',
                 //     name: 'warehouseName', value: ""},
@@ -368,18 +382,11 @@ Ext.define('product.product_Basic_Info_Input', {
         var toolbar1 = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
             items: [
-                // {xtype: 'textfield', fieldLabel: '长一', id: 'length', width: 150, labelWidth: 30, margin: '0 10 0 85', name: 'length', value: ""},
-                // {xtype: 'textfield', fieldLabel: '长二', id: 'length2', width: 150, labelWidth: 30, margin: '0 10 0 85', name: 'length2', value: ""},
-                // {xtype: 'textfield', fieldLabel: '宽一', id: 'width', width: 150, labelWidth: 30, margin: '0 10 0 85', name: 'width', value: ""},
-                // {xtype: 'textfield', fieldLabel: '宽二', id: 'width2', width: 150, labelWidth: 30, margin: '0 10 0 85', name: 'width2', value: ""},
-                // {xtype: 'textfield', fieldLabel: '宽三', id: 'width3', width: 150, labelWidth: 30, margin: '0 10 0 85', name: 'width3', value: ""},
-                {xtype: 'textfield', fieldLabel: '单面积', id: 'unitArea', width: 220, labelWidth: 50,  margin: '0 10 0 0',name: 'unitArea', value: ""},
-                {xtype: 'textfield', fieldLabel: '单重', id: 'unitWeight', width: 220, labelWidth: 30, margin: '0 10 0 10', name: 'unitWeight', value: ""},
-                //{xtype: 'textfield', fieldLabel: '总面积', id: 'totalArea', width: 220, labelWidth: 50,  name: 'totalArea', value: ""},
-                //{xtype: 'textfield', fieldLabel: '总重', id: 'totalWeight', width: 220, labelWidth: 30, name: 'totalWeight', value: ""},
-                {xtype: 'textfield', fieldLabel: '备注', id: 'remark', width: 220, labelWidth: 30, margin: '0 10 0 10',name: 'remark', value: ""},
+                {xtype: 'textfield', fieldLabel: '单面积', id: 'unitArea', width: 350, labelWidth: 60,  margin: '0 40 0 0',name: 'unitArea', value: ""},
+                {xtype: 'textfield', fieldLabel: '单重', id: 'unitWeight', width: 220, labelWidth: 30, margin: '0 40 0 0', name: 'unitWeight', value: ""},
+                {xtype: 'textfield', fieldLabel: '备注', id: 'remark', width: 220, labelWidth: 30, margin: '0 40 0 0',name: 'remark', value: ""},
                 {xtype : 'button',
-                    margin: '0 10 0 70',
+                    margin: '0 0 0 0',
                     iconAlign : 'center',
                     iconCls : 'rukuicon ',
                     text : '添加',
@@ -413,7 +420,7 @@ Ext.define('product.product_Basic_Info_Input', {
 
         //确认添加按钮，
         var toolbar3 = Ext.create('Ext.toolbar.Toolbar', {
-            dock : "bottom",
+            dock : "top",
             id : "toolbar3",
             style:{
                 //marginLeft: '900px'
@@ -422,11 +429,11 @@ Ext.define('product.product_Basic_Info_Input', {
             items : [
                 {
                     xtype: 'textfield',
-                    margin: '0 20 0 0',
+                    margin: '0 40 0 0',
                     fieldLabel: ' 入库人',
                     id: 'operator',
                     width: 150,
-                    labelWidth: 45,
+                    labelWidth: 60,
                     name: 'operator',
                     value: "",
                 },
@@ -434,7 +441,7 @@ Ext.define('product.product_Basic_Info_Input', {
                 xtype : 'button',
                 iconAlign : 'center',
                 iconCls : 'rukuicon ',
-                text : '确认添加',
+                text : '确认录入',
                 region:'center',
                 bodyStyle: 'background:#fff;',
                 handler : function() {
@@ -516,7 +523,7 @@ Ext.define('product.product_Basic_Info_Input', {
             })],
             selType : 'rowmodel'
         });
-        this.dockedItems = [ toolbar, toolbar1, grid, toolbar3];
+        this.dockedItems = [ toolbar, toolbar1,toolbar3, grid];
         //this.items = [ me.grid ];
         this.callParent(arguments);
 

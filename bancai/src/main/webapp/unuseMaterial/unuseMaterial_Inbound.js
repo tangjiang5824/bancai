@@ -549,6 +549,30 @@ Ext.define('unuseMaterial.unuseMaterial_Inbound', {
                 }]
         });
 
+        //模板
+        var tableNameList =  Ext.create('Ext.data.Store', {
+            fields: ['tableName'],
+            data : [
+                {tableName:"废料信息表"},
+                // {tableName:"成品信息表"},
+                //{tableName:"原材料信息表"},
+                //{tableName:"产品信息表"}
+                //...
+            ]
+        });
+        var tableList = Ext.create('Ext.form.ComboBox', {
+            fieldLabel : '数据表类型',
+            labelWidth : 70,
+            width : 400,
+            name : 'table',
+            emptyText : "--请选择--",
+            store: tableNameList,
+            queryMode: 'local',
+            displayField: "tableName",
+            valueField: "tableName",
+            editable : false,
+        });
+
 
         //上传数据文件按钮
         var form = Ext.create("Ext.form.Panel", {
@@ -708,6 +732,27 @@ Ext.define('unuseMaterial.unuseMaterial_Inbound', {
                     text:'<strong>批量上传:</strong>',
                     margin: '0 40 0 0',
                 },
+
+                //模板
+                tableList,
+                {
+                    xtype : 'button',
+                    text : '下载模板',
+                    margin: '0 40 0 0',
+                    handler : function() {
+                        var tableName = tableList.getValue();
+                        if (tableName != null) {
+                            if(tableName=='旧板信息表'){
+                                window.location.href = encodeURI('excel/旧板信息表.xls');
+                            }else{
+                                Ext.Msg.alert('消息', '下载失败！');
+                            }
+                        } else {
+                            Ext.Msg.alert('消息', '请选择数据类型！');
+                        }
+                    }
+                },
+
                 form,
                 ]
         });
