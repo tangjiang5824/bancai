@@ -442,7 +442,7 @@ public class MaterialController {
         rule.setCondition2(condition2);
         rule.setUpWidth(upWidth);
         rule.setOrientation(orientation);
-        rule.setSuffix(suffix);
+        if(suffix!=null&&suffix.trim().length()!=0)  rule.setSuffix(suffix);
         materialMatchRulesRepository.save(rule);
         return  true;
     }
