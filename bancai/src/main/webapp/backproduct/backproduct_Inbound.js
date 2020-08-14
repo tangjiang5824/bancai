@@ -127,6 +127,30 @@ Ext.define('backproduct.backproduct_Inbound', {
             }
 
         });
+        //数据表模板
+        //模板下载
+        var tableNameList =  Ext.create('Ext.data.Store', {
+            fields: ['tableName'],
+            data : [
+                {tableName:"成品信息表"},
+                //{tableName:"原材料信息表"},
+                //{tableName:"产品信息表"}
+                //...
+            ]
+        });
+        var tableList = Ext.create('Ext.form.ComboBox', {
+            fieldLabel : '数据表类型',
+            labelWidth : 70,
+            width : 400,
+            name : 'table',
+            emptyText : "--请选择--",
+            store: tableNameList,
+            queryMode: 'local',
+            displayField: "tableName",
+            valueField: "tableName",
+            editable : false,
+        });
+
 
         var toolbar2 = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
@@ -354,6 +378,27 @@ Ext.define('backproduct.backproduct_Inbound', {
                     text:'<strong>批量上传:</strong>',
                     margin: '0 40 0 0',
                 },
+                //模板
+                tableList,
+                {
+                    xtype : 'button',
+                    text : '下载模板',
+                    margin: '0 40 0 0',
+                    handler : function() {
+                        var tableName = tableList.getValue();
+                        if (tableName != null) {
+                            if(tableName=='旧板信息表'){
+                                window.location.href = encodeURI('excel/旧板信息表.xls');
+                            }else{
+                                Ext.Msg.alert('消息', '下载失败！');
+                            }
+                        } else {
+                            Ext.Msg.alert('消息', '请选择数据类型！');
+                        }
+                    }
+                },
+
+
                 form,
             ]
         });
@@ -675,7 +720,13 @@ Ext.define('backproduct.backproduct_Inbound', {
         //     }
         // };
 
-        this.dockedItems=[{
+        this.dockedItems=[
+            // {
+            //     xtype : 'toolbar',
+            //     dock : 'top',
+            //     items : [toolbar1]
+            // },
+            {
             xtype : 'toolbar',
             dock : 'top',
             items : [toolbar2]
