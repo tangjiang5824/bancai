@@ -67,6 +67,7 @@ public class ProjectController {
      * @return
      */
     @RequestMapping(value="/generate_project.do")
+    @Transactional(rollbackFor = Exception.class)
     public WebResponse add_project(String s,HttpSession session,String projectName,String proStartTime,String proEndTime,String planLeaderId,String produceLeaderId,String purchaseLeaderId,String financeLeaderId,String storeLeaderId,String isPreprocess ) throws IOException, JSONException {
         WebResponse response =new WebResponse();
         if(projectName==null||projectName.trim().length()==0){
@@ -99,6 +100,11 @@ public class ProjectController {
         }catch (Exception e){
         e.printStackTrace();
     }
+        if(planLeaderId.equals("")) planLeaderId=null;
+        if(produceLeaderId.equals("")) produceLeaderId=null;
+        if(purchaseLeaderId.equals("")) purchaseLeaderId=null;
+        if(financeLeaderId.equals("")) financeLeaderId=null;
+        if(storeLeaderId.equals("")) storeLeaderId=null;
         //生成project计划表
         String sql1="insert into project (uploadId,startTime,proStartTime,projectName,proEndTime,planLeaderId,produceLeaderId,purchaseLeaderId,financeLeaderId,storeLeaderId,statusId,isPreprocess) values(?,?,?,?,?,?,?,?,?,?,?,?) ";
         //插入到project表的同时返回projectId
@@ -106,10 +112,16 @@ public class ProjectController {
         for (int i = 0; i < jsonArray.length(); i++) {
             ArrayList arrayList=new ArrayList();
             JSONObject jsonTemp = jsonArray.getJSONObject(i);
+            String BuildingNo=null;
+            String BuildName=null;
+            String BuildOwner=null;
             //获得第i条数据的各个属性值
-            String BuildingNo = jsonTemp.get("buildingNo")+"";
-            String BuildName = jsonTemp.get("buildingName")+"";
-            String BuildOwner = jsonTemp.get("buildingOwner")+"";
+            if(jsonTemp.get("buildingNo")!=null)
+            BuildingNo = jsonTemp.get("buildingNo")+"";
+            if(jsonTemp.get("buildingName")!=null)
+            BuildName = jsonTemp.get("buildingName")+"";
+            if(jsonTemp.get("buildingOwner")!=null)
+            BuildOwner = jsonTemp.get("buildingOwner")+"";
 
             //插入楼栋信息
             String sql2="insert into building (buildingNo,buildingName,buildingLeader,projectId) values(?,?,?,?)";

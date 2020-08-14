@@ -359,7 +359,7 @@ public class MaterialController {
     }
 
     @RequestMapping("/project/match/newPanel.do")
-    public boolean addNewPanelRule(Integer productformatId,Integer materialtypeId,String count, String m,String n, String a,String b, String p, String condition1, String condition2, String upWidth, String orientation){
+    public boolean addNewPanelRule(Integer productformatId,Integer materialtypeId,String count, String m,String n, String a,String b, String p, String condition1, String condition2, String upWidth, String orientation,String suffix){
         MaterialMatchRules rule=new MaterialMatchRules();
         if(count.trim().length()==0) {
             count="1.0";
@@ -442,6 +442,7 @@ public class MaterialController {
         rule.setCondition2(condition2);
         rule.setUpWidth(upWidth);
         rule.setOrientation(orientation);
+        rule.setSuffix(suffix);
         materialMatchRulesRepository.save(rule);
         return  true;
     }
