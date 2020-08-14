@@ -536,8 +536,8 @@ public class ProductDataController {
         if (minCount.length() != 0) {
             c.and(new mysqlcondition("countStore", ">=", minCount));
         }
-        WebResponse wr=queryService.queryDataPage(start, limit, c, tableName);
-        return wr;
+        c.and(new mysqlcondition("countStore", ">", "0"));
+        return queryService.queryDataPage(start, limit, c, tableName);
     }
 
     /*

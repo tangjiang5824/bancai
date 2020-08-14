@@ -570,8 +570,8 @@ public class Select_specification_from_materialName_controller {
 		if (minCount.length() != 0) {
 			c.and(new mysqlcondition("countStore", ">=", minCount));
 		}
-		WebResponse wr=queryAllService.queryDataPage(start, limit, c, tableName);
-		return wr;
+		c.and(new mysqlcondition("countStore", ">", "0"));
+		return queryAllService.queryDataPage(start, limit, c, tableName);
 	}
 
 }
