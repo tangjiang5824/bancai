@@ -850,7 +850,7 @@ public class ProductDataController {
         if (null!=timeEnd&&timeEnd.length() != 0) {
             c.and(new mysqlcondition("time", "<=", timeEnd));
         }
-        return queryService.queryDataPage(start, limit, c, "waste_settle_account");
+        return queryService.queryDataPage(start, limit, c, "waste_settle_account_view");
     }
 
 

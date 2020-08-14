@@ -288,7 +288,6 @@ public class ProjectController {
 //        String tableName = "Store_view";
 //		System.out.println(startWidth);
 //		System.out.println(endWidth);
-//
         mysqlcondition c=new mysqlcondition();
         if (null!=materialId) {
             c.and(new mysqlcondition("materialId", "=", materialId));
