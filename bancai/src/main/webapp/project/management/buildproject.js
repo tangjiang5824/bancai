@@ -338,7 +338,7 @@ Ext.define('project.management.buildproject', {
             id : 'addDataGrid',
             // dockedItems : [toolbar2],
             store : {
-                fields: ['楼栋编号',"楼栋名","楼栋负责人"]
+                fields: []
             },
             columns : [ {
                 dataIndex : 'buildingNo',

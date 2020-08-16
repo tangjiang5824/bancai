@@ -116,13 +116,24 @@ public class ProjectController {
             String BuildName=null;
             String BuildOwner=null;
             //获得第i条数据的各个属性值
-            if(jsonTemp.get("buildingNo")!=null)
-            BuildingNo = jsonTemp.get("buildingNo")+"";
-            if(jsonTemp.get("buildingName")!=null)
-            BuildName = jsonTemp.get("buildingName")+"";
-            if(jsonTemp.get("buildingOwner")!=null)
-            BuildOwner = jsonTemp.get("buildingOwner")+"";
+            try{
+                BuildingNo = jsonTemp.get("buildingNo")+"";
+            }catch (JSONException e){
 
+            }
+            try{
+                BuildName = jsonTemp.get("buildingName")+"";
+            }catch (JSONException e){
+
+            }
+            try{
+                BuildOwner = jsonTemp.get("buildingOwner")+"";
+            }catch (JSONException e){
+
+            }
+            if(BuildingNo==null&&BuildName==null&&BuildOwner==null){
+                break;
+            }
             //插入楼栋信息
             String sql2="insert into building (buildingNo,buildingName,buildingLeader,projectId) values(?,?,?,?)";
             //插入到planlist表的同时返回planlistid

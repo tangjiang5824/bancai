@@ -143,7 +143,6 @@ public class QueryAllService extends BaseService {
 				}*/
 				return list;
 			}
-
 		});
 	}
 	/**

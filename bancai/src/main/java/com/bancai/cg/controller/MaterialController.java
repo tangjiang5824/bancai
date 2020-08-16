@@ -210,7 +210,8 @@ public class MaterialController {
 
             if(null!=jsonTemp.get("description")&&!jsonTemp.get("description").equals("")) {
                 description=jsonTemp.get("description")+"";
-                store.setDescription(description);
+                //store.setDescription(description);
+                logdetail.setDescription(description);
             }
 
             Set<MaterialStore> materialStores = material.getMaterialStores();
