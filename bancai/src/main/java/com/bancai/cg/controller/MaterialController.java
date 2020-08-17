@@ -210,7 +210,8 @@ public class MaterialController {
 
             if(null!=jsonTemp.get("description")&&!jsonTemp.get("description").equals("")) {
                 description=jsonTemp.get("description")+"";
-                store.setDescription(description);
+                //store.setDescription(description);
+                logdetail.setDescription(description);
             }
 
             Set<MaterialStore> materialStores = material.getMaterialStores();
@@ -359,7 +360,7 @@ public class MaterialController {
     }
 
     @RequestMapping("/project/match/newPanel.do")
-    public boolean addNewPanelRule(Integer productformatId,Integer materialtypeId,String count, String m,String n, String a,String b, String p, String condition1, String condition2, String upWidth, String orientation){
+    public boolean addNewPanelRule(Integer productformatId,Integer materialtypeId,String count, String m,String n, String a,String b, String p, String condition1, String condition2, String upWidth, String orientation,String suffix){
         MaterialMatchRules rule=new MaterialMatchRules();
         if(count.trim().length()==0) {
             count="1.0";
@@ -442,6 +443,7 @@ public class MaterialController {
         rule.setCondition2(condition2);
         rule.setUpWidth(upWidth);
         rule.setOrientation(orientation);
+        if(suffix!=null&&suffix.trim().length()!=0)  rule.setSuffix(suffix);
         materialMatchRulesRepository.save(rule);
         return  true;
     }

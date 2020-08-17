@@ -193,13 +193,28 @@ Ext.define('material' +
                     text : '单重',
                     //width : 160,
                     flex :1
-                },{
+                },
+                {
+                    dataIndex : '单面积',
+                    name : '单面积',
+                    text : '单面积',
+                    //width : 160,
+                    flex :1
+                },
+                {
                     dataIndex : 'totalWeight',
                     name : '总重',
                     text : '总重',
                     flex :1
 
+                },{
+                    dataIndex : 'totalArea',
+                    name : '总面积',
+                    text : '总面积',
+                    flex :1
+
                 },
+
                 {
                     dataIndex : 'count',
                     name : '数量',

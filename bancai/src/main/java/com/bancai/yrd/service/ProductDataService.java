@@ -49,6 +49,10 @@ public class ProductDataService extends BaseService{
         row.put("unitWeight",unitWeight);
         row.put("unitArea",unitArea);
         row.put("remark",remark);
+        if(suffix.length()==0)
+            suffix = "null";
+        if(ignoredSuffix.length()==0)
+            ignoredSuffix = "null";
         String values = mValue + "%" + nValue + "%" + pValue + "%" + aValue + "%" + bValue + "%" + mAngle +
                 "%" + nAngle + "%" + pAngle + "%" + suffix + "%" + ignoredSuffix;
         row.put("values", values);
@@ -127,6 +131,10 @@ public class ProductDataService extends BaseService{
                 aValue = values[3];
             if((!values[4].equals("null"))&&(values[4].length()!=0))
                 bValue = values[4];
+            if(values[8].equals("null"))
+                values[8] = "";
+            if(values[9].equals("null"))
+                values[9] = "";
             int productId = insertProjectService.insertDataToTable("insert into product_info (productName,inventoryUnit,unitWeight,unitArea,remark," +
                             "productFormatId,mValue,nValue,pValue,aValue,bValue,mAngle,nAngle,pAngle,suffix,ignoredSuffix,userId) " +
                             "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",

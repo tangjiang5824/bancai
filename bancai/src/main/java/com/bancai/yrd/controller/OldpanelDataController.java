@@ -103,32 +103,6 @@ public class OldpanelDataController {
             response.setMsg(e.getMessage());
         }
         return response;
-//        try {
-//            JSONArray jsonArray = new JSONArray(s);
-//            JSONObject jsonTemp = jsonArray.getJSONObject(0);
-//            String oldpanelTypeId=jsonTemp.get("oldpanelTypeId")+"";
-//            String format1=jsonTemp.get("format1")+"";
-//            String format2=jsonTemp.get("format2")+"";
-//            String format3=jsonTemp.get("format3")+"";
-//            String format4=jsonTemp.get("format4")+"";
-//            String oldpanelFormat = format1+format2+format3+format4;
-//            int formatId = oldpanelDataService.oldpanelAddNewFormat(oldpanelTypeId, oldpanelFormat);
-//            if (formatId == 0) {
-//                return false;//已经存在
-//            }
-//            String userId = (String) session.getAttribute("userid");
-//            Date date = new Date();
-//            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//            String sql_addLog = "insert into format_log (type,formatId,userId,time) values(?,?,?,?)";
-//            boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_addLog,
-//                    "2", String.valueOf(formatId),userId,simpleDateFormat.format(date));
-//            if (!is_log_right) {
-//                return false;
-//            }
-//        } catch (Exception e) {
-//            return false;
-//        }
-//        return true;
     }
 
     /*
@@ -178,7 +152,7 @@ public class OldpanelDataController {
                             errorList = analyzeNameService.addErrorRowToErrorList(errorList, id, "未找到这种旧板格式",map);
                         else
                             insertList = oldpanelDataService.oldpanelAddInsertRowToInfoList(insertList, String.valueOf(formatId), oldpanelName, inventoryUnit,
-                                    unitWeight, unitArea, remark, a[4], a[5], a[6], a[7], a[8], a[9], a[10], a[11], a[12]);
+                                    unitWeight, unitArea, remark,a[3], a[4], a[5], a[6], a[7], a[8], a[9], a[10], a[11]);
                     }
                 }
             }
@@ -199,36 +173,6 @@ public class OldpanelDataController {
             response.setMsg(e.getMessage());
         }
         return response;
-//        try{
-//            JSONArray jsonArray = new JSONArray(s);
-//            String userId = (String)session.getAttribute("userid");
-//            String sql_addLog = "insert into oldpanel_log (type,userId,time,isrollback) values(?,?,?,?)";
-//            int oldpanellogId= insertProjectService.insertDataToTable(sql_addLog,"6",userId,analyzeNameService.getTime(),"0");
-//            for (int i = 0; i < jsonArray.length(); i++) {
-//                JSONObject jsonTemp = jsonArray.getJSONObject(i);
-//                System.out.println("第" + i + "个---" + jsonTemp);
-//                String oldpanelName=(jsonTemp.get("oldpanelName")+"").trim().toUpperCase();
-////                String classificationId=jsonTemp.get("classificationId")+"";
-//                String inventoryUnit=jsonTemp.get("inventoryUnit")+"";
-//                String unitWeight=jsonTemp.get("unitWeight")+"";
-//                String unitArea=jsonTemp.get("unitArea")+"";
-//                String remark=jsonTemp.get("remark")+"";
-//                int oldpanelId =  oldpanelDataService.oldpanelAddNewInfo(oldpanelName,inventoryUnit,
-//                        unitWeight,unitArea,remark,userId);
-//                if(oldpanelId==0){
-//                    return false;//已经存在这种旧板
-//                }
-//                String sql_addLogDetail="insert into oldpanel_logdetail (oldpanellogId,oldpanelId,isrollback) values (?,?,?)";
-//                boolean is_log_right= insertProjectService.insertIntoTableBySQL(sql_addLogDetail,
-//                        String.valueOf(oldpanellogId),String.valueOf(oldpanelId),"0");
-//                if(!is_log_right){
-//                    return false;
-//                }
-//            }
-//        }catch (Exception e){
-//            return false;
-//        }
-//        return true;
     }
 
     /*

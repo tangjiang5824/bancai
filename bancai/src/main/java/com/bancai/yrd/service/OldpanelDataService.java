@@ -49,6 +49,8 @@ public class OldpanelDataService extends BaseService {
         row.put("unitWeight",unitWeight);
         row.put("unitArea",unitArea);
         row.put("remark",remark);
+        if(suffix.length()==0)
+            suffix = "null";
         String values = mValue + "%" + nValue + "%" + pValue + "%" + aValue + "%" + bValue + "%" + mAngle +
                 "%" + nAngle + "%" + pAngle + "%" + suffix;
         row.put("values", values);
@@ -102,6 +104,9 @@ public class OldpanelDataService extends BaseService {
                 aValue = values[3];
             if((!values[4].equals("null"))&&(values[4].length()!=0))
                 bValue = values[4];
+            if(values[8].equals("null"))
+                values[8] = "";
+//            System.out.println(dataRow.get("values").toString());
             int oldpanelId = insertProjectService.insertDataToTable("insert into oldpanel_info (oldpanelName,inventoryUnit,unitWeight,unitArea,remark," +
                             "oldpanelFormatId,mValue,nValue,pValue,aValue,bValue,mAngle,nAngle,pAngle,suffix,userId) " +
                             "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",

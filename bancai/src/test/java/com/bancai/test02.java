@@ -241,9 +241,11 @@ public class test02 {
 //            System.out.println("(1)"+key);
 //            System.out.println(value);
 //        }
-        String t = "^[0-9]+\\.{0,1}[0-9]{0,2}$";
-        String s ="-5";
-        System.out.println(s.matches(t));
+//        String t = "^[0-9]+\\.{0,1}[0-9]{0,2}$";
+//        String s ="-5";
+//        System.out.println(s.matches(t));
+        String s = "200%150%null%null%null%0%0%0%%";
+        System.out.println(s.split("%").length);
 
 
     }

@@ -258,8 +258,8 @@ Ext.define('material.material_Query_Data',{
             columns : [
                 {
                     dataIndex : 'materialName',
-                    name : '品号',
-                    text : '品号',
+                    name : '原材料名',
+                    text : '原材料名',
                     //width : 110,
                     flex :1,
 
@@ -269,6 +269,18 @@ Ext.define('material.material_Query_Data',{
                     text : '原材料类型',
                     flex :.6,
                 },
+                {
+                    dataIndex : 'countStore',
+                    name : '库存数量',
+                    text : '库存数量',
+                    flex :1,
+                },
+                {
+                    dataIndex : 'countUse',
+                    name : '可用数量',
+                    text : '可用数量',
+                    flex :1,
+                },
                 {dataIndex : 'aValue', text : 'a值', flex :.6},
                 {dataIndex : 'bValue', text : 'b值', flex :.6},
                 {dataIndex : 'mValue', text : 'm值', flex :.6},
@@ -276,7 +288,6 @@ Ext.define('material.material_Query_Data',{
                 {dataIndex : 'pValue', text : 'p值', flex :.6},
                 {dataIndex : 'orientation', text : '方向', flex :.6},
                 {dataIndex : 'inventoryUnit', text : '库存单位', flex :.6},
-                {dataIndex : 'description', text : '备注', flex :1},
                 {
                     dataIndex : 'unitWeight',
                     name : '单重',
@@ -300,15 +311,9 @@ Ext.define('material.material_Query_Data',{
                     flex :1,
                 },
                 {
-                    dataIndex : 'countStore',
-                    name : '库存数量',
-                    text : '库存数量',
-                    flex :1,
-                },
-                {
-                    dataIndex : 'countUse',
-                    name : '可用数量',
-                    text : '可用数量',
+                    dataIndex : 'totalArea',
+                    name : '总面积',
+                    text : '总面积',
                     flex :1,
                 },
                 {
@@ -318,7 +323,8 @@ Ext.define('material.material_Query_Data',{
                     //width : 130,
                     flex :1,
 
-                },
+                }
+               // {dataIndex : 'description', text : '备注', flex :1}
                 ],
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 3
