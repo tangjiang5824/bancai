@@ -354,7 +354,6 @@ Ext.define('preprocess.preprocess_Outbound',{
         });
 
         var preprocess_Query_Records_win_showpreprocessData = Ext.create('Ext.window.Window', {
-            id:'preprocess_Query_Records_win_showpreprocessData',
             title: '预加工半成品出入库记录撤销',
             height: 500,
             width: 650,
@@ -487,7 +486,7 @@ Ext.define('preprocess.preprocess_Outbound',{
                 Ext.getCmp("toolbar_pop").items.items[1].setText(isrollback);
                 preprocess_Query_Records_specific_data_grid.setStore(preprocesslogdetailList);
                 // console.log(materiallogdetailList);
-                Ext.getCmp('preprocess_Query_Records_win_showpreprocessData').show();
+               preprocess_Query_Records_win_showpreprocessData.show();
 
 
             }

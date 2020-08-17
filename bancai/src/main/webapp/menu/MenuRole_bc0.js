@@ -511,13 +511,19 @@ Ext.define("menu.MenuRole_bc0", {
 							leaf : true
 						},
 						{
-						text : '查看产品基础信息',
-						id : 'product.query_Pcatergory_baseInfo',//
-						leaf : true
-					},{
+							text : '查询产品类型',
+							id : 'product.query_Ptype_baseInfo',
+							leaf : true
+						},
+						{
 							text : '添加产品基础信息',
 							id : 'product.product_Basic_Info_Input',
 							leaf : true
+						},
+						{
+						text : '查看产品基础信息',
+						id : 'product.query_Pcatergory_baseInfo',//
+						leaf : true
 					},{
 						text : '添加产品格式',
 						id : 'product.product_Format_Input',

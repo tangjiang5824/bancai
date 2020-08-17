@@ -32,7 +32,7 @@ Ext.define('material.material_backcheck',{
 
         //项目名称选择
         var tableListStore = Ext.create('Ext.data.Store',{
-            fields : [ "项目名称","id"],
+            fields : [ 'projectName'],
             proxy : {
                 type : 'ajax',
                 url : 'project/findProjectList.do',
@@ -43,31 +43,66 @@ Ext.define('material.material_backcheck',{
             },
             autoLoad : true
         });
-        var tableList = Ext.create('Ext.form.ComboBox',{
+
+        var project_tableList = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '项目名',
             labelWidth : 45,
-            width : 550,
-            margin : '0 10 0 0',
+            width : 550,//'35%'
+            queryMode: 'local',
             id :  'projectName',
-            name : '项目名称',
+            name : 'projectName',
             matchFieldWidth: true,
-            emptyText : "--请选择--",
+            emptyText : "--请选择项目名--",
             displayField: 'projectName',
             valueField: 'id',
             editable : true,
             store: tableListStore,
-            listeners:{
+            typeAhead: true,
+            triggerAction: 'all',
+            selectOnFocus:true,
+            listeners: {
+                change : function(combo, record, eOpts) {
+                    if(this.callback) {
+                        if(combo.lastSelection && combo.lastSelection.length>0) {
+                            this.callback(combo.lastSelection[0]);
+                        }
+                    }
+                },
+                //下拉框搜索
+                beforequery :function(e){
+                    var combo = e.combo;
+                    combo.collapse();//收起
+                    var value = combo.getValue();
+                    if (!e.forceAll) {//如果不是通过选择，而是文本框录入
+                        combo.store.clearFilter();
+                        combo.store.filterBy(function(record, id) {
+                            var text = record.get(combo.displayField);
+                            // 用自己的过滤规则,如写正则式
+                            return (text.indexOf(value) != -1);
+                        });
+                        combo.onLoad();//不加第一次会显示不出来
+                        combo.expand();
+                        return false;
+                    }
+                    if(!value) {
+                        //如果文本框没值，清除过滤器
+                        combo.store.clearFilter();
+                    }
+                },
+
                 //下拉框默认返回的第一个值
                 render : function(combo) {//渲染
                     combo.getStore().on("load", function(s, r, o) {
-                        // combo.setValue(r[0].get('projectName'));//第一个值
+                        combo.setValue(r[0].get('projectName'));//第一个值
                     });
                 },
+
                 select:function (combo, record) {
                     //选中后
                     var select = record[0].data;
                     var id = select.id;//项目名对应的id
                     console.log(id)
+
                     //重新加载行选项
                     //表名
                     var tableName = 'building';
@@ -80,6 +115,11 @@ Ext.define('material.material_backcheck',{
                             type : 'ajax',
                             //通用接口，material/findAllbyTableNameAndOnlyOneCondition.do传入表名，属性及属性值
                             url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName='+tableName+'&columnName='+projectId+'&columnValue='+id,//根据项目id查询对应的楼栋名
+                            // params : {
+                            // 	tableName:tableName,
+                            // 	columnName:projectId,
+                            // 	columnValue:id,
+                            // },
                             reader : {
                                 type : 'json',
                                 rootProperty: 'building',
@@ -92,8 +132,10 @@ Ext.define('material.material_backcheck',{
                             }
                         }
                     });
+
                     //buildingName,下拉框重新加载数据
                     buildingName.setStore(tableListStore2);
+
                 }
             }
         });
@@ -104,13 +146,14 @@ Ext.define('material.material_backcheck',{
             id :  'buildingName',
             name : 'buildingName',
             matchFieldWidth: false,
-            margin: '0 0 0 40',
+            margin: '0 10 0 40',
             emptyText : "--请选择楼栋名--",
             displayField: 'buildingName',
             valueField: 'id',//楼栋的id
             editable : false,
             autoLoad: true,
             //store: tableListStore2,
+
         });
 
         //查询领料单
@@ -175,7 +218,7 @@ Ext.define('material.material_backcheck',{
             items: [
                 //退料类型
                 // backType,
-                tableList,
+                project_tableList,
                 buildingName,
             ]
         });

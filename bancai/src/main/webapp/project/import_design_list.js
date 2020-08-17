@@ -437,7 +437,6 @@ Ext.define('project.import_design_list', {
 				},
 
 				select:function (combo, record) {
-					projectName:Ext.getCmp('projectName').getValue();
 					//选中后
 					var select = record[0].data;
 					var id = select.id;//项目名对应的id
