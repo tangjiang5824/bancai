@@ -49,7 +49,8 @@ Ext.define('product.add_Ptype_baseInfo', {
                         var rec = sm.getSelection();
 
                         console.log("删除数据-----------：",rec[0].data)
-                        console.log("删除：",rec[0].data.id)
+                        console.log("删除：",rec[0].data.id);
+                        var id = rec[0].data.id;
 
                         //弹框提醒
                         Ext.Msg.show({
@@ -60,9 +61,9 @@ Ext.define('product.add_Ptype_baseInfo', {
                             fn: function (btn) {
                                 if (btn === 'yes') {
                                     Ext.Ajax.request({
-                                        // url:"data/EditCellById.do",  //EditDataById.do
+                                        url:"product/deleteTYpe.do",  //EditDataById.do
                                         params:{
-                                            // type:'delete',
+                                            id:id,
                                         },
                                         success:function (response) {
                                             Ext.MessageBox.alert("提示", "删除成功!");
@@ -185,7 +186,7 @@ Ext.define('product.add_Ptype_baseInfo', {
             store: classificationListStore,
         });
         var grid = Ext.create("Ext.grid.Panel", {
-            title:'产品基础信息',
+            title:'产品类型',
             id : 'addTypeGrid',
             // dockedItems : [toolbar2],
             store : MtypeStore,

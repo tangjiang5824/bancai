@@ -1,15 +1,16 @@
-Ext.define('oldpanel.query_Ocatergory_baseInfo',{
+Ext.define('product.query_Ptype_baseInfo',{
     extend:'Ext.panel.Panel',
     region: 'center',
     layout:'fit',
-    title: '查看旧板基础信息',
+    title: '查询产品类型',
     initComponent: function(){
         var itemsPerPage = 50;
-        var tableName="oldpanel_info_view";
+        var tableName="producttype";
+
 
         //自动将读取到的数据返回到页面中
-        var uploadRecordsStore = Ext.create('Ext.data.Store',{
-            id: 'uploadRecordsStore',
+        var productType_Store = Ext.create('Ext.data.Store',{
+            id: 'productType_Store',
             autoLoad: true,
             fields: [],
             pageSize: itemsPerPage, // items per page
@@ -20,7 +21,7 @@ Ext.define('oldpanel.query_Ocatergory_baseInfo',{
                 method:'POST',
                 reader:{
                     type : 'json',
-                    rootProperty: tableName,
+                    rootProperty: 'producttype',
                     totalProperty: 'totalCount'
                 },
                 params:{
@@ -32,7 +33,7 @@ Ext.define('oldpanel.query_Ocatergory_baseInfo',{
             listeners : {
                 beforeload : function(store, operation, eOpts) {
                     store.getProxy().setExtraParams({
-                        //oldpanelCatergory:Ext.getCmp('oldpanelCatergory').getValue(),
+                        //productCatergory:Ext.getCmp('productCatergory').getValue(),
                         tableName:tableName,
                     });
                 }
@@ -44,41 +45,27 @@ Ext.define('oldpanel.query_Ocatergory_baseInfo',{
             id: 'uploadRecordsMain',
             height:400,
             width:600,
-            store: uploadRecordsStore,
+            store: productType_Store,
             viewConfig : {
                 enableTextSelection : true
             },
             columns : [
-                //序号
-                {
-                    header: '序号',
-                    xtype: 'rownumberer',
-                    width: 45,
-                    align: 'center',
-                    sortable: false
-                },
-                { text: '旧板品名',  dataIndex: 'oldpanelName' ,flex :1},
-                { text: '库存单位',  dataIndex: 'inventoryUnit' ,flex :1},
-                { text: '单面积',  dataIndex: 'unitArea' ,flex :1},
-                { text: '单重',  dataIndex: 'unitWeight' ,flex :1},
-                { text: '旧板类型名称',  dataIndex: 'oldpanelTypeName' ,flex :1},
-                { text: '分类',  dataIndex: 'classificationName' ,flex :1},
-                { text: '描述',  dataIndex: 'remark' ,flex :1},
-
+                { text: '类型',  dataIndex: 'productTypeName' ,flex :1,editor : {xtype : 'textfield', allowBlank : false}},
+                { text: '描述',  dataIndex: 'description' ,flex :1, editor : {xtype : 'textfield', allowBlank : false}}
             ],
+
+            //tbar: toobar,
             dockedItems: [{
                 xtype: 'pagingtoolbar',
-                store: uploadRecordsStore,   // same store GridPanel is using
+                store: productType_Store,   // same store GridPanel is using
                 dock: 'bottom',
                 displayInfo: true,
                 displayMsg:'显示{0}-{1}条，共{2}条',
                 emptyMsg:'无数据'
             }],
 
-            plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
-                clicksToEdit : 1
-            })],
         });
+        this.tbar = toolbar;
 
         this.items = [grid];
         this.callParent(arguments);

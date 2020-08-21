@@ -250,8 +250,8 @@ Ext.define('project.management.buildproject', {
                     //若无项目名，则不能添加楼栋
                     var projectName = Ext.getCmp("projectName").getValue();
                     if(projectName != ''){
-                        //Ext.getCmp('addDataGrid')返回定义的对象
-                        Ext.getCmp('addDataGrid').getStore().loadData(data,
+                        //Ext.getCmp('add_projectbuild_DataGrid')返回定义的对象
+                        Ext.getCmp('add_projectbuild_DataGrid').getStore().loadData(data,
                             true);
                     }else{
                         Ext.MessageBox.alert("警告","项目名不能为空!",function(r) {
@@ -270,7 +270,7 @@ Ext.define('project.management.buildproject', {
                     handler : function() {
                         // 取出grid的字段名字段类型
                         //var userid="<%=session.getAttribute('userid')%>";
-                        var select = Ext.getCmp('addDataGrid').getStore()
+                        var select = Ext.getCmp('add_projectbuild_DataGrid').getStore()
                             .getData();
                         var s = new Array();
                         select.each(function(rec) {
@@ -308,6 +308,10 @@ Ext.define('project.management.buildproject', {
                                 if(ob.success==false)
                                     Ext.MessageBox.alert("提示",ob.msg);
                                 else Ext.MessageBox.alert("提示","创建项目成功！");
+
+                                //刷新
+                                Ext.getCmp('add_projectbuild_DataGrid').getStore().removeAll();
+
                             },
                             failure : function(response) {
                                 //var message =Ext.decode(response.responseText).showmessage;
@@ -335,7 +339,7 @@ Ext.define('project.management.buildproject', {
         });
 
         var grid = Ext.create("Ext.grid.Panel", {
-            id : 'addDataGrid',
+            id : 'add_projectbuild_DataGrid',
             // dockedItems : [toolbar2],
             store : {
                 fields: []
@@ -410,7 +414,7 @@ Ext.define('project.management.buildproject', {
                 handler : function() {
                     // 取出grid的字段名字段类型
                     //var userid="<%=session.getAttribute('userid')%>";
-                    var select = Ext.getCmp('addDataGrid').getStore()
+                    var select = Ext.getCmp('add_projectbuild_DataGrid').getStore()
                         .getData();
                     var s = new Array();
                     select.each(function(rec) {
@@ -446,6 +450,8 @@ Ext.define('project.management.buildproject', {
                             if(ob.success==false)
                             Ext.MessageBox.alert("提示",ob.msg);
                             else Ext.MessageBox.alert("提示","创建项目成功！");
+                            //刷新
+
                         },
                         failure : function(response) {
                             //var message =Ext.decode(response.responseText).showmessage;

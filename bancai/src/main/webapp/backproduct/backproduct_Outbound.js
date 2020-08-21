@@ -302,7 +302,7 @@ Ext.define('backproduct.backproduct_Outbound',{
         });
 
         var backproduct_Query_Records_win_showbackproductData = Ext.create('Ext.window.Window', {
-            id:'backproduct_Query_Records_win_showbackproductData',
+            // id:'backproduct_Query_Records_win_showbackproductData',
             title: '退库成品出入库记录撤销',
             height: 500,
             width: 650,
@@ -418,9 +418,7 @@ Ext.define('backproduct.backproduct_Outbound',{
                 Ext.getCmp("toolbar_pop").items.items[0].setText(id); //设置log id的值
                 Ext.getCmp("toolbar_pop").items.items[1].setText(isrollback);
                 backproduct_Query_Records_specific_data_grid.setStore(backproductlogdetailList);
-                Ext.getCmp('backproduct_Query_Records_win_showbackproductData').show();
-
-
+                backproduct_Query_Records_win_showbackproductData.show();
             }
 
 
