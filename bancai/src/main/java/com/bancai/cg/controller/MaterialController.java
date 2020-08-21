@@ -9,6 +9,8 @@ import com.bancai.cg.util.JPAObjectUtil;
 import com.bancai.commonMethod.QueryAllService;
 import com.bancai.db.mysqlcondition;
 import com.bancai.vo.WebResponse;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -82,7 +85,7 @@ public class MaterialController {
 
     @RequestMapping(value = "/material/findmaterialinfobycondition.do")
     @Transactional
-    public WebResponse findMaterialInfo(String materialName, Integer typeId, Double unitWeight, String inventoryUnit,  Integer start, Integer limit){
+    public WebResponse findMaterialInfo(String materialName, Integer typeId, Double unitWeight, String inventoryUnit, Integer start, Integer limit){
 
 //        Specification<MaterialInfo> spec = new Specification<MaterialInfo>() {
 //            @Override
@@ -136,9 +139,10 @@ public class MaterialController {
      * 入库
      *
      * */
-    @RequestMapping(value="/material/addData.do")
+    @RequestMapping(value="/material/addData.do",method = {RequestMethod.POST,RequestMethod.GET})
     @Transactional
-    public WebResponse addMaterialData(String s,Integer operator, HttpSession session) throws Exception {
+    @ApiOperation("增加原材料信息")
+    public WebResponse addMaterialData(String s,@ApiParam("入库人") Integer operator, HttpSession session) throws Exception {
         WebResponse response=new WebResponse();
         JSONArray jsonArray =JSONArray.parseArray(s);
         if(jsonArray.size()==0){

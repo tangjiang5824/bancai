@@ -9,6 +9,8 @@ import com.bancai.db.mysqlcondition;
 import com.bancai.domain.DataList;
 import com.bancai.domain.DataRow;
 import com.bancai.yrd.service.DesignlistService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,6 +18,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import com.bancai.service.TableService;
@@ -53,7 +56,7 @@ public class DesignlistController {
     /*
      * 上传excel文件designlist
      * */
-    @RequestMapping(value = "/designlist/uploadExcel.do")
+    @RequestMapping(value = "/designlist/uploadExcel.do",method = RequestMethod.POST)
     public WebResponse designlistUploadExcel(MultipartFile uploadFile) {
         WebResponse response = new WebResponse();
         try {
@@ -76,8 +79,9 @@ public class DesignlistController {
     /*
      * 上传designlist
      * */
-    @RequestMapping(value = "/designlist/uploadData.do")
-    public WebResponse designlistUploadData(String s, String projectId, String buildingId, String buildingpositionId, HttpSession session) {
+    @RequestMapping(value = "/designlist/uploadData.do", method = RequestMethod.POST)
+    @ApiOperation("上传设计清单")
+    public WebResponse designlistUploadData(String s, @ApiParam("项目id") String projectId, String buildingId, String buildingpositionId, HttpSession session) {
         WebResponse response = new WebResponse();
         try {
             int errorCount = 0;
@@ -141,7 +145,7 @@ public class DesignlistController {
     /*
      * 查询导入的designlist记录
      * */
-    @RequestMapping(value = "/designlist/queryUploadLog.do")
+    @RequestMapping(value = "/designlist/queryUploadLog.do",method = RequestMethod.POST)
     public void designlistqueryUploadLog(String projectId, String buildingId, String buildingpositionId,
                                                 HttpServletResponse response) throws IOException, JSONException {
         DataList designlistlogList = designlistService.queryDesignlistlog(projectId, buildingId, buildingpositionId);
