@@ -219,13 +219,15 @@ public class DesignlistService extends BaseService{
     }
 
     @Transactional
-    public DataList addMatchResultBackErrorList(JSONArray jsonArray,String designlistId){
+    public DataList addMatchResultBackErrorList(JSONArray jsonArray,String isCompleteMatch,String designlistId){
         DataList errorList = new DataList();
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonTemp = jsonArray.getJSONObject(i);
             String matchResultId = jsonTemp.get("id").toString();
-            if(!matchResultId.equals("-1"))
+            if(!matchResultId.equals("-1")) {
+                jo.update("update match_result set isCompleteMatch=\""+isCompleteMatch+"\" where id=\""+matchResultId+"\"");
                 continue;
+            }
             String count = jsonTemp.get("count")+"";
             String storeId = jsonTemp.get("storeId").toString();
             String name = jsonTemp.get("name").toString();
@@ -247,7 +249,7 @@ public class DesignlistService extends BaseService{
             }
             countUse = countUse-Double.parseDouble(count);
             updateStoreCountUse(typeName,countUse,storeId);
-            if(!addChangeMatchResult(designlistId,storeId,count,name,type))
+            if(!addChangeMatchResult(designlistId,storeId,count,name,type,isCompleteMatch))
                 addMatchResultErrorRow(errorList,name,type,count,"添加匹配结果失败");
         }
         return errorList;
@@ -264,9 +266,9 @@ public class DesignlistService extends BaseService{
     private void updateStoreCountUse(String storeName, double countUse, String id){
         jo.update("update "+storeName+"_store set countUse=\"" + countUse + "\" where id=\"" + id+"\"");
     }
-    private boolean addChangeMatchResult(String designlistId,String storeId,String count,String name,String type){
+    private boolean addChangeMatchResult(String designlistId,String storeId,String count,String name,String type,String isCompleteMatch){
         return insertProjectService.insertIntoTableBySQL("insert into match_result (designlistId,matchId,count,name,madeBy,isCompleteMatch) values (?,?,?,?,?,?)",
-                designlistId,storeId,count,name,type,"2");
+                designlistId,storeId,count,name,type,isCompleteMatch);
     }
 
     @Transactional
@@ -320,8 +322,9 @@ public class DesignlistService extends BaseService{
         //requisition_order
         //requisition_order_log
         //fori:requisition_order_detail,requisition_order_logdetail
-        String sql_query = "select id,type,storeId,productId,projectId,buildingId,buildingpositionId,sum(singleNum) as count from " +
-                "requisition_create_preview_work_order_match_store where workOrderDetailId in ("+workOrderDetailIdString+") group by workOrderDetailId,type,storeId";
+        String sql_query = "select id,type,storeId,productId,projectId,buildingId,buildingpositionId,isCompleteMatch,sum(singleNum) as count from " +
+                "requisition_create_preview_work_order_match_store where workOrderDetailId in ("+workOrderDetailIdString
+                +") group by workOrderDetailId,type,storeId,isCompleteMatch";
         DataList insertList = queryService.query(sql_query);
         String projectId = insertList.get(0).get("projectId").toString();
         int requisitionOrderId = createRequisitionOrderBackId(userId,operator,projectId);
@@ -336,8 +339,9 @@ public class DesignlistService extends BaseService{
             String count = dataRow.get("count").toString();
             String buildingId = dataRow.get("buildingId").toString();
             String buildingpositionId = dataRow.get("buildingpositionId").toString();
+            String isCompleteMatch = dataRow.get("isCompleteMatch").toString();
             int requisitionOrderDetailId = createRequisitionOrderDetailBackId(String.valueOf(requisitionOrderId),workOrderDetailId,
-                    type,storeId,productId,count,buildingId,buildingpositionId);
+                    type,storeId,productId,count,buildingId,buildingpositionId,isCompleteMatch);
             jo.update(sql_updateStatus+workOrderDetailId+"\"");
             b = b&requisitionOrderAddLogDetail(String.valueOf(requisitionOrderLogId), String.valueOf(requisitionOrderDetailId), count);
         }
@@ -348,10 +352,10 @@ public class DesignlistService extends BaseService{
                 userId,operator,analyzeNameService.getTime(),projectId,"0");
     }
     private int createRequisitionOrderDetailBackId(String requisitionOrderId,String workOrderDetailId,String type, String storeId,
-                                                   String productId,String count,String buildingId,String buildingpositionId){
+                                                   String productId,String count,String buildingId,String buildingpositionId,String isCompleteMatch){
         return insertProjectService.insertDataToTable("insert into requisition_order_detail (requisitionOrderId,workOrderDetailId," +
-                        "type,storeId,productId,countRec,countAll,buildingId,buildingpositionId) values (?,?,?,?,?,?,?,?,?)",
-                requisitionOrderId, workOrderDetailId, type, storeId, productId, count, count, buildingId, buildingpositionId);
+                        "type,storeId,productId,countRec,countAll,buildingId,buildingpositionId,isCompleteMatch) values (?,?,?,?,?,?,?,?,?,?)",
+                requisitionOrderId, workOrderDetailId, type, storeId, productId, count, count, buildingId, buildingpositionId,isCompleteMatch);
     }
     private int requisitionOrderAddLogBackId(String type, String requisitionOrderId, String userId, String operator){
         return insertProjectService.insertDataToTable("insert into requisition_order_log (type,requisitionOrderId,userId,time,operator) values(?,?,?,?,?)",
