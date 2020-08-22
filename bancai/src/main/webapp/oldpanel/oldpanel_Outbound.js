@@ -308,7 +308,6 @@ Ext.define('oldpanel.oldpanel_Outbound',{
         });
 
         var win_showoldpanelData_outbound = Ext.create('Ext.window.Window', {
-            // id:'win_showmaterialData_outbound',
             title: '旧板出入库记录撤销',
             height: 500,
             width: 650,

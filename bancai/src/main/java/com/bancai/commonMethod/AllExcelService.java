@@ -234,6 +234,30 @@ public class AllExcelService extends BaseService {
 					errorlist.get(index).put("错误原因","数量或者总重输入出错;  ");
 				}
 			}
+			try{
+				Double totalarea=0.0;
+				if(dataList.get(i).get("总面积")!=null){
+					totalarea=Double.valueOf((dataList.get(i).get("总面积")+"").trim());
+				}
+				Double count=1.0;
+				if(dataList.get(i).get("数量")!=null)
+					count=Double.valueOf((dataList.get(i).get("数量")+"").trim());
+				double unitarea=totalarea/count;
+				unitarea = TransferUtil.keep2tail(unitarea);
+				//dataList.get(i).put("单重",unitweight);
+				row.put("totalArea",totalarea+"");
+				row.put("单面积",unitarea);
+			}catch (Exception e){
+				if(index!=-1){
+					StringBuilder errorMsg=new StringBuilder(errorlist.get(index).get("错误原因")+"");
+					errorMsg.append("数量或者总面积输入出错;  ");
+					errorlist.get(index).put("错误原因",errorMsg.toString());
+				}else{
+					errorlist.add(dataList.get(i));
+					index=errorlist.size()-1;
+					errorlist.get(index).put("错误原因","数量或者总面积输入出错;  ");
+				}
+			}
 			row.put("序号",dataList.get(i).get("序号") +"");
 			row.put("materialName",dataList.get(i).get("原材料名") +"");
 			row.put("warehouseName",dataList.get(i).get("仓库名称") +"");

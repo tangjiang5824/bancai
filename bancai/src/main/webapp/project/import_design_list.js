@@ -109,7 +109,7 @@ Ext.define('project.import_design_list', {
 		});
 		var grid = Ext.create("Ext.grid.Panel", {
 			id : 'addlistDataGrid',
-			store : 'designlistStore',
+			store : designlistStore,
 			title:"清单明细",
 			columns : [
 				// {
@@ -437,7 +437,6 @@ Ext.define('project.import_design_list', {
 				},
 
 				select:function (combo, record) {
-					projectName:Ext.getCmp('projectName').getValue();
 					//选中后
 					var select = record[0].data;
 					var id = select.id;//项目名对应的id
@@ -675,9 +674,12 @@ Ext.define('project.import_design_list', {
 								}else{
 									Ext.MessageBox.hide();
 									Ext.MessageBox.alert("提示","匹配成功" );
+
+									//刷新页面
+									Ext.getCmp('addlistDataGrid').getStore().removeAll();
 								}
 								//var message =Ext.decode(response.responseText).showmessage;
-								//刷新页面
+
 							},
 							failure : function(response) {
 								Ext.MessageBox.hide();

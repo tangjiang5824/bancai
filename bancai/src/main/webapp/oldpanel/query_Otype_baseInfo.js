@@ -1,11 +1,11 @@
-Ext.define('oldpanel.query_Ocatergory_baseInfo',{
+Ext.define('oldpanel.query_Otype_baseInfo',{
     extend:'Ext.panel.Panel',
     region: 'center',
     layout:'fit',
-    title: '查看旧板基础信息',
+    title: '查看旧板类型',
     initComponent: function(){
         var itemsPerPage = 50;
-        var tableName="oldpanel_info_view";
+        var tableName="oldpanel_type_view";
 
         //自动将读取到的数据返回到页面中
         var uploadRecordsStore = Ext.create('Ext.data.Store',{
@@ -49,22 +49,9 @@ Ext.define('oldpanel.query_Ocatergory_baseInfo',{
                 enableTextSelection : true
             },
             columns : [
-                //序号
-                {
-                    header: '序号',
-                    xtype: 'rownumberer',
-                    width: 45,
-                    align: 'center',
-                    sortable: false
-                },
-                { text: '旧板品名',  dataIndex: 'oldpanelName' ,flex :1},
-                { text: '库存单位',  dataIndex: 'inventoryUnit' ,flex :1},
-                { text: '单面积',  dataIndex: 'unitArea' ,flex :1},
-                { text: '单重',  dataIndex: 'unitWeight' ,flex :1},
-                { text: '旧板类型名称',  dataIndex: 'oldpanelTypeName' ,flex :1},
+                { text: '旧版类型名称',  dataIndex: 'oldpanelTypeName' ,flex :1},
                 { text: '分类',  dataIndex: 'classificationName' ,flex :1},
-                { text: '描述',  dataIndex: 'remark' ,flex :1},
-
+                { text: '描述',  dataIndex: 'description' ,flex :1},
             ],
             dockedItems: [{
                 xtype: 'pagingtoolbar',
