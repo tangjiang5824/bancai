@@ -55,7 +55,7 @@ public class DesignlistService extends BaseService{
      */
     @Transactional
     public int analyzeDesignlist(String productName, String position, String userId, String projectId, String buildingId) {
-        if (!isDesignlistPositionValid(projectId, buildingId, position))
+        if ((!position.equals("-1"))&&(!isDesignlistPositionValid(projectId, buildingId, position)))
             return -100;//位置重复导入
         int productId = productDataService.addProductInfoIfNameValid(productName,userId);
         if(productId==0)
@@ -74,7 +74,8 @@ public class DesignlistService extends BaseService{
         for (DataRow dataRow : validList) {
             String productId = dataRow.get("productId").toString();
             String position = dataRow.get("position").toString();
-            setDesignlistOrigin(designlistlogId, projectId, buildingId, buildingpositionId, String.valueOf(productId), position, 0, 0);
+            String figureNum = dataRow.get("figureNum").toString();
+            setDesignlistOrigin(designlistlogId, projectId, buildingId, buildingpositionId, String.valueOf(productId), position, figureNum,0, 0);
         }
         return designlistlogId;
     }
@@ -98,12 +99,12 @@ public class DesignlistService extends BaseService{
     /**
      * 导入设计清单，返回清单id
      */
-    private int setDesignlistOrigin(int designlistlogId,String projectId, String buildingId, String buildingpositionId, String productId, String position,
-                                     int madeBy, int processStatus){
+    private int setDesignlistOrigin(int designlistlogId,String projectId, String buildingId, String buildingpositionId,
+                                    String productId, String position, String figureNum,int madeBy, int processStatus){
         return insertProjectService.insertDataToTable("insert into designlist " +
-                        "(designlistlogId,projectId,buildingId,buildingpositionId,productId,position,madeBy,processStatus) values " +
-                        "(?,?,?,?,?,?,?,?)",String.valueOf(designlistlogId), projectId, buildingId, buildingpositionId, productId, position,
-                String.valueOf(madeBy), String.valueOf(processStatus));
+                        "(designlistlogId,projectId,buildingId,buildingpositionId,productId,position,figureNum,madeBy,processStatus) values " +
+                        "(?,?,?,?,?,?,?,?,?)",String.valueOf(designlistlogId), projectId, buildingId, buildingpositionId, productId,
+                position, figureNum,String.valueOf(madeBy), String.valueOf(processStatus));
     }
 
     @Transactional

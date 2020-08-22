@@ -80,7 +80,6 @@ public class DesignlistController {
     public WebResponse designlistUploadData(String s, String projectId, String buildingId, String buildingpositionId, HttpSession session) {
         WebResponse response = new WebResponse();
         try {
-            int errorCount = 0;
             DataList errorList = new DataList();
             DataList validList = new DataList();
             JSONArray jsonArray = new JSONArray(s);
@@ -88,31 +87,35 @@ public class DesignlistController {
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonTemp = jsonArray.getJSONObject(i);
                 System.out.println("第" + i + "个---" + jsonTemp);
-                String productName=(jsonTemp.get("productName")+"").trim().toUpperCase();
-                String position=(jsonTemp.get("position")+"").trim().toUpperCase();
+                String productName=(jsonTemp.get("品名")+"").trim().toUpperCase();
+                String position=(jsonTemp.get("位置编号")+"").trim().toUpperCase();
+                if(position.equals("NULL")||position.length()==0)
+                    position = "-1";
+                String figureNum=(jsonTemp.get("图号")+"").trim().toUpperCase();
                 int analyzeDesignlist = designlistService.analyzeDesignlist(productName, position, userId, projectId, buildingId);
                 if(analyzeDesignlist==-100){
                     DataRow errorRow = new DataRow();
                     errorRow.put("productName",productName);
                     errorRow.put("position",position);
-                    errorRow.put("errorCode","100");//位置重复
+                    errorRow.put("figureNum",figureNum);
+                    errorRow.put("errorType","位置重复");
                     errorList.add(errorRow);
-                    errorCount++;
                 }else if(analyzeDesignlist==-200){
                     DataRow errorRow = new DataRow();
                     errorRow.put("productName",productName);
                     errorRow.put("position",position);
-                    errorRow.put("errorCode","200");//品名不合法
+                    errorRow.put("figureNum",figureNum);
+                    errorRow.put("errorType","品名不合法");
                     errorList.add(errorRow);
-                    errorCount++;
                 }else {
                     DataRow validRow = new DataRow();
                     validRow.put("productId",String.valueOf(analyzeDesignlist));
                     validRow.put("position",position);
+                    validRow.put("figureNum",figureNum);
                     validList.add(validRow);
                 }
             }
-            if(errorCount!=0){
+            if(errorList.size()!=0){
                 response.put("errorList",errorList);
                 response.put("errorCount",errorList.size());
                 response.setSuccess(false);
