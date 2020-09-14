@@ -133,7 +133,7 @@ Ext.define('project.import_design_list', {
 					}
 				},
 				{
-					dataIndex : 'productName',
+					dataIndex : '品名',
 					name : '产品名称',
 					text : '产品名称',
 					width : 200,
@@ -144,16 +144,7 @@ Ext.define('project.import_design_list', {
 					editable:false,
 					// flex:0.2
 				},
-				// {
-				// 	dataIndex : '产品安装位置',
-				// 	text:'产品安装位置',
-				// 	name:'产品安装位置',
-				// 	//width : 110,
-				// 	editor : {// 文本字段
-				// 		xtype : 'textfield',
-				// 		allowBlank : false,
-				// 	}
-				// },
+
 				// {
 				// 	dataIndex : '是否由旧板生产',
 				// 	text:'是否由旧板生产',
@@ -165,11 +156,16 @@ Ext.define('project.import_design_list', {
 				// 	}
 				// },
 				{
-					dataIndex : 'position',
+					dataIndex : '位置编号',
 					name : '位置编号',
 					text : '位置编号',
 					width : 200,
 					// flex:0.2
+				},
+				{
+					dataIndex : '图号',
+					text:'图号',
+					name:'图号',
 				},
 			],
 			viewConfig : {
@@ -220,7 +216,7 @@ Ext.define('project.import_design_list', {
 					}
 				},
 				{
-					text: '产品名称',
+					text: '品名',
 					dataIndex: 'productName',
 					flex :1,
 					width:"80"
@@ -232,20 +228,21 @@ Ext.define('project.import_design_list', {
 					width:"80"
 				},
 				{
-					text: '产品名',
-					dataIndex: 'productName',
+					text: '图号',
+					dataIndex: 'figureNum',
 					flex :1,
 					width:"80"
 				},
 				{
 					text: '错误原因',
 					flex :1,
-					dataIndex: 'errorCode',
-					renderer: function (value) {
-						return designlist.errorcode.type[value].name; // key-value
-					},
+					dataIndex: 'errorType',
+					// dataIndex: 'errorCode',
+					// renderer: function (value) {
+					// 	return designlist.errorcode.type[value].name; // key-value
+					// },
 				}
-				//fields:['oldpanelId','oldpanelName','count'],specification
+
 
 			],
 			flex:1,

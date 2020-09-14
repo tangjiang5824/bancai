@@ -642,8 +642,13 @@ Ext.define('backproduct.backproduct_Receive',{
                     flex :1,
                 },
                 {
+                    dataIndex:'countStore',
+                    text:'库存数量',
+                    flex :1,
+                },
+                {
                     dataIndex:'countAll',
-                    text:'总数量',
+                    text:'领取总数',
                     flex :1,
                 },
                 {
