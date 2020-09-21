@@ -487,10 +487,4 @@ public class DesignlistController {
         //net.sf.json.JSONObject json= net.sf.json.JSONObject.fromObject(response);
         return response;
     }
-
-
-
-
-
-
 }
