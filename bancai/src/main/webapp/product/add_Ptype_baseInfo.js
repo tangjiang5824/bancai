@@ -35,10 +35,49 @@ Ext.define('product.add_Ptype_baseInfo', {
                     //Ext.getCmp('addTypeGrid')返回定义的对象
                     Ext.getCmp('addTypeGrid').getStore().loadData(data,
                         true);
-
                 }
-
             },
+                {
+                    xtype : 'button',
+                    iconAlign : 'center',
+                    iconCls : 'rukuicon ',
+                    text : '删除',
+                    margin: '0 0 0 40',
+                    handler : function() {
+                        //Ext.getCmp('addTypeGrid')返回定义的对象
+                        var sm = Ext.getCmp('addTypeGrid').getSelectionModel();
+                        var rec = sm.getSelection();
+
+                        console.log("删除数据-----------：",rec[0].data)
+                        console.log("删除：",rec[0].data.id);
+                        var id = rec[0].data.id;
+
+                        //弹框提醒
+                        Ext.Msg.show({
+                            title: '操作确认',
+                            message: '将删除数据，选择“是”否确认？',
+                            buttons: Ext.Msg.YESNO,
+                            icon: Ext.Msg.QUESTION,
+                            fn: function (btn) {
+                                if (btn === 'yes') {
+                                    Ext.Ajax.request({
+                                        url:"product/deleteTYpe.do",  //EditDataById.do
+                                        params:{
+                                            id:id,
+                                        },
+                                        success:function (response) {
+                                            Ext.MessageBox.alert("提示", "删除成功!");
+                                            Ext.getCmp('addTypeGrid').getStore().remove(rec);
+                                        },
+                                        failure : function(response){
+                                            Ext.MessageBox.alert("提示", "删除失败!");
+                                        }
+                                    })
+                                }
+                            }
+                        });
+                    }
+                },
 //                 {
 //                 xtype : 'button',
 //                 iconAlign : 'center',
@@ -147,15 +186,25 @@ Ext.define('product.add_Ptype_baseInfo', {
             store: classificationListStore,
         });
         var grid = Ext.create("Ext.grid.Panel", {
+            title:'产品类型',
             id : 'addTypeGrid',
-            dockedItems : [toolbar2],
+            // dockedItems : [toolbar2],
             store : MtypeStore,
             columns : [
+                //序号
+                {
+                    header: '序号',
+                    xtype: 'rownumberer',
+                    width: 45,
+                    align: 'center',
+                    sortable: false
+                },
                 {
                     dataIndex : 'productTypeName',
                     name : '产品类型名称',
                     text : '产品类型名称',
                     //width : 110,
+                    flex:1,
                     editor : {// 文本字段
                         xtype : 'textfield',
                         allowBlank : false,
@@ -164,6 +213,7 @@ Ext.define('product.add_Ptype_baseInfo', {
                     dataIndex : 'description',
                     name : '描述',
                     text : '描述',
+                    flex:1.5,
                     //width : 110,
                     editor : {// 文本字段
                         xtype : 'textfield',
@@ -173,7 +223,7 @@ Ext.define('product.add_Ptype_baseInfo', {
                     dataIndex : 'classificationId',
                     name : '分类',
                     text : '分类',
-                    flex :.6,
+                    flex :0.6,
                     //width : 110,
                     editor:classificationList,renderer:function(value, cellmeta, record){
                         var index = classificationListStore.find(classificationList.valueField,value);
@@ -185,56 +235,56 @@ Ext.define('product.add_Ptype_baseInfo', {
                         return returnvalue;
                     }
                 },
-                {
-                    xtype:'actioncolumn',
-                    text : '删除操作',
-                    width:100,
-                    style:"text-align:center;",
-                    items: [
-                        //删除按钮
-                        {
-                            icon: 'extjs/imgs/delete.png',
-                            tooltip: 'Delete',
-                            style:"margin-right:20px;",
-                            handler: function(grid, rowIndex, colIndex) {
-                                var rec = grid.getStore().getAt(rowIndex);
-                                console.log("删除--------：",rec.data.typeName)
-                                console.log("删除--------：",rec.data.id)
-                                //类型id
-                                var typeId = rec.data.id;
-                                //弹框提醒
-                                Ext.Msg.show({
-                                    title: '操作确认',
-                                    message: '将删除数据，选择“是”否确认？',
-                                    buttons: Ext.Msg.YESNO,
-                                    icon: Ext.Msg.QUESTION,
-                                    fn: function (btn) {
-                                        if (btn === 'yes') {
-                                            Ext.Ajax.request({
-                                                url:"data/EditCellById.do",  //EditDataById.do
-                                                params:{
-                                                    type:'delete',
-                                                    tableName:tableName,
-                                                    field:'typeName',
-                                                    value:rec.data.typeName,
-                                                    id:typeId
-                                                },
-                                                success:function (response) {
-                                                    Ext.MessageBox.alert("提示", "删除成功!");
-                                                    Ext.getCmp('addTypeGrid').getStore().remove(rec);
-                                                },
-                                                failure : function(response){
-                                                    Ext.MessageBox.alert("提示", "删除失败!");
-                                                }
-                                            })
-                                        }
-                                    }
-                                });
-                                // alert("Terminate " + rec.get('firstname'));
-                            }
-                        }]
-
-                }
+                // {
+                //     xtype:'actioncolumn',
+                //     text : '删除操作',
+                //     width:100,
+                //     style:"text-align:center;",
+                //     items: [
+                //         //删除按钮
+                //         {
+                //             icon: 'extjs/imgs/delete.png',
+                //             tooltip: 'Delete',
+                //             style:"margin-right:20px;",
+                //             handler: function(grid, rowIndex, colIndex) {
+                //                 var rec = grid.getStore().getAt(rowIndex);
+                //                 console.log("删除--------：",rec.data.typeName)
+                //                 console.log("删除--------：",rec.data.id)
+                //                 //类型id
+                //                 var typeId = rec.data.id;
+                //                 //弹框提醒
+                //                 Ext.Msg.show({
+                //                     title: '操作确认',
+                //                     message: '将删除数据，选择“是”否确认？',
+                //                     buttons: Ext.Msg.YESNO,
+                //                     icon: Ext.Msg.QUESTION,
+                //                     fn: function (btn) {
+                //                         if (btn === 'yes') {
+                //                             Ext.Ajax.request({
+                //                                 url:"data/EditCellById.do",  //EditDataById.do
+                //                                 params:{
+                //                                     type:'delete',
+                //                                     tableName:tableName,
+                //                                     field:'typeName',
+                //                                     value:rec.data.typeName,
+                //                                     id:typeId
+                //                                 },
+                //                                 success:function (response) {
+                //                                     Ext.MessageBox.alert("提示", "删除成功!");
+                //                                     Ext.getCmp('addTypeGrid').getStore().remove(rec);
+                //                                 },
+                //                                 failure : function(response){
+                //                                     Ext.MessageBox.alert("提示", "删除失败!");
+                //                                 }
+                //                             })
+                //                         }
+                //                     }
+                //                 });
+                //                 // alert("Terminate " + rec.get('firstname'));
+                //             }
+                //         }]
+                //
+                // }
                  ],
             viewConfig : {
                 plugins : {
@@ -245,7 +295,8 @@ Ext.define('product.add_Ptype_baseInfo', {
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 1
             })],
-            selType : 'rowmodel',
+            selType : 'checkboxmodel',//'rowmodel'
+            // selType : 'rowmodel',
             listeners: {
                 //监听修改
                 validateedit: function (editor, e) {
@@ -275,8 +326,16 @@ Ext.define('product.add_Ptype_baseInfo', {
                 }
             }
         });
+        //dockedItems : [toolbar2],
+        this.dockedItems=[
+            {
+                xtype : 'toolbar',
+                dock : 'top',
+                items : [toolbar2]
+            },
+        ];
 
-        this.dockedItems = [ grid];//toolbar2,
+        this.items = [ grid];//toolbar2,
         //this.items = [ me.grid ];
         this.callParent(arguments);
 

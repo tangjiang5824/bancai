@@ -58,17 +58,30 @@ public class ProjectController {
      * @param s
      * @param session
      * @param projectName
-     * @param startTime
      * @param proEndTime
-     * @param planLeader
-     * @param produceLeader
-     * @param purchaseLeader
-     * @param financeLeader
-     * @param storeLeader
+     * @param planLeaderId
+     * @param produceLeaderId
+     * @param purchaseLeaderId
+     * @param financeLeaderId
+     * @param storeLeaderId
      * @return
      */
     @RequestMapping(value="/generate_project.do")
-    public void add_project(String s,HttpServletResponse response,HttpSession session,String projectName,String startTime,String proEndTime,String planLeader,String produceLeader,String purchaseLeader,String financeLeader,String storeLeader,String isPreprocess ) throws IOException, JSONException {
+    @Transactional(rollbackFor = Exception.class)
+    public WebResponse add_project(String s,HttpSession session,String projectName,String proStartTime,String proEndTime,String planLeaderId,String produceLeaderId,String purchaseLeaderId,String financeLeaderId,String storeLeaderId,String isPreprocess ) throws IOException, JSONException {
+        WebResponse response =new WebResponse();
+        if(projectName==null||projectName.trim().length()==0){
+            response.setSuccess(false);
+            response.setMsg("请输入项目名！");
+            response.setErrorCode(100);
+            return response;
+        }
+        if(isPreprocess==null||isPreprocess.trim().length()==0){
+            response.setSuccess(false);
+            response.setMsg("请选择是否为预加工项目！");
+            response.setErrorCode(200);
+            return response;
+        }
         JSONArray jsonArray = new JSONArray(s);
         String userid=null;
         if(session.getAttribute("userid")!=null)
@@ -79,40 +92,57 @@ public class ProjectController {
         try {
             int projectName_count=insertProjectService.queryisexist(sql_search);
             if (projectName_count!=0){
-                response.setCharacterEncoding("UTF-8");
-                response.setContentType("text/html");
-                response.getWriter().write("{'success':false,'showmessage':'项目名已经存在！操作失败'}");
-                response.setStatus(500);
-                response.getWriter().flush();
-                response.getWriter().close();
-                return ;
+                response.setMsg("项目名已经存在！操作失败");
+                response.setSuccess(false);
+                response.setErrorCode(500);
+                return response;
             }
         }catch (Exception e){
         e.printStackTrace();
     }
+        if(planLeaderId.equals("")) planLeaderId=null;
+        if(produceLeaderId.equals("")) produceLeaderId=null;
+        if(purchaseLeaderId.equals("")) purchaseLeaderId=null;
+        if(financeLeaderId.equals("")) financeLeaderId=null;
+        if(storeLeaderId.equals("")) storeLeaderId=null;
         //生成project计划表
-        String sql1="insert into project (uploadId,startTime,projectName,proEndTime,planLeaderId,produceLeaderId,purchaseLeaderId,financeLeaderId,storeLeaderId,statusId,isPreprocess) values(?,?,?,?,?,?,?,?,?,?,?) ";
+        String sql1="insert into project (uploadId,startTime,proStartTime,projectName,proEndTime,planLeaderId,produceLeaderId,purchaseLeaderId,financeLeaderId,storeLeaderId,statusId,isPreprocess) values(?,?,?,?,?,?,?,?,?,?,?,?) ";
         //插入到project表的同时返回projectId
-        String projectId =insertProjectService.insertDataToTable(sql1,userid,startTime,projectName,proEndTime,planLeader,produceLeader,purchaseLeader,financeLeader,storeLeader,"1",isPreprocess)+"";
+        String projectId =insertProjectService.insertDataToTable(sql1,userid,new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()),proStartTime,projectName,proEndTime,planLeaderId,produceLeaderId,purchaseLeaderId,financeLeaderId,storeLeaderId,"1",isPreprocess)+"";
         for (int i = 0; i < jsonArray.length(); i++) {
             ArrayList arrayList=new ArrayList();
             JSONObject jsonTemp = jsonArray.getJSONObject(i);
+            String BuildingNo=null;
+            String BuildName=null;
+            String BuildOwner=null;
             //获得第i条数据的各个属性值
-            String BuildingNo = jsonTemp.get("buildingNo")+"";
-            String BuildName = jsonTemp.get("buildingName")+"";
-            String BuildOwner = jsonTemp.get("buildingOwner")+"";
+            try{
+                BuildingNo = jsonTemp.get("buildingNo")+"";
+            }catch (JSONException e){
 
+            }
+            try{
+                BuildName = jsonTemp.get("buildingName")+"";
+            }catch (JSONException e){
+
+            }
+            try{
+                BuildOwner = jsonTemp.get("buildingOwner")+"";
+            }catch (JSONException e){
+
+            }
+            if(BuildingNo==null&&BuildName==null&&BuildOwner==null){
+                break;
+            }
             //插入楼栋信息
             String sql2="insert into building (buildingNo,buildingName,buildingLeader,projectId) values(?,?,?,?)";
             //插入到planlist表的同时返回planlistid
             String BuildingId=insertProjectService.insertDataToTable(sql2,BuildingNo,BuildName,BuildOwner,projectId)+"";
         }
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType("text/html");
-        response.getWriter().write(
-                "{'success':true,'showmessage':'创建成功！'}");
-        response.getWriter().flush();
-        response.getWriter().close();
+
+        response.setSuccess(true);
+        response.setMsg("创建成功");
+        return response;
     }
 
     @RequestMapping("/com/bancai/cg/test.do")
@@ -183,8 +213,8 @@ public class ProjectController {
     @RequestMapping(value="/project/findProjectAndBuilding.do")
     public void findProjectAndBuilding(String projectId,String start,String limit,HttpServletResponse response) throws IOException, JSONException {
 
-            DataList projectList= insertProjectService.findallbytableNameAndinfo("project","id",projectId,start,limit);
-            DataList buildingList=insertProjectService.findallbytableNameAndinfo("building","projectId",projectId,start,limit);
+            DataList projectList= insertProjectService.findallbytableNameAndinfo("project_view","id",projectId,start,limit);
+            DataList buildingList=insertProjectService.findallbytableNameAndinfo("building_view","projectId",projectId,start,limit);
             JSONObject object=new JSONObject();
             JSONArray parray =new JSONArray(projectList);
             JSONArray barray=new JSONArray(buildingList);
@@ -200,7 +230,7 @@ public class ProjectController {
     @RequestMapping(value="/project/findBuilding.do")
     public void findProjectBuilding(String projectId,String start,String limit,HttpServletResponse response) throws IOException, JSONException {
         //DataList projectList= insertProjectService.findallbytableNameAndinfo("project","id",projectId);
-        DataList buildingList=insertProjectService.findallbytableNameAndinfo("building","projectId",projectId,start,limit);
+        DataList buildingList=insertProjectService.findallbytableNameAndinfo("building_view","projectId",projectId,start,limit);
         JSONObject object=new JSONObject();
         //JSONArray parray =new JSONArray(projectList);
         JSONArray barray=new JSONArray(buildingList);
@@ -211,6 +241,44 @@ public class ProjectController {
         response.getWriter().write(object.toString());
         response.getWriter().flush();
         response.getWriter().close();
+    }
+
+    //返回有查询条件的项目信息
+    @RequestMapping("/project/findprojectBycondition.do")
+    public WebResponse findProjectbyCondition(Integer start,Integer limit,String projectName,String startTime,String endTime,String proStartTime,String proEndTime,String planLeader,String produceLeader,String purchaseLeader,String financeLeader,String storeLeader){
+        mysqlcondition c=new mysqlcondition();
+        String tableName="project_view";
+        if (null!=projectName&&projectName.length() != 0) {
+            c.and(new mysqlcondition("projectName", "=", projectName));
+        }
+        if (null!=startTime&&startTime.length() != 0) {
+            c.and(new mysqlcondition("startTime", ">=", startTime));
+        }
+        if (null!=endTime&&endTime.length() != 0) {
+            c.and(new mysqlcondition("endTime", "<=", endTime));
+        }
+        if (null!=proStartTime&&proStartTime.length() != 0) {
+            c.and(new mysqlcondition("proStartTime", ">=", proStartTime));
+        }
+        if (null!=proEndTime&&proEndTime.length() != 0) {
+            c.and(new mysqlcondition("proEndTime", "<=", proEndTime));
+        }
+        if (null!=planLeader&&planLeader.length() != 0) {
+            c.and(new mysqlcondition("planLeaderId", "=", planLeader));
+        }
+        if (null!=produceLeader&&produceLeader.length() != 0) {
+            c.and(new mysqlcondition("produceLeaderId", "=", produceLeader));
+        }
+        if (null!=purchaseLeader&&purchaseLeader.length() != 0) {
+            c.and(new mysqlcondition("purchaseLeaderId", "=", purchaseLeader));
+        }
+        if (null!=financeLeader&&financeLeader.length() != 0) {
+            c.and(new mysqlcondition("financeLeaderId", "=", financeLeader));
+        }
+        if (null!=storeLeader&&storeLeader.length() != 0) {
+            c.and(new mysqlcondition("storeLeaderId", "=", storeLeader));
+        }
+        return queryAllService.queryDataPage(start, limit, c, tableName);
     }
 
     /**
@@ -239,25 +307,31 @@ public class ProjectController {
      * @throws IOException
      */
     @RequestMapping(value="/material/findStoreInfo.do")
-    public WebResponse findStoreInfo(String materialName,String count_min,String count_max,String warehouseName, Integer start, Integer limit,String tableName)  {
+    public WebResponse findStoreInfo(Integer materialId,String countStore_min,String countStore_max,String countUse_min,String countUse_max,String warehouseName, Integer start, Integer limit,String tableName)  {
 //        String tableName = "Store_view";
 //		System.out.println(startWidth);
 //		System.out.println(endWidth);
-//
         mysqlcondition c=new mysqlcondition();
-        if (null!=materialName&&materialName.length() != 0) {
-            c.and(new mysqlcondition("materialName", "=", materialName));
+        if (null!=materialId) {
+            c.and(new mysqlcondition("materialId", "=", materialId));
         }
-
-        if (null!=count_min&&count_min.length() != 0) {
-            c.and(new mysqlcondition("count", ">=", count_min));
+        if (null!=countUse_min&&countUse_min.length() != 0) {
+            c.and(new mysqlcondition("countUse", ">=", countUse_min));
         }
-        if (null!=count_max&&count_max.length() != 0) {
-            c.and(new mysqlcondition("count", "<=", count_max));
+        if (null!=countUse_max&&countUse_max.length() != 0) {
+            c.and(new mysqlcondition("countUse", "<=", countUse_max));
+        }
+        if (null!=countStore_min&&countStore_min.length() != 0) {
+            c.and(new mysqlcondition("countStore", ">=", countStore_min));
+        }
+        if (null!=countStore_max&&countStore_max.length() != 0) {
+            c.and(new mysqlcondition("countStore", "<=", countStore_max));
         }
         if (null!=warehouseName&&warehouseName.length() != 0) {
             c.and(new mysqlcondition("warehouseName", "=", warehouseName));
         }
+        //不显示库存数量为0的记录
+        c.and(new mysqlcondition("countStore", ">", 0));
         return queryAllService.queryDataPage(start, limit, c, tableName);
     }
 

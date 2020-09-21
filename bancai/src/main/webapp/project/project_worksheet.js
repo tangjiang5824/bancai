@@ -697,13 +697,11 @@ Ext.define('project.project_worksheet',{
                 align:'stretch'
             },
             width:'100%',
-            height:350,
+            height:360,
             items:[grid1,
                 grid_pro_specific
             ],
         });
-
-
 
         var toolbar_worksheet_specific = Ext.create('Ext.toolbar.Toolbar',{
             id:'toolbar_worksheet_specific',
@@ -795,7 +793,8 @@ Ext.define('project.project_worksheet',{
                 align:'stretch'
             },
             width:'100%',
-            height:350,
+            height:360,
+            autoScroll: true,
             items:[grid2,
                 grid_worksheet_specific
             ],
@@ -804,13 +803,15 @@ Ext.define('project.project_worksheet',{
 
         var panel = Ext.create('Ext.panel.Panel',{
             //dock: 'bottom',
-            layout:{
-                type:'vbox',
-                align:'stretch'
-            },
+            // layout:{
+            //     type:'vbox',
+            //     align:'stretch',
+            //
+            // },
             width:'100%',
-            height:800,
-
+            height:1500,
+            autoHeight: true,
+            // bodyStyle:'overflow-x:hidden;overflow-y:auto;',
             items:[
                 // grid1,
                 panel_show,

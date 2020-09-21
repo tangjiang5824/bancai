@@ -142,7 +142,7 @@ Ext.define('material.material_Outbound',{
             fields: [],
             pageSize: itemsPerPage, // items per page
             proxy:{
-                url : "material/material_query_records.do",
+                url : "material/material_query_records.do?tableName=materiallog_projectname_view",
                 type: 'ajax',
                 reader:{
                     type : 'json',
@@ -150,8 +150,6 @@ Ext.define('material.material_Outbound',{
                     totalProperty: 'totalCount'
                 },
                 params:{
-                    start: 0,
-                    limit: 20,
                     type:0,
                     // operator : Ext.getCmp('operator').getValue(),//获取操作员名，type操作类型
                     // startTime:Ext.getCmp('startTime').getValue(),
@@ -268,28 +266,18 @@ Ext.define('material.material_Outbound',{
                     hidden:true
                 },
                 {
-                    xtype: 'textfield',
+                    xtype: 'combo',
                     margin : '0 40 0 0',
-                    fieldLabel: '回滚人',
+                    fieldLabel: '撤销人',
                     id :'operator_back',
+                    store : workerListStore,
+                    displayField : 'workerName',
+                    valueField : 'id',
                     width: 150,
                     labelWidth: 50,
                     name: 'operator_back',
                     value:"",
                 },
-                {
-                    xtype : 'datefield',
-                    margin : '0 40 0 0',
-                    fieldLabel : '回滚时间',
-                    width : 180,
-                    labelWidth : 60,
-                    id : "backTime",
-                    name : 'backTime',
-                    format : 'Y-m-d',
-                    editable : false,
-                    //value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
-                },
-
                 {
                     xtype : 'button',
                     text: '撤销所有记录',
@@ -305,7 +293,7 @@ Ext.define('material.material_Outbound',{
                         if (is_rollback != 1){
                             Ext.Msg.show({
                                 title: '操作确认',
-                                message: '将回滚数据，选择“是”否确认？',
+                                message: '将撤销数据，选择“是”否确认？',
                                 buttons: Ext.Msg.YESNO,
                                 icon: Ext.Msg.QUESTION,
                                 fn: function (btn) {
@@ -319,10 +307,14 @@ Ext.define('material.material_Outbound',{
                                             },
                                             success:function (response) {
                                                 //console.log(response.responseText);
-                                                Ext.MessageBox.alert("提示", "回滚成功!");
+                                                var ob=JSON.parse(response.responseText);
+                                                if(ob.success==false)
+                                                    Ext.MessageBox.alert("提示", ob.msg);
+                                                else
+                                                    Ext.MessageBox.alert("提示", "撤销成功!");
                                             },
                                             failure : function(response){
-                                                Ext.MessageBox.alert("提示", "回滚失败!");
+                                                Ext.MessageBox.alert("提示", "撤销失败!");
                                             }
                                         })
                                     }
@@ -331,7 +323,7 @@ Ext.define('material.material_Outbound',{
 
                         }
                         else{
-                            Ext.Msg.alert('错误', '该条记录已回滚！')
+                            Ext.Msg.alert('错误', '该条记录已撤销！')
                         }
                     }
                 }
@@ -398,7 +390,7 @@ Ext.define('material.material_Outbound',{
             store: material_inBoundRecords_Store,
             title: "入库详细记录",
             columns : [
-                {   text: '录入人员',  dataIndex: 'operator' ,flex :1},
+                {   text: '录入人员',  dataIndex: 'workerName' ,flex :1},
                 {   text: '入库/出库',
                     dataIndex: 'type' ,
                     flex :1,
@@ -669,10 +661,11 @@ Ext.define('material.material_Outbound',{
                     //fields:['materialName','length','materialType','width','count'],//'oldpanelId','oldpanelName','count'
                     proxy: {
                         type: 'ajax',
-                        url: 'material/findMaterialLogdetails.do?materiallogId=' + id,//获取同一批出入库的原材料
+                       // url: 'material/findMaterialLogdetails.do?materiallogId=' + id,//获取同一批出入库的原材料
+                        url: '/material/findAllbyTableNameAndOnlyOneCondition.do?tableName=material_logdetail_view&&columnName=materiallogId&&columnValue='+id,
                         reader: {
                             type: 'json',
-                            rootProperty: 'material_logdetail',
+                            rootProperty: 'material_logdetail_view',
                         },
                     },
                     autoLoad: true

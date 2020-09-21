@@ -7,7 +7,7 @@ Ext.define('material.material_Query_Records',{
         var itemsPerPage = 50;
         var tableName="material";
 
-        var tableName_material_records = 'material_log';
+        var tableName_material_records = 'materiallog_projectname_view';
         //var materialType="1";
         //操作类型：枚举类型
         Ext.define('Soims.model.application.ApplicationState', {
@@ -300,7 +300,7 @@ Ext.define('material.material_Query_Records',{
             },
             columns : [
                 // { text: '原材料领料记录单编号', dataIndex: 'id', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},
-                { text: '操作员',  dataIndex: 'operator' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
+                { text: '操作员',  dataIndex: 'workerName' ,flex :1, editor:{xtype : 'textfield', allowBlank : false}},
                 {   text: '操作类型',
                     dataIndex: 'type' ,
                     flex :1,
@@ -353,11 +353,11 @@ Ext.define('material.material_Query_Records',{
                         //fields:['materialName','length','materialType','width','count'],//'oldpanelId','oldpanelName','count'
                         proxy : {
                             type : 'ajax',
-                            url: 'material/findMaterialLogdetails.do?materiallogId=' + id,
-                            // url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName=material_logdetail&columnName=materiallogId&columnValue='+id,//获取同类型的原材料
+                            //url: 'material/findMaterialLogdetails.do?materiallogId=' + id,
+                            url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName=material_logdetail_view&columnName=materiallogId&columnValue='+id,//获取同类型的原材料
                             reader : {
                                 type : 'json',
-                                rootProperty: 'material_logdetail',
+                                rootProperty: 'material_logdetail_view',
                             },
                         },
                         autoLoad : true

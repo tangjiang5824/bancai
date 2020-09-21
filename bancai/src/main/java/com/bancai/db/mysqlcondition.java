@@ -9,7 +9,7 @@ public class mysqlcondition {
     }
     public mysqlcondition(String property, String op,Object value) {
         super();
-        buffer.append(property).append(op).append(" ?");
+        buffer.append(property).append(" ").append(op).append(" ?");
         parameters.add(value);
     }
     public mysqlcondition(String property, String op,Object value,boolean text) {

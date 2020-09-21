@@ -71,13 +71,13 @@ Ext.define('oldpanel.oldpanel_Receive',{
                 url : 'order/queryRequisitionOrder.do', //领料单查询
                 reader : {
                     type : 'json',
-                    rootProperty: 'requisitionOrderList',
+                    rootProperty: 'value',
                 }
             },
             autoLoad : true
         });
 
-        var pickList=Ext.create('Ext.data.Store',{
+        var old_pickList=Ext.create('Ext.data.Store',{
             fields:['materialName','materialCount'],
         });
 
@@ -103,7 +103,7 @@ Ext.define('oldpanel.oldpanel_Receive',{
         //         bodyStyle: 'background:#fff;',
         //         handler : function() {
         //
-        //             // 取出grid的字段名字段类型pro_picking_MaterialGrid
+        //             // 取出grid的字段名字段类型old_picking_MaterialGrid
         //             console.log('===========')
         //             console.log(materialList)
         //             var select = Ext.getCmp('PickingListGrid').getStore()
@@ -157,16 +157,16 @@ Ext.define('oldpanel.oldpanel_Receive',{
             id : "toolbar",
             items: [tableList,
                 //单号
-                {
-                    xtype: 'textfield',
-                    margin : '0 10 0 0',
-                    fieldLabel: '单号',
-                    id :'picklistNum',
-                    width: 180,
-                    labelWidth: 30,
-                    name: 'picklistNum',
-                    value:"",
-                },
+                // {
+                //     xtype: 'textfield',
+                //     margin : '0 10 0 0',
+                //     fieldLabel: '单号',
+                //     id :'picklistNum',
+                //     width: 180,
+                //     labelWidth: 30,
+                //     name: 'picklistNum',
+                //     value:"",
+                // },
                 {
                     fieldLabel : '创建人',
                     xtype : 'combo',
@@ -228,6 +228,9 @@ Ext.define('oldpanel.oldpanel_Receive',{
                             params : {
                                 proejctId:Ext.getCmp('projectName').getValue(),
                                 //proejctId:'1',
+                                operator:Ext.getCmp('operator').getValue(),
+                                timeStart:Ext.getCmp('startTime').getValue(),
+                                timeEnd:Ext.getCmp('endTime').getValue(),
                             }
                         });
                     }
@@ -264,7 +267,8 @@ Ext.define('oldpanel.oldpanel_Receive',{
                 {
                     dataIndex:'time',
                     text:'创建时间',
-                    flex :1
+                    flex :1,
+                    renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')
                 },
                 {
                     dataIndex:'projectName',
@@ -319,6 +323,8 @@ Ext.define('oldpanel.oldpanel_Receive',{
                             type:3,
                         }
                     });
+                    //确认领料部分，重置
+                    old_pickList.removeAll();
 
                     //表名
                     var tableName = 'building';
@@ -357,27 +363,27 @@ Ext.define('oldpanel.oldpanel_Receive',{
                     // //弹框
                     // win_picklistInfo_material_outbound.show();
 
-                    // //添加一个tabPanel
                     var tabPanel = Ext.getCmp('old_pick_tabpanel');
-                    console.log("--------------------------->1",tabPanel);
-                    var newPanel = panel_specific;
-                    var myPanel = tabPanel.items[0];
-                    console.log("--------------------------->2",myPanel);
-                    if(myPanel==null){
-                        tabPanel.add(newPanel).show();
+                    var tabs = Ext.getCmp('myold_Panel');
+                    if(!tabs){
+                        var t = tabPanel.add({
+                            // title:requisitionOrderId+'领料单明细',
+                            title:'明细',
+                            id:'myold_Panel',
+                            layout:'fit',
+                            items:[old_panel_specific],
+                            closable:true,
+                            closeAction:'hide',
+                            autoDestroy: true,
+                        });
+                        tabPanel.setActiveTab(t);
                     }
-                    // else{
-                    //     // tabPanel.unhideTabStripItem(myPanel);
-                    // }
-                    // var tab = tabPanel.add(
-                    //         // grid_old_query_pickList_specific,
-                    //         panel_specific
-                    //     );
-                    // tabPanel.setActiveTab(tab);
+                    else{
+                        tabs.show();
+                    }
 
                     //关闭
                     tabPanel.on('beforeremove', function(tabs, tab) {
-                        console.log("beforeremove----",tabs)
                         // tabPanel.remove(tab);
                         return false;
                     });
@@ -393,7 +399,7 @@ Ext.define('oldpanel.oldpanel_Receive',{
                 url : 'order/queryRequisitionOrderDetail.do',//获取同类型的原材料  +'&pickNum='+pickNum
                 reader : {
                     type : 'json',
-                    rootProperty: 'requisitionOrderDetailList',
+                    rootProperty: 'value',
                 },
             },
             autoLoad : true
@@ -504,6 +510,21 @@ Ext.define('oldpanel.oldpanel_Receive',{
                 buildingPositionList,
                 //仓库
                 storePosition,
+                //是否完全匹配
+                {
+                    xtype:'radiogroup',
+                    fieldLabel: '是否完全匹配',
+                    labelWidth:90,
+                    width:210,
+                    columns: 2, //设置没四个选项一行
+                    margin : '0 0 0 40',
+                    id:'isCompleteMatch',
+                    allowBlank: false,
+                    items:[
+                        {boxLabel: '是', name: 'matchType',inputValue: '1'},
+                        {boxLabel: '否', name: 'matchType',inputValue: '0', }, //checked : true  默认选中
+                    ]
+                },
                 {
                     xtype : 'button',
                     text: '领料单明细查询',
@@ -529,7 +550,8 @@ Ext.define('oldpanel.oldpanel_Receive',{
                                 //proejctId:'1',
                                 //type和领料单Id
                                 requisitionOrderId:requisitionOrderId,
-                                type:3,//原材料
+                                type:3,//旧板
+                                isCompleteMatch:Ext.getCmp('isCompleteMatch').getValue().matchType,
                             }
                         });
                     }
@@ -545,7 +567,7 @@ Ext.define('oldpanel.oldpanel_Receive',{
                 //     bodyStyle: 'background:#fff;',
                 //     handler : function() {
                 //
-                //         // 取出grid的字段名字段类型pro_picking_MaterialGrid
+                //         // 取出grid的字段名字段类型old_picking_MaterialGrid
                 //         console.log('1===========')
                 //         var projectId = Ext.getCmp('project_Id').getValue();
                 //
@@ -596,7 +618,7 @@ Ext.define('oldpanel.oldpanel_Receive',{
                 //
                 //         //  右边页面重置
                 //         Ext.getCmp('operator').setValue("");
-                //         pickList.removeAll();
+                //         old_pickList.removeAll();
                 //     }
                 // }
             ]
@@ -648,8 +670,13 @@ Ext.define('oldpanel.oldpanel_Receive',{
                     flex :1,
                 },
                 {
+                    dataIndex:'countStore',
+                    text:'库存数量',
+                    flex :1,
+                },
+                {
                     dataIndex:'countAll',
-                    text:'总数量',
+                    text:'领取总数',
                     flex :1,
                 },
                 {
@@ -798,20 +825,19 @@ Ext.define('oldpanel.oldpanel_Receive',{
                     valueField : 'id',
                     editable : true,
                 },
-                {
-                    xtype: 'datefield',
-                    margin : '0 10 0 0',
-                    fieldLabel: '领料时间',
-                    id :'pickTime',
-                    width: 200,
-                    labelWidth: 60,
-                    name: 'pickTime',
-                    value:"",
-                    format : 'Y-m-d',
-                    editable : false,
-                    // value:Ext.util.Format.date(Ext.Date.add(new Date(),Ext.Date.MONTH,-1),"Y-m-d")
-                    value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
-                },
+                // {
+                //     xtype: 'datefield',
+                //     margin : '0 10 0 0',
+                //     fieldLabel: '领料时间',
+                //     id :'pickTime',
+                //     width: 200,
+                //     labelWidth: 60,
+                //     name: 'pickTime',
+                //     format : 'Y-m-d',
+                //     editable : false,
+                //     // value:Ext.util.Format.date(Ext.Date.add(new Date(),Ext.Date.MONTH,-1),"Y-m-d")
+                //     value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
+                // },
                 {
                     xtype : 'button',
                     iconAlign : 'center',
@@ -822,9 +848,9 @@ Ext.define('oldpanel.oldpanel_Receive',{
                     bodyStyle: 'background:#fff;',
                     handler : function() {
 
-                        // 取出grid的字段名字段类型pro_picking_MaterialGrid
+                        // 取出grid的字段名字段类型old_picking_MaterialGrid
                         console.log('1===========')
-                        var select = Ext.getCmp('pro_picking_MaterialGrid').getStore()
+                        var select = Ext.getCmp('old_picking_MaterialGrid').getStore()
                             .getData();
                         // console.log(select)
                         var projectId = Ext.getCmp('project_Id').getValue();
@@ -933,7 +959,7 @@ Ext.define('oldpanel.oldpanel_Receive',{
 
                                         //  领料页面重置
                                         Ext.getCmp('operator').setValue("");
-                                        pickList.removeAll();
+                                        old_pickList.removeAll();
 
                                         //  领料单查询重新加载
                                         grid_old_query_pickList_specific.getStore().load();
@@ -959,8 +985,8 @@ Ext.define('oldpanel.oldpanel_Receive',{
         });
 
         var grid2=Ext.create('Ext.grid.Panel',{
-            id : 'pro_picking_MaterialGrid',
-            store:pickList,
+            id : 'old_picking_MaterialGrid',
+            store:old_pickList,
             dock: 'bottom',
             autoScroll: true, //超过长度带自动滚动条
             columns:[
@@ -990,7 +1016,7 @@ Ext.define('oldpanel.oldpanel_Receive',{
             dockedItems: [
                 {
                     xtype: 'pagingtoolbar',
-                    store: pickList,   // same store GridPanel is using
+                    store: old_pickList,   // same store GridPanel is using
                     dock: 'bottom',
                     displayInfo: true,
                     displayMsg:'显示{0}-{1}条，共{2}条',
@@ -1000,19 +1026,14 @@ Ext.define('oldpanel.oldpanel_Receive',{
         });
 
         //领料的具体材料信息Panel
-        var panel_specific = Ext.create('Ext.panel.Panel',{
-            id:'myPanel',
-            title: '领料单明细',
+        var old_panel_specific = Ext.create('Ext.panel.Panel',{
+            // title: '领料单明细',
             //dock: 'bottom',
             layout:{
                 type:'vbox',
                 align:'stretch'
             },
             width:'100%',
-            height:500,
-            closable:true,
-            closeAction : 'hide',
-            autoDestroy: false,
             items:[
                 grid_old_query_pickList_specific,
                 {
@@ -1033,7 +1054,7 @@ Ext.define('oldpanel.oldpanel_Receive',{
                                 console.log(records[i].data['countTemp'])
                                 if(records[i].data['countTemp'] != 0){
                                     console.log("添加")
-                                    pickList.add(records[i]);
+                                    old_pickList.add(records[i]);
                                 }
                             }
                             //若要领数量<领取数量，则不能直接remove，需要更改数量值
@@ -1045,7 +1066,7 @@ Ext.define('oldpanel.oldpanel_Receive',{
                         itemId:'move_left',
                         handler:function(){
                             var records=grid2.getSelectionModel().getSelection();
-                            pickList.remove(records);
+                            old_pickList.remove(records);
                             grid_old_query_pickList_specific.store.add(records);//grid_old_query_pickList_specific
                         }
                     }]

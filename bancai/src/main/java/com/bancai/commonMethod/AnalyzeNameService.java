@@ -7,10 +7,13 @@ import com.bancai.domain.DataList;
 import com.bancai.domain.DataRow;
 import org.apache.log4j.Logger;
 import com.bancai.service.TableService;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -18,7 +21,10 @@ import java.util.*;
 public class AnalyzeNameService extends BaseService {
     private Logger log = Logger.getLogger(AnalyzeNameService.class);
     private static String isPureWord = "^[A-Za-z]+$";
-    private static String isPureNumber = "^-?[0-9]+";
+    private static String isNumber = "^[-]?[0-9]+([.][0-9]+)?$";
+    private static String isNonnegativeNumber = "^[0-9]+([.][0-9]+)?$";
+    private static String isPureNumber = "[0-9]+";
+    private static String isPositiveInteger = "^[1-9][0-9]*$";
     @Autowired
     private TableService tableService;
     @Autowired
@@ -29,6 +35,62 @@ public class AnalyzeNameService extends BaseService {
         Date date = new Date();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return simpleDateFormat.format(date);
+    }
+    @Transactional
+    public boolean isNotFitRollbackTime(String time) throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = simpleDateFormat.parse(time);
+        Date now = simpleDateFormat.parse(getTime());
+        long cha = now.getTime() - date.getTime();
+        return cha * 1.0 / (1000 * 60 * 60) >1;
+    }
+    @Transactional
+    public boolean isStringNotNonnegativeNumber(String str){ return !str.matches(isNonnegativeNumber); }
+    @Transactional
+    public boolean isStringNotNumber(String str){ return !str.matches(isNumber); }
+    @Transactional
+    public boolean isStringNotPureNumber(String str){ return !str.matches(isPureNumber); }
+    @Transactional
+    public boolean isStringNotPureWord(String str){ return !str.matches(isPureWord); }
+    @Transactional
+    public boolean isStringNotPositiveInteger(String str){ return !str.matches(isPositiveInteger); }
+    @Transactional
+    public void updateIsrollbackToOneById(String tableName,String id){ jo.update("update "+tableName+" set isrollback=1 where id=\""+id+"\""); }
+    @Transactional
+    public DataList checkCountALessThanCountBInJsonArray(JSONArray jsonArray,String countA,String countB){
+        System.out.println("[===checkCount===]");
+        DataList errorList = new DataList();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonTemp = jsonArray.getJSONObject(i);
+            String counta = (jsonTemp.get(countA)+"").trim();
+            String countb = jsonTemp.get(countB)+"";
+            if((counta.equals("null"))||(counta.length()==0)){
+                DataRow errorRow = new DataRow();
+                errorRow.put("id",jsonTemp.get("id").toString());
+                errorRow.put("errorType","数量未输入");
+                errorList.add(errorRow);
+            }else if(isStringNotNonnegativeNumber(counta)){
+                DataRow errorRow = new DataRow();
+                errorRow.put("id",jsonTemp.get("id").toString());
+                errorRow.put("errorType","数量错误输入");
+                errorList.add(errorRow);
+            }else if(Double.parseDouble(counta)>Double.parseDouble(countb)){
+                DataRow errorRow = new DataRow();
+                errorRow.put("id",jsonTemp.get("id").toString());
+                errorRow.put("errorType","数量超出范围");
+                errorList.add(errorRow);
+            }
+        }
+        System.out.println("[===result:errorNum===]"+errorList.size());
+        return errorList;
+    }
+    @Transactional
+    public DataRow canRollback(String tableName,String id){
+        DataList queryList = queryService.query("select * from "+tableName+" where id=?",id);
+        DataRow row = new DataRow();
+        if((!queryList.isEmpty())&&((queryList.get(0).get("isrollback")+"").equals("0")))
+            row = queryList.get(0);
+        return row;
     }
     @Transactional
     public DataList addErrorRowToErrorList(DataList errorList, String id, String errorType,HashMap<String,String> map){

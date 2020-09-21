@@ -26,11 +26,10 @@ import java.util.*;
 @Service
 public class DesignlistService extends BaseService{
     private Logger log = Logger.getLogger(DesignlistService.class);
-    private static String isPureNumber = "[0-9]+";
     @Autowired
     private QueryAllService queryService;
     @Autowired
-    private AnalyzeNameService AnalyzeNameService;
+    private AnalyzeNameService analyzeNameService;
     @Autowired
     private InsertProjectService insertProjectService;
     @Autowired
@@ -56,7 +55,7 @@ public class DesignlistService extends BaseService{
      */
     @Transactional
     public int analyzeDesignlist(String productName, String position, String userId, String projectId, String buildingId) {
-        if (!isDesignlistPositionValid(projectId, buildingId, position))
+        if ((!position.equals("-1"))&&(!isDesignlistPositionValid(projectId, buildingId, position)))
             return -100;//位置重复导入
         int productId = productDataService.addProductInfoIfNameValid(productName,userId);
         if(productId==0)
@@ -69,15 +68,14 @@ public class DesignlistService extends BaseService{
     @Transactional
     public int createDesignlistData(DataList validList, String userId, String projectId, String buildingId,
                                  String buildingpositionId) {
-        Date date=new Date();
-        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String sql_addLog = "insert into designlist_log (userId,time,isrollback,projectId,buildingId,buildingpositionId) values(?,?,?,?,?,?)";
-        int designlistlogId= insertProjectService.insertDataToTable(sql_addLog,userId,simpleDateFormat.format(date),"0"
+        int designlistlogId= insertProjectService.insertDataToTable(sql_addLog,userId,analyzeNameService.getTime(),"0"
                 ,projectId, buildingId, buildingpositionId);
         for (DataRow dataRow : validList) {
             String productId = dataRow.get("productId").toString();
             String position = dataRow.get("position").toString();
-            setDesignlistOrigin(designlistlogId, projectId, buildingId, buildingpositionId, String.valueOf(productId), position, 0, 0);
+            String figureNum = dataRow.get("figureNum").toString();
+            setDesignlistOrigin(designlistlogId, projectId, buildingId, buildingpositionId, String.valueOf(productId), position, figureNum,0, 0);
         }
         return designlistlogId;
     }
@@ -101,12 +99,12 @@ public class DesignlistService extends BaseService{
     /**
      * 导入设计清单，返回清单id
      */
-    private int setDesignlistOrigin(int designlistlogId,String projectId, String buildingId, String buildingpositionId, String productId, String position,
-                                     int madeBy, int processStatus){
+    private int setDesignlistOrigin(int designlistlogId,String projectId, String buildingId, String buildingpositionId,
+                                    String productId, String position, String figureNum,int madeBy, int processStatus){
         return insertProjectService.insertDataToTable("insert into designlist " +
-                        "(designlistlogId,projectId,buildingId,buildingpositionId,productId,position,madeBy,processStatus) values " +
-                        "(?,?,?,?,?,?,?,?)",String.valueOf(designlistlogId), projectId, buildingId, buildingpositionId, productId, position,
-                String.valueOf(madeBy), String.valueOf(processStatus));
+                        "(designlistlogId,projectId,buildingId,buildingpositionId,productId,position,figureNum,madeBy,processStatus) values " +
+                        "(?,?,?,?,?,?,?,?,?)",String.valueOf(designlistlogId), projectId, buildingId, buildingpositionId, productId,
+                position, figureNum,String.valueOf(madeBy), String.valueOf(processStatus));
     }
 
     @Transactional
@@ -141,39 +139,50 @@ public class DesignlistService extends BaseService{
     }
     @Transactional
     public boolean deleteDesignListLog(String designlistlogId,String userId){
+        boolean b = true;
         DataList list = queryService.query("select * from designlist where designlistlogId=?",designlistlogId);
-        if(list.isEmpty())
-            return true;
-        else {
-            Date date=new Date();
-            SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        if(!list.isEmpty()){
             for (DataRow dataRow : list) {
                 String designlistId = dataRow.get("id").toString();
-                deleteDesignList(designlistId);
+                b=b&deleteDesignList(designlistId);
             }
             jo.update("update designlist_log set isrollback=1,userId=\""+userId+
-                    "\",time=\""+simpleDateFormat.format(date)+"\" where id=\""+designlistlogId+"\"");
-            return true;
+                    "\",time=\""+analyzeNameService.getTime()+"\" where id=\""+designlistlogId+"\"");
         }
+        return b;
     }
 
     @Transactional
     public boolean deleteDesignList(String designlistId){
+        boolean b =true;
         DataList list = queryService.query("select * from query_match_result where designlistId=?",designlistId);
-        if(list.isEmpty())
-            return true;
-        else {
+        if(!list.isEmpty()){
             for (DataRow dataRow : list) {
                 String matchResultId = dataRow.get("id").toString();
                 int type = Integer.parseInt(dataRow.get("materialMadeBy").toString());
                 int storeId = Integer.parseInt(dataRow.get("matchId").toString());
                 double count = Double.parseDouble(dataRow.get("count").toString());
-                designlistMatchResultBackStore(type, storeId, count);
+                b=b&designlistMatchResultBackStore(type, storeId, count);
                 designlistDeleteById("match_result", matchResultId);
             }
             designlistDeleteById("designlist",designlistId);
-            return true;
         }
+        return b;
+    }
+
+    @Transactional
+    public boolean designlistDeleteMatchResult(JSONArray jsonArray){
+        boolean b = true;
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonTemp = jsonArray.getJSONObject(i);
+            String matchResultId = jsonTemp.get("id").toString();
+            double count = Double.parseDouble(jsonTemp.get("count").toString());
+            int storeId = Integer.parseInt(jsonTemp.get("matchId").toString());
+            int type = Integer.parseInt(jsonTemp.get("materialMadeBy").toString());
+            designlistDeleteById("match_result", matchResultId);
+            b=b&designlistMatchResultBackStore(type, storeId, count);
+        }
+        return b;
     }
 
     private boolean designlistMatchResultBackStore(int type,int storeId,double count){
@@ -203,6 +212,64 @@ public class DesignlistService extends BaseService{
     }
 
 
+    @Transactional
+    public DataList getDesignlistByPosition(String projectId,String buildingId,String position){
+        return queryService.query("select * from designlist_product_info_view where projectId=? and buildingId=? and position=?"
+                ,projectId,buildingId,position);
+    }
+
+    @Transactional
+    public DataList addMatchResultBackErrorList(JSONArray jsonArray,String isCompleteMatch,String designlistId){
+        DataList errorList = new DataList();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonTemp = jsonArray.getJSONObject(i);
+            String matchResultId = jsonTemp.get("id").toString();
+            if(!matchResultId.equals("-1")) {
+                jo.update("update match_result set isCompleteMatch=\""+isCompleteMatch+"\" where id=\""+matchResultId+"\"");
+                continue;
+            }
+            String count = jsonTemp.get("count")+"";
+            String storeId = jsonTemp.get("storeId").toString();
+            String name = jsonTemp.get("name").toString();
+            String type = jsonTemp.get("type").toString();
+            String typeName = jsonTemp.get("typeName").toString();
+            if((analyzeNameService.isStringNotNonnegativeNumber(count))||(Double.parseDouble(count)==0)){
+                addMatchResultErrorRow(errorList,name,type,count,"数量输入错误");
+                continue;
+            }
+            DataList infoList = queryService.query("select * from "+typeName+"_info_store_type where storeId=?",storeId);
+            if(infoList.isEmpty()){
+                addMatchResultErrorRow(errorList,name,type,count,"找不到该库存id");
+                continue;
+            }
+            double countUse = Double.parseDouble(infoList.get(0).get("countUse").toString());
+            if(Double.parseDouble(count)>countUse){
+                addMatchResultErrorRow(errorList,name,type,count,"库存数量不足");
+                continue;
+            }
+            countUse = countUse-Double.parseDouble(count);
+            updateStoreCountUse(typeName,countUse,storeId);
+            if(!addChangeMatchResult(designlistId,storeId,count,name,type,isCompleteMatch))
+                addMatchResultErrorRow(errorList,name,type,count,"添加匹配结果失败");
+        }
+        return errorList;
+    }
+
+    private void addMatchResultErrorRow(DataList errorList, String name, String type, String count,String errorType){
+        DataRow errorRow = new DataRow();
+        errorRow.put("name",name);
+        errorRow.put("type",type);
+        errorRow.put("count",count);
+        errorRow.put("errorType",errorType);
+        errorList.add(errorRow);
+    }
+    private void updateStoreCountUse(String storeName, double countUse, String id){
+        jo.update("update "+storeName+"_store set countUse=\"" + countUse + "\" where id=\"" + id+"\"");
+    }
+    private boolean addChangeMatchResult(String designlistId,String storeId,String count,String name,String type,String isCompleteMatch){
+        return insertProjectService.insertIntoTableBySQL("insert into match_result (designlistId,matchId,count,name,madeBy,isCompleteMatch) values (?,?,?,?,?,?)",
+                designlistId,storeId,count,name,type,isCompleteMatch);
+    }
 
     @Transactional
     public void saveDepartmentWorkerData(String id, String departmentId, String workerName,String tel,boolean exist){
@@ -251,17 +318,19 @@ public class DesignlistService extends BaseService{
      * 创建领料单
      * */
     @Transactional
-    public void createRequisition(String workOrderDetailIdString, String userId, String operator){
+    public boolean createRequisition(String workOrderDetailIdString, String userId, String operator){
         //requisition_order
         //requisition_order_log
         //fori:requisition_order_detail,requisition_order_logdetail
-        String sql_query = "select id,type,storeId,productId,projectId,buildingId,buildingpositionId,sum(singleNum) as count from " +
-                "requisition_create_preview_work_order_match_store where workOrderDetailId in ("+workOrderDetailIdString+") group by workOrderDetailId,type,storeId";
+        String sql_query = "select id,type,storeId,productId,projectId,buildingId,buildingpositionId,isCompleteMatch,sum(singleNum) as count from " +
+                "requisition_create_preview_work_order_match_store where workOrderDetailId in ("+workOrderDetailIdString
+                +") group by workOrderDetailId,type,storeId,isCompleteMatch";
         DataList insertList = queryService.query(sql_query);
         String projectId = insertList.get(0).get("projectId").toString();
         int requisitionOrderId = createRequisitionOrderBackId(userId,operator,projectId);
         int requisitionOrderLogId = requisitionOrderAddLogBackId("1",String.valueOf(requisitionOrderId),userId,operator);
         String sql_updateStatus = "update work_order_detail set status=1 where id=\"";
+        boolean b = true;
         for (DataRow dataRow : insertList) {
             String workOrderDetailId = dataRow.get("id").toString();
             String type = dataRow.get("type").toString();
@@ -270,29 +339,27 @@ public class DesignlistService extends BaseService{
             String count = dataRow.get("count").toString();
             String buildingId = dataRow.get("buildingId").toString();
             String buildingpositionId = dataRow.get("buildingpositionId").toString();
+            String isCompleteMatch = dataRow.get("isCompleteMatch").toString();
             int requisitionOrderDetailId = createRequisitionOrderDetailBackId(String.valueOf(requisitionOrderId),workOrderDetailId,
-                    type,storeId,productId,count,buildingId,buildingpositionId);
+                    type,storeId,productId,count,buildingId,buildingpositionId,isCompleteMatch);
             jo.update(sql_updateStatus+workOrderDetailId+"\"");
-            requisitionOrderAddLogDetail(String.valueOf(requisitionOrderLogId), String.valueOf(requisitionOrderDetailId), count);
+            b = b&requisitionOrderAddLogDetail(String.valueOf(requisitionOrderLogId), String.valueOf(requisitionOrderDetailId), count);
         }
+        return b;
     }
     private int createRequisitionOrderBackId(String userId,String operator,String projectId){
-        Date date=new Date();
-        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return insertProjectService.insertDataToTable("insert into requisition_order (userId,operator,time,projectId,status) values (?,?,?,?,?)",
-                userId,operator,simpleDateFormat.format(date),projectId,"0");
+                userId,operator,analyzeNameService.getTime(),projectId,"0");
     }
     private int createRequisitionOrderDetailBackId(String requisitionOrderId,String workOrderDetailId,String type, String storeId,
-                                                   String productId,String count,String buildingId,String buildingpositionId){
+                                                   String productId,String count,String buildingId,String buildingpositionId,String isCompleteMatch){
         return insertProjectService.insertDataToTable("insert into requisition_order_detail (requisitionOrderId,workOrderDetailId," +
-                        "type,storeId,productId,countRec,countAll,buildingId,buildingpositionId) values (?,?,?,?,?,?,?,?,?)",
-                requisitionOrderId, workOrderDetailId, type, storeId, productId, count, count, buildingId, buildingpositionId);
+                        "type,storeId,productId,countRec,countAll,buildingId,buildingpositionId,isCompleteMatch) values (?,?,?,?,?,?,?,?,?,?)",
+                requisitionOrderId, workOrderDetailId, type, storeId, productId, count, count, buildingId, buildingpositionId,isCompleteMatch);
     }
     private int requisitionOrderAddLogBackId(String type, String requisitionOrderId, String userId, String operator){
-        Date date=new Date();
-        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return insertProjectService.insertDataToTable("insert into requisition_order_log (type,requisitionOrderId,userId,time,operator) values(?,?,?,?,?)",
-                type,requisitionOrderId,userId,simpleDateFormat.format(date),operator);
+                type,requisitionOrderId,userId,analyzeNameService.getTime(),operator);
     }
     private boolean requisitionOrderAddLogDetail(String requisitionOrderLogId,String requisitionOrderDetailId,String count){
         return insertProjectService.insertIntoTableBySQL("insert into requisition_order_logdetail (requisitionOrderLogId,requisitionOrderDetailId,count) values (?,?,?)",
@@ -501,56 +568,6 @@ public class DesignlistService extends BaseService{
     }
 
     /**
-     * 领料单领料检查
-     */
-    @Transactional
-    public DataList checkFinishRequisitionOrder(JSONArray jsonArray){
-        System.out.println("[===checkFinishRequisitionOrder===]");
-        DataList errorList = new DataList();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonTemp = jsonArray.getJSONObject(i);
-            String count = (jsonTemp.get("count")+"").trim();
-            String countRec = jsonTemp.get("countRec")+"";
-            if((count.equals("null"))||(count.length()==0)){
-                DataRow errorRow = new DataRow();
-                errorRow.put("id",jsonTemp.get("id").toString());
-                errorRow.put("errorType","未输入领取数量");//未输入领取数量
-                errorList.add(errorRow);
-            }else if((count.split("\\.").length==1)) {//无小数点
-                if(!count.matches(isPureNumber)){
-                    DataRow errorRow = new DataRow();
-                    errorRow.put("id",jsonTemp.get("id").toString());
-                    errorRow.put("errorType","错误输入");//输入的不是一个非负数
-                    errorList.add(errorRow);
-                }else if(Double.parseDouble(count)>Double.parseDouble(countRec)){
-                    DataRow errorRow = new DataRow();
-                    errorRow.put("id",jsonTemp.get("id").toString());
-                    errorRow.put("errorType","超出可领数量");//超出可领数量
-                    errorList.add(errorRow);
-                }
-            }else if((count.split("\\.").length==2)) {//有小数点
-                if((!count.split("\\.")[0].matches(isPureNumber))||(!count.split("\\.")[1].matches(isPureNumber))){
-                    DataRow errorRow = new DataRow();
-                    errorRow.put("id",jsonTemp.get("id").toString());
-                    errorRow.put("errorType","错误输入");//输入的不是一个非负数
-                    errorList.add(errorRow);
-                }else if(Double.parseDouble(count)>Double.parseDouble(countRec)){
-                    DataRow errorRow = new DataRow();
-                    errorRow.put("id",jsonTemp.get("id").toString());
-                    errorRow.put("errorType","超出可领数量");//超出可领数量
-                    errorList.add(errorRow);
-                }
-            }else {
-                DataRow errorRow = new DataRow();
-                errorRow.put("id",jsonTemp.get("id").toString());
-                errorRow.put("errorType","错误输入");//输入的不是一个非负数
-                errorList.add(errorRow);
-            }
-        }
-        System.out.println("[===result:errorNum===]"+errorList.size());
-        return errorList;
-    }
-    /**
      * 领料单内容领料
      */
     @Transactional
@@ -594,11 +611,9 @@ public class DesignlistService extends BaseService{
         }
     }
     private int outboundStoreAddLogBackId(String store, String userId, String operator,String projectId){
-        Date date=new Date();
-        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return insertProjectService.insertDataToTable("insert into " + store +
                 "_log (type,time,userId,operator,projectId,isrollback) values (?,?,?,?,?,?)",
-                "1",simpleDateFormat.format(date),userId,operator,projectId,"1");
+                "1",analyzeNameService.getTime(),userId,operator,projectId,"1");
     }
     private void outboundStoreCountUpdate(String store, String storeId, String count){
         jo.update("update " + store + "_store set countStore=countStore-\"" + count + "\" where id=\"" + storeId + "\"");
@@ -664,17 +679,158 @@ public class DesignlistService extends BaseService{
 //    }
 
 
-    /**
-     * 退料单excel解析
-     */
+    /*
+     * 创建退料单
+     * */
     @Transactional
-    public UploadDataResult uploadBackStoreExcel(InputStream inputStream) throws IOException {
-        UploadDataResult result = new UploadDataResult();
-        Excel excel = new Excel(inputStream);
-        result.dataList = excel.readExcelContent();
-        return result;
+    public boolean createReturnOrder(JSONArray jsonArray,String type,String projectId,String buildingId,String description,String operator,String userId){
+        boolean b = true;
+        int orderId = addReturnOrderBackId(type,projectId,buildingId,description,operator,userId);
+        int logId = addReturnOrderLogBackId(String.valueOf(orderId),userId,operator,"1");
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonTemp = jsonArray.getJSONObject(i);
+            String storeId = jsonTemp.get("storeId")+"";
+            String name=jsonTemp.get("name")+"";
+            String backWarehouseName = (jsonTemp.get("backWarehouseName")+"").trim();
+            String warehouseName =  jsonTemp.get("warehouseName")+"";
+            String count = jsonTemp.get("count")+"";
+            String unitWeight =  jsonTemp.get("unitWeight")+"";
+            String unitArea = jsonTemp.get("unitArea")+"";
+            String totalWeight = jsonTemp.get("totalWeight")+"";
+            String totalArea = jsonTemp.get("totalArea")+"";
+            String inventoryUnit = jsonTemp.get("inventoryUnit")+"";
+            String remark = jsonTemp.get("remark")+"";
+            int detailId = addReturnOrderDetailBackId(String.valueOf(orderId),storeId,name,backWarehouseName,warehouseName,count,unitWeight,unitArea,
+                    totalWeight,totalArea,inventoryUnit,remark);
+            b = b&addReturnOrderLogDetail(String.valueOf(logId),String.valueOf(detailId),count);
+        }
+        return b;
     }
 
+    private int addReturnOrderBackId(String type,String projectId,String buildingId,String description,String operator,String userId){
+        return insertProjectService.insertDataToTable("insert into return_order (type,projectId,buildingId,description,operator,userId,status,time) values (?,?,?,?,?,?,?,?)"
+                , type,projectId,buildingId,description,operator,userId,"0",analyzeNameService.getTime());
+    }
+    private int addReturnOrderLogBackId(String orderId,String userId,String operator,String type){
+        return insertProjectService.insertDataToTable("insert into return_order_log (returnOrderId,userId,operator,type,time) values (?,?,?,?,?)"
+                , orderId,userId,operator,type,analyzeNameService.getTime());
+    }
+    private int addReturnOrderDetailBackId(String orderId,String storeId,String name,String backWarehouseName,String warehouseName,String count,
+                                              String unitWeight ,String unitArea,String totalWeight,String totalArea,String inventoryUnit, String remark){
+        return insertProjectService.insertDataToTable("insert into return_order_detail (returnOrderId,storeId,name,backWarehouseName,warehouseName" +
+                ",countAll,countReturn,unitWeight,unitArea,totalWeight,totalArea,inventoryUnit,remark) values (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                orderId,storeId,name,backWarehouseName,warehouseName,count,count,unitWeight,unitArea,
+                totalWeight,totalArea,inventoryUnit,remark);
+    }
+    private boolean addReturnOrderLogDetail(String logId,String detailId,String count){
+        return insertProjectService.insertIntoTableBySQL("insert into return_order_logdetail (returnOrderLogId,returnOrderDetailId,count) values (?,?,?)",
+                logId,detailId,count);
+    }
+
+    /**
+     * 退料单内容退料
+     */
+    @Transactional
+    public boolean finishReturnOrder(JSONArray jsonArray,String type, String returnOrderId,String operator, String userId){
+        String store = "";
+        boolean b = true;
+        DataRow orderRow = queryService.query("select * from return_order where id=?",returnOrderId).get(0);
+        String projectId = orderRow.get("projectId").toString();
+        String buildingId = orderRow.get("buildingId").toString();
+        String description = orderRow.get("description").toString();
+        switch (type){
+            case "1":
+                store = "backproduct";
+                break;
+            case "2":
+                store = "preprocess";
+                break;
+            case "3":
+                store = "oldpanel";
+                break;
+            case "4":
+                store = "material";
+                break;
+        }
+        //order logszer
+        //store log
+        int returnOrderLogId = addReturnOrderLogBackId(returnOrderId,userId,operator,"2");
+        int storeLogId = backStoreAddLogBackId(store,userId,operator,projectId,buildingId,description);
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonTemp = jsonArray.getJSONObject(i);
+            String returnOrderDetailId=jsonTemp.get("returnOrderDetailId")+"";
+            String count = (jsonTemp.get("count")+"").trim();
+            String storeId =  jsonTemp.get("storeId")+"";
+            String infoId = jsonTemp.get("infoId")+"";
+            String backWarehouseName = jsonTemp.get("backWarehouseName")+"";
+            String remark = jsonTemp.get("remark")+"";
+            //store count reduce
+            //order count reduce
+            //store log detail
+            //order log detail
+            if(!storeId.equals("0")){
+                backStoreCountUpdate(store,storeId,count);
+                updateReturnOrderDetailCountReturn(returnOrderDetailId,count);
+            }else {
+                String totalArea =  jsonTemp.get("totalArea")+"";
+                String totalWeight =  jsonTemp.get("totalWeight")+"";
+                String warehouseName = jsonTemp.get("warehouseName")+"";
+                storeId = String.valueOf(backStoreCountInsert(store,count,infoId,totalArea,totalWeight,warehouseName));
+                updateReturnOrderDetailCountReturnAndStoreId(returnOrderDetailId,count,storeId);
+            }
+            backStoreAddLogDetail(type,count,backWarehouseName,remark,infoId,storeId,String.valueOf(storeLogId));
+            b=b&addReturnOrderLogDetail(String.valueOf(returnOrderLogId),returnOrderDetailId,count);
+        }
+        return b;
+    }
+    private int backStoreAddLogBackId(String store, String userId, String operator,String projectId,String buildingId,String description){
+        return insertProjectService.insertDataToTable("insert into " + store +
+                        "_log (type,time,userId,operator,projectId,buildingId,description,isrollback) values (?,?,?,?,?,?,?,?)",
+                "2",analyzeNameService.getTime(),userId,operator,projectId,buildingId,description,"1");
+    }
+    private void backStoreCountUpdate(String store, String storeId, String count){
+        jo.update("update " + store + "_store set countStore=countStore+\"" + count +
+                "\",countUse=countUse+\""+count+"\" where id=\"" + storeId + "\"");
+    }
+    private int backStoreCountInsert(String store,String count,String infoId,String totalArea,String totalWeight,String warehouseName){
+        return insertProjectService.insertDataToTable("insert into "+store+"_store ("+store+
+                "Id,countUse,countStore,totalArea,totalWeight,warehouseName) values (?,?,?,?,?,?)"
+                ,infoId,count,count,totalArea,totalWeight,warehouseName);
+
+    }
+    private void updateReturnOrderDetailCountReturn(String detailId,String count){
+        jo.update("update return_order_detail set countReturn=countReturn-\""+Double.parseDouble(count)+ "\" where id=\""+detailId+"\"");
+    }
+    private void updateReturnOrderDetailCountReturnAndStoreId(String detailId,String count,String storeId){
+        jo.update("update return_order_detail set countReturn=countReturn-\""+Double.parseDouble(count)+ "\",storeId=\""+storeId
+                +"\" where id=\""+detailId+"\"");
+    }
+    private boolean backStoreAddLogDetail(String type,String count,String backWarehouseName, String remark,
+                                              String infoId, String storeId, String storeLogId){
+        String store = "";
+        String info = "";
+        switch (type){
+            case "1":
+                store = "backproduct";
+                info = "product";
+                break;
+            case "2":
+                store = "preprocess";
+                info = "product";
+                break;
+            case "3":
+                store = "oldpanel";
+                info = "oldpanel";
+                break;
+            case "4":
+                store = "material";
+                info = "material";
+                break;
+        }
+        return insertProjectService.insertIntoTableBySQL("insert into "+store+"_logdetail (isrollback,count,"+
+                        info+"Id,"+store+"storeId,"+store+"logId,backWarehouseName,remark) values (?,?,?,?,?,?,?)",
+                "1",count,infoId,storeId,storeLogId,backWarehouseName,remark);
+    }
 
 
 

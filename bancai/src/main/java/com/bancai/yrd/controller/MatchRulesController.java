@@ -39,7 +39,6 @@ public class MatchRulesController {
     private MatchRulesService matchRulesService;
 
     Logger log = Logger.getLogger(MatchRulesController.class);
-    private static String isPureNumber = "[0-9]+";
 
     /*
      * 查询所有的产品类型
@@ -121,7 +120,7 @@ public class MatchRulesController {
                                              String s_product, String s_old, HttpSession session) throws JSONException {
         WebResponse response = new WebResponse();
         try {
-            if(!priority.matches(isPureNumber)){
+            if(analyzeNameService.isStringNotPureNumber(priority)){
                 response.setSuccess(false);
                 response.setErrorCode(100);//优先级错误
                 return response;
@@ -145,11 +144,11 @@ public class MatchRulesController {
             String nAngleP = (jsonTempP.get("nAngleP")+"").trim();
             String pAngleP = (jsonTempP.get("pAngleP")+"").trim();
             String suffixP = (jsonTempP.get("suffixP")+"").trim().toUpperCase();
-            if(!mAngleP.matches(isPureNumber))
+            if(analyzeNameService.isStringNotPureNumber(mAngleP))
                 mAngleP = "0";
-            if(!nAngleP.matches(isPureNumber))
+            if(analyzeNameService.isStringNotPureNumber(nAngleP))
                 nAngleP = "0";
-            if(!pAngleP.matches(isPureNumber))
+            if(analyzeNameService.isStringNotPureNumber(pAngleP))
                 pAngleP = "0";
             JSONArray jsonArrayO = new JSONArray(s_old);
             JSONObject jsonTempO = jsonArrayO.getJSONObject(0);
@@ -162,11 +161,11 @@ public class MatchRulesController {
             String nAngleO = (jsonTempO.get("nAngleO")+"").trim();
             String pAngleO = (jsonTempO.get("pAngleO")+"").trim();
             String suffixO = (jsonTempO.get("suffixO")+"").trim().toUpperCase();
-            if(!mAngleO.matches(isPureNumber))
+            if(analyzeNameService.isStringNotPureNumber(mAngleO))
                 mAngleO = "0";
-            if(!nAngleO.matches(isPureNumber))
+            if(analyzeNameService.isStringNotPureNumber(nAngleO))
                 nAngleO = "0";
-            if(!pAngleO.matches(isPureNumber))
+            if(analyzeNameService.isStringNotPureNumber(pAngleO))
                 pAngleO = "0";
             int oldpanelMatchRulesId = matchRulesService.addOldpanelMatchRules(productFormatId,oldpanelFormatId,priority,isCompleteMatch
                     ,mValueP,nValueP,pValueP,aValueP,bValueP,mAngleP,nAngleP,pAngleP,suffixP

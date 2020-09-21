@@ -395,8 +395,13 @@ Ext.define('material.add_material_rules', {
                                         },
                                         {
                                             xtype: 'textfield',
-                                            fieldLabel: 'upWidth',
+                                            fieldLabel: '标准值向上对齐',
                                             name: 'upWidth',
+                                        },
+                                        {
+                                            xtype: 'textfield',
+                                            fieldLabel: '后缀',
+                                            name: 'suffix',
                                         }
                                     ]
                                 },

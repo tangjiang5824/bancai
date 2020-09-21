@@ -71,7 +71,7 @@ Ext.define('material.material_Receive',{
                 url : 'order/queryRequisitionOrder.do', //领料单查询
                 reader : {
                     type : 'json',
-                    rootProperty: 'requisitionOrderList',
+                    rootProperty: 'value',
                 }
             },
             autoLoad : true
@@ -157,16 +157,16 @@ Ext.define('material.material_Receive',{
             id : "toolbar",
             items: [tableList,
                 //单号
-                {
-                    xtype: 'textfield',
-                    margin : '0 10 0 0',
-                    fieldLabel: '单号',
-                    id :'picklistNum',
-                    width: 180,
-                    labelWidth: 30,
-                    name: 'picklistNum',
-                    value:"",
-                },
+                // {
+                //     xtype: 'textfield',
+                //     margin : '0 10 0 0',
+                //     fieldLabel: '单号',
+                //     id :'picklistNum',
+                //     width: 180,
+                //     labelWidth: 30,
+                //     name: 'picklistqNum',
+                //     value:"",
+                // },
                 {
                     fieldLabel : '创建人',
                     xtype : 'combo',
@@ -228,6 +228,9 @@ Ext.define('material.material_Receive',{
                             params : {
                                 proejctId:Ext.getCmp('projectName').getValue(),
                                 //proejctId:'1',
+                                operator:Ext.getCmp('operator').getValue(),
+                                timeStart:Ext.getCmp('startTime').getValue(),
+                                timeEnd:Ext.getCmp('endTime').getValue(),
                             }
                         });
                     }
@@ -264,7 +267,8 @@ Ext.define('material.material_Receive',{
                 {
                     dataIndex:'time',
                     text:'创建时间',
-                    flex :1
+                    flex :1,
+                    renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')
                 },
                 {
                     dataIndex:'projectName',
@@ -398,7 +402,7 @@ Ext.define('material.material_Receive',{
                 url : 'order/queryRequisitionOrderDetail.do',//获取同类型的原材料  +'&pickNum='+pickNum
                 reader : {
                     type : 'json',
-                    rootProperty: 'requisitionOrderDetailList',
+                    rootProperty: 'value',
                 },
             },
             autoLoad : true
@@ -653,8 +657,13 @@ Ext.define('material.material_Receive',{
                     flex :1,
                 },
                 {
+                    dataIndex:'countStore',
+                    text:'库存数量',
+                    flex :1,
+                },
+                {
                     dataIndex:'countAll',
-                    text:'总数量',
+                    text:'领取总数',
                     flex :1,
                 },
                 {

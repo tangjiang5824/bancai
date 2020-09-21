@@ -63,7 +63,7 @@ Ext.define('project.project_query_picklist',{
                 url : 'order/queryRequisitionOrder.do', //领料单查询
                 reader : {
                     type : 'json',
-                    rootProperty: 'requisitionOrderList',
+                    rootProperty: 'value',
                 }
             },
             autoLoad : true
@@ -184,6 +184,8 @@ Ext.define('project.project_query_picklist',{
                     name : 'startTime',
                     format : 'Y-m-d',
                     editable : false,
+                    renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')
+
                     //value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
                 },{
                     xtype:'tbtext',
@@ -320,7 +322,7 @@ Ext.define('project.project_query_picklist',{
                 url : 'order/queryRequisitionOrderDetail.do',//获取同类型的原材料  +'&pickNum='+pickNum
                 reader : {
                     type : 'json',
-                    rootProperty: 'requisitionOrderDetailList',
+                    rootProperty: 'value',
                 },
             },
             autoLoad : false

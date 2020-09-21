@@ -9,6 +9,8 @@ import com.bancai.cg.util.JPAObjectUtil;
 import com.bancai.commonMethod.QueryAllService;
 import com.bancai.db.mysqlcondition;
 import com.bancai.vo.WebResponse;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -82,7 +85,7 @@ public class MaterialController {
 
     @RequestMapping(value = "/material/findmaterialinfobycondition.do")
     @Transactional
-    public WebResponse findMaterialInfo(String materialName, Integer typeId, Double unitWeight, String inventoryUnit,  Integer start, Integer limit){
+    public WebResponse findMaterialInfo(String materialName, Integer typeId, Double unitWeight, String inventoryUnit, Integer start, Integer limit){
 
 //        Specification<MaterialInfo> spec = new Specification<MaterialInfo>() {
 //            @Override
@@ -132,15 +135,28 @@ public class MaterialController {
     }
 
     /*
-     * 录入单个原材料数据
+     * 录入原材料数据
      * 入库
      *
      * */
-    @RequestMapping(value="/material/addData.do")
+    @RequestMapping(value="/material/addData.do",method = {RequestMethod.POST,RequestMethod.GET})
     @Transactional
-    public boolean addMaterialData(String s,Integer operator, HttpSession session) throws Exception {
-
+    @ApiOperation("增加原材料信息")
+    public WebResponse addMaterialData(String s,@ApiParam("入库人") Integer operator, HttpSession session) throws Exception {
+        WebResponse response=new WebResponse();
         JSONArray jsonArray =JSONArray.parseArray(s);
+        if(jsonArray.size()==0){
+            response.setErrorCode(100);
+            response.setSuccess(false);
+            response.setMsg("未输入原材料入库数据！");
+            return response;
+        }
+        if(operator==null){
+            response.setErrorCode(200);
+            response.setSuccess(false);
+            response.setMsg("请选择入库人！");
+            return response;
+        }
         String userId = (String)session.getAttribute("userid");
         MaterialLog log=new MaterialLog();
         //入库记录sql
@@ -158,6 +174,8 @@ public class MaterialController {
             MaterialLogdetail logdetail=new MaterialLogdetail();
             MaterialInfo material=null;
             String warehousename=null;
+            String description=null;
+            Double totalArea=0.0;
             Double totalweight=0.0;
             Double count=0.0;
             boolean flag=true;
@@ -165,8 +183,14 @@ public class MaterialController {
             if(null!=jsonTemp.get("materialId")&&!jsonTemp.get("materialId").equals(""))
             {
                 material=materialinfodao.findById(Integer.valueOf(jsonTemp.get("materialId")+"")).orElse(null);
-                store.setMaterialInfo(material);
             }
+            if(material==null){
+                if(null!=jsonTemp.get("materialName")&&!jsonTemp.get("materialName").equals("")) {
+                    List<MaterialInfo> materialInfos=materialinfodao.findByMaterialName(jsonTemp.get("materialName")+"");
+                    material=materialInfos.get(0);
+                }
+            }
+            store.setMaterialInfo(material);
             if(null!=jsonTemp.get("warehouseName")&&!jsonTemp.get("warehouseName").equals(""))
             {
                 warehousename=(jsonTemp.get("warehouseName")+"");
@@ -182,6 +206,16 @@ public class MaterialController {
             if(null!=jsonTemp.get("totalWeight")&&!jsonTemp.get("totalWeight").equals("")) {
                 totalweight=(Double.parseDouble(jsonTemp.get("totalWeight")+""));
                 store.setTotalWeight(totalweight);
+            }
+            if(null!=jsonTemp.get("totalArea")&&!jsonTemp.get("totalArea").equals("")) {
+                totalArea=(Double.parseDouble(jsonTemp.get("totalArea")+""));
+                store.setTotalArea(totalArea);
+            }
+
+            if(null!=jsonTemp.get("description")&&!jsonTemp.get("description").equals("")) {
+                description=jsonTemp.get("description")+"";
+                //store.setDescription(description);
+                logdetail.setDescription(description);
             }
 
             Set<MaterialStore> materialStores = material.getMaterialStores();
@@ -209,7 +243,7 @@ public class MaterialController {
             mateialLogdetaildao.save(logdetail);
 
         }
-        return true;
+        return response;
     }
 
     //原材料仓库出库入库回滚
@@ -309,6 +343,8 @@ public class MaterialController {
         object.put("material_logdetail",list);
         return object.toJSONString();
     }
+
+
     @RequestMapping("/project/addAndupdateBuiling.do")
     @Transactional
     public boolean addAndupdateBuiling(Integer projectId,Integer id,String buildingNo,String buildingName,String buildingLeader){
@@ -328,7 +364,7 @@ public class MaterialController {
     }
 
     @RequestMapping("/project/match/newPanel.do")
-    public boolean addNewPanelRule(Integer productformatId,Integer materialtypeId,String count, String m,String n, String a,String b, String p, String condition1, String condition2, String upWidth, String orientation){
+    public boolean addNewPanelRule(Integer productformatId,Integer materialtypeId,String count, String m,String n, String a,String b, String p, String condition1, String condition2, String upWidth, String orientation,String suffix){
         MaterialMatchRules rule=new MaterialMatchRules();
         if(count.trim().length()==0) {
             count="1.0";
@@ -411,6 +447,7 @@ public class MaterialController {
         rule.setCondition2(condition2);
         rule.setUpWidth(upWidth);
         rule.setOrientation(orientation);
+        if(suffix!=null&&suffix.trim().length()!=0)  rule.setSuffix(suffix);
         materialMatchRulesRepository.save(rule);
         return  true;
     }

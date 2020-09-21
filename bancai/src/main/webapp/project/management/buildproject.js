@@ -62,8 +62,8 @@ Ext.define('project.management.buildproject', {
             queryMode: 'local',
             displayField: 'name',
             valueField: 'abbr',
-            margin : '0 0 0 40',
-            width: 190,
+            margin : '0 0 0 100',
+            width: 200,
             labelWidth: 110,
             renderTo: Ext.getBody(),
             listeners:{
@@ -87,20 +87,35 @@ Ext.define('project.management.buildproject', {
 
         var toolbar_1 = Ext.create('Ext.toolbar.Toolbar',{
             items: [
-                {
-                    xtype: 'textfield',
-                    margin : '0 10 0 0',
-                    fieldLabel: '项目名',
-                    id :'projectName',
-                    // width: '35%',
-                    width: 700,
-                    labelWidth: 50,
-                    allowBlank:false,
-                    name: 'projectName',
-                    value:"",
-                },
-                isPreprocess
-                ]
+                    {
+                        xtype: 'textfield',
+                        margin : '0 30 0 0',
+                        fieldLabel: '项目名',
+                        id :'projectName',
+                        // width: '35%',
+                        width: 700,
+                        labelWidth: 50,
+                        allowBlank:false,
+                        name: 'projectName',
+                        value:"",
+                    },
+                    // isPreprocess,
+                    //单选框
+                    {
+                        xtype:'radiogroup',
+                        fieldLabel: '项目是否为预加工',
+                        labelWidth:110,
+                        width:230,
+                        columns: 2, //设置没四个选项一行
+                        margin : '0 0 0 80',
+                        id:'maintainProjectType',
+                        allowBlank: false,
+                        items:[
+                            {boxLabel: '是', name: 'maintainProjectType',inputValue: '1'},
+                            {boxLabel: '否', name: 'maintainProjectType',inputValue: '0', checked : true},
+                        ]
+                    }
+                    ]
         });
         //职员信息
         var workerListStore = Ext.create('Ext.data.Store',{
@@ -117,24 +132,14 @@ Ext.define('project.management.buildproject', {
         });
         var toolbar_2 = Ext.create('Ext.toolbar.Toolbar',{
             items: [
-                // {
-                //     xtype: 'textfield',
-                //     margin : '0 10 0 0',
-                //     fieldLabel: '计划负责人',
-                //     id :'planLeader',
-                //     width: 180,
-                //     labelWidth: 80,
-                //     name: 'planLeader',
-                //     value:"",
-                // },
                 {
                     fieldLabel : '计划负责人',
                     xtype : 'combo',
                     name : 'planLeader',
                     id : 'planLeader',
-                    margin: '0 10 0 0',
+                    margin: '0 30 0 0',
                     width: 180,
-                    labelWidth: 80,
+                    labelWidth: 65,
                     store : workerListStore,
                     displayField : 'workerName',
                     valueField : 'id',
@@ -145,9 +150,9 @@ Ext.define('project.management.buildproject', {
                     xtype : 'combo',
                     name : 'produceLeader',
                     id : 'produceLeader',
-                    margin: '0 10 0 0',
+                    margin: '0 30 0 0',
                     width: 180,
-                    labelWidth: 80,
+                    labelWidth: 65,
                     store : workerListStore,
                     displayField : 'workerName',
                     valueField : 'id',
@@ -158,9 +163,9 @@ Ext.define('project.management.buildproject', {
                     xtype : 'combo',
                     name : 'purchaseLeader',
                     id : 'purchaseLeader',
-                    margin: '0 10 0 0',
+                    margin: '0 30 0 0',
                     width: 180,
-                    labelWidth: 80,
+                    labelWidth: 65,
                     store : workerListStore,
                     displayField : 'workerName',
                     valueField : 'id',
@@ -171,9 +176,9 @@ Ext.define('project.management.buildproject', {
                     xtype : 'combo',
                     name : 'financeLeader',
                     id : 'financeLeader',
-                    margin: '0 10 0 0',
+                    margin: '0 30 0 0',
                     width: 180,
-                    labelWidth: 80,
+                    labelWidth: 65,
                     store : workerListStore,
                     displayField : 'workerName',
                     valueField : 'id',
@@ -184,9 +189,9 @@ Ext.define('project.management.buildproject', {
                     xtype : 'combo',
                     name : 'storeLeader',
                     id : 'storeLeader',
-                    margin: '0 10 0 0',
+                    margin: '0 30 0 0',
                     width: 180,
-                    labelWidth: 80,
+                    labelWidth: 65,
                     store : workerListStore,
                     displayField : 'workerName',
                     valueField : 'id',
@@ -198,12 +203,12 @@ Ext.define('project.management.buildproject', {
             items: [
                 {
                     xtype : 'monthfield',
-                    margin : '0 10 0 0',
-                    fieldLabel : '开始时间',
+                    margin : '0 30 0 0',
+                    fieldLabel : '计划开始时间',
                     width : 180,
                     labelWidth : 80,
-                    id : "startTime",
-                    name : 'startTime',
+                    id : "proStartTime",
+                    name : 'proStartTime',
                     //align: 'right',
                     format : 'Y-m-d',
                     editable : false,
@@ -211,7 +216,7 @@ Ext.define('project.management.buildproject', {
                     value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
                 },  {
                     xtype : 'monthfield',
-                    margin : '0 10 0 0',
+                    margin : '0 30 0 0',
                     fieldLabel : '预计结束时间',
                     width : 180,
                     labelWidth : 80,
@@ -233,6 +238,7 @@ Ext.define('project.management.buildproject', {
                 iconCls : 'rukuicon ',
                 id:'addBuild',
                 text : '添加楼栋',
+                margin:'0 40 0 0',
                 handler : function() {
                     //fields: ['品号', '品名','规格','库存单位','仓库编号','数量','成本','存放位置']
                     var data = [{
@@ -244,8 +250,8 @@ Ext.define('project.management.buildproject', {
                     //若无项目名，则不能添加楼栋
                     var projectName = Ext.getCmp("projectName").getValue();
                     if(projectName != ''){
-                        //Ext.getCmp('addDataGrid')返回定义的对象
-                        Ext.getCmp('addDataGrid').getStore().loadData(data,
+                        //Ext.getCmp('add_projectbuild_DataGrid')返回定义的对象
+                        Ext.getCmp('add_projectbuild_DataGrid').getStore().loadData(data,
                             true);
                     }else{
                         Ext.MessageBox.alert("警告","项目名不能为空!",function(r) {
@@ -254,6 +260,67 @@ Ext.define('project.management.buildproject', {
                     }
                 }
             },
+                {
+                    xtype : 'button',
+                    iconAlign : 'center',
+                    iconCls : 'rukuicon ',
+                    text : '创建新项目',
+                    region:'center',
+                    bodyStyle: 'background:#fff;',
+                    handler : function() {
+                        // 取出grid的字段名字段类型
+                        //var userid="<%=session.getAttribute('userid')%>";
+                        var select = Ext.getCmp('add_projectbuild_DataGrid').getStore()
+                            .getData();
+                        var s = new Array();
+                        select.each(function(rec) {
+                            //delete rec.data.id;
+                            if(rec.data.buildingNo!="")
+                                s.push(JSON.stringify(rec.data));
+                        });
+
+                        var ispreprocess = Ext.getCmp('maintainProjectType').getValue().maintainProjectType;
+                        console.log("maintainProjectType===============>",Ext.getCmp('maintainProjectType').getValue().maintainProjectType)
+                        //获取数据
+                        var sTime=Ext.Date.format(Ext.getCmp('proStartTime').getValue(), 'Y-m-d H:i:s');
+
+                        Ext.Ajax.request({
+                            url : 'generate_project.do', //createProject.do
+                            method:'POST',
+                            //submitEmptyText : false,
+                            params : {
+                                //tableName:tableName,
+                                //materialType:materialtype,
+                                proStartTime:sTime,
+                                planLeaderId:Ext.getCmp('planLeader').getValue(),
+                                produceLeaderId:Ext.getCmp('produceLeader').getValue(),
+                                proEndTime:Ext.getCmp('proEndTime').getValue(),
+                                purchaseLeaderId:Ext.getCmp('purchaseLeader').getValue(),
+                                financeLeaderId:Ext.getCmp('financeLeader').getValue(),
+                                storeLeaderId:Ext.getCmp('storeLeader').getValue(),
+                                projectName:Ext.getCmp('projectName').getValue(),
+                                isPreprocess:ispreprocess, //Ext.getCmp('isPreprocess').getValue(),//项目是否为预加工
+                                s : "[" + s + "]",
+                            },
+                            success : function(response,action) {
+                                //var message =Ext.decode(response.responseText).showmessage;
+                                var ob=JSON.parse(response.responseText);
+                                if(ob.success==false)
+                                    Ext.MessageBox.alert("提示",ob.msg);
+                                else Ext.MessageBox.alert("提示","创建项目成功！");
+
+                                //刷新
+                                Ext.getCmp('add_projectbuild_DataGrid').getStore().removeAll();
+
+                            },
+                            failure : function(response) {
+                                //var message =Ext.decode(response.responseText).showmessage;
+                                Ext.MessageBox.alert("提示","创建项目失败！" );
+                            }
+                        });
+
+                    }
+                }
             ]
         });
 
@@ -272,10 +339,10 @@ Ext.define('project.management.buildproject', {
         });
 
         var grid = Ext.create("Ext.grid.Panel", {
-            id : 'addDataGrid',
-            dockedItems : [toolbar2],
+            id : 'add_projectbuild_DataGrid',
+            // dockedItems : [toolbar2],
             store : {
-                fields: ['楼栋编号',"楼栋名","楼栋负责人"]
+                fields: []
             },
             columns : [ {
                 dataIndex : 'buildingNo',
@@ -307,7 +374,7 @@ Ext.define('project.management.buildproject', {
                     var ehrRecord = workerListStore.getAt(index);
                     var returnvalue = "";
                     if (ehrRecord) {
-                        returnvalue = ehrRecord.get('typeName');
+                        returnvalue = ehrRecord.get('workerName');
                     }
                     return returnvalue;
                 }
@@ -325,20 +392,9 @@ Ext.define('project.management.buildproject', {
             selType : 'rowmodel',
         });
 
-        var toolbar2 = Ext.create('Ext.toolbar.Toolbar', {
-            dock : "top",
-            id : "toolbar2",
-            items : [  {
-                xtype: 'displayfield',
-                margin : '0 10 0 0',
-                fieldLabel: '楼栋信息',
-                id :'planList',
-                //labelWidth: 60,
-            }]
-        });
 
         var toolbar3 = Ext.create('Ext.toolbar.Toolbar', {
-            dock : "bottom",
+            dock : "top",
             id : "toolbar3",
             //style:{float:'center',},
             //margin-right: '2px',
@@ -347,7 +403,8 @@ Ext.define('project.management.buildproject', {
                 //marginLeft: '900px'
                 layout: 'right'
             },
-            items : [{
+            items : [
+                {
                 xtype : 'button',
                 iconAlign : 'center',
                 iconCls : 'rukuicon ',
@@ -357,7 +414,7 @@ Ext.define('project.management.buildproject', {
                 handler : function() {
                     // 取出grid的字段名字段类型
                     //var userid="<%=session.getAttribute('userid')%>";
-                    var select = Ext.getCmp('addDataGrid').getStore()
+                    var select = Ext.getCmp('add_projectbuild_DataGrid').getStore()
                         .getData();
                     var s = new Array();
                     select.each(function(rec) {
@@ -367,7 +424,7 @@ Ext.define('project.management.buildproject', {
                     });
 
                     //获取数据
-                    var sTime=Ext.Date.format(Ext.getCmp('startTime').getValue(), 'Y-m-d H:i:s');
+                    var sTime=Ext.Date.format(Ext.getCmp('proStartTime').getValue(), 'Y-m-d H:i:s');
 
                     Ext.Ajax.request({
                         url : 'generate_project.do', //createProject.do
@@ -376,24 +433,29 @@ Ext.define('project.management.buildproject', {
                         params : {
                             //tableName:tableName,
                             //materialType:materialtype,
-                            startTime:sTime,
-                            planLeader:Ext.getCmp('planLeader').getValue(),
-                            produceLeader:Ext.getCmp('produceLeader').getValue(),
+                            proStartTime:sTime,
+                            planLeaderId:Ext.getCmp('planLeader').getValue(),
+                            produceLeaderId:Ext.getCmp('produceLeader').getValue(),
                             proEndTime:Ext.getCmp('proEndTime').getValue(),
-                            purchaseLeader:Ext.getCmp('purchaseLeader').getValue(),
-                            financeLeader:Ext.getCmp('financeLeader').getValue(),
-                            storeLeader:Ext.getCmp('storeLeader').getValue(),
+                            purchaseLeaderId:Ext.getCmp('purchaseLeader').getValue(),
+                            financeLeaderId:Ext.getCmp('financeLeader').getValue(),
+                            storeLeaderId:Ext.getCmp('storeLeader').getValue(),
                             projectName:Ext.getCmp('projectName').getValue(),
                             isPreprocess:Ext.getCmp('isPreprocess').getValue(),//项目是否为预加工
                             s : "[" + s + "]",
                         },
-                        success : function(response) {
-                            var message =Ext.decode(response.responseText).showmessage;
-                            Ext.MessageBox.alert("提示",message );
+                        success : function(response,action) {
+                            //var message =Ext.decode(response.responseText).showmessage;
+                            var ob=JSON.parse(response.responseText);
+                            if(ob.success==false)
+                            Ext.MessageBox.alert("提示",ob.msg);
+                            else Ext.MessageBox.alert("提示","创建项目成功！");
+                            //刷新
+
                         },
                         failure : function(response) {
-                            var message =Ext.decode(response.responseText).showmessage;
-                            Ext.MessageBox.alert("提示",message );
+                            //var message =Ext.decode(response.responseText).showmessage;
+                            Ext.MessageBox.alert("提示","创建项目失败！" );
                         }
                     });
 
@@ -401,7 +463,7 @@ Ext.define('project.management.buildproject', {
             }]
         });
 
-        this.dockedItems = [toolbar_1,toolbar_2,toolbar_3,grid,toolbar3];
+        this.dockedItems = [toolbar_1,toolbar_2,toolbar_3,toolbar2, grid];
         //this.items = [ me.grid ];
         this.callParent(arguments);
 

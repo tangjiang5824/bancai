@@ -5,8 +5,10 @@ import com.bancai.cg.entity.MaterialLog;
 import com.bancai.cg.entity.MaterialLogdetail;
 import com.bancai.cg.entity.MaterialStore;
 import com.bancai.cg.service.InsertProjectService;
+import com.bancai.cg.util.TransferUtil;
 import com.bancai.domain.DataList;
 import com.bancai.domain.DataRow;
+import com.bancai.yrd.service.DesignlistService;
 import com.bancai.yrd.service.OldpanelDataService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.Iterator;
 import java.util.List;
@@ -29,7 +32,6 @@ import java.util.Set;
 @Service
 public class AllExcelService extends BaseService {
 	private Logger log = Logger.getLogger(AllExcelService.class);
-	private static String isPureNumber = "[0-9]+";
 	@Autowired
 	private TableService tableService;
 	@Autowired
@@ -37,7 +39,9 @@ public class AllExcelService extends BaseService {
 	@Autowired
 	private InsertProjectService insertProjectService;
 	@Autowired
-	private OldpanelDataService oldpanel_Data_Service;
+	private DesignlistService designlistService;
+	@Autowired
+	private AnalyzeNameService analyzeNameService;
 
 	//JPA dao
 	@Autowired
@@ -85,7 +89,6 @@ public class AllExcelService extends BaseService {
 		//新增JPA时改动
 		MaterialInfo material=null;
 //		System.out.println(dataList);
-		if (tablename.equals("material_store")) {
 			for (int i = 0; i < dataList.size(); i++) {
 				String materialName = dataList.get(i).get("materialName") + "";
 	//			String specification = dataList.get(i).get("specification") + "";
@@ -142,13 +145,6 @@ public class AllExcelService extends BaseService {
 
 				if(flag) materialstoredao.save(store);
 
-				//修改插入到数据库里面的datalist
-
-
-
-
-
-
 				logdetail.setIsrollback(0);
 				logdetail.setMaterialLog(log);
 				logdetail.setMaterialInfo(material);
@@ -156,41 +152,126 @@ public class AllExcelService extends BaseService {
 				if (flag) logdetail.setMaterialStore(store);
 				mateialLogdetaildao.save(logdetail);
 
-				//原材料入库
-//				String sql_insert_material="insert into material_store (materialId,specification,inventoryUnit,count,countUse,warehouseName,unitWeight,totalWeight,description,uploadId) values (?,?,?,?,?,?,?,?,?,?)";
-//				int store_id= insertProjectService.insertDataToTable(sql_insert_material,materialId,specification,inventoryUnit,count,count,warehouseName,unitWeight,totalWeight,description,userid);
-//				//后面为log记录
-//				String sql_log_detail = "insert into material_logdetail (materialName,materialId,count,specification,materiallogId,materialstoreId,isrollback) values (?,?,?,?,?,?,?)";
-//				boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_log_detail,materialName,materialId,count,specification,String.valueOf(main_key),store_id+"","0");
 			}
-		}
-//		else if (tablename.equals("oldpanel")) {
-//			for (int i = 0; i < dataList.size(); i++) {
-//				String oldpanelTypeName = dataList.get(i).get("oldpanelType") + "";
-//				String sql_trans = "select oldpanelType from oldpaneltype where oldpanelTypeName = ?";
-//				typeList = queryService.query(sql_trans,oldpanelTypeName.toUpperCase());
-//				if(typeList.isEmpty())
-//				{
-//					result.setErrorCode(2);
-//					return result;
-//				} else {
-//					String oldpanelType = typeList.get(0).get("oldpanelType") + "";
-//					dataList2.get(i).put("oldpanelType",oldpanelType);
-//					String countStore = dataList.get(i).get("countStore") + "";
-//					dataList2.get(i).put("countUse",countStore);
-////					System.out.println(dataList2);
-//					String oldpanelName = dataList.get(i).get("oldpanelName") + "";
-//					String specification = dataList.get(i).get("specification")+"";
-//					String sql_log_detail = "insert into oldpanellogdetail (oldpanelName,count,specification,oldpanellogId) values (?,?,?,?)";
-////					boolean is_log_right = insertProjectService.insertIntoTableBySQL(sql_log_detail,oldpanelName,countStore,specification,String.valueOf(main_key));
-//				}
-//			}
-//		}
-		// 插入数据
-		//log.debug("materialtype= "+materialtype);
-		//boolean upload = uploadData(dataList2,userid,tablename);
 		result.dataList = dataList;
 		result.success = true;
+		return result;
+
+	}
+	/**
+	 * 原材料上传数据(先上传解析返回后点确定后入库)
+	 *
+	 * @param inputStream
+	 * @param
+	 * @return
+	 * @throws IOException
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public UploadDataResult uploadExcelData(InputStream inputStream) throws IOException {
+		DataList dataList;
+		UploadDataResult result = new UploadDataResult();
+		Excel excel = new Excel(inputStream);
+		dataList = excel.readExcelContent();
+		DataList errorlist=new DataList();
+		DataList retList=new DataList();
+		//新增JPA时改动
+//		System.out.println(dataList);
+		for (int i = 0; i < dataList.size(); i++) {
+			DataRow row=new DataRow();
+			int index=-1;
+			String materialName = dataList.get(i).get("原材料名") + "";
+			List<MaterialInfo> materialList=materialinfodao.findByMaterialName(materialName);
+			if(materialList.size()!=1) {
+				errorlist.add(dataList.get(i));
+				index=errorlist.size()-1;
+				if(materialList.size()>1){
+					errorlist.get(index).put("错误原因","存在多个相同原材料名； ");
+				}else {
+					//materialList.size()<1
+					if(materialName.equals("null")){
+						errorlist.get(index).put("错误原因","原材料名为空； ");
+					}else
+					errorlist.get(index).put("错误原因","系统中不存在该原材料，请在原材料基础信息中进行添加； ");
+				}
+			}
+			String warehouseName=dataList.get(i).get("仓库名称")+"";
+			String sql="select * from storeposition where warehouseName=?";
+			if(queryService.query(sql,warehouseName).size()==0){
+				if(index!=-1){
+					StringBuilder errorMsg=new StringBuilder(errorlist.get(index).get("错误原因")+"");
+					if(warehouseName.equals("null")) errorMsg.append("仓库名为空； ");
+					else errorMsg.append("未找到对应仓库; ");
+					errorlist.get(index).put("错误原因",errorMsg.toString());
+				}else {
+					errorlist.add(dataList.get(i));
+					index=errorlist.size()-1;
+					if(warehouseName.equals("null")) errorlist.get(index).put("错误原因","仓库名为空； ");
+					else errorlist.get(index).put("错误原因","未找到对应仓库; ");
+				}
+			}
+			try{
+				Double totalweight=0.0;
+				if(dataList.get(i).get("总重")!=null){
+					totalweight=Double.valueOf((dataList.get(i).get("总重")+"").trim());
+				}
+				Double count=1.0;
+				if(dataList.get(i).get("数量")!=null)
+					count=Double.valueOf((dataList.get(i).get("数量")+"").trim());
+				double unitweight=totalweight/count;
+				unitweight = TransferUtil.keep2tail(unitweight);
+				//dataList.get(i).put("单重",unitweight);
+				row.put("count",count+"");
+				row.put("totalWeight",totalweight+"");
+				row.put("单重",unitweight);
+			}catch (Exception e){
+				if(index!=-1){
+					StringBuilder errorMsg=new StringBuilder(errorlist.get(index).get("错误原因")+"");
+					errorMsg.append("数量或者总重输入出错;  ");
+					errorlist.get(index).put("错误原因",errorMsg.toString());
+				}else{
+					errorlist.add(dataList.get(i));
+					index=errorlist.size()-1;
+					errorlist.get(index).put("错误原因","数量或者总重输入出错;  ");
+				}
+			}
+			try{
+				Double totalarea=0.0;
+				if(dataList.get(i).get("总面积")!=null){
+					totalarea=Double.valueOf((dataList.get(i).get("总面积")+"").trim());
+				}
+				Double count=1.0;
+				if(dataList.get(i).get("数量")!=null)
+					count=Double.valueOf((dataList.get(i).get("数量")+"").trim());
+				double unitarea=totalarea/count;
+				unitarea = TransferUtil.keep2tail(unitarea);
+				//dataList.get(i).put("单重",unitweight);
+				row.put("totalArea",totalarea+"");
+				row.put("单面积",unitarea);
+			}catch (Exception e){
+				if(index!=-1){
+					StringBuilder errorMsg=new StringBuilder(errorlist.get(index).get("错误原因")+"");
+					errorMsg.append("数量或者总面积输入出错;  ");
+					errorlist.get(index).put("错误原因",errorMsg.toString());
+				}else{
+					errorlist.add(dataList.get(i));
+					index=errorlist.size()-1;
+					errorlist.get(index).put("错误原因","数量或者总面积输入出错;  ");
+				}
+			}
+			row.put("序号",dataList.get(i).get("序号") +"");
+			row.put("materialName",dataList.get(i).get("原材料名") +"");
+			row.put("warehouseName",dataList.get(i).get("仓库名称") +"");
+			row.put("description",dataList.get(i).get("备注") +"");
+			retList.add(row);
+
+		}
+		if(errorlist.size()==0) {
+			result.dataList = retList;
+			result.success = true;
+		}else {
+			result.dataList = errorlist;
+			result.success = false;
+		}
 		return result;
 
 	}
@@ -220,12 +301,92 @@ public class AllExcelService extends BaseService {
 			}
 //			String classificationName = dataRow.get("分类") + "";
 //			String inventoryUnit = dataRow.get("单位") + "";
-			String count = dataRow.get("入库数量") + "";
-			String warehouseName = dataRow.get("入库仓库") + "";
+			String count = (dataRow.get("入库数量") + "").trim().toUpperCase();
+			String warehouseName = (dataRow.get("入库仓库") + "").trim().toUpperCase();
+			String remark = (dataRow.get("备注") + "").trim();
 			DataRow row = new DataRow();
 			row.put("oldpanelName",oldpanelName);
 			row.put("warehouseName",warehouseName);
 			row.put("count",count);
+			row.put("remark",remark);
+			dataList.add(row);
+		}
+		result.dataList = dataList;
+		return result;
+	}
+	/**
+	 * 预加工上传数据
+	 *
+	 * @param inputStream
+	 * @return
+	 * @throws IOException
+	 */
+	@Transactional
+	public UploadDataResult uploadPreprocessExcelData(InputStream inputStream) throws IOException {
+		UploadDataResult result = new UploadDataResult();
+		Excel excel = new Excel(inputStream);
+		DataList excelList = excel.readExcelContent();
+		Iterator it = excelList.iterator();
+		DataList dataList = new DataList();
+		while (it.hasNext()){
+			DataRow dataRow = (DataRow) it.next();
+			String productName = (dataRow.get("品名") + "").trim().toUpperCase();
+			if(productName.length()==0){
+				it.remove();
+				continue;
+			} else if (productName.equals("合计")){
+				it.remove();
+				break;
+			}
+//			String classificationName = dataRow.get("分类") + "";
+//			String inventoryUnit = dataRow.get("单位") + "";
+			String count = (dataRow.get("入库数量") + "").trim().toUpperCase();
+			String warehouseName = (dataRow.get("入库仓库") + "").trim().toUpperCase();
+			String remark = (dataRow.get("备注") + "").trim();
+			DataRow row = new DataRow();
+			row.put("productName",productName);
+			row.put("warehouseName",warehouseName);
+			row.put("count",count);
+			row.put("remark",remark);
+			dataList.add(row);
+		}
+		result.dataList = dataList;
+		return result;
+	}
+	/**
+	 * 退库成品上传数据
+	 *
+	 * @param inputStream
+	 * @return
+	 * @throws IOException
+	 */
+	@Transactional
+	public UploadDataResult uploadBackproductExcelData(InputStream inputStream) throws IOException {
+		UploadDataResult result = new UploadDataResult();
+		Excel excel = new Excel(inputStream);
+		DataList excelList = excel.readExcelContent();
+		Iterator it = excelList.iterator();
+		DataList dataList = new DataList();
+		while (it.hasNext()){
+			DataRow dataRow = (DataRow) it.next();
+			String productName = (dataRow.get("品名") + "").trim().toUpperCase();
+			if(productName.length()==0){
+				it.remove();
+				continue;
+			} else if (productName.equals("合计")){
+				it.remove();
+				break;
+			}
+//			String classificationName = dataRow.get("分类") + "";
+//			String inventoryUnit = dataRow.get("单位") + "";
+			String count = (dataRow.get("入库数量") + "").trim().toUpperCase();
+			String warehouseName = (dataRow.get("入库仓库") + "").trim().toUpperCase();
+			String remark = (dataRow.get("备注") + "").trim();
+			DataRow row = new DataRow();
+			row.put("productName",productName);
+			row.put("warehouseName",warehouseName);
+			row.put("count",count);
+			row.put("remark",remark);
 			dataList.add(row);
 		}
 		result.dataList = dataList;
@@ -233,71 +394,106 @@ public class AllExcelService extends BaseService {
 	}
 
 	/**
-	 * 旧板退料单上传数据
+	 * 退料单上传数据
 	 *
 	 * @param inputStream
 	 * @return
 	 * @throws IOException
 	 */
 	@Transactional
-	public UploadDataResult uploadBackOldpanelExcelData(InputStream inputStream) throws IOException {
+	public UploadDataResult uploadBackExcelData(String typeName,String originName,String projectId,String buildingId, InputStream inputStream) throws IOException {
 		UploadDataResult result = new UploadDataResult();
 		Excel excel = new Excel(inputStream);
 		DataList excelList = excel.readExcelContent();
 		Iterator it = excelList.iterator();
 		DataList dataList = new DataList();
 		DataList errorList = new DataList();
-		String sql_info = "select * from oldpanel_info where oldpanelName=?";
+		String sql_queryInfo = "select * from "+originName+"_info where "+originName+"Name=?";
+		String sql_queryWarehouse = "select * from storeposition where warehouseName=?";
+		String sql_queryStore = "select * from "+typeName+"_store where "+originName+"Id=?";
 		while (it.hasNext()){
 			DataRow dataRow = (DataRow) it.next();
-			String oldpanelName = (dataRow.get("品名") + "").trim().toUpperCase();
-			String count = dataRow.get("退料数量") + "";
-			if(oldpanelName.length()==0){
-				it.remove();
-				continue;
-			} else if (oldpanelName.equals("合计")){
+			String name = (dataRow.get("品名") + "").trim().toUpperCase();
+			String count = (dataRow.get("退料数量") + "").trim();
+			String backWarehouseName = (dataRow.get("退料仓库") + "").trim().toUpperCase();
+			String warehouseName = (dataRow.get("收料仓库") + "").trim().toUpperCase();
+			String remark = dataRow.get("备注") + "";
+			String position = (dataRow.get("编号") + "").trim().toUpperCase();
+			if((name.length()==0)||(name.equals("NULL"))){
+				if((!typeName.equals("backproduct"))||(position.length()==0)||(position.equals("NULL"))) {
+					it.remove();
+					continue;
+				}else {
+					DataList posList = designlistService.getDesignlistByPosition(projectId,buildingId,position);
+					if(posList.isEmpty()){
+						dataRow.put("errorType","编号有误或该项目楼栋中不存在此编号");
+						errorList.add(dataRow);
+						continue;
+					}else {
+						name = posList.get(0).get("productName").toString();
+					}
+				}
+			} else if (name.equals("合计")){
 				it.remove();
 				break;
 			}
-			DataList queryList = queryService.query(sql_info,oldpanelName);
-			if(queryList.isEmpty()){
+			DataList infoList = queryService.query(sql_queryInfo,name);
+			if(infoList.isEmpty()){
+				dataRow.put("errorType","没有该品名的基础信息");
 				errorList.add(dataRow);
-			}else if(((count.split("\\.").length==1)&&(!count.matches(isPureNumber)))||
-					((count.split("\\.").length==2)&&(
-							(!count.split("\\.")[0].matches(isPureNumber))||(!count.split("\\.")[1].matches(isPureNumber))
-					))||((count.split("\\.").length!=1)&&((count.split("\\.").length!=2)))){
-				errorList.add(dataRow);
-			}else if(errorList.isEmpty()){
-				DataRow queryRow = queryList.get(0);
-				String backWarehouseName = dataRow.get("退料仓库") + "";
-				String warehouseName = dataRow.get("收料仓库") + "";
-				String remark = dataRow.get("备注") + "";
-				String unitWeight = "";
-				String unitArea = "";
-				String totalWeight = "";
-				String totalArea = "";
-				String inventoryUnit = queryRow.get("inventoryUnit")+"";
-				if((queryRow.get("unitWeight")!=null)&&(queryRow.get("unitWeight").toString().length()!=0)){
-					unitWeight = queryRow.get("unitWeight").toString();
-					totalWeight = String.valueOf(Double.parseDouble(unitWeight)*Double.parseDouble(count));
-				}
-				if((queryRow.get("unitArea")!=null)&&(queryRow.get("unitArea").toString().length()!=0)){
-					unitArea = queryRow.get("unitArea").toString();
-					totalArea = String.valueOf(Double.parseDouble(unitArea)*Double.parseDouble(count));
-				}
-				DataRow row = new DataRow();
-				row.put("oldpanelName",oldpanelName);
-				row.put("backWarehouseName",backWarehouseName);
-				row.put("warehouseName",warehouseName);
-				row.put("count",count);
-				row.put("unitWeight",unitWeight);
-				row.put("unitArea",unitArea);
-				row.put("totalWeight",totalWeight);
-				row.put("totalArea",totalArea);
-				row.put("inventoryUnit",inventoryUnit);
-				row.put("remark",remark);
-				dataList.add(row);
+				continue;
 			}
+			if(analyzeNameService.isStringNotNonnegativeNumber(count)){
+				dataRow.put("errorType","数量错误");
+				errorList.add(dataRow);
+				continue;
+			}
+			if(queryService.query(sql_queryWarehouse,backWarehouseName).isEmpty()){
+				dataRow.put("errorType","退料仓库有误");
+				errorList.add(dataRow);
+				continue;
+			}
+			DataRow infoRow = infoList.get(0);
+			String infoId = infoRow.get("id").toString();
+			DataList storeList = queryService.query(sql_queryStore,infoId);
+			String storeId = "0";
+			if((!storeList.isEmpty())&&(warehouseName.equals("NULL")||warehouseName.length()==0)){
+				warehouseName = storeList.get(0).get("warehouseName").toString();
+				storeId = storeList.get(0).get("id").toString();
+			}
+			else if(queryService.query(sql_queryWarehouse,warehouseName).isEmpty()){
+				dataRow.put("errorType","收料仓库有误");
+				errorList.add(dataRow);
+				continue;
+			}
+			if(!errorList.isEmpty())
+				continue;
+			String unitWeight = "";
+			String unitArea = "";
+			String totalWeight = "";
+			String totalArea = "";
+			String inventoryUnit = infoRow.get("inventoryUnit")+"";
+			if((infoRow.get("unitWeight")!=null)&&(infoRow.get("unitWeight").toString().length()!=0)){
+				unitWeight = infoRow.get("unitWeight").toString();
+				totalWeight = String.valueOf(TransferUtil.keep2tail(Double.parseDouble(unitWeight)*Double.parseDouble(count)));
+			}
+			if((infoRow.get("unitArea")!=null)&&(infoRow.get("unitArea").toString().length()!=0)){
+				unitArea = infoRow.get("unitArea").toString();
+				totalArea = String.valueOf(TransferUtil.keep2tail(Double.parseDouble(unitArea)*Double.parseDouble(count)));
+			}
+			DataRow row = new DataRow();
+			row.put("name",name);
+			row.put("backWarehouseName",backWarehouseName);
+			row.put("warehouseName",warehouseName);
+			row.put("count",count);
+			row.put("unitWeight",unitWeight);
+			row.put("unitArea",unitArea);
+			row.put("totalWeight",totalWeight);
+			row.put("totalArea",totalArea);
+			row.put("inventoryUnit",inventoryUnit);
+			row.put("remark",remark);
+			row.put("storeId",storeId);
+			dataList.add(row);
 		}
 		if(errorList.isEmpty()){
 			result.dataList = dataList;
@@ -308,6 +504,49 @@ public class AllExcelService extends BaseService {
 		}
 		return result;
 	}
+
+
+	/**
+	 * 废料上传数据
+	 *
+	 * @param inputStream
+	 * @return
+	 * @throws IOException
+	 */
+	@Transactional
+	public UploadDataResult uploadWasteExcelData(InputStream inputStream) throws IOException {
+		UploadDataResult result = new UploadDataResult();
+		Excel excel = new Excel(inputStream);
+		DataList excelList = excel.readExcelContent();
+		Iterator it = excelList.iterator();
+		DataList dataList = new DataList();
+		while (it.hasNext()){
+			DataRow dataRow = (DataRow) it.next();
+			String wasteName = (dataRow.get("品名") + "").trim().toUpperCase();
+			if(wasteName.length()==0){
+				it.remove();
+				continue;
+			} else if (wasteName.equals("合计")){
+				it.remove();
+				break;
+			}
+			String inventoryUnit = (dataRow.get("单位") + "").trim().toUpperCase();
+			String count = (dataRow.get("入库量") + "").trim().toUpperCase();
+			String warehouseName = (dataRow.get("入库仓库") + "").trim().toUpperCase();
+			String remark = dataRow.get("备注") + "";
+			DataRow row = new DataRow();
+			row.put("wasteName",wasteName);
+			row.put("inventoryUnit",inventoryUnit);
+			row.put("warehouseName",warehouseName);
+			row.put("count",count);
+			row.put("remark",remark);
+			dataList.add(row);
+		}
+		result.dataList = dataList;
+		return result;
+	}
+
+
 
 	@Transactional
 	public String findclassificationIdByName(String classificationName){

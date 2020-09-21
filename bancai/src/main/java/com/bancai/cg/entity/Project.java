@@ -14,11 +14,12 @@ public class Project {
     private Date endTime;
     private String projectName;
     private Date proEndTime;
-    private String planLeader;
-    private String produceLeader;
-    private String purchaseLeader;
-    private String financeLeader;
-    private String storeLeader;
+    private Date proStartTime;
+    private Integer planLeaderId;
+    private Integer produceLeaderId;
+    private Integer purchaseLeaderId;
+    private Integer financeLeaderId;
+    private Integer storeLeaderId;
     private Integer uploadId;
     private Integer statusId;
     private Set<Building> buildings =new HashSet<>();
@@ -108,55 +109,51 @@ public class Project {
         this.proEndTime = proEndTime;
     }
 
-    @Basic
-    @Column(name = "planLeader")
-    public String getPlanLeader() {
-        return planLeader;
+    public Date getProStartTime() {
+        return proStartTime;
     }
 
-    public void setPlanLeader(String planLeader) {
-        this.planLeader = planLeader;
+    public void setProStartTime(Date proStartTime) {
+        this.proStartTime = proStartTime;
     }
 
-    @Basic
-    @Column(name = "produceLeader")
-    public String getProduceLeader() {
-        return produceLeader;
+    public Integer getPlanLeaderId() {
+        return planLeaderId;
     }
 
-    public void setProduceLeader(String produceLeader) {
-        this.produceLeader = produceLeader;
+    public void setPlanLeaderId(Integer planLeaderId) {
+        this.planLeaderId = planLeaderId;
     }
 
-    @Basic
-    @Column(name = "purchaseLeader")
-    public String getPurchaseLeader() {
-        return purchaseLeader;
+    public Integer getProduceLeaderId() {
+        return produceLeaderId;
     }
 
-    public void setPurchaseLeader(String purchaseLeader) {
-        this.purchaseLeader = purchaseLeader;
+    public void setProduceLeaderId(Integer produceLeaderId) {
+        this.produceLeaderId = produceLeaderId;
     }
 
-    @Basic
-    @Column(name = "financeLeader")
-    public String getFinanceLeader() {
-        return financeLeader;
+    public Integer getPurchaseLeaderId() {
+        return purchaseLeaderId;
     }
 
-    public void setFinanceLeader(String financeLeader) {
-        this.financeLeader = financeLeader;
+    public void setPurchaseLeaderId(Integer purchaseLeaderId) {
+        this.purchaseLeaderId = purchaseLeaderId;
     }
 
-    @Basic
-    @Column(name = "storeLeader")
-    public String getStoreLeader() {
-        return storeLeader;
+    public Integer getFinanceLeaderId() {
+        return financeLeaderId;
     }
 
-    public void setStoreLeader(String storeLeader) {
-        this.storeLeader = storeLeader;
+    public void setFinanceLeaderId(Integer financeLeaderId) {
+        this.financeLeaderId = financeLeaderId;
     }
 
+    public Integer getStoreLeaderId() {
+        return storeLeaderId;
+    }
 
+    public void setStoreLeaderId(Integer storeLeaderId) {
+        this.storeLeaderId = storeLeaderId;
+    }
 }

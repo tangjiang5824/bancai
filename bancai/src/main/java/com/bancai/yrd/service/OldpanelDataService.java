@@ -49,6 +49,8 @@ public class OldpanelDataService extends BaseService {
         row.put("unitWeight",unitWeight);
         row.put("unitArea",unitArea);
         row.put("remark",remark);
+        if(suffix.length()==0)
+            suffix = "null";
         String values = mValue + "%" + nValue + "%" + pValue + "%" + aValue + "%" + bValue + "%" + mAngle +
                 "%" + nAngle + "%" + pAngle + "%" + suffix;
         row.put("values", values);
@@ -78,7 +80,7 @@ public class OldpanelDataService extends BaseService {
     @Transactional
     public boolean oldpanelAddNewInfo(DataList insertList,String userId){
         boolean b = true;
-        int logId = oldpanelAddLogBackId("6",userId,null,null,null,"",null);
+        int logId = oldpanelAddLogBackId("6","1",userId,null,null,null,"");
         for (DataRow dataRow : insertList) {
             String oldpanelFormatId = dataRow.get("oldpanelFormatId").toString();
             String oldpanelName = dataRow.get("oldpanelName").toString();
@@ -102,6 +104,9 @@ public class OldpanelDataService extends BaseService {
                 aValue = values[3];
             if((!values[4].equals("null"))&&(values[4].length()!=0))
                 bValue = values[4];
+            if(values[8].equals("null"))
+                values[8] = "";
+//            System.out.println(dataRow.get("values").toString());
             int oldpanelId = insertProjectService.insertDataToTable("insert into oldpanel_info (oldpanelName,inventoryUnit,unitWeight,unitArea,remark," +
                             "oldpanelFormatId,mValue,nValue,pValue,aValue,bValue,mAngle,nAngle,pAngle,suffix,userId) " +
                             "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
@@ -143,9 +148,9 @@ public class OldpanelDataService extends BaseService {
      * 入库
      * */
     @Transactional
-    public boolean insertOldpanelDataToStore(DataList insertList,String userId,String operator,String inputTime){
+    public boolean insertOldpanelDataToStore(DataList insertList,String userId,String operator){
         boolean b = true;
-        int logId = oldpanelAddLogBackId("0",userId,operator,null,null,"",inputTime);
+        int logId = oldpanelAddLogBackId("0","0",userId,operator,null,null,"");
         if(logId==0)
             return false;
         for (DataRow dataRow : insertList) {
@@ -154,12 +159,30 @@ public class OldpanelDataService extends BaseService {
         return b;
     }
     /*
+     * 旧板入库撤销
+     * */
+    @Transactional
+    public boolean rollbackOldpanelAddData(String oldpanellogId,String operator,String userId,String projectId,String buildingId){
+        boolean b = true;
+        analyzeNameService.updateIsrollbackToOneById("oldpanel_log",oldpanellogId);
+        int logId = oldpanelAddLogBackId("3","1",userId,operator,projectId,buildingId,"");
+        DataList dataList = queryService.query("select * from oldpanel_logdetail where oldpanellogId=? and isrollback=0",oldpanellogId);
+        for (DataRow dataRow : dataList) {
+            String detailId = dataRow.get("id").toString();
+            String storeId = dataRow.get("oldpanelstoreId").toString();
+            String count = dataRow.get("count").toString();
+            analyzeNameService.updateIsrollbackToOneById("oldpanel_logdetail",detailId);
+            b=b&oldpanelUpdateRollbackStoreById(storeId,count,String.valueOf(logId));
+        }
+        return b;
+    }
+    /*
      * 退库
      * */
     @Transactional
-    public boolean insertOldpanelDataBackStore(DataList insertList,String userId,String operator,String projectId,String buildingId,String description,String inputTime){
+    public boolean insertOldpanelDataBackStore(DataList insertList,String userId,String operator,String projectId,String buildingId,String description){
         boolean b = true;
-        int logId = oldpanelAddLogBackId("2",userId,operator,projectId,buildingId,description,inputTime);
+        int logId = oldpanelAddLogBackId("2","1",userId,operator,projectId,buildingId,description);
         if(logId==0)
             return false;
         for (DataRow dataRow : insertList) {
@@ -177,9 +200,9 @@ public class OldpanelDataService extends BaseService {
         String backWarehouseName = null;
         if(method==2)
             backWarehouseName = dataRow.get("backWarehouseName").toString();
-        if(dataRow.get("unitWeight")!=null)
+        if((dataRow.get("unitWeight")!=null)&&(dataRow.get("unitWeight").toString().length()!=0))
             totalWeight = String.valueOf(Double.parseDouble(count)*Double.parseDouble(dataRow.get("unitWeight").toString()));
-        if(dataRow.get("unitArea")!=null)
+        if((dataRow.get("unitArea")!=null)&&(dataRow.get("unitArea").toString().length()!=0))
             totalArea = String.valueOf(Double.parseDouble(count)*Double.parseDouble(dataRow.get("unitArea").toString()));
         DataList queryList = queryService.query("select * from oldpanel_store where oldpanelId=? and warehouseName=?"
                 ,oldpanelId,warehouseName);
@@ -206,10 +229,28 @@ public class OldpanelDataService extends BaseService {
                 oldpanelId,count,logId,storeId,"0",backWarehouseName,remark);
     }
 
-    private int oldpanelAddLogBackId(String type,String userId,String operator,String projectId,String buildingId,String description,String inputTime){
+    private boolean oldpanelUpdateRollbackStoreById(String storeId,String count,String logId){
+        DataRow dataRow = queryService.query("select * from oldpanel_store_info_format_type_class_view where storeId=?",storeId).get(0);
+        String totalWeight = "";
+        String totalArea = "";
+        String countStore = dataRow.get("countStore").toString();
+        String oldpanelId = dataRow.get("oldpanelId").toString();
+        if((dataRow.get("unitWeight")!=null)&&(dataRow.get("unitWeight").toString().length()!=0))
+            totalWeight = String.valueOf((Double.parseDouble(countStore)-(Double.parseDouble(count)))*Double.parseDouble(dataRow.get("unitWeight").toString()));
+        if((dataRow.get("unitArea")!=null)&&(dataRow.get("unitArea").toString().length()!=0))
+            totalArea = String.valueOf((Double.parseDouble(countStore)-(Double.parseDouble(count)))*Double.parseDouble(dataRow.get("unitArea").toString()));
+        jo.update("update oldpanel_store set countUse=countUse-\""+count+
+                "\",countStore=countStore-\""+count+"\",totalArea=\""+ totalArea +
+                "\",totalWeight=\""+totalWeight+ "\" where id=\""+storeId+"\"");
+        return insertProjectService.insertIntoTableBySQL(
+                "insert into oldpanel_logdetail (oldpanelId,count,oldpanellogId,oldpanelstoreId,isrollback) values (?,?,?,?,?)",
+                oldpanelId,count,logId,storeId,"1");
+    }
+
+    private int oldpanelAddLogBackId(String type,String isrollback,String userId,String operator,String projectId,String buildingId,String description){
         return insertProjectService.insertDataToTable(
-                "insert into oldpanel_log (type,userId,time,operator,isrollback,projectId,buildingId,description,inputTime) values(?,?,?,?,?,?,?,?,?)",
-                type,userId,analyzeNameService.getTime(),operator,"0",projectId,buildingId,description,inputTime);
+                "insert into oldpanel_log (type,userId,time,operator,isrollback,projectId,buildingId,description) values(?,?,?,?,?,?,?,?)",
+                type,userId,analyzeNameService.getTime(),operator,isrollback,projectId,buildingId,description);
     }
 
 

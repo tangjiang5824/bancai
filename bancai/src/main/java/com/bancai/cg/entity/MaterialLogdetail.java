@@ -12,6 +12,16 @@ public class MaterialLogdetail {
     private MaterialLog materialLog;
     private MaterialInfo materialInfo;
     private MaterialStore materialStore;
+    private String description;
+
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     @ManyToOne(targetEntity = MaterialStore.class)
     @JoinColumn(name = "materialstoreId",referencedColumnName = "id")

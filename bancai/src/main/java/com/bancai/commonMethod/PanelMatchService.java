@@ -21,13 +21,11 @@ import java.util.*;
 @Service
 public class PanelMatchService extends BaseService{
     private Logger log = Logger.getLogger(AnalyzeNameService.class);
-    private static String isPureNumber = "[0-9]+";
-    private static String isNumberValue = "^-?[0-9]+";
 
     @Autowired
     private QueryAllService queryService;
     @Autowired
-    private AnalyzeNameService AnalyzeNameService;
+    private AnalyzeNameService analyzeNameService;
     @Autowired
     private InsertProjectService insertProjectService;
     @Autowired
@@ -932,7 +930,7 @@ public class PanelMatchService extends BaseService{
     }
 
     private boolean isValueGreaterThanCon(int value, String singleCon){
-        if (!singleCon.substring(0,1).matches(isPureNumber)) {//>=
+        if (analyzeNameService.isStringNotPureNumber(singleCon.substring(0,1))) {//>=
             return value >= Integer.parseInt(singleCon.substring(1));
         } else {
             return value > Integer.parseInt(singleCon);
@@ -940,7 +938,7 @@ public class PanelMatchService extends BaseService{
     }
 
     private boolean isValueLessThanCon(int value, String singleCon){
-        if (!singleCon.substring(0,1).matches(isPureNumber)) {//>=
+        if (analyzeNameService.isStringNotPureNumber(singleCon.substring(0,1))) {//>=
             return value <= Integer.parseInt(singleCon.substring(1));
         } else {
             return value < Integer.parseInt(singleCon);
