@@ -57,6 +57,7 @@ public class DesignlistController {
      * 上传excel文件designlist
      * */
     @RequestMapping(value = "/designlist/uploadExcel.do",method = RequestMethod.POST)
+    @ApiOperation("上传设计清单文件")
     public WebResponse designlistUploadExcel(MultipartFile uploadFile) {
         WebResponse response = new WebResponse();
         try {
@@ -80,11 +81,10 @@ public class DesignlistController {
      * 上传designlist
      * */
     @RequestMapping(value = "/designlist/uploadData.do", method = RequestMethod.POST)
-    @ApiOperation("上传设计清单")
-    public WebResponse designlistUploadData(String s, @ApiParam("项目id") String projectId, String buildingId, String buildingpositionId, HttpSession session) {
+    @ApiOperation("提交设计清单数据")
+    public WebResponse designlistUploadData(@ApiParam("品名，位置编号，图号")String s, String projectId, String buildingId, String buildingpositionId, HttpSession session) {
         WebResponse response = new WebResponse();
         try {
-            int errorCount = 0;
             DataList errorList = new DataList();
             DataList validList = new DataList();
             JSONArray jsonArray = new JSONArray(s);
@@ -92,31 +92,35 @@ public class DesignlistController {
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonTemp = jsonArray.getJSONObject(i);
                 System.out.println("第" + i + "个---" + jsonTemp);
-                String productName=(jsonTemp.get("productName")+"").trim().toUpperCase();
-                String position=(jsonTemp.get("position")+"").trim().toUpperCase();
+                String productName=(jsonTemp.get("品名")+"").trim().toUpperCase();
+                String position=(jsonTemp.get("位置编号")+"").trim().toUpperCase();
+                if(position.equals("NULL")||position.length()==0)
+                    position = "-1";
+                String figureNum=(jsonTemp.get("图号")+"").trim().toUpperCase();
                 int analyzeDesignlist = designlistService.analyzeDesignlist(productName, position, userId, projectId, buildingId);
                 if(analyzeDesignlist==-100){
                     DataRow errorRow = new DataRow();
                     errorRow.put("productName",productName);
                     errorRow.put("position",position);
-                    errorRow.put("errorCode","100");//位置重复
+                    errorRow.put("figureNum",figureNum);
+                    errorRow.put("errorType","位置重复");
                     errorList.add(errorRow);
-                    errorCount++;
                 }else if(analyzeDesignlist==-200){
                     DataRow errorRow = new DataRow();
                     errorRow.put("productName",productName);
                     errorRow.put("position",position);
-                    errorRow.put("errorCode","200");//品名不合法
+                    errorRow.put("figureNum",figureNum);
+                    errorRow.put("errorType","品名不合法");
                     errorList.add(errorRow);
-                    errorCount++;
                 }else {
                     DataRow validRow = new DataRow();
                     validRow.put("productId",String.valueOf(analyzeDesignlist));
                     validRow.put("position",position);
+                    validRow.put("figureNum",figureNum);
                     validList.add(validRow);
                 }
             }
-            if(errorCount!=0){
+            if(errorList.size()!=0){
                 response.put("errorList",errorList);
                 response.put("errorCount",errorList.size());
                 response.setSuccess(false);
@@ -146,6 +150,7 @@ public class DesignlistController {
      * 查询导入的designlist记录
      * */
     @RequestMapping(value = "/designlist/queryUploadLog.do",method = RequestMethod.POST)
+    @ApiOperation("查询设计清单导入记录")
     public void designlistqueryUploadLog(String projectId, String buildingId, String buildingpositionId,
                                                 HttpServletResponse response) throws IOException, JSONException {
         DataList designlistlogList = designlistService.queryDesignlistlog(projectId, buildingId, buildingpositionId);
@@ -164,6 +169,7 @@ public class DesignlistController {
      * 查询导入的designlist详情by logid
      * */
     @RequestMapping(value = "/designlist/queryDesignlistByLogId.do")
+    @ApiOperation("根据logid查询设计清单")
     public void designlistqueryByLogId(String designlistlogId, HttpServletResponse response) throws IOException, JSONException {
         DataList designlistList = designlistService.queryDesignlistContain(designlistlogId);
         //写回前端
@@ -181,6 +187,7 @@ public class DesignlistController {
      * 对上传的designlist进行撤销
      * */
     @RequestMapping(value = "/designlist/rollbackUploadData.do")
+    @ApiOperation("根据logid撤销设计清单")
     public WebResponse designlistRollbackUploadData(String designlistlogId, HttpSession session) {
         WebResponse response = new WebResponse();
         try {
@@ -211,6 +218,7 @@ public class DesignlistController {
      * 添加或更新操作员信息
      * */
     @RequestMapping("/department/addOrUpdateWorkerInfo.do")
+    @ApiOperation("添加或更新操作员信息")
     public boolean addOrUpdateWorkerInfo(String id, String departmentId, String workerName,String tel){
         workerName = workerName.trim();
         tel = tel.trim();
@@ -229,6 +237,7 @@ public class DesignlistController {
      * 查询工单
      * */
     @RequestMapping("/order/queryWorkOrder.do")
+    @ApiOperation("工单查询")
     public void queryWorkOrder(String projectId, String buildingId, String buildingpositionId,
                                HttpServletResponse response) throws IOException, JSONException {
         DataList workOrderList = designlistService.findWorkOrder(projectId, buildingId, buildingpositionId);
@@ -248,6 +257,7 @@ public class DesignlistController {
      * 查询工单detail
      * */
     @RequestMapping("/order/queryWorkOrderDetail.do")
+    @ApiOperation("工单细节查询")
     public void queryWorkOrderDetail(String projectId, String buildingId, String buildingpositionId,
                                HttpServletResponse response) throws IOException, JSONException {
         DataList workOrderDetailList = designlistService.findWorkOrderDetail(projectId, buildingId, buildingpositionId);
@@ -268,6 +278,7 @@ public class DesignlistController {
      * 根据选取工单生成领料单材料汇总预览
      * */
     @RequestMapping("/order/requisitionCreatePreview.do")
+    @ApiOperation("根据选取工单生成领料单材料汇总预览")
     public WebResponse requisitionCreatePreview(String s) throws JSONException {
         WebResponse response = new WebResponse();
         try {
@@ -310,6 +321,7 @@ public class DesignlistController {
      * 新建领料单
      * */
     @RequestMapping(value = "/order/addRequisitionOrder.do")
+    @ApiOperation("新建领料单")
     public WebResponse addRequisitionOrder(String s, String operator, HttpSession session) throws JSONException {
         WebResponse response = new WebResponse();
         try {
@@ -321,23 +333,11 @@ public class DesignlistController {
                 return response;
             }
             String userId = (String)session.getAttribute("userid");
-//            Date date=new Date();
-//            SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//            int[] requisitionId = designlistService.orderAddRequisition(userId,operator,simpleDateFormat.format(date));
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonTemp = jsonArray.getJSONObject(i);
                 String workOrderDetailId=jsonTemp.get("workOrderDetailId")+"";
                 sb.append("\"").append(workOrderDetailId).append("\",");
-//                String type=jsonTemp.get("type")+"";
-//                String storeId=jsonTemp.get("storeId")+"";
-//                String productId=jsonTemp.get("productId")+"";
-//                String count=jsonTemp.get("count")+"";
-//                String projectId=jsonTemp.get("projectId")+"";
-//                String buildingId=jsonTemp.get("buildingId")+"";
-//                String buildingpositionId=jsonTemp.get("buildingpositionId")+"";
-//                designlistService.orderAddRequisitionDetail(requisitionId[0], requisitionId[1], workOrderDetailId,
-//                        type, storeId, productId, count, projectId, buildingId, buildingpositionId);
             }
             sb.deleteCharAt(sb.length()-1);
             System.out.println("workOrderDetailId====="+sb.toString());
@@ -393,8 +393,9 @@ public class DesignlistController {
      * 查询某张领料单细节
      * */
     @RequestMapping("/order/queryRequisitionOrderDetail.do")
+    @ApiOperation("领料单细节查询")
     public WebResponse queryRequisitionOrderDetail(String type, String requisitionOrderId, String warehouseName, String buildingId,
-                                                   String buildingpositionId,Integer start,Integer limit){
+                                                   String buildingpositionId,String isCompleteMatch,Integer start,Integer limit){
         mysqlcondition c=new mysqlcondition();
         if (null!=requisitionOrderId&&requisitionOrderId.length() != 0) {
             c.and(new mysqlcondition("requisitionOrderId", "=", requisitionOrderId));
@@ -416,6 +417,9 @@ public class DesignlistController {
         }
         if (null!=buildingpositionId&&buildingpositionId.length() != 0) {
             c.and(new mysqlcondition("buildingpositionId", "=", buildingpositionId));
+        }
+        if (null!=isCompleteMatch&&isCompleteMatch.length() != 0) {
+            c.and(new mysqlcondition("isCompleteMatch", "=", isCompleteMatch));
         }
         return queryService.queryDataPage(start, limit, c, "requisition_order_detail_view");
     }
@@ -475,32 +479,6 @@ public class DesignlistController {
             }
             designlistService.finishRequisitionOrder(jsonArray,requisitionOrderId,projectId,operator,userId);
             response.setSuccess(true);
-//            Date date=new Date();
-//            SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//            String sql_addLog = "insert into requisition_order_log (type,requisitionOrderId,userId,time,operator) values(?,?,?,?,?)";
-//            int requisitionOrderLogId= insertProjectService.insertDataToTable(sql_addLog, "2"
-//                    , requisitionOrderId,userId,simpleDateFormat.format(date),operator);
-//            for (int i = 0; i < jsonArray.length(); i++) {
-//                JSONObject jsonTemp = jsonArray.getJSONObject(i);
-//                System.out.println("第" + i + "个---" + jsonTemp);
-//                String requisitionOrderDetailId=jsonTemp.get("requisitionOrderDetailId")+"";
-//                String count = (jsonTemp.get("count")+"").trim();
-//                String countRec = jsonTemp.get("countRec")+"";
-//                int type = Integer.parseInt(jsonTemp.get("type")+"");
-//                String storeId = jsonTemp.get("storeId")+"";
-//                if((count.length()==0)||(Double.parseDouble(count)<0)||(Double.parseDouble(count)>Double.parseDouble(countRec)))
-//                    continue;
-//                boolean is_update_right = designlistService.orderUpdateRequisitionDetail(requisitionOrderDetailId,count,type,storeId);
-//                if(!is_update_right)
-//                    return false;
-//                String sql_addLogDetail="insert into requisition_order_logdetail (requisitionOrderLogId,requisitionOrderDetailId,count)" +
-//                        " values (?,?,?)";
-//                boolean is_log_right= insertProjectService.insertIntoTableBySQL(sql_addLogDetail,
-//                        String.valueOf(requisitionOrderLogId),requisitionOrderDetailId,count);
-//                if(!is_log_right){
-//                    return false;
-//                }
-//            }
         } catch (Exception e) {
             response.setSuccess(false);
             response.setErrorCode(1000); //未知错误
@@ -745,6 +723,7 @@ public class DesignlistController {
      * 匹配结果删除行
      * */
     @RequestMapping(value = "/designlist/deleteMatchResult.do")
+    @ApiOperation("匹配结果删除行")
     public WebResponse deleteDesignlistMatchResult(String s) throws JSONException {
         WebResponse response = new WebResponse();
         try {
@@ -769,7 +748,8 @@ public class DesignlistController {
      * 修改匹配结果
      * */
     @RequestMapping(value = "/designlist/changeMatchResult.do")
-    public WebResponse changeDesignlistMatchResult(String s, String designlistId) throws JSONException {
+    @ApiOperation("匹配结果修改")
+    public WebResponse changeDesignlistMatchResult(String s,String isCompleteMatch, String designlistId) throws JSONException {
         WebResponse response = new WebResponse();
         try {
             JSONArray jsonArray = new JSONArray(s);
@@ -779,7 +759,7 @@ public class DesignlistController {
                 response.setMsg("接收到的数据为空");
                 return response;
             }
-            DataList result = designlistService.addMatchResultBackErrorList(jsonArray,designlistId);
+            DataList result = designlistService.addMatchResultBackErrorList(jsonArray,isCompleteMatch,designlistId);
             if (result.size()>0){
                 response.put("errorList",result);
                 response.put("errorNum",result.size());

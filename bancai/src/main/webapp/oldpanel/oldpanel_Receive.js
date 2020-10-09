@@ -510,6 +510,21 @@ Ext.define('oldpanel.oldpanel_Receive',{
                 buildingPositionList,
                 //仓库
                 storePosition,
+                //是否完全匹配
+                {
+                    xtype:'radiogroup',
+                    fieldLabel: '是否完全匹配',
+                    labelWidth:90,
+                    width:210,
+                    columns: 2, //设置没四个选项一行
+                    margin : '0 0 0 40',
+                    id:'isCompleteMatch',
+                    allowBlank: false,
+                    items:[
+                        {boxLabel: '是', name: 'matchType',inputValue: '1'},
+                        {boxLabel: '否', name: 'matchType',inputValue: '0', }, //checked : true  默认选中
+                    ]
+                },
                 {
                     xtype : 'button',
                     text: '领料单明细查询',
@@ -535,7 +550,8 @@ Ext.define('oldpanel.oldpanel_Receive',{
                                 //proejctId:'1',
                                 //type和领料单Id
                                 requisitionOrderId:requisitionOrderId,
-                                type:3,//原材料
+                                type:3,//旧板
+                                isCompleteMatch:Ext.getCmp('isCompleteMatch').getValue().matchType,
                             }
                         });
                     }
@@ -654,8 +670,13 @@ Ext.define('oldpanel.oldpanel_Receive',{
                     flex :1,
                 },
                 {
+                    dataIndex:'countStore',
+                    text:'库存数量',
+                    flex :1,
+                },
+                {
                     dataIndex:'countAll',
-                    text:'总数量',
+                    text:'领取总数',
                     flex :1,
                 },
                 {
