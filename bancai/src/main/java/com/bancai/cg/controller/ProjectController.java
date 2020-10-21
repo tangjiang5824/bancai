@@ -1,6 +1,11 @@
 package com.bancai.cg.controller;
 
 
+import com.alibaba.excel.EasyExcel;
+import com.bancai.cg.dao.designlistdao;
+import com.bancai.cg.dao.workorderdetaildao;
+import com.bancai.cg.dao.workorderlogdao;
+import com.bancai.cg.dao.workordermatchresultdao;
 import com.bancai.cg.entity.*;
 import com.bancai.cg.service.InsertProjectService;
 import com.bancai.cg.util.newPanelMatch;
@@ -8,6 +13,11 @@ import com.bancai.commonMethod.QueryAllService;
 import com.bancai.db.mysqlcondition;
 import com.bancai.domain.DataList;
 import com.bancai.domain.DataRow;
+import com.bancai.service.ProductService;
+import com.bancai.service.ProjectService;
+import com.bancai.service.QueryService;
+import com.bancai.util.risk.easyexcel.DemoData;
+import com.bancai.util.risk.easyexcel.WorkOrder;
 import com.bancai.vo.WebResponse;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -17,16 +27,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.bancai.service.ProductService;
-import com.bancai.service.ProjectService;
-import com.bancai.service.QueryService;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import com.bancai.cg.dao.*;
 
 @RestController
 public class ProjectController {
@@ -889,6 +895,7 @@ public class ProjectController {
         }
         return true;
     }
+    //查询工单
     @RequestMapping("/order/workApprovalview.do")
     public WebResponse workApprovalview(Integer start,Integer limit,Integer projectId,Integer isActive){
         if(start==null) start=0;
@@ -1002,7 +1009,66 @@ public class ProjectController {
         return true;
     }
 
+    //打印工单
+    @RequestMapping("/project/printWorkOrder.do")
+    public Boolean printWorkOrder(Integer start,Integer limit,Integer projectId,Integer isActive){
+        System.out.println("zzyzzyzyyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzzyyzyzyzyzy");
+        List<WorkOrder> list = new ArrayList<WorkOrder>();
 
+        String fileName = "C:\\Users\\Administrator\\Desktop\\"+"easytest.xlsx";
+        // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
+        // 如果这里想使用03 则 传入excelType参数即可
+        //write(fileName,格式类)
+        //sheet(表名)
+        //doWrite(数据)
+
+
+        if(start==null) start=0;
+        if(limit==null) limit=-1;
+        mysqlcondition c=new mysqlcondition();
+        if (null!=projectId) {
+            c.and(new mysqlcondition("projectId", "=", projectId));
+        }
+        if (null!=isActive) {
+            c.and(new mysqlcondition("isActive", "=", isActive));
+        }
+        WebResponse response =queryAllService.queryDataPage(start, limit, c, "work_order_detail_view");
+        //return response;
+        EasyExcel.write(fileName, WorkOrder.class).sheet("工单").doWrite(WorkOrder_Data(response));
+        return true;
+    }
+
+    private List<WorkOrder> WorkOrder_Data(WebResponse response) {
+        List<WorkOrder> list = new ArrayList<WorkOrder>();
+        System.out.println("之后为工单打印后台代码");
+        //System.out.println(response.get("totalCount"));
+        int totalCount = (int) response.get("totalCount");
+        boolean success = (boolean) response.get("success");
+        //System.out.println(response.get("success"));
+        //System.out.println(response.get("value"));
+        //response中的具体数值
+        DataList WorkOrder_TempList= (DataList)response.get("value");
+        //System.out.println(WorkOrder_TempList.get(1));
+        //System.out.println(WorkOrder_TempList.get(1).get("workOrderDetailId"));
+        for (int i = 0; i < 10; i++) {
+            WorkOrder workOrder_row = new WorkOrder();
+            workOrder_row.setDate((Date)WorkOrder_TempList.get(i).get("date"));
+            workOrder_row.setProjectName(WorkOrder_TempList.get(i).get("projectName").toString());
+            workOrder_row.setBuildingName(WorkOrder_TempList.get(i).get("buildingName")+"");
+            workOrder_row.setPositionName(WorkOrder_TempList.get(i).get("positionName")+"");
+            workOrder_row.setProductName(WorkOrder_TempList.get(i).get("productName")+"");
+            workOrder_row.setCount(Double.parseDouble((WorkOrder_TempList.get(i).get("count"))+""));
+            workOrder_row.setIsActive(WorkOrder_TempList.get(i).get("isActive").toString());
+            workOrder_row.setProductMadeBy(WorkOrder_TempList.get(i).get("productMadeBy")+"");
+            workOrder_row.setStatus(WorkOrder_TempList.get(i).get("status")+"");
+            workOrder_row.setWorkorderlogId(WorkOrder_TempList.get(i).get("workorderlogId")+"");
+            workOrder_row.setProductMatchResultName(WorkOrder_TempList.get(i).get("productMatchResultName")+"");
+            workOrder_row.setProductMatchResultNum(Double.parseDouble((WorkOrder_TempList.get(i).get("productMatchResultNum"))+""));
+            workOrder_row.setWorkerName(WorkOrder_TempList.get(i).get("workerName")+"");
+            list.add(workOrder_row);
+        }
+        return list;
+    }
 
 
     }
