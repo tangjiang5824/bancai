@@ -70,13 +70,17 @@ public class new_panel_match {
                         break;
                     }
                 }
+                //匹配仓库中存在对应原材料
                 if(flag) {
+                    //插入match_result
                     for(Match_result match_result:isrollbacklist){
                         matchresultdao.save(match_result);
-                    }
+                }
+                    //进行仓库数量扣减
                     for (MaterialStore store:storeList){
                         materialstoredao.save(store);
                     }
+                    //修改designlist
                     designlist.setMadeBy(4);
                     designlistdao.save(designlist);
                 }
@@ -90,8 +94,8 @@ public class new_panel_match {
             }else
              rules=materialMatchRulesRepository.findAllByProductformatId(productInfo.getProductFormatId().getId());
             String type=productInfo.getProductFormatId().getProducttype().getClassification().getClassificationName();
+            //通过规则进行匹配 需要放入工单
             List<List<Object>> list = JPAObjectUtil.NewPanelMatch(productInfo, type, rules);
-
 
             for (int j=0;j<list.size();j++){
                 MaterialInfo info=(MaterialInfo) list.get(j).get(0);
