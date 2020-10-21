@@ -225,8 +225,8 @@ Ext.define('backproduct.backproduct_Receive',{
                         console.log(Ext.getCmp('projectName').getValue())
                         backpickListStore.load({
                             params : {
-                                proejctId:Ext.getCmp('projectName').getValue(),
-                                //proejctId:'1',
+                                projectId:Ext.getCmp('projectName').getValue(),
+                                //projectId:'1',
                                 operator:Ext.getCmp('operator').getValue(),
                                 timeStart:Ext.getCmp('startTime').getValue(),
                                 timeEnd:Ext.getCmp('endTime').getValue(),
@@ -520,7 +520,7 @@ Ext.define('backproduct.backproduct_Receive',{
                                 buildingId:buildingId,
                                 buildingpositionId:buildingpositionId,
                                 warehouseName:warehouseName,
-                                //proejctId:'1',
+                                //projectId:'1',
                                 //type和领料单Id
                                 requisitionOrderId:requisitionOrderId,
                                 type:1,//退库产品
