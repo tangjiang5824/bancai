@@ -168,7 +168,15 @@ Ext.define('project.project_query_worksheet',{
                         return "<INPUT type='button' value='工单详情' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
                     }
                 },
-
+                {
+                    // name : '操作',
+                    // name : '操作',
+                    text : '打印',
+                    flex :1 ,
+                    renderer:function(value, cellmeta){
+                        return "<INPUT type='button' value='打印工单' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
+                    }
+                },
 
             ],
             flex:1,
@@ -320,7 +328,7 @@ Ext.define('project.project_query_worksheet',{
             if (rowIndex < 0) {
                 return;
             }
-            console.log("grid.columns[columnIndex]：",Ext.getCmp('worksheet_Grid').columns[columnIndex-1])
+            //console.log("grid.columns[columnIndex]：",Ext.getCmp('worksheet_Grid').columns[columnIndex-1])
             var fieldName = Ext.getCmp('worksheet_Grid').columns[columnIndex-1].text;
             var sm = Ext.getCmp('worksheet_Grid').getSelectionModel();
             // var isrollback = Ext.getCmp('isrollback').getValue();
@@ -358,6 +366,72 @@ Ext.define('project.project_query_worksheet',{
                 // Ext.getCmp("toolbar5").items.items[2].setText(index+1)
                 specific_workorder_outbound_query.setStore(specific_worksheet_List);
                 win_showworkorder_outbound.show();
+            }
+            if (fieldName == "打印") {
+                console.log("zzzzzzzzzzzzzzzzzyyyyyyyyyyyyyyyyyyyzzzzz")
+                Ext.Ajax.request({
+                    url : 'project/printWorkOrder.do', //打印
+                    method:'POST',
+                    //submitEmptyText : false,
+                    params : {
+                        //s : "[" + s + "]",
+                        workorderlogId : workorderlogId,
+                        //operator: Ext.getCmp('operator').getValue(),
+                        // inputTime:Ext.getCmp('inputTime').getValue(),
+                    },
+                    success : function(response) {
+                        console.log("12312312312321",response.responseText);
+                        // if(response.responseText.includes("false"))
+                        // {
+                        //     Ext.MessageBox.alert("提示","入库失败，品名不规范" );
+                        // }
+                        // //var message =Ext.decode(response.responseText).showmessage;
+                        // else{
+                        //     Ext.MessageBox.alert("提示","入库成功" );
+                        // }
+
+                        var res = response.responseText;
+                        var jsonobj = JSON.parse(res);//将json字符串转换为对象
+                        console.log(jsonobj);
+                        console.log("success--------------",jsonobj.success);
+                        console.log("errorList--------------",jsonobj['errorList']);
+                        var success = jsonobj.success;
+                        var errorList = jsonobj.errorList;
+                        var errorCode = jsonobj.errorCode;
+                        var errorCount = jsonobj.errorCount;
+                        if(success == false){
+                            //错误输入
+                            if(errorCode == 200){
+                                //关闭进度条
+                                // Ext.MessageBox.alert("提示","匹配失败，产品位置重复或品名不合法！请重新导入" );
+                                Ext.Msg.show({
+                                    title: '提示',
+                                    message: '打印失败！',
+                                    buttons: Ext.Msg.YESNO,
+                                    icon: Ext.Msg.QUESTION,
+                                    fn: function (btn) {
+                                        if (btn === 'yes') {
+                                            //点击确认，显示重复的数据
+                                            //old_inb_errorlistStore.loadData(errorList);
+                                            //win_oldinb_errorInfo_outbound.show();
+
+                                        }
+                                    }
+                                });
+                            }
+                            else if(errorCode == 1000){
+                                Ext.MessageBox.alert("提示","打印失败，未知错误！请重新打印" );
+                            }
+                        }else{
+                            Ext.MessageBox.alert("提示","打印成功" );
+                        }
+
+                    },
+                    failure : function(response) {
+                        //var message =Ext.decode(response.responseText).showmessage;
+                        Ext.MessageBox.alert("提示","入库失败" );
+                    }
+                });
             }
         }
 

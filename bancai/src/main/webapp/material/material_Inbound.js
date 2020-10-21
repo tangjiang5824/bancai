@@ -228,6 +228,10 @@ Ext.define('material.material_Inbound', {
             dock : "top",
             items: [
                 MaterialTypeList,
+                {xtype: 'textfield', fieldLabel: '原材料品号', id: 'materialNo',
+                    margin: '0 10 0 30',width: 180, labelWidth: 60,
+                    name: 'materialNo', value: ""
+                },
                 {
                     xtype: 'textfield',
                     margin: '0 10 0 40',
@@ -395,6 +399,7 @@ Ext.define('material.material_Inbound', {
                         // var operator = Ext.getCmp('operator').value;
                         var materialId = Ext.getCmp('materialName').value;
                         var materialName = Ext.getCmp('materialName').rawValue;
+                        var materialNo = Ext.getCmp('materialNo').getValue();
                         var mValue = Ext.getCmp('mValue').getValue();
                         var nValue = Ext.getCmp('nValue').getValue();
                         var aValue = Ext.getCmp('aValue').getValue();
@@ -420,6 +425,7 @@ Ext.define('material.material_Inbound', {
                         data = [{
                             'materialId' : materialId,
                             'materialName' : materialName,
+                            'materialNo' : materialNo,
                             'mValue':mValue,
                             'nValue' : nValue,
                             'aValue' : aValue,
@@ -475,6 +481,7 @@ Ext.define('material.material_Inbound', {
                             Ext.getCmp('addDataGrid').getStore().loadData(data,
                             true);
                             //清除框里的数据
+                            Ext.getCmp('materialNo').setValue('');
                             Ext.getCmp('materialName').setValue('');
                             Ext.getCmp('totalWeight').setValue('');
                             Ext.getCmp('totalArea').setValue('');
@@ -666,6 +673,14 @@ Ext.define('material.material_Inbound', {
                     dataIndex : 'materialName',
                     name : 'materialName',
                     text : '原材料名称',
+                    //width : 110,
+                    value:'99',
+                    //defaultValue:"2333",
+                },
+                {
+                    dataIndex : 'materialNo',
+                    name : 'materialNo',
+                    text : '原材料品号',
                     //width : 110,
                     value:'99',
                     //defaultValue:"2333",

@@ -217,26 +217,29 @@ Ext.define('project.import_design_list', {
 				},
 				{
 					text: '品名',
-					dataIndex: 'productName',
+					//dataIndex: 'productName',
+					dataIndex: '品名',
 					flex :1,
 					width:"80"
 				},
 				{
 					text: '位置',
-					dataIndex: 'position',
+					//dataIndex: 'position',
+					dataIndex: '位置',
 					flex :1,
 					width:"80"
 				},
 				{
 					text: '图号',
-					dataIndex: 'figureNum',
+					//dataIndex: 'figureNum',
+					dataIndex: '图号',
 					flex :1,
 					width:"80"
 				},
 				{
 					text: '错误原因',
 					flex :1,
-					dataIndex: 'errorType',
+					//dataIndex: 'errorType',
 					// dataIndex: 'errorCode',
 					// renderer: function (value) {
 					// 	return designlist.errorcode.type[value].name; // key-value
