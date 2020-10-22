@@ -220,8 +220,8 @@ Ext.define('project.project_query_picklist',{
                         console.log(Ext.getCmp('projectName').getValue())
                         MaterialpickListStore.load({
                             params : {
-                                proejctId:Ext.getCmp('projectName').getValue(),
-                                //proejctId:'1',
+                                projectId:Ext.getCmp('projectName').getValue(),
+                                //projectId:'1',
                             }
                         });
                     }
@@ -289,7 +289,7 @@ Ext.define('project.project_query_picklist',{
                     specificMaterialList.load({
                         params : {
                             requisitionOrderId:requisitionOrderId,
-                            //proejctId:'1',
+                            //projectId:'1',
                         }
                     });
 

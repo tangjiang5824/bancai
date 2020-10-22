@@ -450,8 +450,8 @@ Ext.define('project.project_create_picklist',{
                 //         // 重新加载页面，该项目的领料单信息
                 //         worksheetListStore.load({
                 //             params : {
-                //                 proejctId:Ext.getCmp('projectName').getValue(),
-                //                 //proejctId:'1',
+                //                 projectId:Ext.getCmp('projectName').getValue(),
+                //                 //projectId:'1',
                 //             }
                 //         });
                 //         //  右边输入框重置

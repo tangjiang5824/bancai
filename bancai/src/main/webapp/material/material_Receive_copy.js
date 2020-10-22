@@ -187,8 +187,8 @@ Ext.define('material.material_Receive',{
                         console.log(Ext.getCmp('projectName').getValue())
                         MaterialList.load({
                             params : {
-                                proejctId:Ext.getCmp('projectName').getValue(),
-                                //proejctId:'1',
+                                projectId:Ext.getCmp('projectName').getValue(),
+                                //projectId:'1',
                             }
                         });
                     }

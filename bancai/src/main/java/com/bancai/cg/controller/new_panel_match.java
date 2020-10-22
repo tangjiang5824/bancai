@@ -114,40 +114,19 @@ public class new_panel_match {
                     break;
                 }
                 info=materialinfodao.findById(Integer.parseInt(dataList.get(0).get("id")+"")).orElse(null);
-                List<MaterialStore> stores= materialstoredao.findAllByMaterialInfoAndCountUseGreaterThan(info,0.0);
+                /*------------------------------------
+                上面通过匹配规则找到了materialinfo
+                --------------------------------------
+                 */
+
                 Double de_count=Double.parseDouble(list.get(j).get(1).toString());
                 List<Object> temp=new ArrayList<>();
                 temp.add(info);
                 temp.add(de_count);
                 pre_match_results.add(temp);
-//                int k=0;
-//                while (de_count>0){
-//                    if(stores==null||stores.get(k)==null){
-//                        log.error("仓库中 没有找到对应的原材料id 设计清单id"+designlist.getId()+"  产品id "+productInfo.getId());
-//                        flag=false;
-//                        break;
-//                    }
-//                    MaterialStore store=stores.get(k++);
-//                    Match_result match_result = new Match_result();
-//                    match_result.setDesignlistId(designlist.getId());
-//                    match_result.setMatchId(store.getId());
-//                    match_result.setName(dataList.get(0).get("materialName") + "");
-//                    match_result.setIsCompleteMatch(1);
-//                    if(store.getCountUse()>=de_count){
-//                        match_result.setCount(de_count);
-//                        // match_result.setMaterialName(dataList.get(0).get("materialName") + "");
-//                        // match_result.setOrigin("3");
-//                        store.setCountUse(store.getCountUse()-de_count);
-//                        de_count=0.0;
-//                    }else {
-//                        match_result.setCount(store.getCountUse());
-//                        de_count-=store.getCountUse();
-//                        store.setCountUse(0.0);
-//                    }
-//                    isrollbacklist.add(match_result);
-//                    materialstoredao.save(store);
-//                }
 
+                //仓库匹配
+                List<MaterialStore> stores= materialstoredao.findAllByMaterialInfoAndCountUseGreaterThan(info,0.0);
                 if(!JPAObjectUtil.matchStoreByInfo(stores,de_count,isrollbacklist,designlist,dataList.get(0).get("materialName") + "",storeList,session)){
                     log.error("仓库中 没有找到对应的原材料id 设计清单id"+designlist.getId()+"  产品id "+productInfo.getId());
                     flag=false;
