@@ -369,6 +369,7 @@ Ext.define('project.project_query_worksheet',{
             }
             if (fieldName == "打印") {
                 console.log("zzzzzzzzzzzzzzzzzyyyyyyyyyyyyyyyyyyyzzzzz")
+                console.log(workorderlogId)
                 Ext.Ajax.request({
                     url : 'project/printWorkOrder.do', //打印
                     method:'POST',

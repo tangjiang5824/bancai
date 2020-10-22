@@ -1011,8 +1011,9 @@ public class ProjectController {
 
     //打印工单
     @RequestMapping("/project/printWorkOrder.do")
-    public Boolean printWorkOrder(Integer start,Integer limit,Integer projectId,Integer isActive){
+    public Boolean printWorkOrder(Integer start,Integer limit,Integer workorderlogId,Integer isActive){
         System.out.println("zzyzzyzyyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzzyyzyzyzyzy");
+        System.out.println(workorderlogId);
         List<WorkOrder> list = new ArrayList<WorkOrder>();
 
         String fileName = "C:\\Users\\Administrator\\Desktop\\"+"easytest.xlsx";
@@ -1026,13 +1027,15 @@ public class ProjectController {
         if(start==null) start=0;
         if(limit==null) limit=-1;
         mysqlcondition c=new mysqlcondition();
-        if (null!=projectId) {
-            c.and(new mysqlcondition("projectId", "=", projectId));
+        if (null!=workorderlogId) {
+            c.and(new mysqlcondition("workorderlogId", "=", workorderlogId));
         }
-        if (null!=isActive) {
-            c.and(new mysqlcondition("isActive", "=", isActive));
-        }
-        WebResponse response =queryAllService.queryDataPage(start, limit, c, "work_order_detail_view");
+//        if (null!=isActive) {
+//            c.and(new mysqlcondition("isActive", "=", isActive));
+//        }
+        WebResponse response =queryAllService.queryDataPage(start, limit, c, "work_order_detail_match_result");
+        if(!(boolean)response.get("success"))
+            return false;
         //return response;
         EasyExcel.write(fileName, WorkOrder.class).sheet("工单").doWrite(WorkOrder_Data(response));
         return true;
@@ -1041,30 +1044,28 @@ public class ProjectController {
     private List<WorkOrder> WorkOrder_Data(WebResponse response) {
         List<WorkOrder> list = new ArrayList<WorkOrder>();
         System.out.println("之后为工单打印后台代码");
-        //System.out.println(response.get("totalCount"));
-        int totalCount = (int) response.get("totalCount");
-        boolean success = (boolean) response.get("success");
-        //System.out.println(response.get("success"));
-        //System.out.println(response.get("value"));
+        System.out.println(response.get("totalCount"));
+        int totalCount = Integer.parseInt(response.get("totalCount")+"");
+        //boolean success = (boolean) response.get("success");
+        System.out.println(response.get("success"));
+        System.out.println(response.get("value"));
         //response中的具体数值
         DataList WorkOrder_TempList= (DataList)response.get("value");
         //System.out.println(WorkOrder_TempList.get(1));
         //System.out.println(WorkOrder_TempList.get(1).get("workOrderDetailId"));
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < totalCount; i++) {
             WorkOrder workOrder_row = new WorkOrder();
-            workOrder_row.setDate((Date)WorkOrder_TempList.get(i).get("date"));
+            //workOrder_row.setDate((Date)WorkOrder_TempList.get(i).get("date"));
+            workOrder_row.setWorkorderlogId(WorkOrder_TempList.get(i).get("workorderlogId")+"");
             workOrder_row.setProjectName(WorkOrder_TempList.get(i).get("projectName").toString());
             workOrder_row.setBuildingName(WorkOrder_TempList.get(i).get("buildingName")+"");
             workOrder_row.setPositionName(WorkOrder_TempList.get(i).get("positionName")+"");
-            workOrder_row.setProductName(WorkOrder_TempList.get(i).get("productName")+"");
-            workOrder_row.setCount(Double.parseDouble((WorkOrder_TempList.get(i).get("count"))+""));
-            workOrder_row.setIsActive(WorkOrder_TempList.get(i).get("isActive").toString());
             workOrder_row.setProductMadeBy(WorkOrder_TempList.get(i).get("productMadeBy")+"");
-            workOrder_row.setStatus(WorkOrder_TempList.get(i).get("status")+"");
-            workOrder_row.setWorkorderlogId(WorkOrder_TempList.get(i).get("workorderlogId")+"");
-            workOrder_row.setProductMatchResultName(WorkOrder_TempList.get(i).get("productMatchResultName")+"");
-            workOrder_row.setProductMatchResultNum(Double.parseDouble((WorkOrder_TempList.get(i).get("productMatchResultNum"))+""));
-            workOrder_row.setWorkerName(WorkOrder_TempList.get(i).get("workerName")+"");
+            workOrder_row.setProductName(WorkOrder_TempList.get(i).get("productName")+"");
+            workOrder_row.setProductCount(Double.parseDouble(WorkOrder_TempList.get(i).get("productCount")+""));
+            workOrder_row.setIsActive(WorkOrder_TempList.get(i).get("isActive").toString());
+            workOrder_row.setName(WorkOrder_TempList.get(i).get("name")+"");
+            workOrder_row.setMaterialCount(Double.parseDouble((WorkOrder_TempList.get(i).get("materialCount"))+""));
             list.add(workOrder_row);
         }
         return list;
