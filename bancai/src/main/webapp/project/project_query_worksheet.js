@@ -147,8 +147,9 @@ Ext.define('project.project_query_worksheet',{
                 {
                     dataIndex:'time',
                     text:'创建时间',
-                    //editor:{xtype : 'textfield', allowBlank : false}
-                    flex :1
+                    flex :1,
+                    renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')
+
                 }, {
                     dataIndex:'isActive',
                     text:'是否审核',
