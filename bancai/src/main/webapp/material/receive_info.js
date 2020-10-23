@@ -143,7 +143,7 @@ Ext.define('material.receive_info',{
 //                         // buildingId:buildingId,
 //                         // buildingpositionId:buildingpositionId,
 //                         // warehouseName:warehouseName,
-//                         // //proejctId:'1',
+//                         // //projectId:'1',
 //                         // //type和领料单Id
 //                         // requisitionOrderId:requisitionOrderId,
 //                         // type:4,//原材料

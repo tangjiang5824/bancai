@@ -258,7 +258,7 @@ Ext.define('project.project_query_backlist',{
                         backListStore.load({
                             params : {
                                 type:Ext.getCmp('backType').getValue(),//必须
-                                proejctId:Ext.getCmp('projectName').getValue(),
+                                projectId:Ext.getCmp('projectName').getValue(),
                                 buildingId:Ext.getCmp('buildingName').getValue(),
                                 operator:Ext.getCmp('operator').getValue(),
                                 returnOrderId:Ext.getCmp('backlistNum').getValue(),
@@ -333,7 +333,7 @@ Ext.define('project.project_query_backlist',{
                     specific_backList.load({
                         params : {
                             returnOrderId:requisitionOrderId,
-                            //proejctId:'1',
+                            //projectId:'1',
                         }
                     });
 

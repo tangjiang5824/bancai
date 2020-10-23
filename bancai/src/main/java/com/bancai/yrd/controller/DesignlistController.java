@@ -295,11 +295,13 @@ public class DesignlistController {
                 JSONObject jsonTemp = jsonArray.getJSONObject(i);
                 String workOrderDetailId=jsonTemp.get("workOrderDetailId")+"";
                 System.out.println("第" + i + "个workOrderDetailId---" + workOrderDetailId);
-                sb.append(workOrderDetailId).append("\",");
+                sb.append(workOrderDetailId).append("\",\"");
 //                createList = designlistService.createRequisitionPreview(createList, workOrderDetailId);
             }
             sb.deleteCharAt(sb.length()-1);
+            sb.deleteCharAt(sb.length()-1);
             sb.append(") group by type,storeId");
+            System.out.println(sb.toString());
             createList = queryService.query(sb.toString());
             response.put("createList",createList);
             if(createList.isEmpty()) {
@@ -546,6 +548,7 @@ public class DesignlistController {
         return response;
     }
 
+
     /*
      * 新建退料单
      * */
@@ -776,6 +779,7 @@ public class DesignlistController {
         }
         return response;
     }
+
 
 
 

@@ -119,6 +119,10 @@ Ext.define('oldpanel.Old_Query_Data',{
             //     name: 'endWidth',
             //     value:"",
             // },
+                {xtype: 'textfield', fieldLabel: '旧板品号', id: 'oldpanelNo',
+                    margin: '0 10 0 30',width: 150, labelWidth: 60,
+                    name: 'oldpanelNo', value: ""
+                },
                 {
                     xtype:'tbtext',
                     text:'库存数量:',
@@ -160,6 +164,7 @@ Ext.define('oldpanel.Old_Query_Data',{
                             minCount : Ext.getCmp('minCount').getValue(),
                             maxCount : Ext.getCmp('maxCount').getValue(),
                             oldpanelType:Ext.getCmp('oldpanelType').getValue(),
+                            oldpanelNo:Ext.getCmp('oldpanelNo').getValue(),
                             warehouseName:Ext.getCmp('storePosition').rawValue,
                             tableName:tableName,
 
@@ -263,6 +268,7 @@ Ext.define('oldpanel.Old_Query_Data',{
                     minCount : Ext.getCmp('minCount').getValue(),
                     maxCount : Ext.getCmp('maxCount').getValue(),
                     oldpanelType:Ext.getCmp('oldpanelType').getValue(),
+                    oldpanelNo:Ext.getCmp('oldpanelNo').getValue(),
                     warehouseName:Ext.getCmp('storePosition').rawValue,
                     tableName:tableName,
                 }
@@ -280,6 +286,7 @@ Ext.define('oldpanel.Old_Query_Data',{
                         minCount : Ext.getCmp('minCount').getValue(),
                         maxCount : Ext.getCmp('maxCount').getValue(),
                         oldpanelType:Ext.getCmp('oldpanelType').getValue(),
+                        oldpanelNo:Ext.getCmp('oldpanelNo').getValue(),
                         warehouseName:Ext.getCmp('storePosition').rawValue,
                         tableName:tableName,
                     });
@@ -298,6 +305,7 @@ Ext.define('oldpanel.Old_Query_Data',{
             //readOnly:true,
             columns : [
                 {dataIndex : 'oldpanelName', text : '旧板名称', flex :1, },
+                {dataIndex : 'oldpanelNo', text : '旧板品号', flex :1, },
                 //{dataIndex : 'classificationName', text : '分类', flex :1, },
                 {text: '分类', dataIndex: 'classificationId', flex :1,
                     //枚举，1：出库，0：入库
