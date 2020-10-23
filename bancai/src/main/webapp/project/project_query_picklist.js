@@ -246,7 +246,8 @@ Ext.define('project.project_query_picklist',{
                 {
                     dataIndex:'time',
                     text:'创建时间',
-                    flex :1
+                    flex :1,
+                    renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')  //
                 },
                 ],
             flex:1,
