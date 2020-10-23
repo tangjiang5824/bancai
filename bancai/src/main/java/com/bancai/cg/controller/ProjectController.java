@@ -17,6 +17,7 @@ import com.bancai.service.ProductService;
 import com.bancai.service.ProjectService;
 import com.bancai.service.QueryService;
 import com.bancai.util.risk.easyexcel.DemoData;
+import com.bancai.util.risk.easyexcel.RequisitionOrder;
 import com.bancai.util.risk.easyexcel.WorkOrder;
 import com.bancai.vo.WebResponse;
 import org.apache.log4j.Logger;
@@ -1040,7 +1041,37 @@ public class ProjectController {
         EasyExcel.write(fileName, WorkOrder.class).sheet("工单").doWrite(WorkOrder_Data(response));
         return true;
     }
+    //打印领料单
+    @RequestMapping("/project/printRequisitionOrder.do")
+    public Boolean printRequisitionOrder(Integer start,Integer limit,Integer requisitionOrderId){
+        System.out.println("zzyzzyzyyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzzyyzyzyzyzy");
+        System.out.println(requisitionOrderId);
+        List<RequisitionOrder> list = new ArrayList<RequisitionOrder>();
 
+        String fileName = "C:\\Users\\Administrator\\Desktop\\"+"easytest.xlsx";
+        // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
+        // 如果这里想使用03 则 传入excelType参数即可
+        //write(fileName,格式类)
+        //sheet(表名)
+        //doWrite(数据)
+
+
+        if(start==null) start=0;
+        if(limit==null) limit=-1;
+        mysqlcondition c=new mysqlcondition();
+        if (null!=requisitionOrderId) {
+            c.and(new mysqlcondition("requisitionOrderId", "=", requisitionOrderId));
+        }
+//        if (null!=isActive) {
+//            c.and(new mysqlcondition("isActive", "=", isActive));
+//        }
+        WebResponse response =queryAllService.queryDataPage(start, limit, c, "work_order_detail_match_result");
+        if(!(boolean)response.get("success"))
+            return false;
+        //return response;
+        EasyExcel.write(fileName, WorkOrder.class).sheet("工单").doWrite(WorkOrder_Data(response));
+        return true;
+    }
     private List<WorkOrder> WorkOrder_Data(WebResponse response) {
         List<WorkOrder> list = new ArrayList<WorkOrder>();
         System.out.println("之后为工单打印后台代码");
@@ -1055,7 +1086,7 @@ public class ProjectController {
         //System.out.println(WorkOrder_TempList.get(1).get("workOrderDetailId"));
         for (int i = 0; i < totalCount; i++) {
             WorkOrder workOrder_row = new WorkOrder();
-            //workOrder_row.setDate((Date)WorkOrder_TempList.get(i).get("date"));
+            workOrder_row.setDate((Date)WorkOrder_TempList.get(i).get("date"));
             workOrder_row.setWorkorderlogId(WorkOrder_TempList.get(i).get("workorderlogId")+"");
             workOrder_row.setProjectName(WorkOrder_TempList.get(i).get("projectName").toString());
             workOrder_row.setBuildingName(WorkOrder_TempList.get(i).get("buildingName")+"");
@@ -1066,10 +1097,40 @@ public class ProjectController {
             workOrder_row.setIsActive(WorkOrder_TempList.get(i).get("isActive").toString());
             workOrder_row.setName(WorkOrder_TempList.get(i).get("name")+"");
             workOrder_row.setMaterialCount(Double.parseDouble((WorkOrder_TempList.get(i).get("materialCount"))+""));
+            workOrder_row.setIsCompleteMatch(WorkOrder_TempList.get(i).get("isCompleteMatch")+"");
             list.add(workOrder_row);
         }
         return list;
     }
-
+    private List<RequisitionOrder> RequisitionOrder_Data(WebResponse response) {
+        List<RequisitionOrder> list = new ArrayList<RequisitionOrder>();
+        System.out.println("之后为工单打印后台代码");
+        System.out.println(response.get("totalCount"));
+        int totalCount = Integer.parseInt(response.get("totalCount")+"");
+        //boolean success = (boolean) response.get("success");
+        System.out.println(response.get("success"));
+        System.out.println(response.get("value"));
+        //response中的具体数值
+        DataList RequisitionOrder_TempList= (DataList)response.get("value");
+        //System.out.println(WorkOrder_TempList.get(1));
+        //System.out.println(WorkOrder_TempList.get(1).get("workOrderDetailId"));
+        for (int i = 0; i < totalCount; i++) {
+            RequisitionOrder requisitionOrder_row = new RequisitionOrder();
+            //workOrder_row.setDate((Date)WorkOrder_TempList.get(i).get("date"));
+            //requisitionOrder_row.setRequisitionorderId(RequisitionOrder_TempList.get(i).get("requisitionorderId")+"");
+            requisitionOrder_row.setProjectName(RequisitionOrder_TempList.get(i).get("projectName").toString());
+            requisitionOrder_row.setBuildingName(RequisitionOrder_TempList.get(i).get("buildingName")+"");
+            requisitionOrder_row.setPositionName(RequisitionOrder_TempList.get(i).get("positionName")+"");
+            //requisitionOrder_row.setProductMadeBy(RequisitionOrder_TempList.get(i).get("productMadeBy")+"");
+            requisitionOrder_row.setProductName(RequisitionOrder_TempList.get(i).get("productName")+"");
+            //requisitionOrder_row.setProductCount(Double.parseDouble(RequisitionOrder_TempList.get(i).get("productCount")+""));
+//            requisitionOrder_row.setIsActive(RequisitionOrder_TempList.get(i).get("isActive").toString());
+//            requisitionOrder_row.setName(RequisitionOrder_TempList.get(i).get("name")+"");
+//            requisitionOrder_row.setMaterialCount(Double.parseDouble((RequisitionOrder_TempList.get(i).get("materialCount"))+""));
+            requisitionOrder_row.setIsCompleteMatch(RequisitionOrder_TempList.get(i).get("isCompleteMatch")+"");
+            list.add(requisitionOrder_row);
+        }
+        return list;
+    }
 
     }

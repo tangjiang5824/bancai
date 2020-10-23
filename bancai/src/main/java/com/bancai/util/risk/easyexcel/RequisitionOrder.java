@@ -8,7 +8,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class MaterialRequisition {
+public class RequisitionOrder {
     @ExcelProperty("创建时间")
     private Date datetime;
     @ExcelProperty("负责人")
@@ -32,7 +32,7 @@ public class MaterialRequisition {
     @ExcelProperty("领料数量")
     private String productNum;
     @ExcelProperty("是否完全匹配")
-    private Boolean isCompleteMatch;
+    private String isCompleteMatch;
 
     /**
      * 忽略这个字段
