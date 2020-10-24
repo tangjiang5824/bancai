@@ -9,6 +9,7 @@ import com.bancai.cg.dao.workordermatchresultdao;
 import com.bancai.cg.entity.*;
 import com.bancai.cg.service.InsertProjectService;
 import com.bancai.cg.util.newPanelMatch;
+import com.bancai.commonMethod.AnalyzeNameService;
 import com.bancai.commonMethod.QueryAllService;
 import com.bancai.db.mysqlcondition;
 import com.bancai.domain.DataList;
@@ -17,8 +18,10 @@ import com.bancai.service.ProductService;
 import com.bancai.service.ProjectService;
 import com.bancai.service.QueryService;
 import com.bancai.util.risk.easyexcel.DemoData;
+import com.bancai.util.risk.easyexcel.OldpanelMatchResult;
 import com.bancai.util.risk.easyexcel.WorkOrder;
 import com.bancai.vo.WebResponse;
+import io.swagger.annotations.ApiOperation;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,6 +29,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
@@ -56,6 +60,8 @@ public class ProjectController {
     private workordermatchresultdao workordermatchresultdao;
     @Autowired
     private designlistdao designlistdao;
+    @Autowired
+    private AnalyzeNameService analyzeNameService;
 
 
 
@@ -1070,5 +1076,55 @@ public class ProjectController {
         return list;
     }
 
+    @RequestMapping(value = "/project/printOldpanelMatchResult.do")
+    @ApiOperation("打印旧板匹配结果")
+    public Boolean printOldpanelMatchResult(Integer start,Integer limit,Integer projectId,Integer buildingId,Integer buildingpositionId){
+        String fileName = "C:\\Users\\Administrator\\Desktop\\"+"旧板匹配结果"+ analyzeNameService.getTime() +".xls";
+        if(start==null) start=0;
+        if(limit==null) limit=-1;
+        mysqlcondition c=new mysqlcondition();
+        if (null!=projectId) {
+            c.and(new mysqlcondition("projectId", "=", projectId));
+        }
+        if (null!=buildingId) {
+            c.and(new mysqlcondition("buildingId", "=", buildingId));
+        }
+        if (null!=buildingpositionId) {
+            c.and(new mysqlcondition("buildingpositionId", "=", buildingpositionId));
+        }
+        WebResponse response =queryAllService.queryDataPage(start, limit, c, "oldpanel_match_result_view");
+        //return response;
+        EasyExcel.write(fileName, OldpanelMatchResult.class).sheet("工单").doWrite(OldpanelMatchResult_Data(response));
+        return true;
+    }
+
+    private List<OldpanelMatchResult> OldpanelMatchResult_Data(WebResponse response) {
+        List<OldpanelMatchResult> list = new ArrayList<OldpanelMatchResult>();
+        DataList tempList= (DataList)response.get("value");
+        if(tempList!=null&&tempList.size()!=0){
+            for (DataRow dataRow : tempList) {
+                OldpanelMatchResult row = new OldpanelMatchResult();
+                row.setProjectName(dataRow.get("projectName") + "");
+                row.setBuildingName(dataRow.get("buildingName") + "");
+                row.setBuildingpositionName(dataRow.get("buildingpositionName") + "");
+                row.setProductName(dataRow.get("productName") + "");
+                row.setProductInventoryUnit(dataRow.get("productInventoryUnit") + "");
+                row.setProductUnitArea(Double.parseDouble(dataRow.get("productUnitArea") + ""));
+                row.setProductUnitWeight(Double.parseDouble(dataRow.get("productUnitWeight") + ""));
+                row.setProductCount(Double.parseDouble(dataRow.get("productCount") + ""));
+                row.setProductTotalArea(Double.parseDouble(dataRow.get("productTotalArea") + ""));
+                row.setProductTotalWeight(Double.parseDouble(dataRow.get("productTotalWeight") + ""));
+                row.setOldpanelName(dataRow.get("oldpanelName") + "");
+                row.setOldpanelInventoryUnit(dataRow.get("oldpanelInventoryUnit") + "");
+                row.setOldpanelCount(Double.parseDouble(dataRow.get("oldpanelCount") + ""));
+                row.setOldpanelTotalArea(Double.parseDouble(dataRow.get("oldpanelTotalArea") + ""));
+                row.setOldpanelTotalWeight(Double.parseDouble(dataRow.get("oldpanelTotalWeight") + ""));
+                row.setWarehouseName(dataRow.get("warehouseName") + "");
+                row.setIsCompleteMatch(dataRow.get("isCompleteMatch") + "");
+                list.add(row);
+            }
+        }
+        return list;
+    }
 
     }
