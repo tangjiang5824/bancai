@@ -147,8 +147,9 @@ Ext.define('project.project_query_worksheet',{
                 {
                     dataIndex:'time',
                     text:'创建时间',
-                    //editor:{xtype : 'textfield', allowBlank : false}
-                    flex :1
+                    flex :1,
+                    renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')
+
                 }, {
                     dataIndex:'isActive',
                     text:'是否审核',
@@ -369,6 +370,7 @@ Ext.define('project.project_query_worksheet',{
             }
             if (fieldName == "打印") {
                 console.log("zzzzzzzzzzzzzzzzzyyyyyyyyyyyyyyyyyyyzzzzz")
+                console.log(workorderlogId)
                 Ext.Ajax.request({
                     url : 'project/printWorkOrder.do', //打印
                     method:'POST',
@@ -429,7 +431,7 @@ Ext.define('project.project_query_worksheet',{
                     },
                     failure : function(response) {
                         //var message =Ext.decode(response.responseText).showmessage;
-                        Ext.MessageBox.alert("提示","入库失败" );
+                        Ext.MessageBox.alert("提示","打印失败" );
                     }
                 });
             }
