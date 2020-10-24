@@ -299,7 +299,7 @@ Ext.define('material.material_backcheck',{
                         backListStore.load({
                             params : {
                                 //type:3,//默认旧板
-                                proejctId:Ext.getCmp('projectName').getValue(),
+                                projectId:Ext.getCmp('projectName').getValue(),
                                 buildingId:Ext.getCmp('buildingName').getValue(),
                                 operator:Ext.getCmp('operator').getValue(),
                                 returnOrderId:Ext.getCmp('backlistNum').getValue(),

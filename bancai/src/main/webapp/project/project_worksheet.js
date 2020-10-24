@@ -540,8 +540,8 @@ Ext.define('project.project_worksheet',{
                     // 重新加载页面，该项目的领料单信息
                     //     productListStore.load({
                     //         params : {
-                    //             proejctId:Ext.getCmp('projectName').getValue(),
-                    //             //proejctId:'1',
+                    //             projectId:Ext.getCmp('projectName').getValue(),
+                    //             //projectId:'1',
                     //         }
                     //     });
 
