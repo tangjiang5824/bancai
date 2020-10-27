@@ -385,6 +385,11 @@ Ext.define("menu.MenuRole_bc0", {
 						leaf : true
 					},
 					{
+						text : '原材料超领单',
+						id : 'project.material_over_pick',
+						leaf : true
+					},
+					{
 						text : '项目领料单查询',
 						id : 'project.project_query_picklist',
 						leaf : true
