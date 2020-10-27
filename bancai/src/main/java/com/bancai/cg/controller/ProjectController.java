@@ -1037,7 +1037,6 @@ public class ProjectController {
     public Boolean printWorkOrder(Integer start, Integer limit, Integer workorderlogId, Integer isActive) {
         System.out.println("zzyzzyzyyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzzyyzyzyzyzy");
         System.out.println(workorderlogId);
-        List<WorkOrder> list = new ArrayList<WorkOrder>();
 
         String fileName = "C:\\Users\\Administrator\\Desktop\\" + "easytest.xlsx";
         // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
@@ -1069,9 +1068,8 @@ public class ProjectController {
     public Boolean printRequisitionOrder(Integer start, Integer limit, Integer requisitionOrderId) {
         System.out.println("zzyzzyzyyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzzyyzyzyzyzy");
         System.out.println(requisitionOrderId);
-        List<RequisitionOrder> list = new ArrayList<RequisitionOrder>();
 
-        String fileName = "C:\\Users\\Administrator\\Desktop\\" + "easytest.xlsx";
+        String fileName = "C:\\Users\\Administrator\\Desktop\\单号" +requisitionOrderId +"领料单.xlsx";
         // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
         // 如果这里想使用03 则 传入excelType参数即可
         //write(fileName,格式类)
@@ -1092,10 +1090,10 @@ public class ProjectController {
         if (!(boolean) response.get("success"))
             return false;
         //return response;
-        EasyExcel.write(fileName, WorkOrder.class).sheet("工单").doWrite(WorkOrder_Data(response));
+        EasyExcel.write(fileName, WorkOrder.class).sheet("领料单").doWrite(RequisitionOrder_Data(response));
         return true;
     }
-
+    //工单数据绑定
     private List<WorkOrder> WorkOrder_Data(WebResponse response) {
         List<WorkOrder> list = new ArrayList<WorkOrder>();
         System.out.println("之后为工单打印后台代码");
@@ -1126,7 +1124,43 @@ public class ProjectController {
         }
         return list;
     }
+    //领料单数据绑定
+    private List<RequisitionOrder> RequisitionOrder_Data(WebResponse response) {
+        List<RequisitionOrder> list = new ArrayList<RequisitionOrder>();
+        System.out.println("之后为工单打印后台代码");
+        System.out.println(response.get("totalCount"));
+        int totalCount = Integer.parseInt(response.get("totalCount") + "");
+        //boolean success = (boolean) response.get("success");
+        System.out.println(response.get("success"));
+        System.out.println(response.get("value"));
+        //response中的具体数值
+        DataList RequisitionOrder_TempList = (DataList) response.get("value");
+        //System.out.println(WorkOrder_TempList.get(1));
+        //System.out.println(WorkOrder_TempList.get(1).get("workOrderDetailId"));
+        for (int i = 0; i < totalCount; i++) {
+            RequisitionOrder requisitionOrder_row = new RequisitionOrder();
+            //workOrder_row.setDate((Date)WorkOrder_TempList.get(i).get("date"));
+            requisitionOrder_row.setRequisitionOrderId(RequisitionOrder_TempList.get(i).get("requisitionOrderId")+"");
+            requisitionOrder_row.setWorkorderlogId(RequisitionOrder_TempList.get(i).get("workorderlogId")+"");
+            requisitionOrder_row.setProjectName(RequisitionOrder_TempList.get(i).get("projectName").toString());
+            requisitionOrder_row.setBuildingName(RequisitionOrder_TempList.get(i).get("buildingName") + "");
+            requisitionOrder_row.setPositionName(RequisitionOrder_TempList.get(i).get("positionName") + "");
+            requisitionOrder_row.setWarehouseName(RequisitionOrder_TempList.get(i).get("warehouseName")+"");
+            requisitionOrder_row.setName(RequisitionOrder_TempList.get(i).get("name") + "");
+            //requisitionOrder_row.setProductCount(Double.parseDouble(RequisitionOrder_TempList.get(i).get("productCount")+""));
+//            requisitionOrder_row.setIsActive(RequisitionOrder_TempList.get(i).get("isActive").toString());
+//            requisitionOrder_row.setName(RequisitionOrder_TempList.get(i).get("name")+"");
+//            requisitionOrder_row.setMaterialCount(Double.parseDouble((RequisitionOrder_TempList.get(i).get("materialCount"))+""));
+            requisitionOrder_row.setCountAll(RequisitionOrder_TempList.get(i).get("countAll") + "");
+            requisitionOrder_row.setCountRec(RequisitionOrder_TempList.get(i).get("countRec") + "");
+            requisitionOrder_row.setTime((Date)RequisitionOrder_TempList.get(i).get("time"));
+            requisitionOrder_row.setCountAll(RequisitionOrder_TempList.get(i).get("countAll") + "");
+            list.add(requisitionOrder_row);
+        }
+        return list;
+    }
 
+    //打印匹配结果
     @RequestMapping(value = "/project/printOldpanelMatchResult.do")
     @ApiOperation("打印旧板匹配结果")
     public Boolean printOldpanelMatchResult(Integer start, Integer limit, Integer projectId, Integer buildingId, Integer buildingpositionId) {
@@ -1148,7 +1182,7 @@ public class ProjectController {
         EasyExcel.write(fileName, OldpanelMatchResult.class).sheet("工单").doWrite(OldpanelMatchResult_Data(response));
         return true;
     }
-
+    //匹配结果数据绑定
     private List<OldpanelMatchResult> OldpanelMatchResult_Data(WebResponse response) {
         List<OldpanelMatchResult> list = new ArrayList<OldpanelMatchResult>();
         DataList tempList = (DataList) response.get("value");
@@ -1178,35 +1212,6 @@ public class ProjectController {
         return list;
     }
 
-    private List<RequisitionOrder> RequisitionOrder_Data(WebResponse response) {
-        List<RequisitionOrder> list = new ArrayList<RequisitionOrder>();
-        System.out.println("之后为工单打印后台代码");
-        System.out.println(response.get("totalCount"));
-        int totalCount = Integer.parseInt(response.get("totalCount") + "");
-        //boolean success = (boolean) response.get("success");
-        System.out.println(response.get("success"));
-        System.out.println(response.get("value"));
-        //response中的具体数值
-        DataList RequisitionOrder_TempList = (DataList) response.get("value");
-        //System.out.println(WorkOrder_TempList.get(1));
-        //System.out.println(WorkOrder_TempList.get(1).get("workOrderDetailId"));
-        for (int i = 0; i < totalCount; i++) {
-            RequisitionOrder requisitionOrder_row = new RequisitionOrder();
-            //workOrder_row.setDate((Date)WorkOrder_TempList.get(i).get("date"));
-            //requisitionOrder_row.setRequisitionorderId(RequisitionOrder_TempList.get(i).get("requisitionorderId")+"");
-            requisitionOrder_row.setProjectName(RequisitionOrder_TempList.get(i).get("projectName").toString());
-            requisitionOrder_row.setBuildingName(RequisitionOrder_TempList.get(i).get("buildingName") + "");
-            requisitionOrder_row.setPositionName(RequisitionOrder_TempList.get(i).get("positionName") + "");
-            //requisitionOrder_row.setProductMadeBy(RequisitionOrder_TempList.get(i).get("productMadeBy")+"");
-            requisitionOrder_row.setProductName(RequisitionOrder_TempList.get(i).get("productName") + "");
-            //requisitionOrder_row.setProductCount(Double.parseDouble(RequisitionOrder_TempList.get(i).get("productCount")+""));
-//            requisitionOrder_row.setIsActive(RequisitionOrder_TempList.get(i).get("isActive").toString());
-//            requisitionOrder_row.setName(RequisitionOrder_TempList.get(i).get("name")+"");
-//            requisitionOrder_row.setMaterialCount(Double.parseDouble((RequisitionOrder_TempList.get(i).get("materialCount"))+""));
-            requisitionOrder_row.setIsCompleteMatch(RequisitionOrder_TempList.get(i).get("isCompleteMatch") + "");
-            list.add(requisitionOrder_row);
-        }
-        return list;
-    }
+
 
 }

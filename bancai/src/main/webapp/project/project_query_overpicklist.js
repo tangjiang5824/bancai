@@ -1,8 +1,8 @@
-Ext.define('project.project_query_picklist',{
+Ext.define('project.project_query_overpicklist',{
     extend:'Ext.panel.Panel',
     region: 'center',
     layout:'fit',
-    title: '项目领料单查询',
+    title: '项目原材料超领单查询',
     initComponent: function(){
         var itemsPerPage = 50;
         var tableName="material";
@@ -22,9 +22,9 @@ Ext.define('project.project_query_picklist',{
                 9: { value: '5', name: '未匹配成功' },
             }
         });
-        //项目名称选择
-        var tableListStore = Ext.create('Ext.data.Store',{
-            fields : [ "项目名称","id"],
+        //项目、楼栋、位置三连下拉框
+        var tableListStore1 = Ext.create('Ext.data.Store',{
+            fields : [ 'projectName'],
             proxy : {
                 type : 'ajax',
                 url : 'project/findProjectList.do',
@@ -35,126 +35,201 @@ Ext.define('project.project_query_picklist',{
             },
             autoLoad : true
         });
-        var tableList = Ext.create('Ext.form.ComboBox',{
+        var tableList1 = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '项目名',
             labelWidth : 45,
-            width : '35%',
-            margin : '0 10 0 0',
+            width : 550,//'35%'
+            queryMode: 'local',
             id :  'projectName',
-            name : '项目名称',
+            name : 'projectName',
             matchFieldWidth: true,
-            emptyText : "--请选择--",
+            emptyText : "--请选择项目名--",
             displayField: 'projectName',
             valueField: 'id',
             editable : true,
-            store: tableListStore,
-            listeners:{
-                select: function(combo, record, index) {
-                    console.log(record[0].data.projectName);
+            store: tableListStore1,
+            typeAhead: true,
+            triggerAction: 'all',
+            selectOnFocus:true,
+            listeners: {
+                change : function(combo, record, eOpts) {
+                    if(this.callback) {
+                        if(combo.lastSelection && combo.lastSelection.length>0) {
+                            this.callback(combo.lastSelection[0]);
+                        }
+                    }
+                },
+                //下拉框搜索
+                beforequery :function(e){
+                    var combo = e.combo;
+                    combo.collapse();//收起
+                    var value = combo.getValue();
+                    if (!e.forceAll) {//如果不是通过选择，而是文本框录入
+                        combo.store.clearFilter();
+                        combo.store.filterBy(function(record, id) {
+                            var text = record.get(combo.displayField);
+                            // 用自己的过滤规则,如写正则式
+                            return (text.indexOf(value) != -1);
+                        });
+                        combo.onLoad();//不加第一次会显示不出来
+                        combo.expand();
+                        return false;
+                    }
+                    if(!value) {
+                        //如果文本框没值，清除过滤器
+                        combo.store.clearFilter();
+                    }
+                },
+
+                //下拉框默认返回的第一个值
+                render : function(combo) {//渲染
+                    combo.getStore().on("load", function(s, r, o) {
+                        combo.setValue(r[0].get('projectName'));//第一个值
+                    });
+                },
+
+                select:function (combo, record) {
+                    //选中后
+                    var select = record[0].data;
+                    var id = select.id;//项目名对应的id
+                    console.log(id)
+
+                    //重新加载行选项
+                    //表名
+                    var tableName = 'building';
+                    //属性名
+                    var projectId = 'projectId';
+
+                    var tableListStore2 = Ext.create('Ext.data.Store',{
+                        fields : [ 'buildingName'],
+                        proxy : {
+                            type : 'ajax',
+                            //通用接口，material/findAllbyTableNameAndOnlyOneCondition.do传入表名，属性及属性值
+                            url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName='+tableName+'&columnName='+projectId+'&columnValue='+id,//根据项目id查询对应的楼栋名
+                            // params : {
+                            // 	tableName:tableName,
+                            // 	columnName:projectId,
+                            // 	columnValue:id,
+                            // },
+                            reader : {
+                                type : 'json',
+                                rootProperty: 'building',
+                            }
+                        },
+                        autoLoad : true,
+                        listeners:{
+                            load:function () {
+                                Ext.getCmp('buildingName').setValue("");
+                            }
+                        }
+                    });
+
+                    //buildingName,下拉框重新加载数据
+                    buildingName.setStore(tableListStore2);
+
+                    // Ext.Ajax.request({
+                    // 	url:'project/getSelectedProjectName.do',
+                    // 	params:{
+                    // 		projectName:Ext.getCmp('projectName').getValue()
+                    // 	},
+                    // 	success:function (response,config) {
+                    // 		//alert("combox1把数据传到后台成功");
+                    // 	},
+                    // 	failure:function (form, action) {
+                    // 		//alert("combox1把数据传到后台成功");
+                    // 	}
+                    // })
+                }
+            }
+
+        });
+        var buildingName = Ext.create('Ext.form.ComboBox',{
+            fieldLabel : '楼栋名',
+            labelWidth : 45,
+            width : 200,
+            id :  'buildingName',
+            name : 'buildingName',
+            matchFieldWidth: false,
+            margin: '0 10 0 10',
+            emptyText : "--请选择楼栋名--",
+            displayField: 'buildingName',
+            valueField: 'id',//楼栋的id
+            editable : false,
+            autoLoad: true,
+            //store: tableListStore2,
+            listeners: {
+                load:function () {
+
+                    // // projectName:Ext.getCmp('projectName').getValue();
+                    // // buildingName:Ext.getCmp('buildingName').getValue();
+                    // Ext.Ajax.request({
+                    // 	url:'project/getSelectedBuildingName.do',
+                    // 	params:{
+                    // 		//projectName:Ext.getCmp('projectName').getValue(),
+                    // 		buildingName:Ext.getCmp('buildingName').getValue(),
+                    // 	},
+                    // 	success:function (response,config) {
+                    // 		//alert("combox1把数据传到后台成功");
+                    // 	},
+                    // 	failure:function (form, action) {
+                    // 		//alert("combox1把数据传到后台成功");
+                    // 	}
+                    // })
+
                 }
             }
         });
-
-        //查询领料单
-        var MaterialpickListStore = Ext.create('Ext.data.Store',{
-            fields:['materialName','materialCount','countReceived','countNotReceived','countTemp'],
+        var buildingPositionStore = Ext.create('Ext.data.Store',{
+            fields : [ 'buildingPosition'],
             proxy : {
                 type : 'ajax',
-                url : 'order/queryRequisitionOrder.do', //领料单查询
+                url : 'material/findAllBytableName.do?tableName=building_position',
+
                 reader : {
                     type : 'json',
-                    rootProperty: 'value',
+                    rootProperty: 'building_position',
                 }
             },
             autoLoad : true
         });
+        var buildingPositionList = Ext.create('Ext.form.ComboBox',{
+            fieldLabel : '位置',
+            labelWidth : 40,
+            width : 150,
+            margin: '0 10 0 10',
+            id :  'positionName',
+            name : 'positionName',
+            matchFieldWidth: true,
+            // emptyText : "--请选择项目--",
+            displayField: 'positionName',
+            valueField: 'id',
+            // typeAhead : true,
+            editable : true,
+            store: buildingPositionStore,
+            // listeners: {
+            //
+            //     //下拉框默认返回的第一个值
+            //     render: function (combo) {//渲染
+            //         combo.getStore().on("load", function (s, r, o) {
+            //             combo.setValue(r[0].get('projectName'));//第一个值
+            //         });
+            //     }
+            // }
 
-        var pickList=Ext.create('Ext.data.Store',{
-            fields:['materialName','materialCount'],
         });
-
-
-
-        //确认入库按钮，
-        // var toolbar3 = Ext.create('Ext.toolbar.Toolbar', {
-        //     dock : "bottom",
-        //     id : "toolbar3",
-        //     //style:{float:'center',},
-        //     //margin-right: '2px',
-        //     //padding: '0 0 0 750',
-        //     style:{
-        //         //marginLeft: '900px'
-        //         layout: 'right'
-        //     },
-        //     items : [{
-        //         xtype : 'button',
-        //         iconAlign : 'center',
-        //         iconCls : 'rukuicon ',
-        //         text : '确认领料',
-        //         region:'center',
-        //         bodyStyle: 'background:#fff;',
-        //         handler : function() {
-        //
-        //             // 取出grid的字段名字段类型pro_picking_MaterialGrid
-        //             console.log('===========')
-        //             console.log(materialList)
-        //             var select = Ext.getCmp('PickingListGrid').getStore()
-        //                 .getData();
-        //             var s = new Array();
-        //             select.each(function(rec) {
-        //                 s.push(JSON.stringify(rec.data));
-        //             });
-        //             //获取数据
-        //             Ext.Ajax.request({
-        //                 url : 'material/updateprojectmateriallist.do', //原材料入库
-        //                 method:'POST',
-        //                 //submitEmptyText : false,
-        //                 params : {
-        //                     s : "[" + s + "]",//存储选择领料的数量
-        //                     materialList : "[" + materialList + "]",
-        //                 },
-        //                 success : function(response) {
-        //                     //var message =Ext.decode(response.responseText).showmessage;
-        //                     Ext.MessageBox.alert("提示","领取成功" );
-        //                     //刷新页面
-        //                     MaterialList.reload();
-        //
-        //                 },
-        //                 failure : function(response) {
-        //                     //var message =Ext.decode(response.responseText).showmessage;
-        //                     Ext.MessageBox.alert("提示","领取失败" );
-        //                 }
-        //             });
-        //
-        //         }
-        //     }]
-        // });
-
-        //职员信息
-        var workerListStore = Ext.create('Ext.data.Store',{
-            fields : [ 'typeName'],
-            proxy : {
-                type : 'ajax',
-                url : '/material/findAllBytableName.do?tableName=department_worker',
-                reader : {
-                    type : 'json',
-                    rootProperty: 'department_worker',
-                },
-            },
-            autoLoad : true
-        });
-
-        var toolbar = Ext.create('Ext.toolbar.Toolbar',{
+        var toolbar1 = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
-            id : "toolbar",
-            items: [tableList,
-                //单号
+            id : "toolbar1",
+            items : [   tableList1,
+                buildingName,
+                buildingPositionList,
+//单号
                 {
                     xtype: 'textfield',
                     margin : '0 10 0 0',
                     fieldLabel: '单号',
                     id :'picklistNum',
-                    width: 180,
+                    width: 120,
                     labelWidth: 30,
                     name: 'picklistNum',
                     value:"",
@@ -167,7 +242,7 @@ Ext.define('project.project_query_picklist',{
                     // disabled : true,
                     // width:'95%',
                     margin: '0 10 0 0',
-                    width: 150,
+                    width: 120,
                     labelWidth: 45,
                     store : workerListStore,
                     displayField : 'workerName',
@@ -178,7 +253,7 @@ Ext.define('project.project_query_picklist',{
                     xtype : 'datefield',
                     margin : '0 0 0 0',
                     fieldLabel : '创建时间',
-                    width : 180,
+                    width : 120,
                     labelWidth : 60,
                     id : "startTime",
                     name : 'startTime',
@@ -225,9 +300,23 @@ Ext.define('project.project_query_picklist',{
                             }
                         });
                     }
-                }]
+                }
+            ]//exceluploadform
         });
 
+        //查询领料单
+        var MaterialpickListStore = Ext.create('Ext.data.Store',{
+            fields:['materialName','materialCount','countReceived','countNotReceived','countTemp'],
+            proxy : {
+                type : 'ajax',
+                url : 'order/queryOverRequisitionOrder.do', //领料单查询
+                reader : {
+                    type : 'json',
+                    rootProperty: 'value',
+                }
+            },
+            autoLoad : true
+        });
 
         var PickingListGrid=Ext.create('Ext.grid.Panel',{
             id : 'PickingListGrid',
@@ -255,13 +344,13 @@ Ext.define('project.project_query_picklist',{
                     text : '打印',
                     flex :1 ,
                     renderer:function(value, cellmeta){
-                        return "<INPUT type='button' value='打印领料单' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
+                        return "<INPUT type='button' value='打印超领单' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
                     },
                 },
                 ],
             flex:1,
             // height:'100%',
-            tbar: toolbar,
+            tbar: toolbar1,
             // selType:'checkboxmodel', //选择框
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 2
@@ -329,7 +418,7 @@ Ext.define('project.project_query_picklist',{
             fields:['materialName','length','materialType','width','specification','number'],
             proxy : {
                 type : 'ajax',
-                url : 'order/queryRequisitionOrderDetail.do',//获取同类型的原材料  +'&pickNum='+pickNum
+                url : 'order/queryOverRequisitionOrderDetail.do',//获取同类型的原材料  +'&pickNum='+pickNum
                 reader : {
                     type : 'json',
                     rootProperty: 'value',
@@ -490,7 +579,7 @@ Ext.define('project.project_query_picklist',{
                 console.log("zzzzzzzzzzzzzzzzzyyyyyyyyyyyyyyyyyyyzzzzz打印")
                 console.log("requisitionOrderId="+requisitionOrderId)
                 Ext.Ajax.request({
-                    url : 'project/printRequisitionOrder.do', //打印
+                    url : 'project/printOverRequisitionOrder.do', //打印
                     method:'POST',
                     //submitEmptyText : false,
                     params : {
