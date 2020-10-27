@@ -431,7 +431,7 @@ Ext.define('project.project_query_worksheet',{
                     },
                     failure : function(response) {
                         //var message =Ext.decode(response.responseText).showmessage;
-                        Ext.MessageBox.alert("提示","入库失败" );
+                        Ext.MessageBox.alert("提示","打印失败" );
                     }
                 });
             }

@@ -8,31 +8,34 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class MaterialRequisition {
-    @ExcelProperty("创建时间")
-    private Date datetime;
-    @ExcelProperty("负责人")
-    private String operator;
+public class RequisitionOrder {
     @ExcelProperty("所属项目")
     private String projectName;
     @ExcelProperty("所属楼栋")
     private String buildingName;
     @ExcelProperty("所属位置")
     private String positionName;
+    @ExcelProperty("创建时间")
+    private Date time;
+    @ExcelProperty("负责人")
+    private String workerName;
+
     @ExcelProperty("领料单状态")
     private String statusName;
-    @ExcelProperty("数字标题")
-    private Double doubleData;
-    @ExcelProperty("对应工单")
-    private String workOrderDetailId;
-    @ExcelProperty("由什么做成")
+    @ExcelProperty("审批状态")
+    private String isActive;
+    @ExcelProperty("对应工单号")
+    private String workorderlogId;
+    @ExcelProperty("领料类型（旧板/原材料）")
     private String madeBy;
-    @ExcelProperty("产品名")
+    @ExcelProperty("材料名")
     private String productName;
     @ExcelProperty("领料数量")
     private String productNum;
     @ExcelProperty("是否完全匹配")
-    private Boolean isCompleteMatch;
+    private String isCompleteMatch;
+    @ExcelProperty("仓库名")
+    private String storeName;
 
     /**
      * 忽略这个字段

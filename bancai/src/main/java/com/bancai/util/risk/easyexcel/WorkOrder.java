@@ -19,8 +19,8 @@ public class WorkOrder {
     private String positionName;
 //    @ExcelProperty("操作人员")
 //    private String workerName;
-//    @ExcelProperty("创建时间")
-//    private Date date;
+    @ExcelProperty("创建时间")
+    private Date date;
     @ExcelProperty("审批状态")
     private String isActive;
     @ExcelProperty("产品名")
@@ -35,6 +35,8 @@ public class WorkOrder {
     private String name;
     @ExcelProperty("匹配结果数量")
     private Double materialCount;
+    @ExcelProperty("是否完全匹配")
+    private String isCompleteMatch;
 
 
     /**
