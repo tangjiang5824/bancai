@@ -49,43 +49,49 @@ public class new_panel_match {
         Session session=getSession();
         List<Designlist> design_list =designlistdao.findAllByMadeByAndProjectIdAndBuildingIdAndBuildingpositionIdOrderByProductId(0,projectId,buildingId,buildingpositionId);
         int pre_productId=0;
-        List<List<Object>> pre_match_results=new ArrayList<>();
+        List<Match_result> pre_match_results=new ArrayList<>();
         for (int i=0;i<design_list.size();i++){
             Designlist designlist=design_list.get(i);
             //如果出现没有找到产品原材料，则不插入产品的原材料；
-            List<Match_result> isrollbacklist=new ArrayList<>();
+
             //发生改变的store
             List<MaterialStore> storeList=new ArrayList<>();
             boolean flag=true;
             //如果出现相同的productId 则无需匹配，直接返回上次的结果
             if(designlist.getProductId()==pre_productId){
-                for (List<Object> list:pre_match_results){
-                    MaterialInfo info=(MaterialInfo)list.get(0);
-                    materialstoredao.flush();
-                    List<MaterialStore> stores= materialstoredao.findAllByMaterialInfoAndCountUseGreaterThan(info,0.0);
-                    Double de_count=Double.parseDouble(String.valueOf(list.get(1)));
-                    if(!JPAObjectUtil.matchStoreByInfo(stores,de_count,isrollbacklist,designlist,info.getMaterialName(),storeList,session)){
-                        log.error("仓库中 没有找到对应的原材料id 设计清单id"+designlist.getId());
-                        flag=false;
-                        break;
-                    }
+                for (Match_result result:pre_match_results) {
+//                    MaterialInfo info=(MaterialInfo)list.get(0);
+//                    materialstoredao.flush();
+//                    List<MaterialStore> stores= materialstoredao.findAllByMaterialInfoAndCountUseGreaterThan(info,0.0);
+//                    Double de_count=Double.parseDouble(String.valueOf(list.get(1)));
+//                    if(!JPAObjectUtil.matchStoreByInfo(stores,de_count,isrollbacklist,designlist,info.getMaterialName(),storeList,session)){
+//                        log.error("仓库中 没有找到对应的原材料id 设计清单id"+designlist.getId());
+//                        flag=false;
+//                        break;
+//                    }
+//                }
+                    Match_result match_result = new Match_result(result);
+                    match_result.setDesignlistId(designlist.getId());
+                    matchresultdao.save(match_result);
+                    //匹配仓库中存在对应原材料
+//                if(flag) {
+//                    //插入match_result
+//                    for(Match_result match_result:isrollbacklist){
+//                        matchresultdao.save(match_result);
+//                }
+//                    //进行仓库数量扣减
+//                    for (MaterialStore store:storeList){
+//                        materialstoredao.save(store);
+//                    }
+//                    //修改designlist
+//
+//                }
                 }
-                //匹配仓库中存在对应原材料
-                if(flag) {
-                    //插入match_result
-                    for(Match_result match_result:isrollbacklist){
-                        matchresultdao.save(match_result);
-                }
-                    //进行仓库数量扣减
-                    for (MaterialStore store:storeList){
-                        materialstoredao.save(store);
-                    }
-                    //修改designlist
                     designlist.setMadeBy(4);
                     designlistdao.save(designlist);
-                }
                 continue;
             }
+            List<Match_result> isrollbacklist=new ArrayList<>();
             pre_match_results=new ArrayList<>();
             ProductInfo productInfo = productInfodao.findById(designlist.getProductId()).orElse(null);
             List<MaterialMatchRules> rules=null;
@@ -120,27 +126,39 @@ public class new_panel_match {
                  */
 
                 Double de_count=Double.parseDouble(list.get(j).get(1).toString());
-                List<Object> temp=new ArrayList<>();
-                temp.add(info);
-                temp.add(de_count);
-                pre_match_results.add(temp);
+//                List<Object> temp=new ArrayList<>();
+//                temp.add(info);
+//                temp.add(de_count);
+//                pre_match_results.add(temp);
 
+                //材料匹配 直接插入materialinfo信息
+                Match_result match_result=new Match_result();
+                match_result.setDesignlistId(designlist.getId());
+                match_result.setMatchId(info.getMaterialid());
+                match_result.setName(dataList.get(0).get("materialName") + "");
+                match_result.setMadeBy(4);
+                match_result.setIsCompleteMatch(0);
+                match_result.setCount(de_count);
+
+                Match_result match_result_temp=new Match_result(match_result);
+                pre_match_results.add(match_result_temp);
+                isrollbacklist.add(match_result);
                 //仓库匹配
-                List<MaterialStore> stores= materialstoredao.findAllByMaterialInfoAndCountUseGreaterThan(info,0.0);
-                if(!JPAObjectUtil.matchStoreByInfo(stores,de_count,isrollbacklist,designlist,dataList.get(0).get("materialName") + "",storeList,session)){
-                    log.error("仓库中 没有找到对应的原材料id 设计清单id"+designlist.getId()+"  产品id "+productInfo.getId());
-                    flag=false;
-                    break;
-                }
+//                List<MaterialStore> stores= materialstoredao.findAllByMaterialInfoAndCountUseGreaterThan(info,0.0);
+//                if(!JPAObjectUtil.matchStoreByInfo(stores,de_count,isrollbacklist,designlist,dataList.get(0).get("materialName") + "",storeList,session)){
+//                    log.error("仓库中 没有找到对应的原材料id 设计清单id"+designlist.getId()+"  产品id "+productInfo.getId());
+//                    flag=false;
+//                    break;
+//                }
 
             }
             if(flag) {
                 for(Match_result match_result:isrollbacklist){
                     matchresultdao.save(match_result);
                 }
-                for (MaterialStore store:storeList){
-                    materialstoredao.save(store);
-                }
+//                for (MaterialStore store:storeList){
+//                    materialstoredao.save(store);
+//                }
                 pre_productId=designlist.getProductId();
                 designlist.setMadeBy(4);
                 designlistdao.save(designlist);
