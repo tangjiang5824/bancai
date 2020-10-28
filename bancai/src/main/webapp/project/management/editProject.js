@@ -346,6 +346,8 @@ Ext.define('project.management.editProject',{
 
         var rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
             clicksToMoveEditor: 1,
+            saveBtnText: '保存',
+            cancelBtnText: '取消',
             autoCancel: false
         });
 
