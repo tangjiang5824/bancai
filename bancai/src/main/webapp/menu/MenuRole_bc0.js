@@ -230,46 +230,47 @@ Ext.define("menu.MenuRole_bc0", {
 					id : 'product.product_Statistics_Records',
 					leaf : true
 				}]
-			}
+			},
+					{
+						text : '废料仓库管理',
+						expanded : true,
+						children : [
+							{
+								text : '入库',
+								id : 'unuseMaterial.unuseMaterial_Inbound',
+								leaf : true
+							},
+							{
+								text : '库存查询',
+								id : 'unuseMaterial.unuseMaterial_Query_Data',
+								leaf : true
+							} ,{
+								text : '出入库记录查询',
+								id : 'unuseMaterial.unuseMaterial_Query_Records',
+								leaf : true
+							} ,{
+								text : '废料记录撤销',
+								id : 'unuseMaterial.unuseMaterial_cancelRecords',
+								leaf : true
+							} ,{
+								text : '废料出库',
+								id : 'unuseMaterial.unuseMaterial_outBound',
+								leaf : true
+							} ,
+							{
+								text : '废料结算',
+								id : 'unuseMaterial.unuseMaterial_settleAccount',
+								leaf : true
+							} ,
+							{
+								text : '废料结算查询',
+								id : 'unuseMaterial.unuseMaterial_query_settle',
+								leaf : true
+							} ,
+						]
+					},
 		]},
-		{
-			text : '废料仓库管理',
-			expanded : true,
-			children : [
-				{
-					text : '入库',
-					id : 'unuseMaterial.unuseMaterial_Inbound',
-					leaf : true
-				},
-				{
-					text : '库存查询',
-					id : 'unuseMaterial.unuseMaterial_Query_Data',
-					leaf : true
-				} ,{
-					text : '出入库记录查询',
-					id : 'unuseMaterial.unuseMaterial_Query_Records',
-					leaf : true
-				} ,{
-					text : '废料记录撤销',
-					id : 'unuseMaterial.unuseMaterial_cancelRecords',
-					leaf : true
-				} ,{
-					text : '废料出库',
-					id : 'unuseMaterial.unuseMaterial_outBound',
-					leaf : true
-				} ,
-				{
-					text : '废料结算',
-					id : 'unuseMaterial.unuseMaterial_settleAccount',
-					leaf : true
-				} ,
-				{
-					text : '废料结算查询',
-					id : 'unuseMaterial.unuseMaterial_query_settle',
-					leaf : true
-				} ,
-			]
-		},
+
 			// 	{
 			// 	text : '产品管理',
 			// 	expanded : true,
@@ -392,6 +393,11 @@ Ext.define("menu.MenuRole_bc0", {
 					{
 						text : '项目领料单查询',
 						id : 'project.project_query_picklist',
+						leaf : true
+					},
+					{
+						text : '项目原材料超领单查询',
+						id : 'project.project_query_overpicklist',
 						leaf : true
 					},
 					// {

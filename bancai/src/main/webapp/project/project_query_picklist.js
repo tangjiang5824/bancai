@@ -255,7 +255,7 @@ Ext.define('project.project_query_picklist',{
                     text : '打印',
                     flex :1 ,
                     renderer:function(value, cellmeta){
-                        return "<INPUT type='button' value='打印工单' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
+                        return "<INPUT type='button' value='打印领料单' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
                     },
                 },
                 ],
