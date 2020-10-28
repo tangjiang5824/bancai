@@ -207,6 +207,7 @@ Ext.define('project.result.designlist_match_result',{
                 3: { value: '3', name: '旧板' },
                 4: { value: '4', name: '原材料新板' },
                 9: { value: '5', name: '未匹配成功' },
+                null: { value: 'null', name: 'null' },
             }
         });
 

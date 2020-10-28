@@ -51,6 +51,29 @@ Ext.define('project.project_query_picklist',{
             listeners:{
                 select: function(combo, record, index) {
                     console.log(record[0].data.projectName);
+                },
+                listeners:{
+                    //下拉框搜索
+                    beforequery :function(e){
+                        var combo = e.combo;
+                        combo.collapse();//收起
+                        var value = combo.getValue();
+                        if (!e.forceAll) {//如果不是通过选择，而是文本框录入
+                            combo.store.clearFilter();
+                            combo.store.filterBy(function(record, id) {
+                                var text = record.get(combo.displayField);
+                                // 用自己的过滤规则,如写正则式
+                                return (text.indexOf(value) != -1);
+                            });
+                            combo.onLoad();//不加第一次会显示不出来
+                            combo.expand();
+                            return false;
+                        }
+                        if(!value) {
+                            //如果文本框没值，清除过滤器
+                            combo.store.clearFilter();
+                        }
+                    },
                 }
             }
         });
@@ -255,7 +278,7 @@ Ext.define('project.project_query_picklist',{
                     text : '打印',
                     flex :1 ,
                     renderer:function(value, cellmeta){
-                        return "<INPUT type='button' value='打印工单' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
+                        return "<INPUT type='button' value='打印领料单' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
                     },
                 },
                 ],

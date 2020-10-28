@@ -58,7 +58,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
             store: storeNameList,
         });
 
-        var oldPanelNameList = Ext.create('Ext.data.Store',{
+        var oldPanelNameStore = Ext.create('Ext.data.Store',{
             fields : [ 'oldpanelName'],
             proxy : {
                 type : 'ajax',
@@ -70,24 +70,45 @@ Ext.define('oldpanel.oldpanel_Inbound', {
             },
             autoLoad : true
         });
-        var oldpanelTypeList = Ext.create('Ext.form.ComboBox',{
+        var oldpanelNameList = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '旧板类型',
             labelWidth : 70,
             width : 230,
-            id :  'oldpanelType',
-            name : 'oldpanelType',
+            id :  'oldpanelNameList',
+            name : 'oldpanelNameList',
             matchFieldWidth: false,
             emptyText : "--请选择--",
-            displayField: 'oldpanelTypeName',
-            valueField: 'oldpanelType',
-            editable : false,
-            store: oldPanelNameList,
+            displayField: 'oldpanelNameList',
+            valueField: 'oldpanelNameList',
+            editable : true,
+            store: oldPanelNameStore,
             listeners:{
                 select: function(combo, record, index) {
 
                     console.log(oldpanelTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
                     //console.log(record[0].data.materialName);
-                }
+                },
+                //下拉框搜索
+                beforequery :function(e){
+                    var combo = e.combo;
+                    combo.collapse();//收起
+                    var value = combo.getValue();
+                    if (!e.forceAll) {//如果不是通过选择，而是文本框录入
+                        combo.store.clearFilter();
+                        combo.store.filterBy(function(record, id) {
+                            var text = record.get(combo.displayField);
+                            // 用自己的过滤规则,如写正则式
+                            return (text.indexOf(value) != -1);
+                        });
+                        combo.onLoad();//不加第一次会显示不出来
+                        combo.expand();
+                        return false;
+                    }
+                    if(!value) {
+                        //如果文本框没值，清除过滤器
+                        combo.store.clearFilter();
+                    }
+                },
             }
 
         });
@@ -132,6 +153,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                 {xtype: 'textfield', fieldLabel: '旧板品名', id: 'oldpanelName', width: 300, labelWidth: 60,
                     //margin: '0 10 0 40',
                     name: 'oldpanelNo', value: ""},
+                oldpanelNameList,
                 //{xtype: 'textfield', fieldLabel: '重量', id: 'weight', width: 190, labelWidth: 30, margin: '0 10 0 50', name: 'weight', value: ""},
                 //{xtype: 'textfield', fieldLabel: '仓库名称', id: 'warehouseNo', width: 220, labelWidth: 60, margin: '0 10 0 50', name: 'warehouseNo', value: ""},
                 //{xtype: 'textfield', fieldLabel: '存放位置', id: 'position', width: 220, labelWidth: 60, margin: '0 10 0 50', name: 'position', value: ""},

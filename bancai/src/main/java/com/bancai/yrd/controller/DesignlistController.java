@@ -376,6 +376,30 @@ public class DesignlistController {
         }
         return queryService.queryDataPage(start, limit, c, "requisition_order_view");
     }
+
+    /*
+     * 查询超领单
+     * */
+    @RequestMapping("/order/queryOverRequisitionOrder.do")
+    public WebResponse queryOverRequisitionOrder(String projectId, String operator,String requisitionOrderId, String timeStart, String timeEnd,Integer start,Integer limit){
+        mysqlcondition c=new mysqlcondition();
+        if (null!=projectId&&projectId.length() != 0) {
+            c.and(new mysqlcondition("projectId", "=", projectId));
+        }
+        if (null!=requisitionOrderId&&requisitionOrderId.length() != 0) {
+            c.and(new mysqlcondition("requisitionOrderId", "=", requisitionOrderId));
+        }
+        if (null!=operator&&operator.length() != 0) {
+            c.and(new mysqlcondition("operator", "=", operator));
+        }
+        if (null!=timeStart&&timeStart.length() != 0) {
+            c.and(new mysqlcondition("time", ">=", timeStart));
+        }
+        if (null!=timeEnd&&timeEnd.length() != 0) {
+            c.and(new mysqlcondition("time", "<=", timeEnd));
+        }
+        return queryService.queryDataPage(start, limit, c, "over_requisition_order_view");
+    }
 //    public void queryRequisitionOrder(String projectId, String operator, String timeStart, String timeEnd,
 //                                      HttpServletResponse response) throws IOException, JSONException {
 //        DataList requisitionOrderList = designlistService.findRequisitionOrder(projectId,operator,timeStart,timeEnd);
@@ -438,6 +462,41 @@ public class DesignlistController {
             c.and(new mysqlcondition("isCompleteMatch", "=", isCompleteMatch));
         }
         return queryService.queryDataPage(start, limit, c, tableName);
+    }
+
+    /*
+     * 查询某张超领单细节
+     * */
+    @RequestMapping("/order/queryOverRequisitionOrderDetail.do")
+    @ApiOperation("超领单细节查询")
+    public WebResponse queryOverRequisitionOrderDetail(String type, String requisitionOrderId, String warehouseName, String buildingId,
+                                                   String buildingpositionId,String isCompleteMatch,Integer start,Integer limit){
+        mysqlcondition c=new mysqlcondition();
+        if (null!=requisitionOrderId&&requisitionOrderId.length() != 0) {
+            c.and(new mysqlcondition("requisitionOrderId", "=", requisitionOrderId));
+        }else {
+            WebResponse response = new WebResponse();
+            response.setSuccess(false);
+            response.setErrorCode(100);//未获取到领料单号
+            response.setMsg("未获取到领料单号");
+            return response;
+        }
+        if (null!=type&&type.length() != 0) {
+            c.and(new mysqlcondition("type", "=", type));
+        }
+        if (null!=warehouseName&&warehouseName.length() != 0) {
+            c.and(new mysqlcondition("warehouseName", "=", warehouseName));
+        }
+        if (null!=buildingId&&buildingId.length() != 0) {
+            c.and(new mysqlcondition("buildingId", "=", buildingId));
+        }
+        if (null!=buildingpositionId&&buildingpositionId.length() != 0) {
+            c.and(new mysqlcondition("buildingpositionId", "=", buildingpositionId));
+        }
+        if (null!=isCompleteMatch&&isCompleteMatch.length() != 0) {
+            c.and(new mysqlcondition("isCompleteMatch", "=", isCompleteMatch));
+        }
+        return queryService.queryDataPage(start, limit, c, "requisition_order_detail_view");
     }
 //    public void queryRequisitionOrderDetail(String type, String requisitionOrderId, String warehouseName, String buildingId,
 //                                            String buildingpositionId,HttpServletResponse response) throws IOException, JSONException {
