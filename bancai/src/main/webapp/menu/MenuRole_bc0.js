@@ -95,6 +95,11 @@ Ext.define("menu.MenuRole_bc0", {
 						leaf : true
 					},
 					{
+						text : '领料(自定义)',
+						id : 'material.material_Receive_input',
+						leaf : true
+					},
+					{
 						text : '退料',
 						id : 'material.material_backcheck',
 						leaf : true

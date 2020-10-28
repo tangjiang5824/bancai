@@ -67,6 +67,29 @@ Ext.define('project.material_over_pick',{
                     });
                     //buildingName,下拉框重新加载数据
                     buildingName.setStore(tableListStore2);
+                },
+                listeners:{
+                    //下拉框搜索
+                    beforequery :function(e){
+                        var combo = e.combo;
+                        combo.collapse();//收起
+                        var value = combo.getValue();
+                        if (!e.forceAll) {//如果不是通过选择，而是文本框录入
+                            combo.store.clearFilter();
+                            combo.store.filterBy(function(record, id) {
+                                var text = record.get(combo.displayField);
+                                // 用自己的过滤规则,如写正则式
+                                return (text.indexOf(value) != -1);
+                            });
+                            combo.onLoad();//不加第一次会显示不出来
+                            combo.expand();
+                            return false;
+                        }
+                        if(!value) {
+                            //如果文本框没值，清除过滤器
+                            combo.store.clearFilter();
+                        }
+                    },
                 }
             }
         });
@@ -430,23 +453,23 @@ Ext.define('project.material_over_pick',{
                 emptyMsg:'无数据'
             }],
             listeners: {
-                validateedit : function(editor, e) {
-                    var field=e.field
-                    var id=e.record.data.id
-                    if(id)
-                    Ext.Ajax.request({
-                        url:"data/EditCellById.do",  //EditDataById.do
-                        params:{
-                            tableName:tableName,
-                            field:field,
-                            value:e.value,
-                            id:id
-                        },
-                        success:function (response) {
-                            //console.log(response.responseText);
-                        }
-                    })
-                }
+                // validateedit : function(editor, e) {
+                //     var field=e.field
+                //     var id=e.record.data.id
+                //     if(id)
+                //     Ext.Ajax.request({
+                //         url:"data/EditCellById.do",  //EditDataById.do
+                //         params:{
+                //             tableName:tableName,
+                //             field:field,
+                //             value:e.value,
+                //             id:id
+                //         },
+                //         success:function (response) {
+                //             //console.log(response.responseText);
+                //         }
+                //     })
+                // }
             }
         });
 

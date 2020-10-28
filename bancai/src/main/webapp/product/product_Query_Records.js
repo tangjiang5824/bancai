@@ -61,9 +61,29 @@ Ext.define('product.product_Query_Records',{
             listeners:{
                 select: function(combo, record, index) {
                     console.log(record[0].data.projectName);
-                }
+                },
+                //下拉框搜索
+                beforequery :function(e){
+                    var combo = e.combo;
+                    combo.collapse();//收起
+                    var value = combo.getValue();
+                    if (!e.forceAll) {//如果不是通过选择，而是文本框录入
+                        combo.store.clearFilter();
+                        combo.store.filterBy(function(record, id) {
+                            var text = record.get(combo.displayField);
+                            // 用自己的过滤规则,如写正则式
+                            return (text.indexOf(value) != -1);
+                        });
+                        combo.onLoad();//不加第一次会显示不出来
+                        combo.expand();
+                        return false;
+                    }
+                    if(!value) {
+                        //如果文本框没值，清除过滤器
+                        combo.store.clearFilter();
+                    }
+                },
             }
-
         });
 
         //出库or入库选择
