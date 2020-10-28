@@ -374,7 +374,7 @@ public class DesignlistController {
         if (null!=timeEnd&&timeEnd.length() != 0) {
             c.and(new mysqlcondition("time", "<=", timeEnd));
         }
-        return queryService.queryDataPage(start, limit, c, "requisition_order_view");
+        return queryService.queryDataPage(start, limit, c, "requisition_order_union_view");
     }
 
     /*
@@ -425,6 +425,7 @@ public class DesignlistController {
         mysqlcondition c=new mysqlcondition();
         String tableName = "requisition_order_detail_view";
         if (null!=type&&type.length() != 0) {
+            System.out.println(type);
             if((!type.equals("4"))||(origin.equals("1"))) {
                 c.and(new mysqlcondition("type", "=", type));
                 if (null!=requisitionOrderId&&requisitionOrderId.length() != 0) {
@@ -439,7 +440,8 @@ public class DesignlistController {
             }else {
                 tableName = "over_requisition_order_detail_view";
                 if (null!=requisitionOrderId&&requisitionOrderId.length() != 0) {
-                    c.and(new mysqlcondition("overReqOrderId", "=", requisitionOrderId));
+                    //c.and(new mysqlcondition("overReqOrderId", "=", requisitionOrderId));
+                    c.and(new mysqlcondition("requisitionOrderId", "=", requisitionOrderId));
                 }else {
                     WebResponse response = new WebResponse();
                     response.setSuccess(false);
