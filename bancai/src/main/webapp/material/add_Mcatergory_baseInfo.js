@@ -147,56 +147,6 @@ Ext.define('material.add_Mcatergory_baseInfo', {
                         allowBlank : false,
                     }
                 },
-                // {
-                //     dataIndex : 'width',
-                //     name : '宽',
-                //     text : '宽',
-                //     //width : 110,
-                //     editor : {// 文本字段
-                //         xtype : 'textfield',
-                //         allowBlank : false
-                //     }
-                // },
-                // {
-                //     dataIndex : 'specification',
-                //     name : '规格',
-                //     text : '规格/m',
-                //     //width : 110,
-                //     editor : {// 文本字段
-                //         xtype : 'textfield',
-                //         allowBlank : false,
-                //     }
-                // },
-                // {
-                //     dataIndex : 'unitWeight',
-                //     name : '单重',
-                //     text : '单重',
-                //     //width : 110,
-                //     editor : {// 文本字段
-                //         xtype : 'textfield',
-                //         allowBlank : false,
-                //     }
-                // },
-                // {
-                //     dataIndex : 'inventoryUnit',
-                //     name : '库存单位',
-                //     text : '库存单位',
-                //     //width : 110,
-                //     editor : {// 文本字段
-                //         xtype : 'textfield',
-                //         allowBlank : false,
-                //     }
-                // },
-                // {
-                //     dataIndex : 'description',
-                //     name : '描述',
-                //     text : '描述',
-                //     //width : 110,
-                //     editor : {// 文本字段
-                //         xtype : 'textfield',
-                //         allowBlank : false,
-                //     }
-                // },
 
                 {
                     dataIndex : 'typeId',
