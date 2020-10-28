@@ -62,24 +62,24 @@ Ext.define('oldpanel.oldpanel_Inbound', {
             fields : [ 'oldpanelName'],
             proxy : {
                 type : 'ajax',
-                url : 'oldpanel/oldpanelType.do',
+                url : 'material/findAllBytableName.do?tableName=oldpanel_info',
                 reader : {
                     type : 'json',
-                    rootProperty: 'typeList',
+                    rootProperty: 'oldpanel_info',
                 }
             },
             autoLoad : true
         });
         var oldpanelNameList = Ext.create('Ext.form.ComboBox',{
-            fieldLabel : '旧板类型',
+            fieldLabel : '旧板品名',
             labelWidth : 70,
             width : 230,
             id :  'oldpanelNameList',
             name : 'oldpanelNameList',
             matchFieldWidth: false,
             emptyText : "--请选择--",
-            displayField: 'oldpanelNameList',
-            valueField: 'oldpanelNameList',
+            displayField: 'oldpanelName',
+            valueField: 'oldpanelName',
             editable : true,
             store: oldPanelNameStore,
             listeners:{
@@ -150,9 +150,9 @@ Ext.define('oldpanel.oldpanel_Inbound', {
         var toolbar2 = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
             items: [
-                {xtype: 'textfield', fieldLabel: '旧板品名', id: 'oldpanelName', width: 300, labelWidth: 60,
-                    //margin: '0 10 0 40',
-                    name: 'oldpanelNo', value: ""},
+                // {xtype: 'textfield', fieldLabel: '旧板品名', id: 'oldpanelName', width: 300, labelWidth: 60,
+                //     //margin: '0 10 0 40',
+                //     name: 'oldpanelName', value: ""},
                 oldpanelNameList,
                 //{xtype: 'textfield', fieldLabel: '重量', id: 'weight', width: 190, labelWidth: 30, margin: '0 10 0 50', name: 'weight', value: ""},
                 //{xtype: 'textfield', fieldLabel: '仓库名称', id: 'warehouseNo', width: 220, labelWidth: 60, margin: '0 10 0 50', name: 'warehouseNo', value: ""},
@@ -181,7 +181,8 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                     text : '添加',
                     handler: function(){
                         //var classificationName = Ext.getCmp('classification').getValue();
-                        var oldpanelName = Ext.getCmp('oldpanelName').getValue();
+                        log(Ext.getCmp('oldpanelNameList').getValue())
+                        var oldpanelName = Ext.getCmp('oldpanelNameList').getValue();
                         var oldpanelNo = Ext.getCmp('oldpanelNo').getValue();
                         //var inventoryUnit = Ext.getCmp('inventoryUnit').getValue();
                         var count = Ext.getCmp('count').getValue();

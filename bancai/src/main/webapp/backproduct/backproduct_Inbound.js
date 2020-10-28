@@ -151,7 +151,7 @@ Ext.define('backproduct.backproduct_Inbound', {
             editable : false,
         });
 
-
+        //单条录入和添加记录按钮
         var toolbar2 = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
             items: [
@@ -369,7 +369,7 @@ Ext.define('backproduct.backproduct_Inbound', {
             },
             ]
         });
-
+        //批量上传下载模板toolbar
         var toolbar4 = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
             items : [

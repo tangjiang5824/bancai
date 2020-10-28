@@ -172,7 +172,7 @@ Ext.define('material.material_Receive',{
             },
             autoLoad : true
         });
-
+        //领料单查询界面
         var toolbar = Ext.create('Ext.toolbar.Toolbar',{
             dock : "top",
             id : "toolbar",
@@ -294,6 +294,11 @@ Ext.define('material.material_Receive',{
                 {
                     dataIndex:'projectName',
                     text:'所属项目',
+                    flex :1
+                },
+                {
+                    dataIndex:'origin',
+                    text:'领料单类型',
                     flex :1
                 },
             ],
@@ -671,6 +676,16 @@ Ext.define('material.material_Receive',{
                     renderer: function (value) {
                         return product.model.originType[value].name; // key-value
                     },
+                },
+                {
+                    dataIndex:'buildingName',
+                    text:'楼栋名',
+                    flex :1,
+                },
+                {
+                    dataIndex:'buildingpositionName',
+                    text:'位置',
+                    flex :1,
                 },
                 {
                     dataIndex:'warehouseName',
