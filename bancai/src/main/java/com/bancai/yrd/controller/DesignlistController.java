@@ -396,20 +396,34 @@ public class DesignlistController {
      * */
     @RequestMapping("/order/queryRequisitionOrderDetail.do")
     @ApiOperation("领料单细节查询")
-    public WebResponse queryRequisitionOrderDetail(String type, String requisitionOrderId, String warehouseName, String buildingId,
+    public WebResponse queryRequisitionOrderDetail(String type,String origin, String requisitionOrderId, String warehouseName, String buildingId,
                                                    String buildingpositionId,String isCompleteMatch,Integer start,Integer limit){
         mysqlcondition c=new mysqlcondition();
-        if (null!=requisitionOrderId&&requisitionOrderId.length() != 0) {
-            c.and(new mysqlcondition("requisitionOrderId", "=", requisitionOrderId));
-        }else {
-            WebResponse response = new WebResponse();
-            response.setSuccess(false);
-            response.setErrorCode(100);//未获取到领料单号
-            response.setMsg("未获取到领料单号");
-            return response;
-        }
+        String tableName = "requisition_order_detail_view";
         if (null!=type&&type.length() != 0) {
-            c.and(new mysqlcondition("type", "=", type));
+            if((!type.equals("4"))||(origin.equals("1"))) {
+                c.and(new mysqlcondition("type", "=", type));
+                if (null!=requisitionOrderId&&requisitionOrderId.length() != 0) {
+                    c.and(new mysqlcondition("requisitionOrderId", "=", requisitionOrderId));
+                }else {
+                    WebResponse response = new WebResponse();
+                    response.setSuccess(false);
+                    response.setErrorCode(100);
+                    response.setMsg("未获取到领料单号");
+                    return response;
+                }
+            }else {
+                tableName = "over_requisition_order_detail_view";
+                if (null!=requisitionOrderId&&requisitionOrderId.length() != 0) {
+                    c.and(new mysqlcondition("overReqOrderId", "=", requisitionOrderId));
+                }else {
+                    WebResponse response = new WebResponse();
+                    response.setSuccess(false);
+                    response.setErrorCode(200);
+                    response.setMsg("未获取到超领单号");
+                    return response;
+                }
+            }
         }
         if (null!=warehouseName&&warehouseName.length() != 0) {
             c.and(new mysqlcondition("warehouseName", "=", warehouseName));
@@ -423,7 +437,7 @@ public class DesignlistController {
         if (null!=isCompleteMatch&&isCompleteMatch.length() != 0) {
             c.and(new mysqlcondition("isCompleteMatch", "=", isCompleteMatch));
         }
-        return queryService.queryDataPage(start, limit, c, "requisition_order_detail_view");
+        return queryService.queryDataPage(start, limit, c, tableName);
     }
 //    public void queryRequisitionOrderDetail(String type, String requisitionOrderId, String warehouseName, String buildingId,
 //                                            String buildingpositionId,HttpServletResponse response) throws IOException, JSONException {
@@ -781,6 +795,58 @@ public class DesignlistController {
     }
 
 
+
+    @RequestMapping(value = "/backStore/createReturnOrder.do",method = RequestMethod.POST)
+    @ApiOperation("新建超领单")
+    public WebResponse createOverReqOrder(String s, String projectId,String buildingId,String buildingpositionId,String description,String operator, HttpSession session) throws JSONException {
+        WebResponse response = new WebResponse();
+        try {
+            JSONArray jsonArray = new JSONArray(s);
+            if(jsonArray.length()==0){
+                response.setSuccess(false);
+                response.setErrorCode(100);
+                response.setMsg("接收到的数据为空");
+                return response;
+            }
+            if((projectId==null)||(projectId.length()==0)||(buildingId==null)||(buildingId.length()==0)){
+                response.setSuccess(false);
+                response.setErrorCode(200);
+                response.setMsg("未选择项目或楼栋");
+                return response;
+            }
+            if((operator==null)||(operator.length()==0)){
+                response.setSuccess(false);
+                response.setErrorCode(300);
+                response.setMsg("未选择超领申请人");
+                return response;
+            }
+            if((description==null)||(description.length()==0)){
+                response.setSuccess(false);
+                response.setErrorCode(400);
+                response.setMsg("未输入超领原因");
+                return response;
+            }
+            if((buildingpositionId==null)||(buildingpositionId.length()==0))
+                buildingpositionId = null;
+            String userId = (String)session.getAttribute("userid");
+            DataList errorList = analyzeNameService.checkCountALessThanCountBInJsonArray(jsonArray,"count","countUse");
+            if(errorList.size()!=0){
+                response.put("errorList",errorList);
+                response.put("errorNum",errorList.size());
+                response.setSuccess(false);
+                response.setErrorCode(400);
+                response.setMsg("存在错误输入");
+                return response;
+            }
+            boolean result = designlistService.createOverReqOrder(jsonArray,projectId,buildingId,buildingpositionId,description,operator,userId);
+            response.setSuccess(result);
+        } catch (Exception e) {
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误
+            response.setMsg(e.getMessage());
+        }
+        return response;
+    }
 
 
 
