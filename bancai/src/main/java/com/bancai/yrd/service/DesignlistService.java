@@ -84,11 +84,23 @@ public class DesignlistService extends BaseService{
      */
     @Transactional
     public boolean matchDesignlist(String projectId, String buildingId, String buildingpositionId) throws ScriptException {
-        panelMatchService.matchBackProduct(projectId,buildingId,buildingpositionId);
-        panelMatchService.matchPreprocess(projectId,buildingId,buildingpositionId);
-        panelMatchService.matchOldpanel(projectId,buildingId,buildingpositionId);
-        new_panel_match.match(Integer.parseInt(projectId),Integer.parseInt(buildingId),Integer.parseInt(buildingpositionId));
+        if(!isProjectPreprocess(projectId)){
+            panelMatchService.matchBackProduct(projectId,buildingId,buildingpositionId);
+            panelMatchService.matchPreprocess(projectId,buildingId,buildingpositionId);
+            panelMatchService.matchOldpanel(projectId,buildingId,buildingpositionId);
+            new_panel_match.match(Integer.parseInt(projectId),Integer.parseInt(buildingId),Integer.parseInt(buildingpositionId));
+        }else {
+            new_panel_match.match(Integer.parseInt(projectId),Integer.parseInt(buildingId),Integer.parseInt(buildingpositionId));
+        }
         return panelMatchService.matchError(projectId,buildingId,buildingpositionId);
+    }
+
+    private boolean isProjectPreprocess(String projectId){
+        DataList list = queryService.query("select * from project where id=?",projectId);
+        if(!list.isEmpty()){
+            return Integer.parseInt(list.get(0).get("isPreprocess").toString()) != 0;
+        }
+        return false;
     }
 
     private boolean isDesignlistPositionValid(String projectId,String buildingId,String position){
