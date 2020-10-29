@@ -554,6 +554,7 @@ public class DesignlistService extends BaseService{
     @Transactional
     public void finishRequisitionOrder(JSONArray jsonArray, String requisitionOrderId, String projectId, String operator, String userId){
         String type = jsonArray.getJSONObject(0).get("type")+"";
+        String origin = jsonArray.getJSONObject(0).get("origin")+"";
         String store = "";
         switch (type){
             case "1":
@@ -568,28 +569,47 @@ public class DesignlistService extends BaseService{
             case "4":
                 store = "material";
                 break;
+            default:
+                break;
         }
         //order log
         //store log
-        int requisitionOrderLogId = requisitionOrderAddLogBackId("2",requisitionOrderId,userId,operator);
-        int storeLogId = outboundStoreAddLogBackId(store,userId,operator,projectId);
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonTemp = jsonArray.getJSONObject(i);
-            String requisitionOrderDetailId=jsonTemp.get("requisitionOrderDetailId")+"";
-            String count = (jsonTemp.get("count")+"").trim();
-            String storeId =  jsonTemp.get("storeId")+"";
-            String infoId = jsonTemp.get("infoId")+"";
-            String buildingId =  jsonTemp.get("buildingId")+"";
-            String buildingpositionId = jsonTemp.get("buildingpositionId")+"";
-            //store count reduce
-            //order count reduce
-            //store log detail
-            //order log detail
-            outboundStoreCountUpdate(store,storeId,count);
-            outboundRequisitionCountUpdate(requisitionOrderDetailId,count);
-            outboundStoreAddLogDetail(type,count,buildingId,buildingpositionId,infoId,storeId,String.valueOf(storeLogId));
-            outboundRequisitionAddLogDetail(String.valueOf(requisitionOrderLogId),requisitionOrderDetailId,count);
+        if(origin.equals("1")){
+            int requisitionOrderLogId = requisitionOrderAddLogBackId("2",requisitionOrderId,userId,operator);
+            int storeLogId = outboundStoreAddLogBackId(store,userId,operator,projectId);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonTemp = jsonArray.getJSONObject(i);
+                String requisitionOrderDetailId=jsonTemp.get("requisitionOrderDetailId")+"";
+                String count = (jsonTemp.get("count")+"").trim();
+                String storeId =  jsonTemp.get("storeId")+"";
+                String infoId = jsonTemp.get("infoId")+"";
+                String buildingId =  jsonTemp.get("buildingId")+"";
+                String buildingpositionId = jsonTemp.get("buildingpositionId")+"";
+                //store count reduce
+                //order count reduce
+                //store log detail
+                //order log detail
+                outboundStoreCountUpdate(store,storeId,count);
+                outboundRequisitionCountUpdate(requisitionOrderDetailId,count);
+                outboundStoreAddLogDetail(type,count,buildingId,buildingpositionId,infoId,storeId,String.valueOf(storeLogId));
+                outboundRequisitionAddLogDetail(String.valueOf(requisitionOrderLogId),requisitionOrderDetailId,count);
+            }
+        }else if(origin.equals("2")){
+            int storeLogId = outboundStoreAddLogBackId(store,userId,operator,projectId);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonTemp = jsonArray.getJSONObject(i);
+                String requisitionOrderDetailId=jsonTemp.get("requisitionOrderDetailId")+"";
+                String count = (jsonTemp.get("count")+"").trim();
+                String storeId =  jsonTemp.get("storeId")+"";
+                String infoId = jsonTemp.get("infoId")+"";
+                String buildingId =  jsonTemp.get("buildingId")+"";
+                String buildingpositionId = jsonTemp.get("buildingpositionId")+"";
+                outboundStoreCountUpdate(store,storeId,count);
+                outboundOverRequisitionCountUpdate(requisitionOrderDetailId,count);
+                outboundStoreAddLogDetail(type,count,buildingId,buildingpositionId,infoId,storeId,String.valueOf(storeLogId));
+            }
         }
+
     }
 
     /**
@@ -648,6 +668,10 @@ public class DesignlistService extends BaseService{
     }
     private void outboundRequisitionCountUpdate(String requisitionOrderDetailId,String count){
         jo.update("update requisition_order_detail set countRec=countRec-\""+count+
+                "\" where id=\""+requisitionOrderDetailId+"\"");
+    }
+    private void outboundOverRequisitionCountUpdate(String requisitionOrderDetailId,String count){
+        jo.update("update over_requisition_order_detail set countRec=countRec-\""+count+
                 "\" where id=\""+requisitionOrderDetailId+"\"");
     }
     private boolean outboundStoreAddLogDetail(String type,String count,String buildingId, String buildingpositionId,

@@ -184,20 +184,20 @@ Ext.define('project.material_over_pick',{
                     value:"",
                 },
                 //申请日期
-                {
-                    xtype: 'datefield',
-                    margin: '0 50 0 0',
-                    fieldLabel: '申请日期',
-                    id: 'overpickTime',
-                    labelWidth : 55,
-                    width : 220,
-                    name: 'overpickTime',
-                    value: "",
-                    format : 'Y-m-d',
-                    editable : false,
-                    matchFieldWidth: true,
-                    style:"margin-top:50px;",
-                },
+                // {
+                //     xtype: 'datefield',
+                //     margin: '0 50 0 0',
+                //     fieldLabel: '申请日期',
+                //     id: 'overpickTime',
+                //     labelWidth : 55,
+                //     width : 220,
+                //     name: 'overpickTime',
+                //     value: "",
+                //     format : 'Y-m-d',
+                //     editable : false,
+                //     matchFieldWidth: true,
+                //     style:"margin-top:50px;",
+                // },
                 //申请人
                 {
                     fieldLabel : '申请人',
@@ -249,6 +249,12 @@ Ext.define('project.material_over_pick',{
                 handler : function() {
                     // 取出grid的字段名字段类型
                     //var userid="<%=session.getAttribute('userid')%>";
+                    var projectId = Ext.getCmp('projectName').getValue();
+                    var buildingId = Ext.getCmp('buildingName').getValue();
+                    var positionId = Ext.getCmp('positionName').getValue();
+                    var overpick_res = Ext.getCmp('overpick_res').getValue();
+                    var operator = Ext.getCmp('operator').getValue();
+
                     var select = Ext.getCmp('material_Query_Data_Main').getStore()
                         .getData();
                     var s = new Array();
@@ -262,11 +268,18 @@ Ext.define('project.material_over_pick',{
                     //alert(s);//数组s存放表格中的数据，每条数据以json格式存放
 
                     Ext.Ajax.request({
-                        url : 'material/insertIntoMaterialType.do', //HandleDataController
+                        url : 'order/createOverRequisitionOrder.do', //HandleDataController
                         method:'POST',
                         //submitEmptyText : false,
                         params : {
                             tableName:tableName,
+                            projectId:projectId,
+                            buildingId:buildingId,
+                            buildingpositionId:positionId,
+                            description:overpick_res,
+                            operator:operator,
+
+
                             // materialType:materialtype,
                             s : "[" + s + "]",
 
@@ -429,7 +442,7 @@ Ext.define('project.material_over_pick',{
                     text : '可用数量',
                     flex :1,
                 },{
-                    dataIndex : 'countOverpick',
+                    dataIndex : 'count',
                     name : '超领数量',
                     text : '超领数量',
                     flex :1,
