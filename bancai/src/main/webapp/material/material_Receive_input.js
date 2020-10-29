@@ -139,20 +139,10 @@ Ext.define('material.material_Receive_input',{
                     var id = select.id;//项目名对应的id
                     console.log(select);
                     //确定后面的属性值
-                    var inventoryUnit = select.inventoryUnit;
-                    var materialTypeName = select.materialTypeName;
-                    //存放位置，行列
-                    var warehouseName = select.warehouseName;
-                    var countStore = select.countStore;
-                    var countUse = select.countUse;
+                    var materialStoreId = select.storeId;
+                    var sc = Ext.getCmp('pro_picking_MaterialGrid').getSelectionModel().getSelection();
 
-                    var sc = Ext.getCmp('material_Query_Data_Main').getSelectionModel().getSelection();
-
-                    sc[0].set('inventoryUnit',inventoryUnit);
-                    sc[0].set('materialTypeName',materialTypeName);
-                    sc[0].set('warehouseName',warehouseName);
-                    sc[0].set('countStore',countStore);
-                    sc[0].set('countUse',countUse);
+                    sc[0].set('materialStoreId',materialStoreId);
                 },
 
                 //下拉框搜索
@@ -611,15 +601,15 @@ Ext.define('material.material_Receive_input',{
                     text:'待领数量',
                     flex :1,
                 },
-                {
-                    dataIndex:'count',
-                    text:'领取数量',
-                    flex :1,
-                    editor : {
-                        xtype : 'textfield',
-                        allowBlank : true
-                    }
-                },
+                // {
+                //     dataIndex:'count',
+                //     text:'领取数量',
+                //     flex :1,
+                //     editor : {
+                //         xtype : 'textfield',
+                //         allowBlank : true
+                //     }
+                // },
             ],
             // height:'100%',
             flex:1,
@@ -734,13 +724,12 @@ Ext.define('material.material_Receive_input',{
                         console.log('1===========')
                         var select = Ext.getCmp('pro_picking_MaterialGrid').getStore()
                             .getData();
-                        // console.log(select)
+                        // console.log(select.items[0].data.inputName)
                         var projectId = Ext.getCmp('project_Id').getValue();
                         var s = new Array();
                         select.each(function(rec) {
                             s.push(JSON.stringify(rec.data));
                         });
-                        console.log(s)
                         console.log('2===========')
                         var operator = Ext.getCmp('operator_pick').getValue();
                         console.log('2===========',operator)
@@ -901,6 +890,12 @@ Ext.define('material.material_Receive_input',{
                         }
                         return returnvalue;
                     },
+                },
+                {
+                    dataIndex:'materialStoreId',
+                    text:'材料storeId',
+                    hidden:true,
+                    flex :1,
                 },
                 {
                     dataIndex:'name',
