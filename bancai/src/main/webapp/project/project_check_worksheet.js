@@ -11,7 +11,19 @@ Ext.define('project.project_check_worksheet',{
 
         //存放所选的原材料的具体规格
         var materialList = '';
-
+        //职员信息
+        var workerListStore = Ext.create('Ext.data.Store',{
+            fields : [ 'typeName'],
+            proxy : {
+                type : 'ajax',
+                url : '/material/findAllBytableName.do?tableName=department_worker',
+                reader : {
+                    type : 'json',
+                    rootProperty: 'department_worker',
+                },
+            },
+            autoLoad : true
+        });
         //工单审核状态：枚举类型
         Ext.define('Worksheet.check.State', {
             statics: { // 关键
@@ -171,7 +183,8 @@ Ext.define('project.project_check_worksheet',{
                     dataIndex:'time',
                     text:'创建时间',
                     //editor:{xtype : 'textfield', allowBlank : false}
-                    flex :1
+                    flex :1,
+                    renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')
                 }, {
                     dataIndex:'isActive',
                     text:'是否审核',
@@ -302,15 +315,30 @@ Ext.define('project.project_check_worksheet',{
                     bodyStyle: 'background:#fff;',
                     hidden:true
                 },
+                // {
+                //     xtype: 'textfield',
+                //     margin : '0 40 0 0',
+                //     fieldLabel: '审核人',
+                //     id :'operator_back',
+                //     width: 150,
+                //     labelWidth: 50,
+                //     name: 'operator_back',
+                //     value:"",
+                // },
                 {
-                    xtype: 'textfield',
-                    margin : '0 40 0 0',
-                    fieldLabel: '审核人',
-                    id :'operator_back',
+                    fieldLabel : '审核人',
+                    xtype : 'combo',
+                    name : 'operator_back',
+                    id : 'operator_back',
+                    // disabled : true,
+                    // width:'95%',
+                    margin: '0 40 0 0',
                     width: 150,
-                    labelWidth: 50,
-                    name: 'operator_back',
-                    value:"",
+                    labelWidth: 45,
+                    store : workerListStore,
+                    displayField : 'workerName',
+                    valueField : 'id',
+                    editable : true,
                 },
                 {
                     xtype : 'datefield',
@@ -447,7 +475,14 @@ Ext.define('project.project_check_worksheet',{
                     text: '产品数量',
                     flex :1,
                     dataIndex: 'count'
-                }
+                },
+                {
+                    text: '工单创建时间',
+                    flex :1,
+                    dataIndex: 'time',
+                    renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')
+                },
+
                 //fields:['oldpanelId','oldpanelName','count'],specification
 
             ],

@@ -184,20 +184,20 @@ Ext.define('project.material_over_pick',{
                     value:"",
                 },
                 //申请日期
-                {
-                    xtype: 'datefield',
-                    margin: '0 50 0 0',
-                    fieldLabel: '申请日期',
-                    id: 'overpickTime',
-                    labelWidth : 55,
-                    width : 220,
-                    name: 'overpickTime',
-                    value: "",
-                    format : 'Y-m-d',
-                    editable : false,
-                    matchFieldWidth: true,
-                    style:"margin-top:50px;",
-                },
+                // {
+                //     xtype: 'datefield',
+                //     margin: '0 50 0 0',
+                //     fieldLabel: '申请日期',
+                //     id: 'overpickTime',
+                //     labelWidth : 55,
+                //     width : 220,
+                //     name: 'overpickTime',
+                //     value: "",
+                //     format : 'Y-m-d',
+                //     editable : false,
+                //     matchFieldWidth: true,
+                //     style:"margin-top:50px;",
+                // },
                 //申请人
                 {
                     fieldLabel : '申请人',
@@ -249,6 +249,12 @@ Ext.define('project.material_over_pick',{
                 handler : function() {
                     // 取出grid的字段名字段类型
                     //var userid="<%=session.getAttribute('userid')%>";
+                    var projectId = Ext.getCmp('projectName').getValue();
+                    var buildingId = Ext.getCmp('buildingName').getValue();
+                    var positionId = Ext.getCmp('positionName').getValue();
+                    var overpick_res = Ext.getCmp('overpick_res').getValue();
+                    var operator = Ext.getCmp('operator').getValue();
+
                     var select = Ext.getCmp('material_Query_Data_Main').getStore()
                         .getData();
                     var s = new Array();
@@ -262,18 +268,82 @@ Ext.define('project.material_over_pick',{
                     //alert(s);//数组s存放表格中的数据，每条数据以json格式存放
 
                     Ext.Ajax.request({
-                        url : 'material/insertIntoMaterialType.do', //HandleDataController
+                        url : 'order/createOverRequisitionOrder.do', //HandleDataController
                         method:'POST',
                         //submitEmptyText : false,
                         params : {
                             tableName:tableName,
+                            projectId:projectId,
+                            buildingId:buildingId,
+                            buildingpositionId:positionId,
+                            description:overpick_res,
+                            operator:operator,
                             // materialType:materialtype,
                             s : "[" + s + "]",
-
                         },
                         success : function(response) {
-                            Ext.MessageBox.alert("提示", "录入成功！");
-                            Ext.getCmp("addMaterialBasicGrid").getStore().removeAll();
+                            // Ext.MessageBox.alert("提示", "录入成功！");
+                            // Ext.getCmp("addMaterialBasicGrid").getStore().removeAll();
+                            console.log('111111111111111111111',response);
+                            var res = response.responseText;
+                            var jsonobj = JSON.parse(res);//将json字符串转换为对象
+                            console.log(jsonobj);
+                            console.log("success--------------",jsonobj.success);
+                            console.log("errorList--------------",jsonobj['errorList']);
+                            var success = jsonobj.success;
+                            var msg = jsonobj.msg;
+                            var errorList = jsonobj.errorList;
+                            var errorCode = jsonobj.errorCode;
+                            var errorCount = jsonobj.errorNum;
+                            if(success == false){
+                                //错误输入
+                                if(errorCode == 400){
+                                    //关闭进度条
+                                    Ext.MessageBox.hide();
+                                    // Ext.MessageBox.alert("提示","匹配失败，产品位置重复或品名不合法！请重新导入" );
+                                    Ext.Msg.show({
+                                        title: '提示',
+                                        message: '创建失败，存在错误输入！\n是否查看具体错误数据',
+                                        buttons: Ext.Msg.YESNO,
+                                        icon: Ext.Msg.QUESTION,
+                                        fn: function (btn) {
+                                            if (btn === 'yes') {
+                                                //点击确认，显示重复的数据
+                                                errorlistStore.loadData(errorList);
+                                                win_errorInfo_over.show();
+                                            }
+                                        }
+                                    });
+                                }
+                                else if(errorCode == 100){
+                                    Ext.MessageBox.hide();
+                                    Ext.MessageBox.alert("提示","创建失败！接收到的数据为空" );
+                                }
+                                else if(errorCode == 200){
+                                    Ext.MessageBox.hide();
+                                    Ext.MessageBox.alert("提示","创建失败！未选择项目或楼栋" );
+                                }
+                                else if(errorCode == 300){
+                                    Ext.MessageBox.hide();
+                                    Ext.MessageBox.alert("提示","创建失败！未选择超领申请人" );
+                                }
+                                else if(errorCode == 1000){
+                                    Ext.MessageBox.hide();
+                                    Ext.MessageBox.alert("提示","创建失败，未知错误！请重新领取" );
+                                }
+                            }else{
+                                Ext.MessageBox.hide();
+                                Ext.MessageBox.alert("提示","创建成功" );
+
+                                //  领料页面重置
+                                Ext.getCmp('operator').setValue("");
+                                Ext.getCmp('projectName').setValue("");
+                                Ext.getCmp('buildingName').setValue("");
+                                Ext.getCmp('positionName').setValue("");
+                                Ext.getCmp('overpick_res').setValue("");
+
+                                Ext.getCmp("material_Query_Data_Main").getStore().removeAll();
+                            }
                         },
                         failure : function(response) {
                             Ext.MessageBox.alert("提示", "录入失败！");
@@ -282,6 +352,57 @@ Ext.define('project.material_over_pick',{
 
                 }
             }]
+        });
+
+        //错误提示，弹出框
+        var errorlistStore = Ext.create('Ext.data.Store',{
+            id: 'errorlistStore',
+            autoLoad: true,
+            fields: ['productName','position'],
+            //pageSize: itemsPerPage, // items per page
+            data:[],
+            editable:false,
+        });
+
+        //弹出框，出入库详细记录
+        var specific_errorlist_over=Ext.create('Ext.grid.Panel',{
+            id : 'specific_errorlist_over',
+            // tbar: toolbar_pop,
+            store:errorlistStore,//oldpanellogdetailList，store1的数据固定
+            dock: 'bottom',
+            columns:[
+
+                {
+                    text: '原材料',
+                    //dataIndex: 'productName',
+                    dataIndex: 'id',
+                    flex :1,
+                    width:"80"
+                },
+                {
+                    text: '错误原因',
+                    dataIndex:'errorType',
+                    flex :1,
+                }
+            ],
+            flex:1,
+            //selType:'checkboxmodel',
+            plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
+                clicksToEdit : 2
+            })],
+        });
+
+        var win_errorInfo_over = Ext.create('Ext.window.Window', {
+            // id:'win_errorInfo_over',
+            title: '错误详情',
+            height: 500,
+            width: 750,
+            layout: 'fit',
+            closable : true,
+            draggable:true,
+            closeAction : 'hidden',
+            // tbar:toolbar_pop1,
+            items:specific_errorlist_over,
         });
 
 
@@ -327,8 +448,11 @@ Ext.define('project.material_over_pick',{
                     var warehouseName = select.warehouseName;
                     var countStore = select.countStore;
                     var countUse = select.countUse;
+                    var storeId = select.storeId;
 
                     var sc = Ext.getCmp('material_Query_Data_Main').getSelectionModel().getSelection();
+
+                    sc[0].set('storeId',storeId);
 
                     sc[0].set('inventoryUnit',inventoryUnit);
                     sc[0].set('materialTypeName',materialTypeName);
@@ -392,6 +516,13 @@ Ext.define('project.material_over_pick',{
                     },
                 },
                 {
+                    dataIndex : 'storeId',
+                    name : '原材料id',
+                    text : '原材料id',
+                    hidden:true,
+                    flex :1,
+                },
+                {
                     dataIndex : 'materialTypeName',
                     name : '原材料类型',
                     text : '原材料类型',
@@ -429,7 +560,7 @@ Ext.define('project.material_over_pick',{
                     text : '可用数量',
                     flex :1,
                 },{
-                    dataIndex : 'countOverpick',
+                    dataIndex : 'count',
                     name : '超领数量',
                     text : '超领数量',
                     flex :1,

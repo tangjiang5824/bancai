@@ -149,7 +149,7 @@ public class DesignlistController {
     /*
      * 查询导入的designlist记录
      * */
-    @RequestMapping(value = "/designlist/queryUploadLog.do",method = RequestMethod.POST)
+    @RequestMapping(value = "/designlist/queryUploadLog.do")
     @ApiOperation("查询设计清单导入记录")
     public void designlistqueryUploadLog(String projectId, String buildingId, String buildingpositionId,
                                                 HttpServletResponse response) throws IOException, JSONException {
@@ -357,7 +357,7 @@ public class DesignlistController {
      * 查询领料单
      * */
     @RequestMapping("/order/queryRequisitionOrder.do")
-    public WebResponse queryRequisitionOrder(String projectId, String operator,String requisitionOrderId, String timeStart, String timeEnd,Integer start,Integer limit){
+    public WebResponse queryRequisitionOrder(String origin,String projectId, String operator,String requisitionOrderId, String timeStart, String timeEnd,Integer start,Integer limit){
         mysqlcondition c=new mysqlcondition();
         if (null!=projectId&&projectId.length() != 0) {
             c.and(new mysqlcondition("projectId", "=", projectId));
@@ -373,6 +373,11 @@ public class DesignlistController {
         }
         if (null!=timeEnd&&timeEnd.length() != 0) {
             c.and(new mysqlcondition("time", "<=", timeEnd));
+        }
+        if (null!=origin&&origin.length() != 0) {
+            c.and(new mysqlcondition("origin", "=", origin));
+        }else {
+            c.and(new mysqlcondition("origin", "=", 1));
         }
         return queryService.queryDataPage(start, limit, c, "requisition_order_union_view");
     }
@@ -424,32 +429,19 @@ public class DesignlistController {
                                                    String buildingpositionId,String isCompleteMatch,Integer start,Integer limit){
         mysqlcondition c=new mysqlcondition();
         String tableName = "requisition_order_detail_view";
+        if (null!=requisitionOrderId&&requisitionOrderId.length() != 0) {
+            c.and(new mysqlcondition("requisitionOrderId", "=", requisitionOrderId));
+        }else {
+            WebResponse response = new WebResponse();
+            response.setSuccess(false);
+            response.setErrorCode(100);
+            response.setMsg("未获取到领料单号");
+            return response;
+        }
         if (null!=type&&type.length() != 0) {
             System.out.println(type);
-            if((!type.equals("4"))||(origin.equals("1"))) {
-                c.and(new mysqlcondition("type", "=", type));
-                if (null!=requisitionOrderId&&requisitionOrderId.length() != 0) {
-                    c.and(new mysqlcondition("requisitionOrderId", "=", requisitionOrderId));
-                }else {
-                    WebResponse response = new WebResponse();
-                    response.setSuccess(false);
-                    response.setErrorCode(100);
-                    response.setMsg("未获取到领料单号");
-                    return response;
-                }
-            }else {
-                tableName = "over_requisition_order_detail_view";
-                if (null!=requisitionOrderId&&requisitionOrderId.length() != 0) {
-                    //c.and(new mysqlcondition("overReqOrderId", "=", requisitionOrderId));
-                    c.and(new mysqlcondition("requisitionOrderId", "=", requisitionOrderId));
-                }else {
-                    WebResponse response = new WebResponse();
-                    response.setSuccess(false);
-                    response.setErrorCode(200);
-                    response.setMsg("未获取到超领单号");
-                    return response;
-                }
-            }
+            if((!type.equals("4"))||(origin.equals("1"))) c.and(new mysqlcondition("type", "=", type));
+            else tableName = "over_requisition_order_detail_view";
         }
         if (null!=warehouseName&&warehouseName.length() != 0) {
             c.and(new mysqlcondition("warehouseName", "=", warehouseName));
@@ -566,7 +558,7 @@ public class DesignlistController {
     /*
      * 自定义原材料领料
      * */
-    @RequestMapping(value = "/reqisition/MaterialRequisitionOrder.do")
+    @RequestMapping(value = "/requisition/MaterialRequisitionOrder.do")
     public WebResponse materialOrderFinish(String s, String requisitionOrderId, String projectId, String operator, HttpSession session) throws JSONException {
         WebResponse response = new WebResponse();
         try {
@@ -902,7 +894,7 @@ public class DesignlistController {
 
 
 
-    @RequestMapping(value = "/backStore/createReturnOrder.do",method = RequestMethod.POST)
+    @RequestMapping(value = "/order/createOverRequisitionOrder.do",method = RequestMethod.POST)
     @ApiOperation("新建超领单")
     public WebResponse createOverReqOrder(String s, String projectId,String buildingId,String buildingpositionId,String description,String operator, HttpSession session) throws JSONException {
         WebResponse response = new WebResponse();

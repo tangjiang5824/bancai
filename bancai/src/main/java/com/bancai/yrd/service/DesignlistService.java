@@ -905,7 +905,7 @@ public class DesignlistService extends BaseService{
                 , projectId,buildingId,buildingpositionId,description,operator,userId,"0",analyzeNameService.getTime());
     }
     private int addOverReqOrderDetailBackId(String orderId,String storeId,String count,String buildingId,String buildingpositionId){
-        return insertProjectService.insertDataToTable("insert into over_requisition_order_detail (overReqOrderId,storeId,countAll,countRec,type,buildingId,buildingpositionId) values (?,?,?,?,?,?)",
+        return insertProjectService.insertDataToTable("insert into over_requisition_order_detail (overReqOrderId,storeId,countAll,countRec,type,buildingId,buildingpositionId) values (?,?,?,?,?,?,?)",
                 orderId,storeId,count,count,"4",buildingId,buildingpositionId);
     }
 

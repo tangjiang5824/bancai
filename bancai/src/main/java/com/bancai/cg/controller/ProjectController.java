@@ -1057,7 +1057,7 @@ public class ProjectController {
         System.out.println("zzyzzyzyyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzzyyzyzyzyzy");
         System.out.println(workorderlogId);
 
-        String fileName = "C:\\Users\\Administrator\\Desktop\\" + "easytest.xlsx";
+        String fileName = "C:\\Users\\Administrator\\Desktop\\单号" +workorderlogId +"领料单.xlsx";
         // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
         // 如果这里想使用03 则 传入excelType参数即可
         //write(fileName,格式类)
@@ -1074,7 +1074,7 @@ public class ProjectController {
 //        if (null!=isActive) {
 //            c.and(new mysqlcondition("isActive", "=", isActive));
 //        }
-        WebResponse response = queryAllService.queryDataPage(start, limit, c, "work_order_detail_match_result");
+        WebResponse response = queryAllService.queryDataPage(start, limit, c, "work_order_detail_match_result_print");
         if (!(boolean) response.get("success"))
             return false;
         //return response;
@@ -1105,7 +1105,7 @@ public class ProjectController {
 //        if (null!=isActive) {
 //            c.and(new mysqlcondition("isActive", "=", isActive));
 //        }
-        WebResponse response = queryAllService.queryDataPage(start, limit, c, "work_order_detail_match_result");
+        WebResponse response = queryAllService.queryDataPage(start, limit, c, "requisition_order_detail_print");
         if (!(boolean) response.get("success"))
             return false;
         //return response;
@@ -1146,7 +1146,7 @@ public class ProjectController {
     //领料单数据绑定
     private List<RequisitionOrder> RequisitionOrder_Data(WebResponse response) {
         List<RequisitionOrder> list = new ArrayList<RequisitionOrder>();
-        System.out.println("之后为工单打印后台代码");
+        System.out.println("之后为领料单打印后台代码");
         System.out.println(response.get("totalCount"));
         int totalCount = Integer.parseInt(response.get("totalCount") + "");
         //boolean success = (boolean) response.get("success");
@@ -1181,10 +1181,10 @@ public class ProjectController {
 
     //打印匹配结果
     @RequestMapping(value = "/project/printMatchResult.do")
-    @ApiOperation("打印旧板匹配结果")
+    @ApiOperation("打印匹配结果")
     public Boolean printOldpanelMatchResult(Integer start, Integer limit, Integer projectId,
                                             Integer buildingId, Integer buildingpositionId,Integer madeBy) {
-        String fileName = "C:\\Users\\Administrator\\Desktop\\" + "匹配结果" + analyzeNameService.getTime() + ".xlsx";
+        String fileName = "C:\\Users\\Administrator\\Desktop\\" + "匹配结果.xlsx";
         if (start == null) start = 0;
         if (limit == null) limit = -1;
         mysqlcondition c = new mysqlcondition();
@@ -1200,7 +1200,7 @@ public class ProjectController {
         if (null != madeBy) {
             c.and(new mysqlcondition("productMadeBy", "=", madeBy));
         }
-        WebResponse response = queryAllService.queryDataPage(start, limit, c, "query_match_result");
+        WebResponse response = queryAllService.queryDataPage(start, limit, c, "ztemp_query_match_result");
         //return response;
         EasyExcel.write(fileName, MatchResult.class).sheet("匹配结果").doWrite(MatchResult_Data(response));
         return true;
@@ -1209,12 +1209,13 @@ public class ProjectController {
     private List<MatchResult> MatchResult_Data(WebResponse response) {
         List<MatchResult> list = new ArrayList<MatchResult>();
         DataList tempList = (DataList) response.get("value");
+        System.out.println(tempList);
         if (tempList != null && tempList.size() != 0) {
             for (DataRow dataRow : tempList) {
                 MatchResult row = new MatchResult();
                 row.setProjectName(dataRow.get("projectName") + "");
                 row.setBuildingName(dataRow.get("buildingName") + "");
-                row.setBuildingpositionName(dataRow.get("buildingpositionName") + "");
+                row.setBuildingpositionName(dataRow.get("positionName") + "");
                 row.setProductName(dataRow.get("productName") + "");
 //                row.setProductInventoryUnit(dataRow.get("productInventoryUnit") + "");
 //                row.setProductUnitArea(Double.parseDouble(dataRow.get("productUnitArea") + ""));
@@ -1228,9 +1229,9 @@ public class ProjectController {
 //                row.setOldpanelTotalArea(Double.parseDouble(dataRow.get("oldpanelTotalArea") + ""));
 //                row.setOldpanelTotalWeight(Double.parseDouble(dataRow.get("oldpanelTotalWeight") + ""));
 //                row.setWarehouseName(dataRow.get("warehouseName") + "");
-                row.setIsCompleteMatch(dataRow.get("productMadeBy") + "");
-                row.setIsCompleteMatch(dataRow.get("name") + "");
-                row.setIsCompleteMatch(dataRow.get("count") + "");
+                row.setProductMadeBy(dataRow.get("productMadeBy") + "");
+                row.setName(dataRow.get("name") + "");
+                row.setCount(dataRow.get("count") + "");
                 row.setIsCompleteMatch(dataRow.get("isCompleteMatch") + "");
                 list.add(row);
             }
