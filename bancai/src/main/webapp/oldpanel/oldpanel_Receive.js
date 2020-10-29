@@ -4,6 +4,7 @@ Ext.define('oldpanel.oldpanel_Receive',{
     id:'old_pick_tabpanel',
     region: 'center',
     layout:'fit',
+
     title: '旧板领料',
 
     initComponent: function(){
@@ -686,8 +687,23 @@ Ext.define('oldpanel.oldpanel_Receive',{
                     },
                 },
                 {
+                    dataIndex:'buildingName',
+                    text:'楼栋名',
+                    flex :1,
+                },
+                {
+                    dataIndex:'buildingpositionName',
+                    text:'位置',
+                    flex :1,
+                },
+                {
                     dataIndex:'warehouseName',
                     text:'仓库名',
+                    flex :1,
+                },
+                {
+                    dataIndex:'isCompleteMatch',
+                    text:'是否完全匹配',
                     flex :1,
                 },
                 {

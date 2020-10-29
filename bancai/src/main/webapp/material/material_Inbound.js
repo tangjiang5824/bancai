@@ -696,7 +696,8 @@ Ext.define('material.material_Inbound', {
                     dataIndex : 'inventoryUnit',
                     text : '库存单位',
                     //width : 110,
-                },{
+                },
+                {
                     dataIndex : 'totalWeight',
                     name : 'totalWeight',
                     text : '总重',
@@ -771,7 +772,7 @@ Ext.define('material.material_Inbound', {
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 1
             })],
-            selType : 'checkboxmodel'  //rowmodel
+            //selType : 'checkboxmodel'  //rowmodel
         });
 
         //添加cell单击事件
