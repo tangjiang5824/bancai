@@ -19,11 +19,12 @@ Ext.define("menu.MenuRole_bc0", {
 					text : '入库',
 					id : 'oldpanel.oldpanel_Inbound',
 					leaf : true
-				} ,{
-					text : '批量入库',
-					id : 'oldpanel.old_Upload_Data',
-					leaf : true
 				} ,
+				// 	{
+				// 	text : '批量入库',
+				// 	id : 'oldpanel.old_Upload_Data',
+				// 	leaf : true
+				// } ,
 					{
 					text : '误入库撤销',
 					id : 'oldpanel.oldpanel_Outbound',

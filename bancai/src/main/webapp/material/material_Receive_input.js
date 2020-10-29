@@ -30,7 +30,13 @@ Ext.define('material.material_Receive_input',{
                 9: { value: '5', name: '未匹配成功' },
             }
         });
-
+        //领料单类型：枚举类型
+        Ext.define('product.model.originType_OverOrNot', {
+            statics: { // 关键s
+                1: { value: '1', name: '领料单' },
+                2: { value: '2', name: '超领单' },
+            }
+        });
         //项目名称选择
         var tableListStore = Ext.create('Ext.data.Store',{
             fields : [ "项目名称","id"],
@@ -139,20 +145,10 @@ Ext.define('material.material_Receive_input',{
                     var id = select.id;//项目名对应的id
                     console.log(select);
                     //确定后面的属性值
-                    var inventoryUnit = select.inventoryUnit;
-                    var materialTypeName = select.materialTypeName;
-                    //存放位置，行列
-                    var warehouseName = select.warehouseName;
-                    var countStore = select.countStore;
-                    var countUse = select.countUse;
+                    var materialStoreId = select.storeId;
+                    var sc = Ext.getCmp('pro_picking_MaterialGrid').getSelectionModel().getSelection();
 
-                    var sc = Ext.getCmp('material_Query_Data_Main').getSelectionModel().getSelection();
-
-                    sc[0].set('inventoryUnit',inventoryUnit);
-                    sc[0].set('materialTypeName',materialTypeName);
-                    sc[0].set('warehouseName',warehouseName);
-                    sc[0].set('countStore',countStore);
-                    sc[0].set('countUse',countUse);
+                    sc[0].set('materialStoreId',materialStoreId);
                 },
 
                 //下拉框搜索
@@ -179,8 +175,6 @@ Ext.define('material.material_Receive_input',{
 
             }
         });
-
-
 
         //职员信息
         var workerListStore = Ext.create('Ext.data.Store',{
@@ -309,6 +303,14 @@ Ext.define('material.material_Receive_input',{
                     text:'所属项目',
                     flex :1
                 },
+                {
+                    dataIndex:'origin',
+                    text:'领料单类型',
+                    flex :1,
+                    renderer: function (value) {
+                        return product.model.originType_OverOrNot[value].name; // key-value
+                    },
+                },
             ],
             flex:1,
             // height:'100%',
@@ -332,6 +334,7 @@ Ext.define('material.material_Receive_input',{
                 itemdblclick: function(me, record, item, index,rowModel){
                     var select = record.data;
                     console.log("select--======",select);
+                    var origin = select.origin;
                     var requisitionOrderId = select.requisitionOrderId;//领料单号
                     var projectId = select.projectId;
 
@@ -340,6 +343,7 @@ Ext.define('material.material_Receive_input',{
                         params : {
                             requisitionOrderId:requisitionOrderId,
                             type:4,
+                            origin:origin
                         }
                     });
 
@@ -535,7 +539,7 @@ Ext.define('material.material_Receive_input',{
                     handler: function(){
                         //材料的筛选条件
                         var requisitionOrderId = Ext.getCmp('picklistId').getValue();
-
+                        var origin = Ext.getCmp('origin').getValue();
                         var buildingId = Ext.getCmp('buildingName').getValue();
                         var buildingpositionId = Ext.getCmp('positionName').getValue();
                         var warehouseName = Ext.getCmp('storePosition').rawValue;
@@ -552,6 +556,7 @@ Ext.define('material.material_Receive_input',{
                                 //type和领料单Id
                                 requisitionOrderId:requisitionOrderId,
                                 type:4,//原材料
+                                origin:origin
                             }
                         });
                     }
@@ -592,6 +597,16 @@ Ext.define('material.material_Receive_input',{
                     },
                 },
                 {
+                    dataIndex:'buildingName',
+                    text:'楼栋名',
+                    flex :1,
+                },
+                {
+                    dataIndex:'buildingpositionName',
+                    text:'位置',
+                    flex :1,
+                },
+                {
                     dataIndex:'warehouseName',
                     text:'仓库名',
                     flex :1,
@@ -611,15 +626,15 @@ Ext.define('material.material_Receive_input',{
                     text:'待领数量',
                     flex :1,
                 },
-                {
-                    dataIndex:'count',
-                    text:'领取数量',
-                    flex :1,
-                    editor : {
-                        xtype : 'textfield',
-                        allowBlank : true
-                    }
-                },
+                // {
+                //     dataIndex:'count',
+                //     text:'领取数量',
+                //     flex :1,
+                //     editor : {
+                //         xtype : 'textfield',
+                //         allowBlank : true
+                //     }
+                // },
             ],
             // height:'100%',
             flex:1,
@@ -734,13 +749,12 @@ Ext.define('material.material_Receive_input',{
                         console.log('1===========')
                         var select = Ext.getCmp('pro_picking_MaterialGrid').getStore()
                             .getData();
-                        // console.log(select)
+                        // console.log(select.items[0].data.inputName)
                         var projectId = Ext.getCmp('project_Id').getValue();
                         var s = new Array();
                         select.each(function(rec) {
                             s.push(JSON.stringify(rec.data));
                         });
-                        console.log(s)
                         console.log('2===========')
                         var operator = Ext.getCmp('operator_pick').getValue();
                         console.log('2===========',operator)
@@ -901,6 +915,12 @@ Ext.define('material.material_Receive_input',{
                         }
                         return returnvalue;
                     },
+                },
+                {
+                    dataIndex:'materialStoreId',
+                    text:'材料storeId',
+                    hidden:true,
+                    flex :1,
                 },
                 {
                     dataIndex:'name',

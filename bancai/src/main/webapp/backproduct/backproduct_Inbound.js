@@ -60,73 +60,6 @@ Ext.define('backproduct.backproduct_Inbound', {
             store: storeNameList,
         });
 
-        var oldPanelNameList = Ext.create('Ext.data.Store',{
-            fields : [ 'oldpanelName'],
-            proxy : {
-                type : 'ajax',
-                url : 'oldpanel/oldpanelType.do',
-                reader : {
-                    type : 'json',
-                    rootProperty: 'typeList',
-                }
-            },
-            autoLoad : true
-        });
-        var oldpanelTypeList = Ext.create('Ext.form.ComboBox',{
-            fieldLabel : '旧板类型',
-            labelWidth : 70,
-            width : 230,
-            id :  'oldpanelType',
-            name : 'oldpanelType',
-            matchFieldWidth: false,
-            emptyText : "--请选择--",
-            displayField: 'oldpanelTypeName',
-            valueField: 'oldpanelType',
-            editable : false,
-            store: oldPanelNameList,
-            listeners:{
-                select: function(combo, record, index) {
-
-                    console.log(oldpanelTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
-                    //console.log(record[0].data.materialName);
-                }
-            }
-
-        });
-
-        var classificationListStore = Ext.create('Ext.data.Store',{
-            fields : [ 'classificationName'],
-            proxy : {
-                type : 'ajax',
-                url : '/material/findAllBytableName.do?tableName=classification',
-                reader : {
-                    type : 'json',
-                    rootProperty: 'classification',
-                },
-            },
-            autoLoad : true
-        });
-        var classificationList = Ext.create('Ext.form.ComboBox',{
-            fieldLabel : '分类',
-            labelWidth : 70,
-            width : 230,
-            id :  'classification',
-            name : 'classification',
-            matchFieldWidth: false,
-            emptyText : "--请选择--",
-            displayField: 'classificationName',
-            valueField: 'classificationId',
-            editable : false,
-            store: classificationListStore,
-            listeners:{
-                select: function(combo, record, index) {
-
-                    console.log(classificationList.getValue());// MaterialTypeList.getValue()获得选择的类型
-                    //console.log(record[0].data.materialName);
-                }
-            }
-
-        });
         //数据表模板
         //模板下载
         var tableNameList =  Ext.create('Ext.data.Store', {
@@ -151,7 +84,7 @@ Ext.define('backproduct.backproduct_Inbound', {
             editable : false,
         });
 
-
+        //单条录入和添加记录按钮
         var toolbar2 = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
             items: [
@@ -369,7 +302,7 @@ Ext.define('backproduct.backproduct_Inbound', {
             },
             ]
         });
-
+        //批量上传下载模板toolbar
         var toolbar4 = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
             items : [
