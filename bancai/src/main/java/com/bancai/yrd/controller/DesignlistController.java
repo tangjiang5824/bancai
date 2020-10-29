@@ -448,32 +448,19 @@ public class DesignlistController {
                                                    String buildingpositionId,String isCompleteMatch,Integer start,Integer limit){
         mysqlcondition c=new mysqlcondition();
         String tableName = "requisition_order_detail_view";
+        if (null!=requisitionOrderId&&requisitionOrderId.length() != 0) {
+            c.and(new mysqlcondition("requisitionOrderId", "=", requisitionOrderId));
+        }else {
+            WebResponse response = new WebResponse();
+            response.setSuccess(false);
+            response.setErrorCode(100);
+            response.setMsg("未获取到领料单号");
+            return response;
+        }
         if (null!=type&&type.length() != 0) {
             System.out.println(type);
-            if((!type.equals("4"))||(origin.equals("1"))) {
-                c.and(new mysqlcondition("type", "=", type));
-                if (null!=requisitionOrderId&&requisitionOrderId.length() != 0) {
-                    c.and(new mysqlcondition("requisitionOrderId", "=", requisitionOrderId));
-                }else {
-                    WebResponse response = new WebResponse();
-                    response.setSuccess(false);
-                    response.setErrorCode(100);
-                    response.setMsg("未获取到领料单号");
-                    return response;
-                }
-            }else {
-                tableName = "over_requisition_order_detail_view";
-                if (null!=requisitionOrderId&&requisitionOrderId.length() != 0) {
-                    //c.and(new mysqlcondition("overReqOrderId", "=", requisitionOrderId));
-                    c.and(new mysqlcondition("requisitionOrderId", "=", requisitionOrderId));
-                }else {
-                    WebResponse response = new WebResponse();
-                    response.setSuccess(false);
-                    response.setErrorCode(200);
-                    response.setMsg("未获取到超领单号");
-                    return response;
-                }
-            }
+            if((!type.equals("4"))||(origin.equals("1"))) c.and(new mysqlcondition("type", "=", type));
+            else tableName = "over_requisition_order_detail_view";
         }
         if (null!=warehouseName&&warehouseName.length() != 0) {
             c.and(new mysqlcondition("warehouseName", "=", warehouseName));

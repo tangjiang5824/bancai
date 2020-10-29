@@ -346,6 +346,21 @@ Ext.define('project.project_worksheet',{
                     text:'数量',
                     flex :1
                 },
+                {
+                    dataIndex:'projectName',
+                    text:'项目',
+                    flex :1
+                },
+                {
+                    dataIndex:'buildingName',
+                    text:'楼栋',
+                    flex :1
+                },
+                {
+                    dataIndex:'positionName',
+                    text:'位置',
+                    flex :1
+                },
             ],
             flex:1.3,
             // height:'100%',
