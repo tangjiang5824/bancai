@@ -16,7 +16,15 @@ public class MaterialType {
     private Set<MaterialMatchRules> materialMatchRules=new HashSet<>();
     @OneToMany(mappedBy = "typeId")
     private Set<MaterialInfo> materialInfos=new HashSet<>();
+    private Integer materialPrefix;
 
+    public Integer getMaterialPrefix() {
+        return materialPrefix;
+    }
+
+    public void setMaterialPrefix(Integer materialPrefix) {
+        this.materialPrefix = materialPrefix;
+    }
 
     public Set<MaterialMatchRules> getMaterialMatchRules() {
         return materialMatchRules;

@@ -23,6 +23,15 @@ public class MaterialInfo {
     private MaterialType typeId;
     private Set<MaterialStore> materialStores =new HashSet<>();
     private Set<MaterialLogdetail> materialLogdetails =new HashSet<>();
+    private String partNo;
+
+    public String getPartNo() {
+        return partNo;
+    }
+
+    public void setPartNo(String partNo) {
+        this.partNo = partNo;
+    }
 
     @ManyToOne(targetEntity = MaterialType.class)
     @JoinColumn(name = "typeId",referencedColumnName = "id")

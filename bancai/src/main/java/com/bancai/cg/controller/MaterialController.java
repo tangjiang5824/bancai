@@ -26,6 +26,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpSession;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -75,8 +76,23 @@ public class MaterialController {
             info.setUnitWeight(info_trans.getUnitWeight());
             info.setTypeId(materialTypedao.findById(info_trans.getTypeId()).orElse(null));
             materialinfodao.save(info);
+            Integer prefix=info.getTypeId().getMaterialPrefix();
+            Integer type=info.getTypeId().getId();
+            Integer id=info.getMaterialid();
+            String partNo=getPartNo(prefix,type,id);
+            info.setPartNo(partNo);
+            materialinfodao.save(info);
         }
         return true;
+    }
+    //3+2+4
+    private static String getPartNo(Integer prefix, Integer type, Integer id) {
+        String type1= String.valueOf(type+100);
+        String type2=type1.substring(type1.length()-2);
+        String id1= String.valueOf(id+10000);
+        String id2=id1.substring(id1.length()-4);
+        String partNo=prefix+type2+id2;
+        return partNo;
     }
 
     //public boolean
