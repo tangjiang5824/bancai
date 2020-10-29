@@ -611,6 +611,53 @@ public class DesignlistService extends BaseService{
         }
 
     }
+
+    /**
+     * 原材料自定义领料单领料
+     */
+    @Transactional
+    public void materialRequisition(JSONArray jsonArray, String requisitionOrderId, String projectId, String operator, String userId){
+//        String type = jsonArray.getJSONObject(0).get("type")+"";
+        String store = "material";
+//        switch (type){
+//            case "1":
+//                store = "backproduct";
+//                break;
+//            case "2":
+//                store = "preprocess";
+//                break;
+//            case "3":
+//                store = "oldpanel";
+//                break;
+//            case "4":
+//                store = "material";
+//                break;
+//        }
+        //order log
+        //store log
+        int requisitionOrderLogId = requisitionOrderAddLogBackId("2",requisitionOrderId,userId,operator);
+        int storeLogId = outboundStoreAddLogBackId("material",userId,operator,projectId);
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonTemp = jsonArray.getJSONObject(i);
+            String requisitionOrderDetailId=jsonTemp.get("requisitionOrderDetailId")+"";
+            String count = (jsonTemp.get("count")+"").trim();
+            String storeId =  jsonTemp.get("materialStoreId")+"";
+            String infoId = jsonTemp.get("infoId")+"";
+            String buildingId =  jsonTemp.get("buildingId")+"";
+            String buildingpositionId = jsonTemp.get("buildingpositionId")+"";
+            String countRec=jsonTemp.get("countRec")+"";
+            //store count reduce
+            //order count reduce
+            //store log detail
+            //order log detail
+            outboundStoreCountUpdate(store,storeId,count);
+            outboundRequisitionCountUpdate(requisitionOrderDetailId,countRec);
+            outboundStoreAddLogDetail("4",count,buildingId,buildingpositionId,infoId,storeId,String.valueOf(storeLogId));
+            outboundRequisitionAddLogDetail(String.valueOf(requisitionOrderLogId),requisitionOrderDetailId,countRec);
+        }
+    }
+
+
     private int outboundStoreAddLogBackId(String store, String userId, String operator,String projectId){
         return insertProjectService.insertDataToTable("insert into " + store +
                 "_log (type,time,userId,operator,projectId,isrollback) values (?,?,?,?,?,?)",
