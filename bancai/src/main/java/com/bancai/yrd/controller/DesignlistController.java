@@ -563,6 +563,51 @@ public class DesignlistController {
         }
         return response;
     }
+    /*
+     * 自定义原材料领料
+     * */
+    @RequestMapping(value = "/reqisition/MaterialRequisitionOrder.do")
+    public WebResponse materialOrderFinish(String s, String requisitionOrderId, String projectId, String operator, HttpSession session) throws JSONException {
+        WebResponse response = new WebResponse();
+        try {
+            JSONArray jsonArray = new JSONArray(s);
+            if(jsonArray.length()==0){
+                response.setSuccess(false);
+                response.setErrorCode(100);//接收到的s为空
+                response.setMsg("接收到的数据为空");
+                return response;
+            }
+            if((requisitionOrderId==null)||(requisitionOrderId.length()==0)||(projectId==null)||(projectId.length()==0)){
+                response.setSuccess(false);
+                response.setErrorCode(200);//未收到领料单号或项目ID
+                response.setMsg("未收到领料单号或项目ID");
+                return response;
+            }
+            if((operator==null)||(operator.length()==0)){
+                response.setSuccess(false);
+                response.setErrorCode(300);//未选择领料人
+                response.setMsg("未选择领料人");
+                return response;
+            }
+            String userId = (String)session.getAttribute("userid");
+//            DataList errorList = analyzeNameService.checkCountALessThanCountBInJsonArray(jsonArray,"count","countRec");
+//            if(errorList.size()!=0){
+//                response.put("errorList",errorList);
+//                response.put("errorNum",errorList.size());
+//                response.setSuccess(false);
+//                response.setErrorCode(400);//存在错误输入
+//                response.setMsg("存在错误输入");
+//                return response;
+//            }
+            designlistService.materialRequisition(jsonArray,requisitionOrderId,projectId,operator,userId);
+            response.setSuccess(true);
+        } catch (Exception e) {
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误
+            response.setMsg(e.getMessage());
+        }
+        return response;
+    }
 
     /*
      * 上传excel文件退料单

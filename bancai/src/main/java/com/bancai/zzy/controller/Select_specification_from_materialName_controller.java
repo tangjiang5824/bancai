@@ -523,7 +523,7 @@ public class Select_specification_from_materialName_controller {
 		//String madeBy = "4";
 		mysqlcondition c=new mysqlcondition();
 		if (madeBy!=null&&madeBy.length() != 0) {
-			c.and(new mysqlcondition("madeBy", "=", madeBy));
+			c.and(new mysqlcondition("productMadeBy", "=", madeBy));
 		}
 		if (projectId.length() != 0) {
 			c.and(new mysqlcondition("projectId", "=", projectId));
