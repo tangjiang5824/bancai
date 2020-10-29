@@ -357,28 +357,7 @@ public class DesignlistController {
      * 查询领料单
      * */
     @RequestMapping("/order/queryRequisitionOrder.do")
-    public WebResponse queryRequisitionOrder(String projectId, String operator,String requisitionOrderId, String timeStart, String timeEnd,Integer start,Integer limit){
-        mysqlcondition c=new mysqlcondition();
-        if (null!=projectId&&projectId.length() != 0) {
-            c.and(new mysqlcondition("projectId", "=", projectId));
-        }
-        if (null!=requisitionOrderId&&requisitionOrderId.length() != 0) {
-            c.and(new mysqlcondition("requisitionOrderId", "=", requisitionOrderId));
-        }
-        if (null!=operator&&operator.length() != 0) {
-            c.and(new mysqlcondition("operator", "=", operator));
-        }
-        if (null!=timeStart&&timeStart.length() != 0) {
-            c.and(new mysqlcondition("time", ">=", timeStart));
-        }
-        if (null!=timeEnd&&timeEnd.length() != 0) {
-            c.and(new mysqlcondition("time", "<=", timeEnd));
-        }
-        return queryService.queryDataPage(start, limit, c, "requisition_order_view");
-    }
-
-    @RequestMapping("/order/queryRequisitionUnionOrder.do")
-    public WebResponse queryRequisitionUnionOrder(String origin,String projectId, String operator,String requisitionOrderId, String timeStart, String timeEnd,Integer start,Integer limit){
+    public WebResponse queryRequisitionOrder(String origin,String projectId, String operator,String requisitionOrderId, String timeStart, String timeEnd,Integer start,Integer limit){
         mysqlcondition c=new mysqlcondition();
         if (null!=projectId&&projectId.length() != 0) {
             c.and(new mysqlcondition("projectId", "=", projectId));
@@ -397,6 +376,8 @@ public class DesignlistController {
         }
         if (null!=origin&&origin.length() != 0) {
             c.and(new mysqlcondition("origin", "=", origin));
+        }else {
+            c.and(new mysqlcondition("origin", "=", 1));
         }
         return queryService.queryDataPage(start, limit, c, "requisition_order_union_view");
     }
@@ -448,32 +429,19 @@ public class DesignlistController {
                                                    String buildingpositionId,String isCompleteMatch,Integer start,Integer limit){
         mysqlcondition c=new mysqlcondition();
         String tableName = "requisition_order_detail_view";
+        if (null!=requisitionOrderId&&requisitionOrderId.length() != 0) {
+            c.and(new mysqlcondition("requisitionOrderId", "=", requisitionOrderId));
+        }else {
+            WebResponse response = new WebResponse();
+            response.setSuccess(false);
+            response.setErrorCode(100);
+            response.setMsg("未获取到领料单号");
+            return response;
+        }
         if (null!=type&&type.length() != 0) {
             System.out.println(type);
-            if((!type.equals("4"))||(origin.equals("1"))) {
-                c.and(new mysqlcondition("type", "=", type));
-                if (null!=requisitionOrderId&&requisitionOrderId.length() != 0) {
-                    c.and(new mysqlcondition("requisitionOrderId", "=", requisitionOrderId));
-                }else {
-                    WebResponse response = new WebResponse();
-                    response.setSuccess(false);
-                    response.setErrorCode(100);
-                    response.setMsg("未获取到领料单号");
-                    return response;
-                }
-            }else {
-                tableName = "over_requisition_order_detail_view";
-                if (null!=requisitionOrderId&&requisitionOrderId.length() != 0) {
-                    //c.and(new mysqlcondition("overReqOrderId", "=", requisitionOrderId));
-                    c.and(new mysqlcondition("requisitionOrderId", "=", requisitionOrderId));
-                }else {
-                    WebResponse response = new WebResponse();
-                    response.setSuccess(false);
-                    response.setErrorCode(200);
-                    response.setMsg("未获取到超领单号");
-                    return response;
-                }
-            }
+            if((!type.equals("4"))||(origin.equals("1"))) c.and(new mysqlcondition("type", "=", type));
+            else tableName = "over_requisition_order_detail_view";
         }
         if (null!=warehouseName&&warehouseName.length() != 0) {
             c.and(new mysqlcondition("warehouseName", "=", warehouseName));

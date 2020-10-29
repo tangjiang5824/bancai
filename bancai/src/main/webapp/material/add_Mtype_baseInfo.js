@@ -122,6 +122,7 @@ Ext.define('material.add_Mtype_baseInfo', {
             store : MtypeStore,
             columns : [
                 {dataIndex : 'typeName', text : '原材料类型', width :300, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'materialPrefix', text : '品号前缀', width :300, editor : {xtype : 'textfield', allowBlank : false,}},
                 {
                     xtype:'actioncolumn',
                     text : '删除操作',

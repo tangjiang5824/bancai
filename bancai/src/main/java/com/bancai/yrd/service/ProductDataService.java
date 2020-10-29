@@ -38,12 +38,13 @@ public class ProductDataService extends BaseService{
         return insertList;
     }
     @Transactional
-    public DataList productAddInsertRowToInfoList(DataList insertList,String productFormatId,String productName,String inventoryUnit,
+    public DataList productAddInsertRowToInfoList(DataList insertList,String productFormatId,String productTypeId,String productName,String inventoryUnit,
                                                   String unitWeight,String unitArea,String remark,String mValue,String nValue,String pValue,
                                                   String aValue,String bValue,String mAngle,String nAngle,String pAngle,
                                                   String suffix,String ignoredSuffix){
         DataRow row = new DataRow();
         row.put("productFormatId",productFormatId);
+        row.put("productTypeId",productTypeId);
         row.put("productName",productName);
         row.put("inventoryUnit",inventoryUnit);
         row.put("unitWeight",unitWeight);
@@ -110,6 +111,7 @@ public class ProductDataService extends BaseService{
                 "6",userId,analyzeNameService.getTime());
         for (DataRow dataRow : insertList) {
             String productFormatId = dataRow.get("productFormatId").toString();
+            String productTypeId = dataRow.get("productTypeId").toString();
             String productName = dataRow.get("productName").toString();
             String inventoryUnit = dataRow.get("inventoryUnit").toString();
             String unitWeight = dataRow.get("unitWeight").toString();
@@ -140,6 +142,8 @@ public class ProductDataService extends BaseService{
                             "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                     productName,inventoryUnit,unitWeight,unitArea,remark,productFormatId,mValue,nValue,pValue,aValue,bValue
                     ,values[5],values[6],values[7],values[8],values[9],userId);
+            String partNo = analyzeNameService.productPartNoGenerator(productTypeId,String.valueOf(productId));
+            jo.update("update oldpanel_info set partNo=\""+partNo+"\" where id=\""+productId+"\"");
             b = b&insertProjectService.insertIntoTableBySQL("insert into product_logdetail (productlogId,productId) values (?,?)",
                     String.valueOf(logId), String.valueOf(productId));
         }
@@ -162,17 +166,23 @@ public class ProductDataService extends BaseService{
     public int addProductInfoIfNameValid(String productName,String userId){
         int productId = analyzeNameService.isInfoExist("product", productName);
         if (productId == 0) {
-            if (analyzeNameService.getTypeByProductName(productName).size() == 0)
+            DataList list = analyzeNameService.getTypeByProductName(productName);
+            if (list.size() == 0)
                 return 0;
-            String sql_addLog = "insert into product_log (type,userId,time) values(?,?,?)";
-            productId = productAddSingleInfo(productName, "", "", "", "", userId);
-            if (productId == 0)
-                return 0;
-            int productlogId = insertProjectService.insertDataToTable(sql_addLog, "6", "0", analyzeNameService.getTime());
-            boolean isLogRight = insertProjectService.insertIntoTableBySQL("insert into product_logdetail (productlogId,productId) values (?,?)",
-                    String.valueOf(productlogId), String.valueOf(productId));
-            if (!isLogRight)
-                return 0;
+            else {
+                String productTypeId = list.get(0).get("classificationId").toString();
+                String sql_addLog = "insert into product_log (type,userId,time) values(?,?,?)";
+                productId = productAddSingleInfo(productName, "", "", "", "", userId);
+                if (productId == 0)
+                    return 0;
+                int productlogId = insertProjectService.insertDataToTable(sql_addLog, "6", "0", analyzeNameService.getTime());
+                boolean isLogRight = insertProjectService.insertIntoTableBySQL("insert into product_logdetail (productlogId,productId) values (?,?)",
+                        String.valueOf(productlogId), String.valueOf(productId));
+                if (!isLogRight)
+                    return 0;
+                String partNo = analyzeNameService.productPartNoGenerator(productTypeId,String.valueOf(productId));
+                jo.update("update oldpanel_info set partNo=\""+partNo+"\" where id=\""+productId+"\"");
+            }
         }
         return productId;
     }

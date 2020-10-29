@@ -106,10 +106,32 @@ public class AnalyzeNameService extends BaseService {
         errorList.add(errorRow);
         return errorList;
     }
-//    @Transactional
-//    public String partNoGenerator(int type,String ){
-//
-//    }
+    @Transactional
+    public String oldpanelPartNoGenerator(String typeId,String infoId){
+        String classificationId = queryService.query("SELECT classificationId FROM oldpaneltype WHERE id=?",typeId).get(0).get("classificationId").toString();
+        StringBuilder typeIdBuilder = new StringBuilder(typeId);
+        StringBuilder infoIdBuilder = new StringBuilder(infoId);
+        while(typeIdBuilder.length()<2){
+            typeIdBuilder.insert(0, "0");
+        }
+        while(infoIdBuilder.length()<4){
+            infoIdBuilder.insert(0, "0");
+        }
+        return "218080"+classificationId+typeIdBuilder.toString()+infoIdBuilder.toString();
+    }
+    @Transactional
+    public String productPartNoGenerator(String typeId,String infoId){
+        String classificationId = queryService.query("SELECT classificationId FROM producttype WHERE id=?",typeId).get(0).get("classificationId").toString();
+        StringBuilder typeIdBuilder = new StringBuilder(typeId);
+        StringBuilder infoIdBuilder = new StringBuilder(infoId);
+        while(typeIdBuilder.length()<2){
+            typeIdBuilder.insert(0, "0");
+        }
+        while(infoIdBuilder.length()<4){
+            infoIdBuilder.insert(0, "0");
+        }
+        return "215080"+classificationId+typeIdBuilder.toString()+infoIdBuilder.toString();
+    }
     /**
      * 根据旧板类型名获取类型ID
      */
