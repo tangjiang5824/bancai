@@ -536,37 +536,6 @@ public class DesignlistService extends BaseService{
 
 
 
-    /*
-     * 查询领料单
-     * */
-    @Transactional
-    public DataList findRequisitionOrder(String projectId, String operator, String timeStart, String timeEnd){
-        StringBuilder sb =new StringBuilder("select * from requisition_order_view where userId>0");
-        if((projectId!=null)&&(projectId.length()!=0))
-            sb.append(" and projectId=\"").append(projectId).append("\"");
-        if((operator!=null)&&(operator.length()!=0))
-            sb.append(" and operator=\"").append(projectId).append("\"");
-        return queryService.query(sb.toString());
-    }
-
-    /*
-     * 查询领料单细节
-     * */
-    @Transactional
-    public DataList findRequisitionOrderDetail(String type, String requisitionOrderId, String warehouseName, String buildingId,
-                                               String buildingpositionId) {
-        StringBuilder sb = new StringBuilder("select * from requisition_order_detail_view where requisitionOrderId=?");
-        if((type!=null)&&(type.length()!=0))
-            sb.append(" and type=\"").append(type).append("\"");
-        if((warehouseName!=null)&&(warehouseName.length()!=0))
-            sb.append(" and warehouseName=\"").append(warehouseName).append("\"");
-        if((buildingId!=null)&&(buildingId.length()!=0))
-            sb.append(" and buildingId=\"").append(buildingId).append("\"");
-        if((buildingpositionId!=null)&&(buildingpositionId.length()!=0))
-            sb.append(" and buildingpositionId=\"").append(buildingpositionId).append("\"");
-        return queryService.query(sb.toString(), requisitionOrderId);
-    }
-
     /**
      * 领料单内容领料
      */
@@ -833,7 +802,29 @@ public class DesignlistService extends BaseService{
     }
 
 
-
+    /*
+     * 创建超领单
+     * */
+    @Transactional
+    public boolean createOverReqOrder(JSONArray jsonArray,String projectId,String buildingId,String buildingpositionId,String description,String operator,String userId){
+        int orderId = addOverReqBackId(projectId,buildingId,buildingpositionId,description,operator,userId);
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonTemp = jsonArray.getJSONObject(i);
+            String storeId = jsonTemp.get("storeId")+"";
+            String count = jsonTemp.get("count")+"";
+            jo.update("update material_store set countUse=countUse-\""+count+"\" where id=\""+storeId+"\"");
+            int detailId = addOverReqOrderDetailBackId(String.valueOf(orderId),storeId,count,buildingId,buildingpositionId);
+        }
+        return true;
+    }
+    private int addOverReqBackId(String projectId,String buildingId,String buildingpositionId,String description,String operator,String userId){
+        return insertProjectService.insertDataToTable("insert into over_requisition_order (projectId,buildingId,buildingpositionId,description,operator,userId,status,time) values (?,?,?,?,?,?,?,?)"
+                , projectId,buildingId,buildingpositionId,description,operator,userId,"0",analyzeNameService.getTime());
+    }
+    private int addOverReqOrderDetailBackId(String orderId,String storeId,String count,String buildingId,String buildingpositionId){
+        return insertProjectService.insertDataToTable("insert into over_requisition_order_detail (overReqOrderId,storeId,countAll,countRec,type,buildingId,buildingpositionId) values (?,?,?,?,?,?)",
+                orderId,storeId,count,count,"4",buildingId,buildingpositionId);
+    }
 
 
 

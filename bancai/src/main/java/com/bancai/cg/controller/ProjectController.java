@@ -348,7 +348,28 @@ public class ProjectController {
         c.and(new mysqlcondition("countStore", ">", 0));
         return queryAllService.queryDataPage(start, limit, c, tableName);
     }
+    /**
+     * 返回仓库中阈值数量以下所有的信息（仓库查询）
+     *
+     * @param
+     * @throws IOException
+     */
+    @RequestMapping(value = "/material/findStoreThresholdInfo.do")
+    public WebResponse findStoreThresholdInfo(Integer threshold, Integer start, Integer limit, String tableName) {
+//        String tableName = "Store_view";
+//		System.out.println(startWidth);
+//		System.out.println(endWidth);
+        mysqlcondition c = new mysqlcondition();
 
+        if (null != threshold) {
+            //Integer threshold_int = Integer.parseInt(threshold);
+            c.and(new mysqlcondition("countStore", "<=", threshold));
+        }
+
+        //不显示库存数量为0的记录
+        //c.and(new mysqlcondition("countStore", ">", 0));
+        return queryAllService.queryDataPage(start, limit, c, tableName);
+    }
     /**
      * 返回所有的仓库名
      *

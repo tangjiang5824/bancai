@@ -7,7 +7,6 @@ Ext.define("menu.MenuRole_bc0", {
 	store : {
 		root : {
 			expanded : true,
-
 			children : [{
 				text : '仓库管理',
 				expanded : true,
@@ -20,13 +19,14 @@ Ext.define("menu.MenuRole_bc0", {
 					text : '入库',
 					id : 'oldpanel.oldpanel_Inbound',
 					leaf : true
-				} ,{
-					text : '批量入库',
-					id : 'oldpanel.old_Upload_Data',
-					leaf : true
 				} ,
+				// 	{
+				// 	text : '批量入库',
+				// 	id : 'oldpanel.old_Upload_Data',
+				// 	leaf : true
+				// } ,
 					{
-					text : '特殊出库',
+					text : '误入库撤销',
 					id : 'oldpanel.oldpanel_Outbound',
 					leaf : true
 				},
@@ -54,11 +54,13 @@ Ext.define("menu.MenuRole_bc0", {
 					text : '出入库记录查询',
 					id : 'oldpanel.oldpanel_Query_Records',//'oldpanel.oldpanel_Query_Records',
 					leaf : true
-				}, {
-					text : '出入库记录统计',
-					id : 'oldpanel.oldpanel_Statistics_Records',
-					leaf : true
-				}]
+				}
+				// ,{
+				// 	text : '出入库记录统计',
+				// 	id : 'oldpanel.oldpanel_Statistics_Records',
+				// 	leaf : true
+				// }
+				]
 			} ,{
 				text : '原材料管理',
 				expanded : true,
@@ -74,7 +76,7 @@ Ext.define("menu.MenuRole_bc0", {
 					id : 'material.material_Upload_Data',
 					leaf : true
 				}, {
-						text : '特殊出库',
+						text : '误入库撤销',
 						id : 'material.material_Outbound',
 						leaf : true
 					},
@@ -107,15 +109,17 @@ Ext.define("menu.MenuRole_bc0", {
 					text : '出入库记录查询',
 					id : 'material.material_Query_Records',//'material.material_Query_Records',
 					leaf : true
-				}, {
-					text : '出入库记录统计',
-					id : 'material.material_Statistics_Records',
-					leaf : true
-				}, {
+				}
+				// ,{
+				// 	text : '出入库记录统计',
+				// 	id : 'material.material_Statistics_Records',
+				// 	leaf : true
+				// }
+				,{
 					text : '库存预警',
 					id : 'material.material_Warning',
 					leaf : true
-				}, {
+				},{
 					text : '库存报警',
 					id : 'material.material_Alarm',
 					leaf : true
@@ -153,7 +157,7 @@ Ext.define("menu.MenuRole_bc0", {
 						leaf : true
 					},
 					{
-						text : '入库撤销',
+						text : '误入库撤销',
 						id : 'preprocess.preprocess_Outbound',
 						leaf : true
 					},
@@ -161,11 +165,13 @@ Ext.define("menu.MenuRole_bc0", {
 						text : '出入库记录查询',
 						id : 'preprocess.preprocess_Query_Records',
 						leaf : true
-				}, {
-					text : '出入库记录统计',
-					id : '',
-					leaf : true
-				}]
+				}
+				// ,{
+				// 	text : '出入库记录统计',
+				// 	id : '',
+				// 	leaf : true
+				// }
+				]
 			},{
 				text : '退库成品仓库管理',
 				expanded : true,
@@ -189,7 +195,7 @@ Ext.define("menu.MenuRole_bc0", {
 						leaf : true
 					},
 					{
-					text : '入库撤销',
+					text : '误入库撤销',
 					id : 'backproduct.backproduct_Outbound',
 					leaf : true
 				},
@@ -197,11 +203,13 @@ Ext.define("menu.MenuRole_bc0", {
 					text : '出入库记录查询',
 					id : 'backproduct.backproduct_Query_Records',
 					leaf : true
-				}, {
-					text : '出入库记录统计',
-					id : 'backproduct.backproduct_Statistics_Records',
-					leaf : true
-				}]
+				}
+				// , {
+				// 	text : '出入库记录统计',
+				// 	id : 'backproduct.backproduct_Statistics_Records',
+				// 	leaf : true
+				// }
+				]
 			},{
 				text : '产品成品仓库管理',
 				expanded : true,

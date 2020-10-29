@@ -108,12 +108,12 @@ Ext.define('material.material_Query_Data',{
                     name: 'countStore_max',
                     value:"",
                 },
-                {
-                    xtype:'tbtext',
-                    text:'可用数量:',
-                    margin : '0 10 0 20',
-                    itemId:'move_left',
-                },
+                // {
+                //     xtype:'tbtext',
+                //     text:'可用数量:',
+                //     margin : '0 10 0 20',
+                //     itemId:'move_left',
+                // },
                 {
                     xtype: 'textfield',
                     margin : '0 10 0 0',
@@ -275,12 +275,12 @@ Ext.define('material.material_Query_Data',{
                     text : '库存数量',
                     flex :1,
                 },
-                {
-                    dataIndex : 'countUse',
-                    name : '可用数量',
-                    text : '可用数量',
-                    flex :1,
-                },
+                // {
+                //     dataIndex : 'countUse',
+                //     name : '可用数量',
+                //     text : '可用数量',
+                //     flex :1,
+                // },
                 {dataIndex : 'aValue', text : 'a值', flex :.6},
                 {dataIndex : 'bValue', text : 'b值', flex :.6},
                 {dataIndex : 'mValue', text : 'm值', flex :.6},

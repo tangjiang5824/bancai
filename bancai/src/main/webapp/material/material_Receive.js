@@ -29,7 +29,13 @@ Ext.define('material.material_Receive',{
                 9: { value: '5', name: '未匹配成功' },
             }
         });
-
+        //领料单类型：枚举类型
+        Ext.define('product.model.originType_OverOrNot', {
+            statics: { // 关键s
+                1: { value: '1', name: '领料单' },
+                2: { value: '2', name: '超领单' },
+            }
+        });
         //项目名称选择
         var tableListStore = Ext.create('Ext.data.Store',{
             fields : [ "项目名称","id"],
@@ -172,7 +178,7 @@ Ext.define('material.material_Receive',{
             },
             autoLoad : true
         });
-
+        //领料单查询界面
         var toolbar = Ext.create('Ext.toolbar.Toolbar',{
             dock : "top",
             id : "toolbar",
@@ -296,6 +302,14 @@ Ext.define('material.material_Receive',{
                     text:'所属项目',
                     flex :1
                 },
+                {
+                    dataIndex:'origin',
+                    text:'领料单类型',
+                    flex :1,
+                    renderer: function (value) {
+                        return product.model.originType_OverOrNot[value].name; // key-value
+                    },
+                },
             ],
             flex:1,
             // height:'100%',
@@ -319,6 +333,8 @@ Ext.define('material.material_Receive',{
                 itemdblclick: function(me, record, item, index,rowModel){
                     var select = record.data;
                     console.log("select--======",select);
+                    var origin = select.origin;
+                    console.log("origin--======",origin);
                     var requisitionOrderId = select.requisitionOrderId;//领料单号
                     var projectId = select.projectId;
 
@@ -342,6 +358,7 @@ Ext.define('material.material_Receive',{
                         params : {
                             requisitionOrderId:requisitionOrderId,
                             type:4,
+                            origin:origin
                         }
                     });
 
@@ -543,7 +560,7 @@ Ext.define('material.material_Receive',{
                     handler: function(){
                         //材料的筛选条件
                         var requisitionOrderId = Ext.getCmp('picklistId').getValue();
-
+                        var origin = Ext.getCmp('origin').getValue();
                         var buildingId = Ext.getCmp('buildingName').getValue();
                         var buildingpositionId = Ext.getCmp('positionName').getValue();
                         var warehouseName = Ext.getCmp('storePosition').rawValue;
@@ -560,6 +577,7 @@ Ext.define('material.material_Receive',{
                                 //type和领料单Id
                                 requisitionOrderId:requisitionOrderId,
                                 type:4,//原材料
+                                origin:origin
                             }
                         });
                     }
@@ -671,6 +689,16 @@ Ext.define('material.material_Receive',{
                     renderer: function (value) {
                         return product.model.originType[value].name; // key-value
                     },
+                },
+                {
+                    dataIndex:'buildingName',
+                    text:'楼栋名',
+                    flex :1,
+                },
+                {
+                    dataIndex:'buildingpositionName',
+                    text:'位置',
+                    flex :1,
                 },
                 {
                     dataIndex:'warehouseName',
