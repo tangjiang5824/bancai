@@ -541,7 +541,7 @@ Ext.define('project.project_create_picklist',{
             // height:'100%',
             flex:1,
             tbar:toobar_right,
-            selType:'checkboxmodel'
+            //selType:'checkboxmodel'
         });
 
 
