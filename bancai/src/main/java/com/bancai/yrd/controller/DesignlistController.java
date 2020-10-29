@@ -566,7 +566,7 @@ public class DesignlistController {
     /*
      * 自定义原材料领料
      * */
-    @RequestMapping(value = "/reqisition/MaterialRequisitionOrder.do")
+    @RequestMapping(value = "/requisition/MaterialRequisitionOrder.do")
     public WebResponse materialOrderFinish(String s, String requisitionOrderId, String projectId, String operator, HttpSession session) throws JSONException {
         WebResponse response = new WebResponse();
         try {
@@ -902,7 +902,7 @@ public class DesignlistController {
 
 
 
-    @RequestMapping(value = "/backStore/createReturnOrder.do",method = RequestMethod.POST)
+    @RequestMapping(value = "/order/createOverRequisitionOrder.do",method = RequestMethod.POST)
     @ApiOperation("新建超领单")
     public WebResponse createOverReqOrder(String s, String projectId,String buildingId,String buildingpositionId,String description,String operator, HttpSession session) throws JSONException {
         WebResponse response = new WebResponse();
