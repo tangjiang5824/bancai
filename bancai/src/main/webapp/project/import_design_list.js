@@ -624,6 +624,7 @@ Ext.define('project.import_design_list', {
 						//获取数据
 						Ext.Ajax.request({
 							url : 'designlist/uploadData.do', //上传匹配数据
+							timeout: 6000000,
 							method:'POST',
 							//submitEmptyText : false,
 							params : {
