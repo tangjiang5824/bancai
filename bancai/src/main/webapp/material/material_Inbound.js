@@ -228,9 +228,15 @@ Ext.define('material.material_Inbound', {
             dock : "top",
             items: [
                 MaterialTypeList,
-                {xtype: 'textfield', fieldLabel: '原材料品号', id: 'materialNo',
-                    margin: '0 10 0 30',width: 180, labelWidth: 60,
-                    name: 'materialNo', value: ""
+                {
+                    xtype: 'textfield',
+                    fieldLabel: '原材料品号',
+                    id: 'materialNo',
+                    margin: '0 10 0 30',
+                    width: 180,
+                    labelWidth: 65,
+                    name: 'materialNo',
+                    value: ""
                 },
                 {
                     xtype: 'textfield',
@@ -681,7 +687,7 @@ Ext.define('material.material_Inbound', {
                     dataIndex : 'materialNo',
                     name : 'materialNo',
                     text : '原材料品号',
-                    //width : 110,
+
                     value:'99',
                     //defaultValue:"2333",
                 },
