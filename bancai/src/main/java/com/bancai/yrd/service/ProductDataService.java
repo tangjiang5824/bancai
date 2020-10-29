@@ -143,7 +143,7 @@ public class ProductDataService extends BaseService{
                     productName,inventoryUnit,unitWeight,unitArea,remark,productFormatId,mValue,nValue,pValue,aValue,bValue
                     ,values[5],values[6],values[7],values[8],values[9],userId);
             String partNo = analyzeNameService.productPartNoGenerator(productTypeId,String.valueOf(productId));
-            jo.update("update oldpanel_info set partNo=\""+partNo+"\" where id=\""+productId+"\"");
+            jo.update("update product_info set partNo=\""+partNo+"\" where id=\""+productId+"\"");
             b = b&insertProjectService.insertIntoTableBySQL("insert into product_logdetail (productlogId,productId) values (?,?)",
                     String.valueOf(logId), String.valueOf(productId));
         }
@@ -181,7 +181,7 @@ public class ProductDataService extends BaseService{
                 if (!isLogRight)
                     return 0;
                 String partNo = analyzeNameService.productPartNoGenerator(productTypeId,String.valueOf(productId));
-                jo.update("update oldpanel_info set partNo=\""+partNo+"\" where id=\""+productId+"\"");
+                jo.update("update product_info set partNo=\""+partNo+"\" where id=\""+productId+"\"");
             }
         }
         return productId;
