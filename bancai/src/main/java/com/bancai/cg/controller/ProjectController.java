@@ -17,8 +17,7 @@ import com.bancai.domain.DataRow;
 import com.bancai.service.ProductService;
 import com.bancai.service.ProjectService;
 import com.bancai.service.QueryService;
-import com.bancai.util.risk.easyexcel.DemoData;
-import com.bancai.util.risk.easyexcel.OldpanelMatchResult;
+import com.bancai.util.risk.easyexcel.MatchResult;
 import com.bancai.util.risk.easyexcel.RequisitionOrder;
 import com.bancai.util.risk.easyexcel.WorkOrder;
 import com.bancai.vo.WebResponse;
@@ -30,7 +29,6 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
@@ -1182,10 +1180,11 @@ public class ProjectController {
     }
 
     //打印匹配结果
-    @RequestMapping(value = "/project/printOldpanelMatchResult.do")
+    @RequestMapping(value = "/project/printMatchResult.do")
     @ApiOperation("打印旧板匹配结果")
-    public Boolean printOldpanelMatchResult(Integer start, Integer limit, Integer projectId, Integer buildingId, Integer buildingpositionId) {
-        String fileName = "C:\\Users\\Administrator\\Desktop\\" + "旧板匹配结果" + analyzeNameService.getTime() + ".xls";
+    public Boolean printOldpanelMatchResult(Integer start, Integer limit, Integer projectId,
+                                            Integer buildingId, Integer buildingpositionId,Integer madeBy) {
+        String fileName = "C:\\Users\\Administrator\\Desktop\\" + "匹配结果" + analyzeNameService.getTime() + ".xlsx";
         if (start == null) start = 0;
         if (limit == null) limit = -1;
         mysqlcondition c = new mysqlcondition();
@@ -1198,34 +1197,40 @@ public class ProjectController {
         if (null != buildingpositionId) {
             c.and(new mysqlcondition("buildingpositionId", "=", buildingpositionId));
         }
-        WebResponse response = queryAllService.queryDataPage(start, limit, c, "oldpanel_match_result_view");
+        if (null != madeBy) {
+            c.and(new mysqlcondition("productMadeBy", "=", madeBy));
+        }
+        WebResponse response = queryAllService.queryDataPage(start, limit, c, "query_match_result");
         //return response;
-        EasyExcel.write(fileName, OldpanelMatchResult.class).sheet("工单").doWrite(OldpanelMatchResult_Data(response));
+        EasyExcel.write(fileName, MatchResult.class).sheet("匹配结果").doWrite(MatchResult_Data(response));
         return true;
     }
     //匹配结果数据绑定
-    private List<OldpanelMatchResult> OldpanelMatchResult_Data(WebResponse response) {
-        List<OldpanelMatchResult> list = new ArrayList<OldpanelMatchResult>();
+    private List<MatchResult> MatchResult_Data(WebResponse response) {
+        List<MatchResult> list = new ArrayList<MatchResult>();
         DataList tempList = (DataList) response.get("value");
         if (tempList != null && tempList.size() != 0) {
             for (DataRow dataRow : tempList) {
-                OldpanelMatchResult row = new OldpanelMatchResult();
+                MatchResult row = new MatchResult();
                 row.setProjectName(dataRow.get("projectName") + "");
                 row.setBuildingName(dataRow.get("buildingName") + "");
                 row.setBuildingpositionName(dataRow.get("buildingpositionName") + "");
                 row.setProductName(dataRow.get("productName") + "");
-                row.setProductInventoryUnit(dataRow.get("productInventoryUnit") + "");
-                row.setProductUnitArea(Double.parseDouble(dataRow.get("productUnitArea") + ""));
-                row.setProductUnitWeight(Double.parseDouble(dataRow.get("productUnitWeight") + ""));
-                row.setProductCount(Double.parseDouble(dataRow.get("productCount") + ""));
-                row.setProductTotalArea(Double.parseDouble(dataRow.get("productTotalArea") + ""));
-                row.setProductTotalWeight(Double.parseDouble(dataRow.get("productTotalWeight") + ""));
-                row.setOldpanelName(dataRow.get("oldpanelName") + "");
-                row.setOldpanelInventoryUnit(dataRow.get("oldpanelInventoryUnit") + "");
-                row.setOldpanelCount(Double.parseDouble(dataRow.get("oldpanelCount") + ""));
-                row.setOldpanelTotalArea(Double.parseDouble(dataRow.get("oldpanelTotalArea") + ""));
-                row.setOldpanelTotalWeight(Double.parseDouble(dataRow.get("oldpanelTotalWeight") + ""));
-                row.setWarehouseName(dataRow.get("warehouseName") + "");
+//                row.setProductInventoryUnit(dataRow.get("productInventoryUnit") + "");
+//                row.setProductUnitArea(Double.parseDouble(dataRow.get("productUnitArea") + ""));
+//                row.setProductUnitWeight(Double.parseDouble(dataRow.get("productUnitWeight") + ""));
+//                row.setProductCount(Double.parseDouble(dataRow.get("productCount") + ""));
+//                row.setProductTotalArea(Double.parseDouble(dataRow.get("productTotalArea") + ""));
+//                row.setProductTotalWeight(Double.parseDouble(dataRow.get("productTotalWeight") + ""));
+//                row.setOldpanelName(dataRow.get("oldpanelName") + "");
+//                row.setOldpanelInventoryUnit(dataRow.get("oldpanelInventoryUnit") + "");
+//                row.setOldpanelCount(Double.parseDouble(dataRow.get("oldpanelCount") + ""));
+//                row.setOldpanelTotalArea(Double.parseDouble(dataRow.get("oldpanelTotalArea") + ""));
+//                row.setOldpanelTotalWeight(Double.parseDouble(dataRow.get("oldpanelTotalWeight") + ""));
+//                row.setWarehouseName(dataRow.get("warehouseName") + "");
+                row.setIsCompleteMatch(dataRow.get("productMadeBy") + "");
+                row.setIsCompleteMatch(dataRow.get("name") + "");
+                row.setIsCompleteMatch(dataRow.get("count") + "");
                 row.setIsCompleteMatch(dataRow.get("isCompleteMatch") + "");
                 list.add(row);
             }
