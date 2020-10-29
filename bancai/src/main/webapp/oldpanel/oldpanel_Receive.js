@@ -89,12 +89,12 @@ Ext.define('oldpanel.oldpanel_Receive',{
         var oldpickListStore = Ext.create('Ext.data.Store',{
             fields:['materialName','materialCount','countReceived','countNotReceived','countTemp'],
             proxy : {
-                type : 'ajax',
+                type : 'rest',
                 url : 'order/queryRequisitionOrder.do', //领料单查询
                 reader : {
                     type : 'json',
                     rootProperty: 'value',
-                }
+                },
             },
             autoLoad : true
         });

@@ -146,11 +146,11 @@ Ext.define('project.project_query_overpicklist',{
         var buildingName = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '楼栋名',
             labelWidth : 45,
-            width : 200,
+            width : 250,
             id :  'buildingName',
             name : 'buildingName',
             matchFieldWidth: false,
-            margin: '0 10 0 10',
+            margin: '0 0 0 40',
             emptyText : "--请选择楼栋名--",
             displayField: 'buildingName',
             valueField: 'id',//楼栋的id
@@ -195,8 +195,8 @@ Ext.define('project.project_query_overpicklist',{
         var buildingPositionList = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '位置',
             labelWidth : 40,
-            width : 150,
-            margin: '0 10 0 10',
+            width : 200,
+            margin: '0 0 0 40',
             id :  'positionName',
             name : 'positionName',
             matchFieldWidth: true,
@@ -206,16 +206,20 @@ Ext.define('project.project_query_overpicklist',{
             // typeAhead : true,
             editable : true,
             store: buildingPositionStore,
-            // listeners: {
-            //
-            //     //下拉框默认返回的第一个值
-            //     render: function (combo) {//渲染
-            //         combo.getStore().on("load", function (s, r, o) {
-            //             combo.setValue(r[0].get('projectName'));//第一个值
-            //         });
-            //     }
-            // }
 
+        });
+        //职员信息
+        var workerListStore = Ext.create('Ext.data.Store',{
+            fields : [ 'typeName'],
+            proxy : {
+                type : 'ajax',
+                url : '/material/findAllBytableName.do?tableName=department_worker',
+                reader : {
+                    type : 'json',
+                    rootProperty: 'department_worker',
+                },
+            },
+            autoLoad : true
         });
         var toolbar1 = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
@@ -223,13 +227,19 @@ Ext.define('project.project_query_overpicklist',{
             items : [   tableList1,
                 buildingName,
                 buildingPositionList,
-//单号
+            ]//exceluploadform
+        });
+
+        var toolbar2 = Ext.create('Ext.toolbar.Toolbar', {
+            dock: "top",
+            id: "toolbar2",
+            items: [
                 {
                     xtype: 'textfield',
-                    margin : '0 10 0 0',
+                    margin : '0 40 0 15',
                     fieldLabel: '单号',
                     id :'picklistNum',
-                    width: 120,
+                    width: 200,
                     labelWidth: 30,
                     name: 'picklistNum',
                     value:"",
@@ -241,8 +251,8 @@ Ext.define('project.project_query_overpicklist',{
                     id : 'operator',
                     // disabled : true,
                     // width:'95%',
-                    margin: '0 10 0 0',
-                    width: 120,
+                    margin: '0 40 0 0',
+                    width: 160,
                     labelWidth: 45,
                     store : workerListStore,
                     displayField : 'workerName',
@@ -253,7 +263,7 @@ Ext.define('project.project_query_overpicklist',{
                     xtype : 'datefield',
                     margin : '0 0 0 0',
                     fieldLabel : '创建时间',
-                    width : 120,
+                    width : 180,
                     labelWidth : 60,
                     id : "startTime",
                     name : 'startTime',
@@ -301,7 +311,7 @@ Ext.define('project.project_query_overpicklist',{
                         });
                     }
                 }
-            ]//exceluploadform
+            ]
         });
 
         //查询领料单
@@ -367,7 +377,7 @@ Ext.define('project.project_query_overpicklist',{
                 ],
             flex:1,
             // height:'100%',
-            tbar: toolbar1,
+            // tbar: toolbar1,
             // selType:'checkboxmodel', //选择框
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 2
@@ -674,6 +684,19 @@ Ext.define('project.project_query_overpicklist',{
         // ];
         // this.tbar = toolbar;
         this.items = [panel];
+        this.dockedItems=[{
+            xtype : 'toolbar',
+            dock : 'top',
+            style:'border-width:0 0 0 0;',
+            items : [toolbar1]
+        },
+            {
+                xtype : 'toolbar',
+                dock : 'top',
+                style:'border-width:0 0 0 0;',
+                items : [toolbar2]
+            },
+        ];
         this.callParent(arguments);
     }
 })
