@@ -559,6 +559,8 @@ Ext.define('project.project_worksheet',{
             id : 'pickingMaterialGrid',
             store:pre_worksheetStore,
             dock: 'bottom',
+            region:'center',
+            height:'50%',
             columns:[
                 {
                     dataIndex:'productName',
@@ -580,14 +582,14 @@ Ext.define('project.project_worksheet',{
             flex:1.3,
             tbar:toobar_right,
             selType:'checkboxmodel',
-            dockedItems: [{
-                xtype: 'pagingtoolbar',
-                store: pre_worksheetStore,   // same store GridPanel is using
-                dock: 'bottom',
-                displayInfo: true,
-                displayMsg:'显示{0}-{1}条，共{2}条',
-                emptyMsg:'无数据'
-            }]
+            // dockedItems: [{
+            //     xtype: 'pagingtoolbar',
+            //     store: pre_worksheetStore,   // same store GridPanel is using
+            //     dock: 'bottom',
+            //     displayInfo: true,
+            //     displayMsg:'显示{0}-{1}条，共{2}条',
+            //     emptyMsg:'无数据'
+            // }]
         });
 
         // //查询某类产品具体的匹配信息，右侧界面
@@ -792,8 +794,10 @@ Ext.define('project.project_worksheet',{
                 type:'hbox',
                 align:'stretch'
             },
+            region:'center',
             width:'100%',
             height:360,
+            // height:'50%',
             autoScroll: true,
             items:[grid2,
                 grid_worksheet_specific
@@ -809,8 +813,9 @@ Ext.define('project.project_worksheet',{
             //
             // },
             width:'100%',
-            height:1500,
-            autoHeight: true,
+            height:'100%',
+            // autoHeight: true,
+            autoScroll:true,
             // bodyStyle:'overflow-x:hidden;overflow-y:auto;',
             items:[
                 // grid1,
