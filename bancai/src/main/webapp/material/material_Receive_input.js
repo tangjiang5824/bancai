@@ -762,7 +762,7 @@ Ext.define('material.material_Receive_input',{
                         if(s.length != 0 && operator != null ){
                             //获取数据
                             Ext.Ajax.request({
-                                url : 'order/finishRequisitionOrder.do', //领料
+                                url : '/requisition/MaterialRequisitionOrder.do', //领料
                                 method:'POST',
                                 // submitEmptyText : false,
                                 params : {
@@ -854,11 +854,20 @@ Ext.define('material.material_Receive_input',{
                                         Ext.MessageBox.alert("提示","领取成功" );
 
                                         //  领料页面重置
-                                        Ext.getCmp('operator').setValue("");
+                                        Ext.getCmp('operator_pick').setValue("");
                                         pickList.removeAll();
 
                                         //  领料单查询重新加载
-                                        grid__query_pickList_specific.getStore().load();
+                                        // grid__query_pickList_specific.getStore().load();
+
+                                        specificMaterialList.load({
+                                            params : {
+
+                                                requisitionOrderId:Ext.getCmp('picklistId').getValue(),
+                                                type:4,//原材料
+                                                origin:1
+                                            }
+                                        });
                                     }
                                     // if(response == true){
                                     //     Ext.MessageBox.alert("提示","领取成功" );
