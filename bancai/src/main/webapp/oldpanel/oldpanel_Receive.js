@@ -253,6 +253,7 @@ Ext.define('oldpanel.oldpanel_Receive',{
                                 operator:Ext.getCmp('operator').getValue(),
                                 timeStart:Ext.getCmp('startTime').getValue(),
                                 timeEnd:Ext.getCmp('endTime').getValue(),
+                                origin:1,
                             }
                         });
                     }

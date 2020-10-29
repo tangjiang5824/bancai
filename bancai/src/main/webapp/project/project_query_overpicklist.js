@@ -322,8 +322,10 @@ Ext.define('project.project_query_overpicklist',{
             id : 'PickingListGrid',
             store:MaterialpickListStore,
             dock: 'bottom',
-            columns:[{
-                dataIndex:'requisitionOrderId',
+            columns:[
+                new Ext.grid.RowNumberer(),//序号
+                {
+                dataIndex:'id',
                 text:'领料单号',
                 flex :1
             },
@@ -337,6 +339,21 @@ Ext.define('project.project_query_overpicklist',{
                     text:'创建时间',
                     flex :1,
                     renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')  //
+                },
+                {
+                    dataIndex:'projectName',
+                    text:'项目名',
+                    flex :1,
+                },
+                {
+                    dataIndex:'buildingName',
+                    text:'楼栋名',
+                    flex :1,
+                },
+                {
+                    dataIndex:'description',
+                    text:'超领原因',
+                    flex :1,
                 },
                 {
                     // name : '操作',
@@ -369,7 +386,9 @@ Ext.define('project.project_query_overpicklist',{
                 // 双击表行响应事件,显示领料单的具体信息
                 itemdblclick: function(me, record, item, index,rowModel){
                     var select = record.data;
-                    var requisitionOrderId = select.requisitionOrderId;
+                    console.log('------------------------------------')
+                    console.log(select)
+                    var requisitionOrderId = select.id;
                     //var pickNumber = select.
                     // var specificMaterialList = Ext.create('Ext.data.Store',{
                     //     //id,materialName,length,width,materialType,number

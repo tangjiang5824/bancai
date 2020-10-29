@@ -340,8 +340,11 @@ Ext.define('project.material_over_pick',{
                     var warehouseName = select.warehouseName;
                     var countStore = select.countStore;
                     var countUse = select.countUse;
+                    var storeId = select.storeId;
 
                     var sc = Ext.getCmp('material_Query_Data_Main').getSelectionModel().getSelection();
+
+                    sc[0].set('storeId',storeId);
 
                     sc[0].set('inventoryUnit',inventoryUnit);
                     sc[0].set('materialTypeName',materialTypeName);
@@ -403,6 +406,13 @@ Ext.define('project.material_over_pick',{
                         }
                         return returnvalue;
                     },
+                },
+                {
+                    dataIndex : 'storeId',
+                    name : '原材料id',
+                    text : '原材料id',
+                    hidden:true,
+                    flex :1,
                 },
                 {
                     dataIndex : 'materialTypeName',

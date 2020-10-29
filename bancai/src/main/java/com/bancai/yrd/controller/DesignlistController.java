@@ -374,6 +374,30 @@ public class DesignlistController {
         if (null!=timeEnd&&timeEnd.length() != 0) {
             c.and(new mysqlcondition("time", "<=", timeEnd));
         }
+        return queryService.queryDataPage(start, limit, c, "requisition_order_view");
+    }
+
+    @RequestMapping("/order/queryRequisitionUnionOrder.do")
+    public WebResponse queryRequisitionUnionOrder(String origin,String projectId, String operator,String requisitionOrderId, String timeStart, String timeEnd,Integer start,Integer limit){
+        mysqlcondition c=new mysqlcondition();
+        if (null!=projectId&&projectId.length() != 0) {
+            c.and(new mysqlcondition("projectId", "=", projectId));
+        }
+        if (null!=requisitionOrderId&&requisitionOrderId.length() != 0) {
+            c.and(new mysqlcondition("requisitionOrderId", "=", requisitionOrderId));
+        }
+        if (null!=operator&&operator.length() != 0) {
+            c.and(new mysqlcondition("operator", "=", operator));
+        }
+        if (null!=timeStart&&timeStart.length() != 0) {
+            c.and(new mysqlcondition("time", ">=", timeStart));
+        }
+        if (null!=timeEnd&&timeEnd.length() != 0) {
+            c.and(new mysqlcondition("time", "<=", timeEnd));
+        }
+        if (null!=origin&&origin.length() != 0) {
+            c.and(new mysqlcondition("origin", "=", origin));
+        }
         return queryService.queryDataPage(start, limit, c, "requisition_order_union_view");
     }
 
