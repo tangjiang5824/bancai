@@ -8,7 +8,15 @@ Ext.define('project.management.editProject',{
         var itemsPerPage = 50;
         var tableName="project_username_statusName";
         //var materialType="1";
-
+        //项目是否为预加工项目：枚举类型
+        Ext.define('Project.check.State', {
+            statics: { // 关键
+                0: { value: '0', name: '否' },
+                1: { value: '1', name: '是' },
+                // 2: { value: '2', name: '已驳回' },
+                null: { value: 'null', name: '无' },
+            }
+        });
         var record_start = 0;
 
         var tableListStore = Ext.create('Ext.data.Store',{
@@ -618,6 +626,11 @@ Ext.define('project.management.editProject',{
                 { text: '采购负责人', dataIndex: 'purchaseLeaderName', flex :1},
                 { text: '财务负责人', dataIndex: 'financeLeaderName', flex :1},
                 { text: '仓库负责人', dataIndex: 'storeLeaderName', flex :1},
+                { text: '是否为预加工项目', dataIndex: 'isPreprocess', flex :1,
+                    renderer: function (value) {
+                        return Project.check.State[value].name; // key-value
+                    },
+                },
 
             ],
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
