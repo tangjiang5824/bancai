@@ -149,7 +149,7 @@ public class DesignlistController {
     /*
      * 查询导入的designlist记录
      * */
-    @RequestMapping(value = "/designlist/queryUploadLog.do",method = RequestMethod.POST)
+    @RequestMapping(value = "/designlist/queryUploadLog.do")
     @ApiOperation("查询设计清单导入记录")
     public void designlistqueryUploadLog(String projectId, String buildingId, String buildingpositionId,
                                                 HttpServletResponse response) throws IOException, JSONException {
@@ -357,7 +357,28 @@ public class DesignlistController {
      * 查询领料单
      * */
     @RequestMapping("/order/queryRequisitionOrder.do")
-    public WebResponse queryRequisitionOrder(String origin,String projectId, String operator,String requisitionOrderId, String timeStart, String timeEnd,Integer start,Integer limit){
+    public WebResponse queryRequisitionOrder(String projectId, String operator,String requisitionOrderId, String timeStart, String timeEnd,Integer start,Integer limit){
+        mysqlcondition c=new mysqlcondition();
+        if (null!=projectId&&projectId.length() != 0) {
+            c.and(new mysqlcondition("projectId", "=", projectId));
+        }
+        if (null!=requisitionOrderId&&requisitionOrderId.length() != 0) {
+            c.and(new mysqlcondition("requisitionOrderId", "=", requisitionOrderId));
+        }
+        if (null!=operator&&operator.length() != 0) {
+            c.and(new mysqlcondition("operator", "=", operator));
+        }
+        if (null!=timeStart&&timeStart.length() != 0) {
+            c.and(new mysqlcondition("time", ">=", timeStart));
+        }
+        if (null!=timeEnd&&timeEnd.length() != 0) {
+            c.and(new mysqlcondition("time", "<=", timeEnd));
+        }
+        return queryService.queryDataPage(start, limit, c, "requisition_order_view");
+    }
+
+    @RequestMapping("/order/queryRequisitionUnionOrder.do")
+    public WebResponse queryRequisitionUnionOrder(String origin,String projectId, String operator,String requisitionOrderId, String timeStart, String timeEnd,Integer start,Integer limit){
         mysqlcondition c=new mysqlcondition();
         if (null!=projectId&&projectId.length() != 0) {
             c.and(new mysqlcondition("projectId", "=", projectId));

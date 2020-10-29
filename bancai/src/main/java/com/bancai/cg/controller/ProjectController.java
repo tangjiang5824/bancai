@@ -1057,7 +1057,7 @@ public class ProjectController {
         System.out.println("zzyzzyzyyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzzyyzyzyzyzy");
         System.out.println(workorderlogId);
 
-        String fileName = "C:\\Users\\Administrator\\Desktop\\" + "easytest.xlsx";
+        String fileName = "C:\\Users\\Administrator\\Desktop\\单号" +workorderlogId +"领料单.xlsx";
         // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
         // 如果这里想使用03 则 传入excelType参数即可
         //write(fileName,格式类)
@@ -1074,7 +1074,7 @@ public class ProjectController {
 //        if (null!=isActive) {
 //            c.and(new mysqlcondition("isActive", "=", isActive));
 //        }
-        WebResponse response = queryAllService.queryDataPage(start, limit, c, "work_order_detail_match_result");
+        WebResponse response = queryAllService.queryDataPage(start, limit, c, "work_order_detail_match_result_print");
         if (!(boolean) response.get("success"))
             return false;
         //return response;
@@ -1105,7 +1105,7 @@ public class ProjectController {
 //        if (null!=isActive) {
 //            c.and(new mysqlcondition("isActive", "=", isActive));
 //        }
-        WebResponse response = queryAllService.queryDataPage(start, limit, c, "work_order_detail_match_result");
+        WebResponse response = queryAllService.queryDataPage(start, limit, c, "requisition_order_detail_print");
         if (!(boolean) response.get("success"))
             return false;
         //return response;
@@ -1146,7 +1146,7 @@ public class ProjectController {
     //领料单数据绑定
     private List<RequisitionOrder> RequisitionOrder_Data(WebResponse response) {
         List<RequisitionOrder> list = new ArrayList<RequisitionOrder>();
-        System.out.println("之后为工单打印后台代码");
+        System.out.println("之后为领料单打印后台代码");
         System.out.println(response.get("totalCount"));
         int totalCount = Integer.parseInt(response.get("totalCount") + "");
         //boolean success = (boolean) response.get("success");
@@ -1181,7 +1181,7 @@ public class ProjectController {
 
     //打印匹配结果
     @RequestMapping(value = "/project/printMatchResult.do")
-    @ApiOperation("打印旧板匹配结果")
+    @ApiOperation("打印匹配结果")
     public Boolean printOldpanelMatchResult(Integer start, Integer limit, Integer projectId,
                                             Integer buildingId, Integer buildingpositionId,Integer madeBy) {
         String fileName = "C:\\Users\\Administrator\\Desktop\\" + "匹配结果.xlsx";

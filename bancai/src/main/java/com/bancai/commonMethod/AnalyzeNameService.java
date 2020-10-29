@@ -106,6 +106,10 @@ public class AnalyzeNameService extends BaseService {
         errorList.add(errorRow);
         return errorList;
     }
+//    @Transactional
+//    public String partNoGenerator(int type,String ){
+//
+//    }
     /**
      * 根据旧板类型名获取类型ID
      */
