@@ -51,7 +51,7 @@ Ext.define('material.material_Inbound', {
         });
         var MaterialTypeList = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '原材料品名',
-            labelWidth : 80,
+            labelWidth : 70,
             width : 270,
             id :  'materialName',
             name : 'materialName',
@@ -70,7 +70,9 @@ Ext.define('material.material_Inbound', {
                     //下拉框选择的一条记录，所有信息
                     var rec = record[0].data
                     console.log("record=====================",rec)
-                    Ext.getCmp("mValue").setValue(rec.mValue)//setText(pro['planLeader']);//计划负责人
+
+                    Ext.getCmp("partNo").setValue(rec.partNo);
+                    Ext.getCmp("mValue").setValue(rec.mValue);//setText(pro['planLeader']);//计划负责人
                     Ext.getCmp("nValue").setValue(rec.nValue);//生产负责人
                     Ext.getCmp("aValue").setValue(rec.aValue);//采购负责人
                     Ext.getCmp("bValue").setValue(rec.bValue);//采购负责人
@@ -231,11 +233,11 @@ Ext.define('material.material_Inbound', {
                 {
                     xtype: 'textfield',
                     fieldLabel: '原材料品号',
-                    id: 'materialNo',
+                    id: 'partNo',
                     margin: '0 10 0 30',
                     width: 180,
                     labelWidth: 65,
-                    name: 'materialNo',
+                    name: 'partNo',
                     value: ""
                 },
                 {
@@ -405,7 +407,7 @@ Ext.define('material.material_Inbound', {
                         // var operator = Ext.getCmp('operator').value;
                         var materialId = Ext.getCmp('materialName').value;
                         var materialName = Ext.getCmp('materialName').rawValue;
-                        var materialNo = Ext.getCmp('materialNo').getValue();
+                        var partNo = Ext.getCmp('partNo').getValue();
                         var mValue = Ext.getCmp('mValue').getValue();
                         var nValue = Ext.getCmp('nValue').getValue();
                         var aValue = Ext.getCmp('aValue').getValue();
@@ -431,7 +433,7 @@ Ext.define('material.material_Inbound', {
                         data = [{
                             'materialId' : materialId,
                             'materialName' : materialName,
-                            'materialNo' : materialNo,
+                            'partNo' : partNo,
                             'mValue':mValue,
                             'nValue' : nValue,
                             'aValue' : aValue,
@@ -487,7 +489,7 @@ Ext.define('material.material_Inbound', {
                             Ext.getCmp('addDataGrid').getStore().loadData(data,
                             true);
                             //清除框里的数据
-                            Ext.getCmp('materialNo').setValue('');
+                            Ext.getCmp('partNo').setValue('');
                             Ext.getCmp('materialName').setValue('');
                             Ext.getCmp('totalWeight').setValue('');
                             Ext.getCmp('totalArea').setValue('');
@@ -680,15 +682,12 @@ Ext.define('material.material_Inbound', {
                     name : 'materialName',
                     text : '原材料名称',
                     //width : 110,
-                    value:'99',
                     //defaultValue:"2333",
                 },
                 {
-                    dataIndex : 'materialNo',
-                    name : 'materialNo',
+                    dataIndex : 'partNo',
+                    name : 'partNo',
                     text : '原材料品号',
-
-                    value:'99',
                     //defaultValue:"2333",
                 },
                 {dataIndex : 'aValue', text : 'a值', flex :.6, },
