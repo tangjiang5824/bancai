@@ -1184,7 +1184,7 @@ public class ProjectController {
     @ApiOperation("打印旧板匹配结果")
     public Boolean printOldpanelMatchResult(Integer start, Integer limit, Integer projectId,
                                             Integer buildingId, Integer buildingpositionId,Integer madeBy) {
-        String fileName = "C:\\Users\\Administrator\\Desktop\\" + "匹配结果" + analyzeNameService.getTime() + ".xlsx";
+        String fileName = "C:\\Users\\Administrator\\Desktop\\" + "匹配结果.xlsx";
         if (start == null) start = 0;
         if (limit == null) limit = -1;
         mysqlcondition c = new mysqlcondition();
@@ -1200,7 +1200,7 @@ public class ProjectController {
         if (null != madeBy) {
             c.and(new mysqlcondition("productMadeBy", "=", madeBy));
         }
-        WebResponse response = queryAllService.queryDataPage(start, limit, c, "query_match_result");
+        WebResponse response = queryAllService.queryDataPage(start, limit, c, "ztemp_query_match_result");
         //return response;
         EasyExcel.write(fileName, MatchResult.class).sheet("匹配结果").doWrite(MatchResult_Data(response));
         return true;
@@ -1209,12 +1209,13 @@ public class ProjectController {
     private List<MatchResult> MatchResult_Data(WebResponse response) {
         List<MatchResult> list = new ArrayList<MatchResult>();
         DataList tempList = (DataList) response.get("value");
+        System.out.println(tempList);
         if (tempList != null && tempList.size() != 0) {
             for (DataRow dataRow : tempList) {
                 MatchResult row = new MatchResult();
                 row.setProjectName(dataRow.get("projectName") + "");
                 row.setBuildingName(dataRow.get("buildingName") + "");
-                row.setBuildingpositionName(dataRow.get("buildingpositionName") + "");
+                row.setBuildingpositionName(dataRow.get("positionName") + "");
                 row.setProductName(dataRow.get("productName") + "");
 //                row.setProductInventoryUnit(dataRow.get("productInventoryUnit") + "");
 //                row.setProductUnitArea(Double.parseDouble(dataRow.get("productUnitArea") + ""));
@@ -1228,9 +1229,9 @@ public class ProjectController {
 //                row.setOldpanelTotalArea(Double.parseDouble(dataRow.get("oldpanelTotalArea") + ""));
 //                row.setOldpanelTotalWeight(Double.parseDouble(dataRow.get("oldpanelTotalWeight") + ""));
 //                row.setWarehouseName(dataRow.get("warehouseName") + "");
-                row.setIsCompleteMatch(dataRow.get("productMadeBy") + "");
-                row.setIsCompleteMatch(dataRow.get("name") + "");
-                row.setIsCompleteMatch(dataRow.get("count") + "");
+                row.setProductMadeBy(dataRow.get("productMadeBy") + "");
+                row.setName(dataRow.get("name") + "");
+                row.setCount(dataRow.get("count") + "");
                 row.setIsCompleteMatch(dataRow.get("isCompleteMatch") + "");
                 list.add(row);
             }

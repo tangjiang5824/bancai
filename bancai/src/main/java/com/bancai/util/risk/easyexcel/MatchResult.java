@@ -34,7 +34,7 @@ public class MatchResult {
 //    @ExcelProperty("匹配旧板单位")
 //    private String oldpanelInventoryUnit;
     @ExcelProperty("匹配结果数量")
-    private Double count;
+    private String count;
 //    @ExcelProperty("匹配旧板面积/m2")
 //    private Double oldpanelTotalArea;
 //    @ExcelProperty("匹配旧板重量/KG")
