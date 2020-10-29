@@ -357,7 +357,7 @@ public class DesignlistController {
      * 查询领料单
      * */
     @RequestMapping("/order/queryRequisitionOrder.do")
-    public WebResponse queryRequisitionOrder(String projectId, String operator,String requisitionOrderId, String timeStart, String timeEnd,Integer start,Integer limit){
+    public WebResponse queryRequisitionOrder(String origin,String projectId, String operator,String requisitionOrderId, String timeStart, String timeEnd,Integer start,Integer limit){
         mysqlcondition c=new mysqlcondition();
         if (null!=projectId&&projectId.length() != 0) {
             c.and(new mysqlcondition("projectId", "=", projectId));
@@ -373,6 +373,9 @@ public class DesignlistController {
         }
         if (null!=timeEnd&&timeEnd.length() != 0) {
             c.and(new mysqlcondition("time", "<=", timeEnd));
+        }
+        if (null!=origin&&origin.length() != 0) {
+            c.and(new mysqlcondition("origin", "=", origin));
         }
         return queryService.queryDataPage(start, limit, c, "requisition_order_union_view");
     }
