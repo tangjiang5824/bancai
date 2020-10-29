@@ -149,7 +149,7 @@ public class DesignlistController {
     /*
      * 查询导入的designlist记录
      * */
-    @RequestMapping(value = "/designlist/queryUploadLog.do",method = RequestMethod.POST)
+    @RequestMapping(value = "/designlist/queryUploadLog.do")
     @ApiOperation("查询设计清单导入记录")
     public void designlistqueryUploadLog(String projectId, String buildingId, String buildingpositionId,
                                                 HttpServletResponse response) throws IOException, JSONException {

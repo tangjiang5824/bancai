@@ -278,15 +278,72 @@ Ext.define('project.material_over_pick',{
                             buildingpositionId:positionId,
                             description:overpick_res,
                             operator:operator,
-
-
                             // materialType:materialtype,
                             s : "[" + s + "]",
-
                         },
                         success : function(response) {
-                            Ext.MessageBox.alert("提示", "录入成功！");
-                            Ext.getCmp("addMaterialBasicGrid").getStore().removeAll();
+                            // Ext.MessageBox.alert("提示", "录入成功！");
+                            // Ext.getCmp("addMaterialBasicGrid").getStore().removeAll();
+                            console.log('111111111111111111111',response);
+                            var res = response.responseText;
+                            var jsonobj = JSON.parse(res);//将json字符串转换为对象
+                            console.log(jsonobj);
+                            console.log("success--------------",jsonobj.success);
+                            console.log("errorList--------------",jsonobj['errorList']);
+                            var success = jsonobj.success;
+                            var msg = jsonobj.msg;
+                            var errorList = jsonobj.errorList;
+                            var errorCode = jsonobj.errorCode;
+                            var errorCount = jsonobj.errorNum;
+                            if(success == false){
+                                //错误输入
+                                if(errorCode == 400){
+                                    //关闭进度条
+                                    Ext.MessageBox.hide();
+                                    // Ext.MessageBox.alert("提示","匹配失败，产品位置重复或品名不合法！请重新导入" );
+                                    Ext.Msg.show({
+                                        title: '提示',
+                                        message: '创建失败，存在错误输入！\n是否查看具体错误数据',
+                                        buttons: Ext.Msg.YESNO,
+                                        icon: Ext.Msg.QUESTION,
+                                        fn: function (btn) {
+                                            if (btn === 'yes') {
+                                                //点击确认，显示重复的数据
+                                                errorlistStore.loadData(errorList);
+                                                win_errorInfo_over.show();
+                                            }
+                                        }
+                                    });
+                                }
+                                else if(errorCode == 100){
+                                    Ext.MessageBox.hide();
+                                    Ext.MessageBox.alert("提示","创建失败！接收到的数据为空" );
+                                }
+                                else if(errorCode == 200){
+                                    Ext.MessageBox.hide();
+                                    Ext.MessageBox.alert("提示","创建失败！未选择项目或楼栋" );
+                                }
+                                else if(errorCode == 300){
+                                    Ext.MessageBox.hide();
+                                    Ext.MessageBox.alert("提示","创建失败！未选择超领申请人" );
+                                }
+                                else if(errorCode == 1000){
+                                    Ext.MessageBox.hide();
+                                    Ext.MessageBox.alert("提示","创建失败，未知错误！请重新领取" );
+                                }
+                            }else{
+                                Ext.MessageBox.hide();
+                                Ext.MessageBox.alert("提示","创建成功" );
+
+                                //  领料页面重置
+                                Ext.getCmp('operator').setValue("");
+                                Ext.getCmp('projectName').setValue("");
+                                Ext.getCmp('buildingName').setValue("");
+                                Ext.getCmp('positionName').setValue("");
+                                Ext.getCmp('overpick_res').setValue("");
+
+                                Ext.getCmp("material_Query_Data_Main").getStore().removeAll();
+                            }
                         },
                         failure : function(response) {
                             Ext.MessageBox.alert("提示", "录入失败！");
@@ -295,6 +352,57 @@ Ext.define('project.material_over_pick',{
 
                 }
             }]
+        });
+
+        //错误提示，弹出框
+        var errorlistStore = Ext.create('Ext.data.Store',{
+            id: 'errorlistStore',
+            autoLoad: true,
+            fields: ['productName','position'],
+            //pageSize: itemsPerPage, // items per page
+            data:[],
+            editable:false,
+        });
+
+        //弹出框，出入库详细记录
+        var specific_errorlist_over=Ext.create('Ext.grid.Panel',{
+            id : 'specific_errorlist_over',
+            // tbar: toolbar_pop,
+            store:errorlistStore,//oldpanellogdetailList，store1的数据固定
+            dock: 'bottom',
+            columns:[
+
+                {
+                    text: '原材料',
+                    //dataIndex: 'productName',
+                    dataIndex: 'id',
+                    flex :1,
+                    width:"80"
+                },
+                {
+                    text: '错误原因',
+                    dataIndex:'errorType',
+                    flex :1,
+                }
+            ],
+            flex:1,
+            //selType:'checkboxmodel',
+            plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
+                clicksToEdit : 2
+            })],
+        });
+
+        var win_errorInfo_over = Ext.create('Ext.window.Window', {
+            // id:'win_errorInfo_over',
+            title: '错误详情',
+            height: 500,
+            width: 750,
+            layout: 'fit',
+            closable : true,
+            draggable:true,
+            closeAction : 'hidden',
+            // tbar:toolbar_pop1,
+            items:specific_errorlist_over,
         });
 
 
