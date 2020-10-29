@@ -1,8 +1,8 @@
-Ext.define('oldpanel.oldpanel_Inbound', {
+Ext.define('material.material_Inbound', {
     extend : 'Ext.panel.Panel',
     region : 'center',
     layout : "fit",
-    title : '旧板入库',
+    title : '原材料入库',
     reloadPage : function() {
         var p = Ext.getCmp('functionPanel');
         p.removeAll();
@@ -59,35 +59,33 @@ Ext.define('oldpanel.oldpanel_Inbound', {
             store: storeNameList,
         });
 
-        var oldPanelNameStore = Ext.create('Ext.data.Store',{
-            fields : [ 'oldpanelName'],
+        var materialNameStore = Ext.create('Ext.data.Store',{
+            fields : [ 'materialName'],
             proxy : {
                 type : 'ajax',
-                url : 'material/findAllBytableName.do?tableName=oldpanel_info',
+                url : 'material/findAllBytableName.do?tableName=material_info',
                 reader : {
                     type : 'json',
-                    rootProperty: 'oldpanel_info',
+                    rootProperty: 'material_info',
                 }
             },
             autoLoad : true
         });
-        var oldpanelNameList = Ext.create('Ext.form.ComboBox',{
+        var materialNameList = Ext.create('Ext.form.ComboBox',{
             //fieldLabel : '旧板品名',
             labelWidth : 70,
             width : 230,
-            id :  'oldpanelNameList',
-            name : 'oldpanelNameList',
+            id :  'materialNameList',
+            name : 'materialNameList',
             matchFieldWidth: false,
             emptyText : "--请选择--",
-            displayField: 'oldpanelName',
-            valueField: 'oldpanelName',
+            displayField: 'materialName',
+            valueField: 'materialName',
             editable : true,
-            store: oldPanelNameStore,
+            store: materialNameStore,
             listeners:{
                 select: function(combo, record, index) {
 
-                    //console.log(oldpanelNameList.getValue());// MaterialTypeList.getValue()获得选择的类型
-                    //console.log(record[0].data.materialName);
                 },
                 //下拉框搜索
                 beforequery :function(e){
@@ -119,8 +117,8 @@ Ext.define('oldpanel.oldpanel_Inbound', {
         var tableNameList =  Ext.create('Ext.data.Store', {
             fields: ['tableName'],
             data : [
-                {tableName:"旧板信息表"},
-                //{tableName:"原材料信息表"},
+                //{tableName:"旧板信息表"},
+                {tableName:"原材料信息表"},
                 //{tableName:"产品信息表"}
                 //...
             ]
@@ -157,14 +155,14 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                         // var count = Ext.getCmp('count').getValue();
                         // var warehouseName = Ext.getCmp('storePosition').rawValue;
                         var data = [{
-                            'oldpanelName' : '',
-                            'oldpanelNo' : '',
+                            'materialName' : '',
+                            'materialNo' : '',
                             'warehouseName':'',
                             'remark' : '',
                             'count' : '',
                         }];
 
-                        Ext.getCmp('oldpanel_addDataGrid').getStore().loadData(data, true);
+                        Ext.getCmp('material_addDataGrid').getStore().loadData(data, true);
                     }
                 },
                 //删除行数据
@@ -175,15 +173,15 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                     iconCls : 'rukuicon ',
                     text : '删除',
                     handler: function(){
-                        var sm = Ext.getCmp('oldpanel_addDataGrid').getSelectionModel();
-                        var oldpanelArr = sm.getSelection();
-                        if (oldpanelArr.length != 0) {
-                            Ext.Msg.confirm("提示", "共选中" + oldpanelArr.length + "条数据，是否确认删除？", function (btn) {
+                        var sm = Ext.getCmp('material_addDataGrid').getSelectionModel();
+                        var materialArr = sm.getSelection();
+                        if (materialArr.length != 0) {
+                            Ext.Msg.confirm("提示", "共选中" + materialArr.length + "条数据，是否确认删除？", function (btn) {
                                 if (btn == 'yes') {
                                     //先删除后台再删除前台
                                     //ajax 删除后台数据 成功则删除前台数据；失败则不删除前台数据
                                     //Extjs 4.x 删除
-                                    Ext.getCmp('oldpanel_addDataGrid').getStore().remove(oldpanelArr);
+                                    Ext.getCmp('material_addDataGrid').getStore().remove(materialArr);
                                 } else {
                                     return;
                                 }
@@ -223,7 +221,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                                         //var check=Ext.getCmp("check").getValue();
 
                                         form.submit({
-                                            url : 'oldpanel/uploadExcel.do', //上传excel文件，并回显数据，退库成品批量上传
+                                            url : 'uploadMaterialExcel.do', //上传excel文件，并回显数据，退库成品批量上传
                                             waitMsg : '正在上传...',
 
                                             success : function(exceluploadform,response, action) {
@@ -253,7 +251,8 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                                                 }else{
                                                     Ext.MessageBox.alert("提示", "上传成功!");
                                                     //重新加载数据
-                                                    oldpanelStore.loadData(List);
+                                                    //materialStore.loadData(List);
+                                                    MaterialStore.loadData(action.result['value']);
                                                 }
                                                 // Ext.MessageBox.alert("提示", "上传成功!");
 
@@ -371,12 +370,11 @@ Ext.define('oldpanel.oldpanel_Inbound', {
         var back_inb_errorlistStore = Ext.create('Ext.data.Store',{
             id: 'back_inb_errorlistStore',
             autoLoad: true,
-            fields: ['oldpanelName','position'],
+            fields: ['materialName','position'],
             //pageSize: itemsPerPage, // items per page
             data:[],
             editable:false,
         });
-
         //弹出框，出入库详细记录
         var back_inb_errorlist_outbound=Ext.create('Ext.grid.Panel',{
             id : 'back_inb_errorlist_outbound',
@@ -392,8 +390,8 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                     sortable: false
                 },
                 {
-                    text: '旧板名称',
-                    dataIndex: 'oldpanelName',
+                    text: '原材料名称',
+                    dataIndex: 'materialName',
                     flex :1,
                     width:"80"
                 },
@@ -423,7 +421,6 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                 clicksToEdit : 2
             })],
         });
-
         var win_backinb_errorInfo_outbound = Ext.create('Ext.window.Window', {
             // id:'win_backinb_errorInfo_outbound',
             title: '错误详情',
@@ -436,7 +433,6 @@ Ext.define('oldpanel.oldpanel_Inbound', {
             // tbar:toolbar_pop1,
             items:back_inb_errorlist_outbound,
         });
-
         //职员信息
         var workerListStore = Ext.create('Ext.data.Store',{
             fields : [ 'typeName'],
@@ -498,7 +494,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                     handler : function() {
 
                         // 取出grid的字段名字段类型
-                        var select = Ext.getCmp('oldpanel_addDataGrid').getStore()
+                        var select = Ext.getCmp('material_addDataGrid').getStore()
                             .getData();
                         var s = new Array();
                         select.each(function(rec) {
@@ -523,7 +519,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                         //获得当前操作时间
                         //var sTime=Ext.Date.format(Ext.getCmp('startTime').getValue(), 'Y-m-d H:i:s');
                         Ext.Ajax.request({
-                            url : 'oldpanel/addData.do',  //入库
+                            url : 'material/addData.do',  //入库
                             method:'POST',
                             //submitEmptyText : false,
                             params : {
@@ -588,8 +584,8 @@ Ext.define('oldpanel.oldpanel_Inbound', {
         });
 
 
-        var oldpanelStore = Ext.create('Ext.data.Store',{
-            id: 'oldpanelStore',
+        var materialStore = Ext.create('Ext.data.Store',{
+            id: 'materialStore',
             autoLoad: true,
             fields: [],
             pageSize: itemsPerPage, // items per page
@@ -597,26 +593,26 @@ Ext.define('oldpanel.oldpanel_Inbound', {
         });
 
         var grid = Ext.create("Ext.grid.Panel", {
-            id : 'oldpanel_addDataGrid',
+            id : 'material_addDataGrid',
             //dockedItems : [toolbar2],
-            store : oldpanelStore,
+            store : materialStore,
             columns : [
                 {
-                    dataIndex : 'oldpanelName',
-                    text : '旧板名称',
+                    dataIndex : 'materialName',
+                    text : '原材料名称',
                     flex :1,
-                    editor : oldpanelNameList,renderer:function(value, cellmeta, record){
-                        var index = oldPanelNameStore.find(oldpanelNameList.valueField,value);
-                        var ehrRecord = oldPanelNameStore.getAt(index);
+                    editor : materialNameList,renderer:function(value, cellmeta, record){
+                        var index = materialNameStore.find(materialNameList.valueField,value);
+                        var ehrRecord = materialNameStore.getAt(index);
                         var returnvalue = "";
                         if (ehrRecord) {
-                            returnvalue = ehrRecord.get('oldpanelName');
+                            returnvalue = ehrRecord.get('materialName');
                         }
                         return returnvalue;
                     },
                     render:{}
                 },
-                {dataIndex : 'oldpanelNo', text : '旧板品号', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'materialNo', text : '原材料品号', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {
                     dataIndex : 'warehouseName',
                     text : '仓库名称',

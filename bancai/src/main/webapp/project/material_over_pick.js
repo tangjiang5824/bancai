@@ -109,7 +109,6 @@ Ext.define('project.material_over_pick',{
             //store: tableListStore2,
 
         });
-
         var buildingPositionStore = Ext.create('Ext.data.Store',{
             fields : [ 'buildingPosition'],
             proxy : {
@@ -122,7 +121,6 @@ Ext.define('project.material_over_pick',{
             },
             autoLoad : true
         });
-
         var buildingPositionList = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '位置',
             labelWidth : 30,
@@ -138,7 +136,6 @@ Ext.define('project.material_over_pick',{
             editable : true,
             store: buildingPositionStore,
         });
-
         //职员信息
         var workerListStore = Ext.create('Ext.data.Store',{
             fields : [ 'typeName'],
@@ -152,7 +149,7 @@ Ext.define('project.material_over_pick',{
             },
             autoLoad : true
         });
-
+        //创建超领单
         var toolbar_top = Ext.create("Ext.toolbar.Toolbar", {
             // dock : "top",
             border:false,
@@ -163,7 +160,7 @@ Ext.define('project.material_over_pick',{
                 }
             ]
         });
-
+        //项目名，楼栋名，位置
         var toobar = Ext.create('Ext.toolbar.Toolbar',{
             items: [
                 //项目名
@@ -172,6 +169,7 @@ Ext.define('project.material_over_pick',{
                 buildingPositionList,
                 ]
         });
+        //超领原因，申请日期，申请人
         var toolbar1 = Ext.create('Ext.toolbar.Toolbar',{
             items: [
                 //超龄原因
@@ -220,6 +218,7 @@ Ext.define('project.material_over_pick',{
                 },
             ]
         });
+        //新增按钮
         var toolbar2 = Ext.create("Ext.toolbar.Toolbar", {
             dock : "top",
             items : [{

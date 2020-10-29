@@ -29,7 +29,13 @@ Ext.define('material.material_Receive',{
                 9: { value: '5', name: '未匹配成功' },
             }
         });
-
+        //领料单类型：枚举类型
+        Ext.define('product.model.originType_OverOrNot', {
+            statics: { // 关键s
+                1: { value: '1', name: '领料单' },
+                2: { value: '2', name: '超领单' },
+            }
+        });
         //项目名称选择
         var tableListStore = Ext.create('Ext.data.Store',{
             fields : [ "项目名称","id"],
@@ -299,7 +305,10 @@ Ext.define('material.material_Receive',{
                 {
                     dataIndex:'origin',
                     text:'领料单类型',
-                    flex :1
+                    flex :1,
+                    renderer: function (value) {
+                        return product.model.originType_OverOrNot[value].name; // key-value
+                    },
                 },
             ],
             flex:1,
