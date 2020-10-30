@@ -526,11 +526,11 @@ Ext.define('project.project_create_picklist',{
                     text:'数量',
                     flex :1
                 },
-                {
-                    dataIndex:'warehouseName', //工单号
-                    text:'仓库名',
-                    flex :1
-                },
+                // {
+                //     dataIndex:'warehouseName', //工单号
+                //     text:'仓库名',
+                //     flex :1
+                // },
                 // {
                 //     dataIndex:'countTemp',//countTemp
                 //     text:'领取数量',

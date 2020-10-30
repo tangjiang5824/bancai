@@ -265,6 +265,14 @@ Ext.define('material.material_Query_Data',{
 
                 },
                 {
+                    dataIndex : 'partNo',
+                    name : '品号',
+                    text : '品号',
+                    //width : 110,
+                    flex :1,
+
+                },
+                {
                     dataIndex : 'typeName',
                     text : '原材料类型',
                     flex :.6,

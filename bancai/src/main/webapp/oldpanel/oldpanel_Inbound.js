@@ -88,6 +88,13 @@ Ext.define('oldpanel.oldpanel_Inbound', {
 
                     //console.log(oldpanelNameList.getValue());// MaterialTypeList.getValue()获得选择的类型
                     //console.log(record[0].data.materialName);
+                    partNo
+                    var select = record[0].data;
+                    var partNo = select.partNo;
+
+                    var sc = Ext.getCmp('oldpanel_addDataGrid').getSelectionModel().getSelection();
+
+                    sc[0].set('partNo',partNo);
                 },
                 //下拉框搜索
                 beforequery :function(e){
@@ -158,7 +165,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                         // var warehouseName = Ext.getCmp('storePosition').rawValue;
                         var data = [{
                             'oldpanelName' : '',
-                            'oldpanelNo' : '',
+                            'partNo' : '',
                             'warehouseName':'',
                             'remark' : '',
                             'count' : '',
@@ -605,7 +612,8 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                     dataIndex : 'oldpanelName',
                     text : '旧板名称',
                     flex :1,
-                    editor : oldpanelNameList,renderer:function(value, cellmeta, record){
+                    editor : oldpanelNameList,
+                    renderer:function(value, cellmeta, record){
                         var index = oldPanelNameStore.find(oldpanelNameList.valueField,value);
                         var ehrRecord = oldPanelNameStore.getAt(index);
                         var returnvalue = "";
@@ -616,7 +624,15 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                     },
                     render:{}
                 },
-                {dataIndex : 'oldpanelNo', text : '旧板品号', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {
+                    dataIndex : 'partNo',
+                    text : '旧板品号',
+                    flex :1,
+                    editor : {
+                        xtype : 'textfield',
+                        allowBlank : false,
+                    }
+                    },
                 {
                     dataIndex : 'warehouseName',
                     text : '仓库名称',

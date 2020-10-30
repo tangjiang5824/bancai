@@ -349,7 +349,6 @@ Ext.define('project.material_over_pick',{
                             Ext.MessageBox.alert("提示", "录入失败！");
                         }
                     });
-
                 }
             }]
         });
@@ -371,13 +370,11 @@ Ext.define('project.material_over_pick',{
             store:errorlistStore,//oldpanellogdetailList，store1的数据固定
             dock: 'bottom',
             columns:[
-
                 {
                     text: '原材料',
                     //dataIndex: 'productName',
                     dataIndex: 'id',
                     flex :1,
-                    width:"80"
                 },
                 {
                     text: '错误原因',

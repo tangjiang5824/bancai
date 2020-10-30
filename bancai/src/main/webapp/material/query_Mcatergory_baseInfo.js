@@ -144,6 +144,7 @@ Ext.define('material.query_Mcatergory_baseInfo',{
             columns : [
                 // { text: '原材料品名',  dataIndex: 'materialName' ,flex :1,editor : {xtype : 'textfield', allowBlank : false}},
                 { text: '原材料品名',  dataIndex: 'materialName' ,flex :1},
+                { text: '原材料品号',  dataIndex: 'partNo' ,flex :1},
                 {
                     dataIndex : 'typeName',
                     text : '原材料类型',

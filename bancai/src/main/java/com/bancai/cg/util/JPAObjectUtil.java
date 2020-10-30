@@ -83,6 +83,7 @@ public class JPAObjectUtil {
                     for (int i=0;i<s.length;i++){
                         if(material.getnValue()>Integer.parseInt(s[i])) continue;
                         material.setnValue(Integer.parseInt(s[i]));
+                        break;
                     }
                 }
                 arrayList.add(material);

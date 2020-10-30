@@ -204,7 +204,6 @@ public class ProductDataService extends BaseService{
                         String.valueOf(productlogIdOld), String.valueOf(productIdOld));
                 if (!isLogRightOld)
                     return 0;
-
             }
         }
         return productId;
