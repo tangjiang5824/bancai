@@ -107,8 +107,7 @@ public class AnalyzeNameService extends BaseService {
         return errorList;
     }
     @Transactional
-    public String oldpanelPartNoGenerator(String typeId,String infoId){
-        String classificationId = queryService.query("SELECT classificationId FROM oldpaneltype WHERE id=?",typeId).get(0).get("classificationId").toString();
+    public String oldpanelPartNoGenerator(String typeId,String infoId,String classificationId){
         StringBuilder typeIdBuilder = new StringBuilder(typeId);
         StringBuilder infoIdBuilder = new StringBuilder(infoId);
         while(typeIdBuilder.length()<2){
@@ -117,11 +116,10 @@ public class AnalyzeNameService extends BaseService {
         while(infoIdBuilder.length()<4){
             infoIdBuilder.insert(0, "0");
         }
-        return "218080"+classificationId+typeIdBuilder.toString()+infoIdBuilder.toString();
+        return "217080"+classificationId+typeIdBuilder.toString()+infoIdBuilder.toString();
     }
     @Transactional
-    public String productPartNoGenerator(String typeId,String infoId){
-        String classificationId = queryService.query("SELECT classificationId FROM producttype WHERE id=?",typeId).get(0).get("classificationId").toString();
+    public String productPartNoNewGenerator(String typeId,String infoId,String classificationId){
         StringBuilder typeIdBuilder = new StringBuilder(typeId);
         StringBuilder infoIdBuilder = new StringBuilder(infoId);
         while(typeIdBuilder.length()<2){
@@ -131,6 +129,18 @@ public class AnalyzeNameService extends BaseService {
             infoIdBuilder.insert(0, "0");
         }
         return "215080"+classificationId+typeIdBuilder.toString()+infoIdBuilder.toString();
+    }
+    @Transactional
+    public String productPartNoOldGenerator(String typeId,String infoId,String classificationId){
+        StringBuilder typeIdBuilder = new StringBuilder(typeId);
+        StringBuilder infoIdBuilder = new StringBuilder(infoId);
+        while(typeIdBuilder.length()<2){
+            typeIdBuilder.insert(0, "0");
+        }
+        while(infoIdBuilder.length()<4){
+            infoIdBuilder.insert(0, "0");
+        }
+        return "218080"+classificationId+typeIdBuilder.toString()+infoIdBuilder.toString();
     }
     /**
      * 根据旧板类型名获取类型ID

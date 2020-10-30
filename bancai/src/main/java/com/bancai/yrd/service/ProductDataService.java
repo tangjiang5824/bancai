@@ -38,13 +38,14 @@ public class ProductDataService extends BaseService{
         return insertList;
     }
     @Transactional
-    public DataList productAddInsertRowToInfoList(DataList insertList,String productFormatId,String productTypeId,String productName,String inventoryUnit,
+    public DataList productAddInsertRowToInfoList(DataList insertList,String productFormatId,String productTypeId,String classificationId,String productName,String inventoryUnit,
                                                   String unitWeight,String unitArea,String remark,String mValue,String nValue,String pValue,
                                                   String aValue,String bValue,String mAngle,String nAngle,String pAngle,
                                                   String suffix,String ignoredSuffix){
         DataRow row = new DataRow();
         row.put("productFormatId",productFormatId);
         row.put("productTypeId",productTypeId);
+        row.put("classificationId",classificationId);
         row.put("productName",productName);
         row.put("inventoryUnit",inventoryUnit);
         row.put("unitWeight",unitWeight);
@@ -112,6 +113,7 @@ public class ProductDataService extends BaseService{
         for (DataRow dataRow : insertList) {
             String productFormatId = dataRow.get("productFormatId").toString();
             String productTypeId = dataRow.get("productTypeId").toString();
+            String classificationId = dataRow.get("classificationId").toString();
             String productName = dataRow.get("productName").toString();
             String inventoryUnit = dataRow.get("inventoryUnit").toString();
             String unitWeight = dataRow.get("unitWeight").toString();
@@ -137,15 +139,24 @@ public class ProductDataService extends BaseService{
                 values[8] = "";
             if(values[9].equals("null"))
                 values[9] = "";
-            int productId = insertProjectService.insertDataToTable("insert into product_info (productName,inventoryUnit,unitWeight,unitArea,remark," +
+            int productIdNew = insertProjectService.insertDataToTable("insert into product_info (productName,inventoryUnit,unitWeight,unitArea,remark," +
                             "productFormatId,mValue,nValue,pValue,aValue,bValue,mAngle,nAngle,pAngle,suffix,ignoredSuffix,userId) " +
                             "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                     productName,inventoryUnit,unitWeight,unitArea,remark,productFormatId,mValue,nValue,pValue,aValue,bValue
                     ,values[5],values[6],values[7],values[8],values[9],userId);
-            String partNo = analyzeNameService.productPartNoGenerator(productTypeId,String.valueOf(productId));
-            jo.update("update oldpanel_info set partNo=\""+partNo+"\" where id=\""+productId+"\"");
+            int productIdOld = insertProjectService.insertDataToTable("insert into product_info (productName,inventoryUnit,unitWeight,unitArea,remark," +
+                            "productFormatId,mValue,nValue,pValue,aValue,bValue,mAngle,nAngle,pAngle,suffix,ignoredSuffix,userId) " +
+                            "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                    productName,inventoryUnit,unitWeight,unitArea,remark,productFormatId,mValue,nValue,pValue,aValue,bValue
+                    ,values[5],values[6],values[7],values[8],values[9],userId);
+            String partNoNew = analyzeNameService.productPartNoNewGenerator(productTypeId,String.valueOf(productIdNew),classificationId);
+            jo.update("update product_info set partNo=\""+partNoNew+"\" where id=\""+productIdNew+"\"");
             b = b&insertProjectService.insertIntoTableBySQL("insert into product_logdetail (productlogId,productId) values (?,?)",
-                    String.valueOf(logId), String.valueOf(productId));
+                    String.valueOf(logId), String.valueOf(productIdNew));
+            String partNoOld = analyzeNameService.productPartNoOldGenerator(productTypeId,String.valueOf(productIdOld),classificationId);
+            jo.update("update product_info set partNo=\""+partNoOld+"\" where id=\""+productIdOld+"\"");
+            b = b&insertProjectService.insertIntoTableBySQL("insert into product_logdetail (productlogId,productId) values (?,?)",
+                    String.valueOf(logId), String.valueOf(productIdOld));
         }
         return b;
     }
@@ -170,18 +181,30 @@ public class ProductDataService extends BaseService{
             if (list.size() == 0)
                 return 0;
             else {
-                String productTypeId = list.get(0).get("classificationId").toString();
+                String productTypeId = list.get(0).get("id").toString();
+                String classificationId = list.get(0).get("classificationId").toString();
                 String sql_addLog = "insert into product_log (type,userId,time) values(?,?,?)";
-                productId = productAddSingleInfo(productName, "", "", "", "", userId);
-                if (productId == 0)
+                int productIdNew = productAddSingleInfo(productName, "", "", "", "", userId);
+                if (productIdNew == 0)
                     return 0;
-                int productlogId = insertProjectService.insertDataToTable(sql_addLog, "6", "0", analyzeNameService.getTime());
-                boolean isLogRight = insertProjectService.insertIntoTableBySQL("insert into product_logdetail (productlogId,productId) values (?,?)",
-                        String.valueOf(productlogId), String.valueOf(productId));
-                if (!isLogRight)
+                int productlogIdNew = insertProjectService.insertDataToTable(sql_addLog, "6", "0", analyzeNameService.getTime());
+                String partNoNew = analyzeNameService.productPartNoNewGenerator(productTypeId,String.valueOf(productIdNew),classificationId);
+                jo.update("update product_info set partNo=\""+partNoNew+"\" where id=\""+productId+"\"");
+                boolean isLogRightNew = insertProjectService.insertIntoTableBySQL("insert into product_logdetail (productlogId,productId) values (?,?)",
+                        String.valueOf(productlogIdNew), String.valueOf(productIdNew));
+                if (!isLogRightNew)
                     return 0;
-                String partNo = analyzeNameService.productPartNoGenerator(productTypeId,String.valueOf(productId));
-                jo.update("update oldpanel_info set partNo=\""+partNo+"\" where id=\""+productId+"\"");
+                int productIdOld = productAddSingleInfo(productName, "", "", "", "", userId);
+                if (productIdOld == 0)
+                    return 0;
+                int productlogIdOld = insertProjectService.insertDataToTable(sql_addLog, "6", "0", analyzeNameService.getTime());
+                String partNoOld = analyzeNameService.productPartNoOldGenerator(productTypeId,String.valueOf(productIdOld),classificationId);
+                jo.update("update product_info set partNo=\""+partNoOld+"\" where id=\""+productId+"\"");
+                boolean isLogRightOld = insertProjectService.insertIntoTableBySQL("insert into product_logdetail (productlogId,productId) values (?,?)",
+                        String.valueOf(productlogIdOld), String.valueOf(productIdOld));
+                if (!isLogRightOld)
+                    return 0;
+
             }
         }
         return productId;
