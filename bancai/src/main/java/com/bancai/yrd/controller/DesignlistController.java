@@ -459,30 +459,16 @@ public class DesignlistController {
         return queryService.queryDataPage(start, limit, c, tableName);
     }
     /*
-     * 查询某张领料单细节zzy
+     * 查询某张超领单细节zzy
      * */
-    @RequestMapping("/order/zzyqueryRequisitionOrderDetail.do")
+    @RequestMapping("/order/zzyqueryOverRequisitionOrderDetail.do")
     @ApiOperation("领料单细节查询")
-    public WebResponse zzyqueryRequisitionOrderDetail(String type,String origin, String requisitionOrderId, String warehouseName, String buildingId,
+    public WebResponse zzyqueryOverRequisitionOrderDetail(String requisitionOrderId, String buildingId,
                                                    String buildingpositionId,String isCompleteMatch,Integer start,Integer limit){
         mysqlcondition c=new mysqlcondition();
-        String tableName = "requisition_order_detail_view";
+        String tableName = "over_requisition_order_detail_view";
         if (null!=requisitionOrderId&&requisitionOrderId.length() != 0) {
             c.and(new mysqlcondition("requisitionOrderId", "=", requisitionOrderId));
-        }else {
-            WebResponse response = new WebResponse();
-            response.setSuccess(false);
-            response.setErrorCode(100);
-            response.setMsg("未获取到领料单号");
-            return response;
-        }
-        if (null!=type&&type.length() != 0) {
-            System.out.println(type);
-            if((!type.equals("4"))||(origin.equals("1"))) c.and(new mysqlcondition("type", "=", type));
-            else tableName = "over_requisition_order_detail_view";
-        }
-        if (null!=warehouseName&&warehouseName.length() != 0) {
-            c.and(new mysqlcondition("warehouseName", "=", warehouseName));
         }
         if (null!=buildingId&&buildingId.length() != 0) {
             c.and(new mysqlcondition("buildingId", "=", buildingId));
