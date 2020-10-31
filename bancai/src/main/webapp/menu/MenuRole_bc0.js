@@ -137,11 +137,18 @@ Ext.define("menu.MenuRole_bc0", {
 					text : '入库',
 					id : 'preprocess.preprocess_Inbound',
 					leaf : true
-				} ,{
-					text : '批量入库',
-					id : 'preprocess.preprocess_Upload_Data',
-					leaf : true
-				} ,{
+				} ,
+					{
+						text : '入库',
+						id : 'preprocess.preprocess_Inbound_old',
+						leaf : true
+					} ,
+				// 	{
+				// 	text : '批量入库',
+				// 	id : 'preprocess.preprocess_Upload_Data',
+				// 	leaf : true
+				// } ,
+					{
 					text : '库存查询',
 					id : 'preprocess.preprocess_Query_Data',
 					leaf : true
@@ -198,7 +205,7 @@ Ext.define("menu.MenuRole_bc0", {
 					text : '误入库撤销',
 					id : 'backproduct.backproduct_Outbound',
 					leaf : true
-				},
+					},
 					{
 					text : '出入库记录查询',
 					id : 'backproduct.backproduct_Query_Records',
@@ -466,7 +473,7 @@ Ext.define("menu.MenuRole_bc0", {
 						id : 'material.add_Mcatergory_baseInfo',
 						leaf : true
 					},{
-						text : '查看原材料类型',
+						text : '查看原材料基础信息',
 						id : 'material.query_Mcatergory_baseInfo',
 						leaf : true
 					},

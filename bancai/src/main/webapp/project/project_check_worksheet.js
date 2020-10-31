@@ -340,18 +340,18 @@ Ext.define('project.project_check_worksheet',{
                     valueField : 'id',
                     editable : true,
                 },
-                {
-                    xtype : 'datefield',
-                    margin : '0 40 0 0',
-                    fieldLabel : '审核时间',
-                    width : 180,
-                    labelWidth : 60,
-                    id : "backTime",
-                    name : 'backTime',
-                    format : 'Y-m-d',
-                    editable : false,
-                    //value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
-                },
+                // {
+                //     xtype : 'datefield',
+                //     margin : '0 40 0 0',
+                //     fieldLabel : '审核时间',
+                //     width : 180,
+                //     labelWidth : 60,
+                //     id : "backTime",
+                //     name : 'backTime',
+                //     format : 'Y-m-d',
+                //     editable : false,
+                //     //value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
+                // },
                 {
                     xtype : 'button',
                     text: '审核',

@@ -447,7 +447,7 @@ Ext.define('project.project_query_overpicklist',{
             fields:['materialName','length','materialType','width','specification','number'],
             proxy : {
                 type : 'ajax',
-                url : 'order/queryOverRequisitionOrderDetail.do',//获取同类型的原材料  +'&pickNum='+pickNum
+                url : 'order/zzyqueryOverRequisitionOrderDetail.do',//获取同类型的原材料  +'&pickNum='+pickNum
                 reader : {
                     type : 'json',
                     rootProperty: 'value',
@@ -477,11 +477,11 @@ Ext.define('project.project_query_overpicklist',{
                         return product.model.originType[value].name; // key-value
                     },
                 },
-                {
-                    dataIndex:'warehouseName',
-                    text:'仓库名',
-                    flex :1,
-                },
+                // {
+                //     dataIndex:'warehouseName',
+                //     text:'仓库名',
+                //     flex :1,
+                // },
                 {
                     dataIndex:'countAll',
                     text:'总数量',
