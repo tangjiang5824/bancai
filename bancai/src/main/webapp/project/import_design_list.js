@@ -90,6 +90,63 @@ Ext.define('project.import_design_list', {
 // 						}
 // 					}]
 // 		});
+		//单条录入和添加记录按钮
+		var toolbar_one = Ext.create('Ext.toolbar.Toolbar', {
+			dock : "top",
+			items: [
+				{
+					xtype:'tbtext',
+					text:'<strong>单条录入:</strong>',
+					margin: '0 40 0 0',
+				},
+				{   xtype : 'button',
+					margin: '0 40 0 0',
+					iconAlign : 'center',
+					iconCls : 'rukuicon ',
+					text : '添加记录',
+					handler: function(){
+						// var productName = Ext.getCmp('productName').getValue();
+						// var count = Ext.getCmp('count').getValue();
+						// var warehouseName = Ext.getCmp('storePosition').rawValue;
+						var data = [{
+							'品名' : '',
+							'位置编号' : '',
+							'图号':'',
+						}];
+
+						Ext.getCmp('addlistDataGrid').getStore().loadData(data, true);
+					}
+				},
+				//删除行数据
+				{
+					xtype : 'button',
+					margin: '0 0 0 0',
+					iconAlign : 'center',
+					iconCls : 'rukuicon ',
+					text : '删除',
+					handler: function(){
+						var sm = Ext.getCmp('addlistDataGrid').getSelectionModel();
+						var productArr = sm.getSelection();
+						if (productArr.length != 0) {
+							Ext.Msg.confirm("提示", "共选中" + productArr.length + "条数据，是否确认删除？", function (btn) {
+								if (btn == 'yes') {
+									//先删除后台再删除前台
+									//ajax 删除后台数据 成功则删除前台数据；失败则不删除前台数据
+									//Extjs 4.x 删除
+									Ext.getCmp('addlistDataGrid').getStore().remove(productArr);
+								} else {
+									return;
+								}
+							});
+						} else {
+							//Ext.Msg.confirm("提示", "无选中数据");
+							Ext.Msg.alert("提示", "无选中数据");
+						}
+					}
+				}
+
+			]
+		});
 		//错误类型：枚举类型
 		Ext.define('designlist.errorcode.type', {
 			statics: { // 关键
@@ -112,16 +169,6 @@ Ext.define('project.import_design_list', {
 			store : designlistStore,
 			title:"清单明细",
 			columns : [
-				// {
-				// 	dataIndex : '产品编号',
-				// 	name : '产品编号',
-				// 	text : '产品编号',
-				// 	//width : 110,
-				// 	editor : {// 文本字段
-				// 		xtype : 'textfield',
-				// 		allowBlank : false
-				// 	}
-				// },
 				{
 					// dataIndex : '序号',
 					name : '序号',
@@ -141,7 +188,7 @@ Ext.define('project.import_design_list', {
 						xtype : 'textfield',
 						allowBlank : false,
 					},
-					editable:false,
+					editable:true,
 					// flex:0.2
 				},
 
@@ -161,11 +208,19 @@ Ext.define('project.import_design_list', {
 					text : '位置编号',
 					width : 200,
 					// flex:0.2
+					editor : {
+						xtype : 'textfield',
+						allowBlank : false,
+					},
 				},
 				{
 					dataIndex : '图号',
 					text:'图号',
 					name:'图号',
+					editor : {
+						xtype : 'textfield',
+						allowBlank : false,
+					},
 				},
 			],
 			viewConfig : {
@@ -178,6 +233,9 @@ Ext.define('project.import_design_list', {
 			// 			clicksToEdit : 3
 			// 		})],
 			selType : 'rowmodel',
+			plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
+				clicksToEdit : 1
+			})],
 			dockedItems: [{
 				xtype: 'pagingtoolbar',
 				store: designlistStore,   // same store GridPanel is using
@@ -217,29 +275,29 @@ Ext.define('project.import_design_list', {
 				},
 				{
 					text: '品名',
-					//dataIndex: 'productName',
-					dataIndex: '品名',
+					dataIndex: 'productName',
+					// dataIndex: '品名',
 					flex :1,
 					width:"80"
 				},
 				{
 					text: '位置',
-					//dataIndex: 'position',
-					dataIndex: '位置',
+					dataIndex: 'position',
+					// dataIndex: '位置',
 					flex :1,
 					width:"80"
 				},
 				{
 					text: '图号',
-					//dataIndex: 'figureNum',
-					dataIndex: '图号',
+					dataIndex: 'figureNum',
+					// dataIndex: '图号',
 					flex :1,
 					width:"80"
 				},
 				{
 					text: '错误原因',
 					flex :1,
-					//dataIndex: 'errorType',
+					dataIndex: 'errorType',
 					// dataIndex: 'errorCode',
 					// renderer: function (value) {
 					// 	return designlist.errorcode.type[value].name; // key-value
@@ -589,6 +647,11 @@ Ext.define('project.import_design_list', {
 				// 	margin: '0 0 0 40',
 				// 	text:'选择文件:',
 				// },
+				{
+					xtype:'tbtext',
+					text:'<strong>批量上传:</strong>',
+					margin: '0 40 0 0',
+				},
 				exceluploadform,
 				{
 					xtype : 'button',
@@ -693,13 +756,20 @@ Ext.define('project.import_design_list', {
 			]//exceluploadform
 		});
 
-		// this.dockedItems = [toolbar2,grid];
 		//多行toolbar
-		this.dockedItems=[{
+		this.dockedItems=[
+
+			{
 			xtype : 'toolbar',
 			dock : 'top',
 			items : [toolbar1]
-		},{
+		},
+			{
+				xtype : 'toolbar',
+				dock : 'top',
+				items : [toolbar_one]
+			},
+			{
 			xtype : 'toolbar',
 			dock : 'top',
 			style:'border-width:0 0 0 0;',
