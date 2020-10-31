@@ -439,6 +439,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
             layout: 'fit',
             closable : true,
             draggable:true,
+            modal :true, //除了窗口，不能操作其他
             closeAction : 'hidden',
             // tbar:toolbar_pop1,
             items:back_inb_errorlist_outbound,

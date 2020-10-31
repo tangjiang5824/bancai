@@ -223,38 +223,34 @@ Ext.define('project.project_check_worksheet',{
                 emptyMsg:'无数据'
             }
             ],
-            listeners: {
-                // 双击表行响应事件
-                itemdblclick: function(me, record, item, index,rowModel){
-                    var select = record.data;
-                    //工单id
-                    var workorderlogId = select.id;
-
-                    //var pickNumber = select.
-
-                    //工单的具体信息
-                    var specific_worksheet_List = Ext.create('Ext.data.Store',{
-                        //id,materialName,length,width,materialType,number
-                        fields:['materialName','length','materialType','width','specification','number'],
-                        proxy : {
-                            type : 'ajax',
-                            url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName='+table_workoderLogDetail+'&columnName=workorderlogId'+'&columnValue='+workorderlogId,//获取同类型的原材料  +'&pickNum='+pickNum
-                            reader : {
-                                type : 'json',
-                                rootProperty: table_workoderLogDetail,
-                            },
-                        },
-                        autoLoad : true
-                    });
-
-                    Ext.getCmp("toolbar_pop").items.items[0].setText(workorderlogId);//修改id为win_num的值，动态显示在窗口中
-                    // //传rowNum响应的行号:index+1
-                    // Ext.getCmp("toolbar5").items.items[2].setText(index+1)
-                    specific_workorder_outbound.setStore(specific_worksheet_List);
-                    win_showworkorder_outbound.show();
-                }
-
-            }
+            // listeners: {
+            //     // 双击表行响应事件
+            //     itemdblclick: function(me, record, item, index,rowModel){
+            //         var select = record.data;
+            //         //工单id
+            //         var workorderlogId = select.id;
+            //
+            //         //工单的具体信息
+            //         var specific_worksheet_List = Ext.create('Ext.data.Store',{
+            //             //id,materialName,length,width,materialType,number
+            //             fields:['materialName','length','materialType','width','specification','number'],
+            //             proxy : {
+            //                 type : 'ajax',
+            //                 url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName='+table_workoderLogDetail+'&columnName=workorderlogId'+'&columnValue='+workorderlogId,//获取同类型的原材料  +'&pickNum='+pickNum
+            //                 reader : {
+            //                     type : 'json',
+            //                     rootProperty: table_workoderLogDetail,
+            //                 },
+            //             },
+            //             autoLoad : true
+            //         });
+            //         Ext.getCmp("toolbar_pop").items.items[0].setText(workorderlogId);//修改id为win_num的值，动态显示在窗口中
+            //         // //传rowNum响应的行号:index+1
+            //         // Ext.getCmp("toolbar5").items.items[2].setText(index+1)
+            //         specific_workorder_outbound.setStore(specific_worksheet_List);
+            //         win_showworkorder_outbound.show();
+            //     }
+            // }
 
         });
 
@@ -491,13 +487,6 @@ Ext.define('project.project_check_worksheet',{
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 2
             })],
-            // listeners: {
-            //     //监听修改
-            //     validateedit: function (editor, e) {
-            //         var field = e.field
-            //         var id = e.record.data.id
-            //     },
-            // }
         });
 
         var win_showworkorder_outbound = Ext.create('Ext.window.Window', {
@@ -508,6 +497,7 @@ Ext.define('project.project_check_worksheet',{
             layout: 'fit',
             closable : true,
             draggable:true,
+            modal :true, //除了窗口，不能操作其他
             closeAction : 'hidden',
             tbar:toolbar_pop1,
             items:specific_workorder_outbound,
@@ -560,7 +550,6 @@ Ext.define('project.project_check_worksheet',{
                 win_showworkorder_outbound.show();
             }
         }
-
 
         this.items = [worksheet_Grid];
         this.callParent(arguments);

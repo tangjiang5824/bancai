@@ -314,6 +314,7 @@ Ext.define('oldpanel.oldpanel_Outbound',{
             layout: 'fit',
             closable : true,
             draggable:true,
+            modal :true,
             closeAction : 'hidden',
             items:specific_data_grid_outbound,
         });

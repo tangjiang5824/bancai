@@ -308,12 +308,13 @@ Ext.define('material.material_Query_Records',{
             layout: 'fit',
             closable : true,
             draggable:true,
+            modal :true,
             closeAction : 'hidden',
             items:material_Query_Records_specific_data_grid,
         });
 
         var grid = Ext.create('Ext.grid.Panel',{
-            id: 'material_Query_Records_Main',
+            id: 'material_Query_Records_Main',''
             store: material_Query_Records_Store,
             viewConfig : {
                 enableTextSelection : true,
