@@ -151,7 +151,7 @@ public class OldpanelDataController {
                         if (formatId == 0)
                             errorList = analyzeNameService.addErrorRowToErrorList(errorList, id, "未找到这种旧板格式",map);
                         else
-                            insertList = oldpanelDataService.oldpanelAddInsertRowToInfoList(insertList, String.valueOf(formatId),a[1], oldpanelName, inventoryUnit,
+                            insertList = oldpanelDataService.oldpanelAddInsertRowToInfoList(insertList, String.valueOf(formatId),a[1],a[2], oldpanelName, inventoryUnit,
                                     unitWeight, unitArea, remark,a[3], a[4], a[5], a[6], a[7], a[8], a[9], a[10], a[11]);
                     }
                 }
