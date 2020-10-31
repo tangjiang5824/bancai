@@ -66,7 +66,7 @@ Ext.define('material' +
             columns:[
                 {
                     dataIndex : '序号',
-                    text : '出错行',
+                    text : 'excel中错误序号',
                     width : "80",
                     flex:1
                     // renderer:function(value,metadata,record,rowIndex){
@@ -74,32 +74,32 @@ Ext.define('material' +
                     // }
                 },
                 {
-                    dataIndex: 'materialName',
+                    dataIndex: '原材料名',
                     text: '原材料名',
                     flex :1,
                     width:"80"
                 },
                 {
-                    dataIndex: 'totalWeight',
+                    dataIndex: '总重',
                     text: '总重',
                     flex :1,
                     width:"80"
                 },
                 {
-                    dataIndex: 'count',
+                    dataIndex: '数量',
                     text: '数量',
                     flex :1,
                     width:"80"
                 },
                 {
                     text: '仓库名称',
-                    dataIndex: 'warehouseName',
+                    dataIndex: '仓库名称',
                     flex :1,
                     width:"80"
                 },
                 {
                     text: '备注',
-                    dataIndex: 'description',
+                    dataIndex: '备注',
                     flex :1,
                     width:"80"
                 },
@@ -397,23 +397,14 @@ Ext.define('material' +
             dock : "top",
             id : "toolbar2",
             items : [
-                // {
-                //     xtype: 'textfield',
-                //     margin: '0 40 0 0',
-                //     fieldLabel: ' 入库人',
-                //     id: 'operator',
-                //     width: 150,
-                //     labelWidth: 45,
-                //     name: 'operator',
-                //     value: "",
-                // },
+
                 form,
                 {
                     fieldLabel : '入库人',
                     xtype : 'combo',
                     name : 'operator',
                     id : 'operator',
-                    margin: '0 40 0 0',
+                    margin: '0 40 0 40',
                     // disabled : true,
                     // width:'95%',
                     width: 150,
@@ -499,7 +490,7 @@ Ext.define('material' +
                     var tableName = tableList.getValue();
                     if (tableName != null) {
                         if(tableName=='原材料信息表'){
-                            window.location.href = encodeURI('excel/原材料信息表.xls');
+                            window.location.href = encodeURI('excel/原材料入库信息表.xls');
                         }else{
                             window.location.href = encodeURI('excel/旧版信息表.xls');
                             //window.location.href = encodeURI('data/downloadExcelTemplate.do?tableName=' + tableName);

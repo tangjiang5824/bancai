@@ -314,7 +314,7 @@ Ext.define('material.material_Query_Records',{
         });
 
         var grid = Ext.create('Ext.grid.Panel',{
-            id: 'material_Query_Records_Main',''
+            id: 'material_Query_Records_Main',
             store: material_Query_Records_Store,
             viewConfig : {
                 enableTextSelection : true,
