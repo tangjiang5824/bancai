@@ -150,7 +150,7 @@ public class ProductDataController {
                         if (formatId == 0)
                             errorList = analyzeNameService.addErrorRowToErrorList(errorList, id, "未找到这种产品格式",map);
                         else
-                            insertList = productDataService.productAddInsertRowToInfoList(insertList, String.valueOf(formatId),a[1], productName, inventoryUnit,
+                            insertList = productDataService.productAddInsertRowToInfoList(insertList, String.valueOf(formatId),a[1],a[2], productName, inventoryUnit,
                                     unitWeight, unitArea, remark,a[3], a[4], a[5], a[6], a[7], a[8], a[9], a[10], a[11], a[12]);
                     }
                 }
