@@ -72,7 +72,9 @@
         //MenuRole_bc:0:admin,1:计划处，2：财务处
         // var menu=Ext.create("menu.MenuRole_bc"+usertype,{title:title,usertype:usertype});
 		var menu=Ext.create("menu.MenuRole_bc"+usertype,{title:"功能导航"});
-        var welcome = Ext.create("welcome.Welcome0");
+        // var welcome = Ext.create("welcome.Welcome0"); //欢迎页面
+        var welcome = Ext.create("project.management.queryproject");
+
 		// var menu=Ext.create("menu.MenuRole_upload",{title:title,usertype:usertype});
 		// var welcome = Ext.create("welcome.Welcome0");
 

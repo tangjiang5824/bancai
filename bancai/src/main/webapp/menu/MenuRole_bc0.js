@@ -6,14 +6,14 @@ Ext.define("menu.MenuRole_bc0", {
 	},
 	store : {
 		root : {
-			expanded : true,
+			expanded : true,//菜单项 展开
 			children : [{
 				text : '仓库管理',
 				expanded : true,
 				children : [
 						{
 				text : '旧板管理',
-				expanded : true,
+				// expanded : true,
 				children : [
 					{
 					text : '入库',
@@ -63,7 +63,7 @@ Ext.define("menu.MenuRole_bc0", {
 				]
 			} ,{
 				text : '原材料管理',
-				expanded : true,
+				// expanded : true,
 				children : [
 					{
 					text : '入库',
@@ -126,7 +126,7 @@ Ext.define("menu.MenuRole_bc0", {
 				}]
 			}, {
 				text : '预加工仓库管理',
-				expanded : true,
+				// expanded : true,
 				children : [
 				// 	{
 				// 	text : '半成品预加工',
@@ -174,8 +174,9 @@ Ext.define("menu.MenuRole_bc0", {
 				]
 			},{
 				text : '退库成品仓库管理',
-				expanded : true,
-				children : [  {
+				// expanded : true,
+				children : [
+					{
 					text : '入库',
 					id : 'backproduct.backproduct_Inbound',
 					leaf : true
@@ -212,7 +213,7 @@ Ext.define("menu.MenuRole_bc0", {
 				]
 			},{
 				text : '产品成品仓库管理',
-				expanded : true,
+				// expanded : true,
 				children : [
 				// 	{
 				// 	text : '单件产品成品入库',
@@ -246,7 +247,7 @@ Ext.define("menu.MenuRole_bc0", {
 			},
 					{
 						text : '废料仓库管理',
-						expanded : true,
+						// expanded : true,
 						children : [
 							{
 								text : '入库',
@@ -300,7 +301,7 @@ Ext.define("menu.MenuRole_bc0", {
 			// },
 				{
 				text : '项目管理',
-				expanded : true,
+				// expanded : true,
 				children : [ {
 					text : '项目立项',
 					id : 'project.management.buildproject',
@@ -452,10 +453,11 @@ Ext.define("menu.MenuRole_bc0", {
 				{
 				text : '基础信息管理',
 				expanded : true,
-				children : [ {
+				children : [
+					{
 					text : '原材料种类管理',
 					//leaf : true
-					expanded : true,
+					// expanded : true,
 					children : [
 						{
 							text : '原材料类型',
@@ -486,7 +488,7 @@ Ext.define("menu.MenuRole_bc0", {
 				} , {
 					text : '旧版种类管理',
 					//leaf : true
-					expanded : true,
+					// expanded : true,
 					children : [
 						// {
 						// 	text : '添加新的类型',
@@ -528,7 +530,7 @@ Ext.define("menu.MenuRole_bc0", {
 				} , {
 					text : '产品种类管理',
 					//leaf : true
-					expanded : true,
+					// expanded : true,
 					children : [
 						// {
 						// 	text : '添加新的类型',
@@ -568,7 +570,7 @@ Ext.define("menu.MenuRole_bc0", {
 				},{
 					//
 					text : '部门职员管理',
-					expanded : true,
+					// expanded : true,
 					children : [ {
 						text : '职员信息',
 						id : 'userManagement.department_worker',
