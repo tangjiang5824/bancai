@@ -140,10 +140,10 @@ Ext.define('oldpanel.Old_Query_Data',{
             //     name: 'endWidth',
             //     value:"",
             // },
-                {xtype: 'textfield', fieldLabel: '旧板品号', id: 'oldpanelNo',
-                    margin: '0 10 0 30',width: 150, labelWidth: 60,
-                    name: 'oldpanelNo', value: ""
-                },
+            //     {xtype: 'textfield', fieldLabel: '旧板品号', id: 'oldpanelNo',
+            //         margin: '0 10 0 30',width: 150, labelWidth: 60,
+            //         name: 'oldpanelNo', value: ""
+            //     },
                 {
                     xtype:'tbtext',
                     text:'库存数量:',
