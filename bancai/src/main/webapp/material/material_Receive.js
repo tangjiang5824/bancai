@@ -381,8 +381,8 @@ Ext.define('material.material_Receive',{
                     adaptMaterialList.load({
                         params : {
                             requisitionOrderId:requisitionOrderId,
-                            type:4,
-                            origin:origin
+                            // type:4,
+                            // origin:origin
                         }
                     });
 
@@ -476,7 +476,7 @@ Ext.define('material.material_Receive',{
             fields:['materialName','length','materialType','width','specification','number'],
             proxy : {
                 type : 'ajax',
-                url : '',//根据材料名匹配仓库中的原材料
+                url : 'material/requisition.do',//根据材料名匹配仓库中的原材料
                 reader : {
                     type : 'json',
                     rootProperty: 'value',
@@ -629,8 +629,8 @@ Ext.define('material.material_Receive',{
                                 buildingpositionId:buildingpositionId,
                                 //type和领料单Id
                                 requisitionOrderId:requisitionOrderId,
-                                type:4,//原材料
-                                origin:origin
+                                // type:4,//原材料
+                                // origin:origin
                             }
                         });
                     }
