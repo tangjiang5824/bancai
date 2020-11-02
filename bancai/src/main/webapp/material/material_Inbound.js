@@ -560,16 +560,7 @@ Ext.define('material.material_Inbound', {
                 layout: 'right'
             },
             items : [
-                // {
-                //     xtype: 'textfield',
-                //     margin: '0 40 0 0',
-                //     fieldLabel: ' 入库人',
-                //     id: 'operator',
-                //     width: 150,
-                //     labelWidth: 45,
-                //     name: 'operator',
-                //     value: "",
-                // },
+
                 {
                     fieldLabel : '入库人',
                     xtype : 'combo',
@@ -577,7 +568,7 @@ Ext.define('material.material_Inbound', {
                     id : 'operator',
                     // disabled : true,
                     // width:'95%',
-                    margin: '0 40 0 0',
+                    margin: '0 40 0 40',
                     width: 150,
                     labelWidth: 45,
                     store : workerListStore,

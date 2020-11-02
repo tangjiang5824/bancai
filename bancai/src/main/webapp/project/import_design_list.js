@@ -685,11 +685,12 @@ Ext.define('project.import_design_list', {
 						);
 						console.log("s--------------",s)
 						//获取数据
-						Ext.Ajax.timeout=900000;
+						// Ext.Ajax.timeout=900000;//设置超时时间
 						Ext.Ajax.request({
 							url : 'designlist/uploadData.do', //上传匹配数据
 							method:'POST',
 							//submitEmptyText : false,
+							timeout:900000,
 							params : {
 								s : "[" + s + "]",//存储选择领料的数量
 								projectId:projectId,
