@@ -20,7 +20,7 @@ public class WorkOrder {
 //    @ExcelProperty("操作人员")
 //    private String workerName;
     @ExcelProperty("创建时间")
-    private Date date;
+    private String date;
     @ExcelProperty("审批状态")
     private String isActive;
     @ExcelProperty("产品名")

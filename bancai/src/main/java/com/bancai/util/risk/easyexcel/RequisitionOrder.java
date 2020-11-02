@@ -16,7 +16,7 @@ public class RequisitionOrder {
     @ExcelProperty("所属位置")
     private String positionName;
     @ExcelProperty("创建时间")
-    private Date time;
+    private String time;
     @ExcelProperty("负责人")
     private String workerName;
 //    @ExcelProperty("领料单状态")

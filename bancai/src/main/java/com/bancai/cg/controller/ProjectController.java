@@ -1057,7 +1057,7 @@ public class ProjectController {
         System.out.println("zzyzzyzyyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzzyyzyzyzyzy");
         System.out.println(workorderlogId);
 
-        String fileName = "C:\\Users\\Administrator\\Desktop\\单号" +workorderlogId +"领料单.xlsx";
+        String fileName = "C:\\Users\\Administrator\\Desktop\\单号" +workorderlogId +"工单.xlsx";
         // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
         // 如果这里想使用03 则 传入excelType参数即可
         //write(fileName,格式类)
@@ -1109,9 +1109,41 @@ public class ProjectController {
         if (!(boolean) response.get("success"))
             return false;
         //return response;
-        EasyExcel.write(fileName, WorkOrder.class).sheet("领料单").doWrite(RequisitionOrder_Data(response));
+        EasyExcel.write(fileName, RequisitionOrder.class).sheet("领料单").doWrite(RequisitionOrder_Data(response));
         return true;
     }
+
+    //打印超领单
+    @RequestMapping("/project/printOverRequisitionOrder.do")
+    public Boolean printOverRequisitionOrder(Integer start, Integer limit, Integer requisitionOrderId) {
+        System.out.println("zzyzzyzyyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzzyyzyzyzyzy");
+        System.out.println(requisitionOrderId);
+
+        String fileName = "C:\\Users\\Administrator\\Desktop\\单号" +requisitionOrderId +"超领单.xlsx";
+        // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
+        // 如果这里想使用03 则 传入excelType参数即可
+        //write(fileName,格式类)
+        //sheet(表名)
+        //doWrite(数据)
+
+
+        if (start == null) start = 0;
+        if (limit == null) limit = -1;
+        mysqlcondition c = new mysqlcondition();
+        if (null != requisitionOrderId) {
+            c.and(new mysqlcondition("requisitionOrderId", "=", requisitionOrderId));
+        }
+//        if (null!=isActive) {
+//            c.and(new mysqlcondition("isActive", "=", isActive));
+//        }
+        WebResponse response = queryAllService.queryDataPage(start, limit, c, "over_requisition_order_print");
+        if (!(boolean) response.get("success"))
+            return false;
+        //return response;
+        EasyExcel.write(fileName, RequisitionOrder.class).sheet("超领单").doWrite(RequisitionOrder_Data(response));
+        return true;
+    }
+
     //工单数据绑定
     private List<WorkOrder> WorkOrder_Data(WebResponse response) {
         List<WorkOrder> list = new ArrayList<WorkOrder>();
@@ -1127,7 +1159,7 @@ public class ProjectController {
         //System.out.println(WorkOrder_TempList.get(1).get("workOrderDetailId"));
         for (int i = 0; i < totalCount; i++) {
             WorkOrder workOrder_row = new WorkOrder();
-            workOrder_row.setDate((Date) WorkOrder_TempList.get(i).get("date"));
+            workOrder_row.setDate(WorkOrder_TempList.get(i).get("date")+ "");
             workOrder_row.setWorkorderlogId(WorkOrder_TempList.get(i).get("workorderlogId") + "");
             workOrder_row.setProjectName(WorkOrder_TempList.get(i).get("projectName").toString());
             workOrder_row.setBuildingName(WorkOrder_TempList.get(i).get("buildingName") + "");
@@ -1172,7 +1204,7 @@ public class ProjectController {
 //            requisitionOrder_row.setMaterialCount(Double.parseDouble((RequisitionOrder_TempList.get(i).get("materialCount"))+""));
             requisitionOrder_row.setCountAll(RequisitionOrder_TempList.get(i).get("countAll") + "");
             requisitionOrder_row.setCountRec(RequisitionOrder_TempList.get(i).get("countRec") + "");
-            requisitionOrder_row.setTime((Date)RequisitionOrder_TempList.get(i).get("time"));
+            requisitionOrder_row.setTime(RequisitionOrder_TempList.get(i).get("time")+ "");
             requisitionOrder_row.setCountAll(RequisitionOrder_TempList.get(i).get("countAll") + "");
             list.add(requisitionOrder_row);
         }

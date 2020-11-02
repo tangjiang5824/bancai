@@ -310,7 +310,7 @@ Ext.define('material.query_Newpanel_Rules',{
             ],
 
 
-            //点击表项修改
+            //  //点击表项修改
             // listeners: {
             //
             //     validateedit: function(editor, e){//监听点击表格
@@ -343,9 +343,9 @@ Ext.define('material.query_Newpanel_Rules',{
             //             }
             //         });
             //     },
-            // }
-            //对表的行双击，响应的事件
-
+            // },
+            // //对表的行双击，响应的事件
+            //
             // listeners: {
             // 	itemdblclick: function(me, item, index){
             // 		//var select = record.data;
