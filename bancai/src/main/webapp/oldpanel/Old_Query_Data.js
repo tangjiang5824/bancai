@@ -358,7 +358,11 @@ Ext.define('oldpanel.Old_Query_Data',{
                 displayMsg:'显示{0}-{1}条，共{2}条',
                 emptyMsg:'无数据'
             }],
-
+            viewConfig: {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false
+            },
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 1
             })],
