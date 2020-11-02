@@ -12,6 +12,8 @@ Ext.define('project.import_design_list', {
 		var record_start_bottom = 0;
 		var record_start_pop = 0;
 
+		Ext.Ajax.timeout=9000000;//设置超时时间
+
 // 		var toolbar2 = Ext.create("Ext.toolbar.Toolbar", {
 // 			dock : "top",
 // 			items : [{
@@ -637,6 +639,10 @@ Ext.define('project.import_design_list', {
 
 					]//exceluploadform
 		});
+
+		//防止按钮重复点击，发送多次请求，post_flag
+		var post_flag = false;
+
 		var toolbar2 = Ext.create('Ext.toolbar.Toolbar', {
 			dock : "top",
 			id : "toolbar2",
@@ -660,6 +666,18 @@ Ext.define('project.import_design_list', {
 					margin: '0 0 0 40',
 					layout: 'right',
 					handler: function(){
+						if(post_flag){
+							return;
+						}
+						post_flag = true;
+
+						// self.saveOrderBtnCanUse = true;//按钮不能点击
+						// setTimeout(() => {
+						// 	//防止重复点击发送请求
+						// 	self.saveOrderBtnCanUse = false;//按钮不可以点击
+						// }, 90000);
+						// // 正常代码再执行
+
 						var select = Ext.getCmp('addlistDataGrid').getStore()
 							.getData();
 						var s = new Array();
@@ -673,16 +691,17 @@ Ext.define('project.import_design_list', {
 
 
 						//显示匹配进度
-						Ext.MessageBox.show(
-							{
-								title:'请稍候',
-								msg:'产品匹配中，请耐心等待...',
-								progressText:'',    //进度条文本
-								width:300,
-								progress:true,
-								closable:false
-							}
-						);
+						// Ext.MessageBox.show(
+						// 	{
+						// 		title:'请稍候',
+						// 		msg:'产品匹配中，请耐心等待...',
+						// 		progressText:'',    //进度条文本
+						// 		width:300,
+						// 		progress:true,
+						// 		closable:false
+						// 	}
+						// );
+
 						console.log("s--------------",s)
 						//获取数据
 						// Ext.Ajax.timeout=900000;//设置超时时间
@@ -690,7 +709,7 @@ Ext.define('project.import_design_list', {
 							url : 'designlist/uploadData.do', //上传匹配数据
 							method:'POST',
 							//submitEmptyText : false,
-							timeout:900000,
+							timeout:90000000,//超时时间
 							params : {
 								s : "[" + s + "]",//存储选择领料的数量
 								projectId:projectId,
@@ -724,6 +743,8 @@ Ext.define('project.import_design_list', {
 													//点击确认，显示重复的数据
 													errorlistStore.loadData(errorList);
 													win_errorInfo_outbound.show();
+
+													post_flag =false;
 												}
 											}
 										});
@@ -731,23 +752,30 @@ Ext.define('project.import_design_list', {
 									else if(errorCode == 300){
 										Ext.MessageBox.hide();
 										Ext.MessageBox.alert("提示","产品匹配失败！请重新导入" );
+
+										post_flag =false;
 									}
 									else if(errorCode == 1000){
 										Ext.MessageBox.hide();
 										Ext.MessageBox.alert("提示","匹配失败，未知错误！请重新导入" );
+
+										post_flag =false;
 									}
 								}else{
 									Ext.MessageBox.hide();
 									Ext.MessageBox.alert("提示","匹配成功" );
-
 									//刷新页面
 									Ext.getCmp('addlistDataGrid').getStore().removeAll();
+
+									post_flag =false;
 								}
 								//var message =Ext.decode(response.responseText).showmessage;
 
 							},
 							failure : function(response) {
-								Ext.MessageBox.hide();
+
+								post_flag =false;//防止发送多次请求
+								// Ext.MessageBox.hide();
 								//var message =Ext.decode(response.responseText).showmessage;
 								Ext.MessageBox.alert("提示","匹配失败" );
 							}
