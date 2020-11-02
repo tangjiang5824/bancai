@@ -319,6 +319,11 @@ Ext.define('material.material_Receive_input',{
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 2
             })],
+            viewConfig: {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false
+            },
             dockedItems: [
                 {
                     xtype: 'pagingtoolbar',
@@ -572,6 +577,11 @@ Ext.define('material.material_Receive_input',{
             dock: 'bottom',
             // closable:true,
             closeAction: 'hide',
+            viewConfig: {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false
+            },
             columns:[
                 {
                     // dataIndex : '序号',
@@ -671,6 +681,11 @@ Ext.define('material.material_Receive_input',{
             // tbar: toolbar_pop,
             store:m_receive_errorlistStore,//oldpanellogdetailList，store1的数据固定
             dock: 'bottom',
+            viewConfig: {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false
+            },
             columns:[
                 {
                     // dataIndex : '序号',
