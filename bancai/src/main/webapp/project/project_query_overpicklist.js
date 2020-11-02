@@ -598,15 +598,15 @@ Ext.define('project.project_query_overpicklist',{
             var sm = Ext.getCmp('PickingListGrid').getSelectionModel();
             //var isrollback = Ext.getCmp('isrollback').getValue();
             var materialArr = sm.getSelection();
-            var requisitionOrderId = e.data.requisitionOrderId;  //选中记录的logid,工单号
+            var requisitionOrderId = e.data.id;  //选中记录的logid,工单号
             var projectName = e.data.projectName;  //选中记录的项目名
             var workerName = e.data.workerName;  //选中记录的项目名
             var time = e.data.time;  //选中记录的项目名
             console.log("e.data：",e.data);
             console.log("requisitionOrderId "+requisitionOrderId+" projectName "+projectName+" workerName "+workerName+" time "+time);
-            if (columnIndex == 3) {
-                console.log("zzzzzzzzzzzzzzzzzyyyyyyyyyyyyyyyyyyyzzzzz打印")
-                console.log("requisitionOrderId="+requisitionOrderId)
+            if (columnIndex == 7) {
+                //console.log("zzzzzzzzzzzzzzzzzyyyyyyyyyyyyyyyyyyyzzzzz打印")
+                console.log("张仲逸requisitionOrderId="+requisitionOrderId)
                 Ext.Ajax.request({
                     url : 'project/printOverRequisitionOrder.do', //打印
                     method:'POST',

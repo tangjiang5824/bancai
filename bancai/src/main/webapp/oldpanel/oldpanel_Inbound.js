@@ -22,6 +22,8 @@ Ext.define('oldpanel.oldpanel_Inbound', {
         var record_start = 0;
         var projectId = "-1";
         var buildingId = "-1";
+        //防止按钮重复点击，发送多次请求，post_flag
+        var post_flag = false;
         Ext.define('Soims.model.application.ApplicationState', {
             statics: { // 关键
                 0: { value: '0', name: '墙板' },
@@ -160,6 +162,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                     iconCls : 'rukuicon ',
                     text : '添加记录',
                     handler: function(){
+
                         // var productName = Ext.getCmp('productName').getValue();
                         // var count = Ext.getCmp('count').getValue();
                         // var warehouseName = Ext.getCmp('storePosition').rawValue;
@@ -504,7 +507,10 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                     region:'center',
                     bodyStyle: 'background:#fff;',
                     handler : function() {
-
+                        if(post_flag){
+                            return;
+                        }
+                        post_flag = true;
                         // 取出grid的字段名字段类型
                         var select = Ext.getCmp('oldpanel_addDataGrid').getStore()
                             .getData();
@@ -557,6 +563,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                                 var errorCount = jsonobj.errorCount;
                                 if(success == false){
                                     //错误输入
+                                    post_flag =false;
                                     if(errorCode == 200){
                                         //关闭进度条
                                         // Ext.MessageBox.alert("提示","匹配失败，产品位置重复或品名不合法！请重新导入" );
@@ -578,6 +585,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                                         Ext.MessageBox.alert("提示","入库失败，未知错误！请重新入库" );
                                     }
                                 }else{
+                                    post_flag =false;
                                     Ext.MessageBox.alert("提示","入库成功" );
                                 }
 
@@ -585,7 +593,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                             failure : function(response) {
                                 //关闭进度条
                                 Ext.MessageBox.hide();
-
+                                post_flag =false;
                                 //var message =Ext.decode(response.responseText).showmessage;
                                 Ext.MessageBox.alert("提示","入库失败" );
                             }

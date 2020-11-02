@@ -6,6 +6,7 @@ Ext.define('oldpanel.Old_Query_Data',{
     initComponent: function(){
         var itemsPerPage = 50;
         var tableName="oldpanel_info_store_type";
+        var post_flag = false;
         Ext.define('Soims.model.application.ApplicationState', {
             statics: { // 关键
                 4: { value: '4', name: '墙板' },
@@ -140,10 +141,10 @@ Ext.define('oldpanel.Old_Query_Data',{
             //     name: 'endWidth',
             //     value:"",
             // },
-            //     {xtype: 'textfield', fieldLabel: '旧板品号', id: 'oldpanelNo',
-            //         margin: '0 10 0 30',width: 150, labelWidth: 60,
-            //         name: 'oldpanelNo', value: ""
-            //     },
+                {xtype: 'textfield', fieldLabel: '旧板品号', id: 'oldpanelNo',
+                    margin: '0 10 0 30',width: 150, labelWidth: 60,
+                    name: 'oldpanelNo', value: ""
+                },
                 {
                     xtype:'tbtext',
                     text:'库存数量:',

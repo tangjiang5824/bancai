@@ -246,11 +246,13 @@ Ext.define("menu.MenuRole_bc0", {
 					text : '出入库记录查询',
 					id : 'product.product_Query_Records',
 					leaf : true
-				}, {
-					text : '出入库记录统计',
-					id : 'product.product_Statistics_Records',
-					leaf : true
-				}]
+				},
+				// 	{
+				// 	text : '出入库记录统计',
+				// 	id : 'product.product_Statistics_Records',
+				// 	leaf : true
+				// }
+				]
 			},
 					{
 						text : '废料仓库管理',
