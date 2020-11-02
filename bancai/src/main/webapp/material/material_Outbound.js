@@ -237,6 +237,9 @@ Ext.define('material.material_Outbound',{
             }]
         });
 
+        //防止按钮重复点击，发送多次请求，post_flag
+        var post_flag = false;
+
         //弹出框的表头
         var toolbar_pop = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
@@ -285,6 +288,11 @@ Ext.define('material.material_Outbound',{
                     margin: '0 0 0 40',
                     layout: 'right',
                     handler: function(){
+                        if(post_flag){
+                            return;
+                        }
+                        post_flag = true;
+
                         var material_logId = Ext.getCmp("log_id").text;
                         var is_rollback = Ext.getCmp("is_rollback").text;
                         var operator = Ext.getCmp("operator_back").getValue();
@@ -308,13 +316,25 @@ Ext.define('material.material_Outbound',{
                                             success:function (response) {
                                                 //console.log(response.responseText);
                                                 var ob=JSON.parse(response.responseText);
-                                                if(ob.success==false)
+                                                if(ob.success==false){
                                                     Ext.MessageBox.alert("提示", ob.msg);
-                                                else
+                                                    post_flag =false;
+                                                }
+                                                else{
                                                     Ext.MessageBox.alert("提示", "撤销成功!");
+
+                                                    //成功后，关闭窗口
+                                                    win_showmaterialData_outbound.close();
+
+                                                    //重新刷新页面
+                                                    Ext.getCmp('addDataGrid').getStore().load();
+
+                                                    post_flag =false;
+                                                }
                                             },
                                             failure : function(response){
                                                 Ext.MessageBox.alert("提示", "撤销失败!");
+                                                post_flag =false;
                                             }
                                         })
                                     }

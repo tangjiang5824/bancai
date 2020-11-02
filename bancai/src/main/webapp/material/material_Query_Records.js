@@ -386,16 +386,29 @@ Ext.define('material.material_Query_Records',{
                     });
                     // 根据出入库0/1，决定弹出框表格列名
                     var col = material_Query_Records_specific_data_grid.columns[1];
-                    if(opType == 1){
-                        col.setText("出库数量");
-                    }
-                    if(opType == 2){
-                        col.setText("退库数量");
-                    }
-                    else{
+
+
+                    if(opType == 0){
                         col.setText("入库数量");
                     }
-
+                    else if(opType == 1){
+                        col.setText("出库数量");
+                    }
+                    else if(opType == 2){
+                        col.setText("退库数量");
+                    }
+                    else if(opType == 3){
+                        col.setText("撤销入库数量");
+                    }
+                    else if(opType == 4){
+                        col.setText("撤销出库数量");
+                    }
+                    else if(opType == 5) {
+                        col.setText("撤销退库数量");
+                    }
+                    else {
+                        col.setText("数量");
+                    }
 
                     material_Query_Records_specific_data_grid.setStore(materiallogdetailList);
                     console.log(materiallogdetailList);

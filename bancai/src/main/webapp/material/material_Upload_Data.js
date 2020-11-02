@@ -395,7 +395,7 @@ Ext.define('material' +
 
         //防止按钮重复点击，发送多次请求，post_flag
         var post_flag = false;
-        
+
         var toolbar = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
             id : "toolbar2",
