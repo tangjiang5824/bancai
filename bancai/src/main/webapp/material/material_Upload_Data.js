@@ -393,6 +393,9 @@ Ext.define('material' +
             autoLoad : true
         });
 
+        //防止按钮重复点击，发送多次请求，post_flag
+        var post_flag = false;
+        
         var toolbar = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
             id : "toolbar2",
@@ -423,6 +426,10 @@ Ext.define('material' +
                     region:'center',
                     bodyStyle: 'background:#fff;',
                     handler : function() {
+                        if(post_flag){
+                            return;
+                        }
+                        post_flag = true;
 
                         // var projectId = "-1";
                         // var buildingId = "-1";
@@ -464,16 +471,22 @@ Ext.define('material' +
                                     //错误输入
                                     Ext.MessageBox.alert("提示",Msg);
 
+                                    post_flag =false;
+
                                 }else{
                                     Ext.MessageBox.alert("提示","入库成功" );
                                     //刷新
                                     Ext.getCmp('uploadRecordsmaterial').getStore().remove();
+
+                                    post_flag =false;
                                 }
 
                             },
                             failure : function(response) {
                                 //var message =Ext.decode(response.responseText).showmessage;
                                 Ext.MessageBox.alert("提示","入库失败" );
+
+                                post_flag =false;
                             }
                         });
 
