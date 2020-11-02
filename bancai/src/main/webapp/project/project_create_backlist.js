@@ -320,6 +320,7 @@ Ext.define('project.project_create_backlist', {
 			draggable:true,
 			closeAction : 'hidden',
 			// tbar:toolbar_pop1,
+			modal :true,
 			items:specific_errorlist_outbound,
 		});
 
@@ -447,7 +448,7 @@ Ext.define('project.project_create_backlist', {
 												}else if(ob.errorCode==200){
 													Ext.Msg.show({
 														title: '提示',
-														message: '匹配失败，存在不合法材料记录！\n是否查看具体错误数据',
+														message: '上传失败，存在不合法材料记录！\n是否查看具体错误数据',
 														buttons: Ext.Msg.YESNO,
 														icon: Ext.Msg.QUESTION,
 														fn: function (btn) {
@@ -797,6 +798,9 @@ Ext.define('project.project_create_backlist', {
 
 								}else{
 									Ext.MessageBox.alert("提示","创建退料单成功！" );
+									//刷新
+									Ext.getCmp('backlist_DataGrid').getStore().remove();
+
 								}
 								//var message =Ext.decode(response.responseText).showmessage;
 								//刷新页面

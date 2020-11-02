@@ -46,7 +46,7 @@ Ext.define("menu.MenuRole_bc0", {
 					leaf : true
 				},
 				{
-					text : '退料',
+					text : '退料审核',
 					id : 'oldpanel.oldpanel_backcheck',
 					leaf : true
 				},
@@ -85,11 +85,7 @@ Ext.define("menu.MenuRole_bc0", {
 					id : 'material.material_Query_Data',
 					leaf : true
 				},
-				// 	{
-				// 	text : '原材料退库',
-				// 	id : 'material.material_Back',
-				// 	leaf : true
-				// },
+
 					{
 						text : '领料',
 						id : 'material.material_Receive',
@@ -100,8 +96,13 @@ Ext.define("menu.MenuRole_bc0", {
 						id : 'material.material_Receive_input',
 						leaf : true
 					},
+					// 	{
+					// 	text : '原材料退库',
+					// 	id : 'material.material_Back',
+					// 	leaf : true
+					// },
 					{
-						text : '退料',
+						text : '退料审核',
 						id : 'material.material_backcheck',
 						leaf : true
 					},
