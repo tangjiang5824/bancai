@@ -490,7 +490,14 @@ Ext.define("menu.MenuRole_bc0", {
 						id : 'material.add_material_rules',
 
 						leaf : true
-					}
+					},
+						{
+
+							text : '查询修改新板匹配规则',
+							id : 'material.query_Newpanel_Rules',
+
+							leaf : true
+						},
 					]
 				} , {
 					text : '旧版种类管理',
