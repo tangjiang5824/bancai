@@ -24,6 +24,15 @@ public class MaterialInfo {
     private Set<MaterialStore> materialStores =new HashSet<>();
     private Set<MaterialLogdetail> materialLogdetails =new HashSet<>();
     private String partNo;
+    private String specification;
+
+    public String getSpecification() {
+        return specification;
+    }
+
+    public void setSpecification(String specification) {
+        this.specification = specification;
+    }
 
     public String getPartNo() {
         return partNo;

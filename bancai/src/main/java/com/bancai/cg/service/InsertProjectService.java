@@ -78,6 +78,12 @@ public class InsertProjectService extends BaseService {
 
     }
 
+    @Transactional
+    public DataList query(String sql){
+        return queryService.query(sql);
+
+    }
+
 
     /**
      * 通用接口  通过表名和要查的字段查询结果，如果全查第二个参数设为空
