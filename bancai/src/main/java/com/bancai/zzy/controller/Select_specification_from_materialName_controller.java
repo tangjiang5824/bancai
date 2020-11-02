@@ -573,5 +573,25 @@ public class Select_specification_from_materialName_controller {
 		c.and(new mysqlcondition("countStore", ">", "0"));
 		return queryAllService.queryDataPage(start, limit, c, tableName);
 	}
+	//查询新板匹配规则
+	@RequestMapping(value = "/project/queryNewPanelMatchRules.do")
+	public WebResponse queryNewPanelMatchRules(Integer start, Integer limit, Integer productTypeId,
+											   Integer materialTypeId,Integer productFormatId,String tableName) throws ParseException {
+		if(null==start||start.equals("")) start=0;
+		if(null==limit||limit.equals("")) limit=50;
+		//String madeBy = "4";
+		mysqlcondition c=new mysqlcondition();
+		if (productTypeId!=null) {
+			c.and(new mysqlcondition("productTypeId", "=", productTypeId));
+		}
+		if (materialTypeId!=null) {
+			c.and(new mysqlcondition("materialTypeId", "=", materialTypeId));
+		}
+		if (productFormatId!=null) {
+			c.and(new mysqlcondition("productFormatId", "=", productFormatId));
+		}
+		WebResponse wr=queryAllService.queryDataPage(start, limit, c, tableName);
+		return wr;
+	}
 
 }
