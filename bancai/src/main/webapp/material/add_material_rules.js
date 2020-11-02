@@ -48,8 +48,8 @@ Ext.define('material.add_material_rules', {
         });
         //
         var material_type=Ext.create('Ext.form.ComboBox',{
-            // fieldLabel : '原材料分类',
-            // labelWidth : 80,
+             fieldLabel : '匹配原材料类型',
+             labelWidth : 120,
             // width : 230,
             // margin: '0 10 0 40',
             id :  'materialtypeId',
@@ -264,7 +264,8 @@ Ext.define('material.add_material_rules', {
                                         type: 'vbox'
                                     },
                                     items:[
-                                        material_type,
+                                        // productNameList,
+                                        product_type
                                     ]
                                 },
                                 {
@@ -281,10 +282,10 @@ Ext.define('material.add_material_rules', {
                                         type: 'vbox'
                                     },
                                     items:[
-                                        // productNameList,
-                                        product_type
+                                        product_format
                                     ]
-                                },{
+                                },
+                                {
                                     flex:1,
                                     defaults: {
                                         border:false,
@@ -298,9 +299,11 @@ Ext.define('material.add_material_rules', {
                                         type: 'vbox'
                                     },
                                     items:[
-                                        product_format
+                                        material_type,
                                     ]
                                 },
+
+
                             ]
                         },
                     ]},
