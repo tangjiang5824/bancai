@@ -5,9 +5,12 @@ import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.bancai.cg.dao.*;
 import com.bancai.cg.entity.*;
+import com.bancai.cg.service.InsertProjectService;
 import com.bancai.cg.util.JPAObjectUtil;
 import com.bancai.commonMethod.QueryAllService;
 import com.bancai.db.mysqlcondition;
+import com.bancai.domain.DataList;
+import com.bancai.domain.DataRow;
 import com.bancai.vo.WebResponse;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -54,6 +57,8 @@ public class MaterialController {
     private MaterialMatchRulesRepository materialMatchRulesRepository;
     @Autowired
     private QueryAllService queryAllService;
+    @Autowired
+    private InsertProjectService insertProjectService;
 
 
     //向materialtype原材料类型表插入
@@ -468,5 +473,115 @@ public class MaterialController {
         return  true;
     }
 
+    @RequestMapping("/material/requisition.do")
+    public String findMaterialStore(Integer requisitionOrderId,Integer buildingId,Integer buildingpositionId){
+        mysqlcondition c=new mysqlcondition();
+        if (null!=requisitionOrderId) {
+            c.and(new mysqlcondition("requisitionOrderId", "=", requisitionOrderId));
+        }
+        if (buildingId!=null) {
+            c.and(new mysqlcondition("buildingId", "=", buildingId));
+        }
+        if (null!=buildingpositionId) {
+            c.and(new mysqlcondition("buildingpositionId", "=", buildingpositionId));
+        }
+        DataList dataList=insertProjectService.findObjectId("requisition_order_detail_view",c);
+        ArrayList<HashMap<String,String>> response=new ArrayList<>();
+        for(DataRow row:dataList){
+            Integer materialId=Integer.valueOf(row.get("infoId")+"");
+            Double count=Double.valueOf(row.get("countRec")+"");
+            MaterialInfo info=materialinfodao.findById(materialId).orElse(null);
+            MaterialType type=info.getTypeId();
+     //       List<Integer> list=new ArrayList<>();
+           //匹配长度m,计算总长度和库存
+            // 1、 U  2、 60F封边 3、BS  4、EB 5、 EC 6、 DP 7、企口
+            if(type.getId()==1||type.getId()==16||type.getId()==17||type.getId()==10||type.getId()==12||type.getId()==13||type.getId()==15){
+                mysqlcondition c1=new mysqlcondition();
+                if (null!=info.getTypeId()) {
+                    c1.and(new mysqlcondition("typeId", "=", info.getTypeId().getId()));
+                }
+                if (null!=info.getnValue()) {
+                    c1.and(new mysqlcondition("nValue", "=", info.getnValue()));
+                }
+                if (null!=info.getpValue()) {
+                    c1.and(new mysqlcondition("pValue", "=", info.getpValue()));
+                }
+                if (null!=info.getaValue()) {
+                    c1.and(new mysqlcondition("aValue", "=", info.getaValue()));
+                }
+                if (null!=info.getbValue()) {
+                    c1.and(new mysqlcondition("bValue", "=", info.getbValue()));
+                }
+                if (null!=info.getOrientation()) {
+                    c1.and(new mysqlcondition("orientation", "=", info.getOrientation()));
+                }
+                DataList materialinfos=insertProjectService.findObjectId("material_info",c1);
+                StringBuffer ids=new StringBuffer();
+                for(DataRow row1:materialinfos){
+                    ids.append(","+row1.get("id"));
+                }
+                String id="("+ids.substring(1).toString()+")";
+                String sql="select *  from material_store_view where materialId in "+id+" and countStore>0 order by mValue";
+                DataList storeList=insertProjectService.query(sql);
+                //计算总共需要m大小
+                Double deCount=info.getmValue()*count;
+                int index=0;
+                while (deCount>0&&index<storeList.size()){
+                    DataRow dataRow=storeList.get(index);
+                    Double storeCount=Double.valueOf(dataRow.get("countStore")+"");
+                    Double mValue=Double.valueOf(dataRow.get("mValue")+"");
+                    HashMap<String,String> map=new HashMap<>();
+                    map.put("storeId",dataRow.get("storeId")+"");
+                    map.put("materialId",dataRow.get("materialId")+"");
+                    map.put("materialName",dataRow.get("materialName")+"");
+                    map.put("partNo",dataRow.get("partNo")+"");
+                    map.put("countStore",dataRow.get("countStore")+"");
+                    map.put("warehouseName",dataRow.get("warehouseName")+"");
+                    if(deCount<=storeCount*mValue){
+                        map.put("count",Math.ceil(deCount/mValue)+"");
+                        deCount=0.0;
+                    }else {
+                        map.put("count",storeCount+"");
+                        deCount-=storeCount*mValue;
+                    }
+                    response.add(map);
+                    index++;
+                }
+                if(index>=storeList.size()||deCount>0) System.out.println("没有足够的库存");
+            }else {
+                //完全匹配，扣除个数
+                String sql = "select * from material_store_view where materialId=" + info.getMaterialid() + " and countStore>0";
+                DataList storeList = insertProjectService.query(sql);
+                Double deCount = count;
+                int index = 0;
+                while (deCount > 0 && index < storeList.size()) {
+                    DataRow dataRow = storeList.get(index);
+                    Double storeCount = Double.valueOf(dataRow.get("countStore") + "");
+                    Double mValue = Double.valueOf(dataRow.get("mValue") + "");
+                    HashMap<String, String> map = new HashMap<>();
+                    map.put("storeId", dataRow.get("storeId") + "");
+                    map.put("materialId", dataRow.get("materialId") + "");
+                    map.put("materialName", dataRow.get("materialName") + "");
+                    map.put("partNo", dataRow.get("partNo") + "");
+                    map.put("countStore", dataRow.get("countStore") + "");
+                    map.put("warehouseName", dataRow.get("warehouseName") + "");
+                    if (deCount <= storeCount) {
+                        map.put("count", deCount + "");
+                        deCount = 0.0;
+                    } else {
+                        map.put("count", storeCount + "");
+                        deCount -= storeCount;
+                    }
+                    response.add(map);
+                    index++;
+                }
+                if (index >= storeList.size() || deCount > 0) System.out.println("没有足够的库存");
+            }
+        }
+        JSONObject object=new JSONObject();
+        object.put("totalcount",response.size());
+        object.put("response",response);
+        return object.toJSONString();
+    }
 
 }

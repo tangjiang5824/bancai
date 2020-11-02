@@ -329,6 +329,11 @@ Ext.define('material.material_Receive',{
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 2
             })],
+            viewConfig: {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false
+            },
             dockedItems: [
                 {
                     xtype: 'pagingtoolbar',
@@ -795,6 +800,12 @@ Ext.define('material.material_Receive',{
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 2
             })],
+            //无数据时，默认显示 无数据
+            viewConfig: {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false
+            },
             dockedItems: [
                 {
                     xtype: 'pagingtoolbar',
@@ -1108,6 +1119,11 @@ Ext.define('material.material_Receive',{
             flex:1,
             tbar:toobar_right,
             // selType:'checkboxmodel', //复选框
+            viewConfig: {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>无数据</div>",
+                deferEmptyText: false
+            },
             dockedItems: [
                 {
                     xtype: 'pagingtoolbar',
