@@ -289,6 +289,11 @@ Ext.define('backproduct.backproduct_Outbound',{
             ],
             flex:1,
             //selType:'checkboxmodel',
+            viewConfig: {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false
+            },
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 2
             })],
@@ -361,7 +366,10 @@ Ext.define('backproduct.backproduct_Outbound',{
                 plugins : {
                     ptype : "gridviewdragdrop",
                     dragText : "可用鼠标拖拽进行上下排序"
-                }
+                },
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false
             },
 
             dockedItems:[{

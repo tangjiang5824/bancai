@@ -261,6 +261,11 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
                 //fields:['oldpanelId','oldpanelName','count'],specification
 
             ],
+            viewConfig: {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false
+            },
             flex:1,
             //selType:'checkboxmodel',
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
@@ -292,7 +297,10 @@ Ext.define('oldpanel.oldpanel_Query_Records',{
             store: old_Query_Records_store,
             viewConfig : {
                 enableTextSelection : true,
-                editable:true
+                editable:true,
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false
             },
             columns : [
                 // { text: '原材料领料记录单编号', dataIndex: 'id', flex :1 ,editor:{xtype : 'textfield', allowBlank : false}},

@@ -314,7 +314,11 @@ Ext.define('backproduct.backproduct_Query_Data',{
                 // {dataIndex : 'width', text : '宽', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 // {dataIndex : 'remark', text : '备注', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
             ],
-
+            viewConfig: {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false
+            },
             tbar: toobar,
             dockedItems: [{
                 xtype: 'pagingtoolbar',
