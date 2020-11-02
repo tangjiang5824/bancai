@@ -342,11 +342,11 @@ Ext.define("menu.MenuRole_bc0", {
 						id : 'project.project_check_designList',//
 						leaf : true
 					} ,
-					{
-						text : '项目匹配结果总览',
-						id : 'project.result.project_match_result',//project.import_planList
-						leaf : true
-					},
+					// {
+					// 	text : '项目匹配结果总览',
+					// 	id : 'project.result.project_match_result',//project.import_planList
+					// 	leaf : true
+					// },
 					{
 						text : '项目匹配结果查询',
 						id : 'project.result.designlist_match_result',//project.import_planList
