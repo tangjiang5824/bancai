@@ -368,6 +368,11 @@ Ext.define('unuseMaterial.unuseMaterial_outBound',{
             ],
             // height:'100%',
             flex:1,
+            viewConfig : {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false,
+            },
             selType:'checkboxmodel' ,//每行的复选框
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 2
@@ -441,6 +446,11 @@ Ext.define('unuseMaterial.unuseMaterial_outBound',{
 
             ],
             flex:1,
+            viewConfig : {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false,
+            },
             //selType:'checkboxmodel',
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 2
@@ -667,6 +677,11 @@ Ext.define('unuseMaterial.unuseMaterial_outBound',{
                 ],
             // height:'100%',
             flex:1,
+            viewConfig : {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false,
+            },
             tbar:toobar_right,
             selType:'checkboxmodel',
             dockedItems: [

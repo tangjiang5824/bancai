@@ -336,6 +336,11 @@ Ext.define('unuseMaterial.unuseMaterial_query_settle',{
                 },
             ],
             flex:1,
+            viewConfig : {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false,
+            },
             // height:'100%',
             // tbar: toolbar,
             // selType:'checkboxmodel', //选择框
