@@ -411,10 +411,23 @@ Ext.define('product.product_Basic_Info_Input', {
                             'inventoryUnit' : inventoryUnit,
                             //'number' : number,
                         }];
-                        Ext.getCmp('addDataGrid').getStore().loadData(data, true);
+                        Ext.getCmp('addProBaseDataGrid').getStore().loadData(data, true);
                     }
                 }
             ]
+        });
+        //职员信息
+        var workerListStore = Ext.create('Ext.data.Store',{
+            fields : [ 'typeName'],
+            proxy : {
+                type : 'ajax',
+                url : '/material/findAllBytableName.do?tableName=department_worker',
+                reader : {
+                    type : 'json',
+                    rootProperty: 'department_worker',
+                },
+            },
+            autoLoad : true
         });
 
 
@@ -427,15 +440,30 @@ Ext.define('product.product_Basic_Info_Input', {
                 layout: 'right'
             },
             items : [
+                // {
+                //     xtype: 'textfield',
+                //     margin: '0 40 0 0',
+                //     fieldLabel: ' 入库人',
+                //     id: 'operator',
+                //     width: 150,
+                //     labelWidth: 60,
+                //     name: 'operator',
+                //     value: "",
+                // },
                 {
-                    xtype: 'textfield',
+                    fieldLabel : '入库人',
+                    xtype : 'combo',
+                    name : 'operator',
+                    id : 'operator',
+                    // disabled : true,
+                    // width:'95%',
                     margin: '0 40 0 0',
-                    fieldLabel: ' 入库人',
-                    id: 'operator',
-                    width: 150,
-                    labelWidth: 60,
-                    name: 'operator',
-                    value: "",
+                    width: 180,
+                    labelWidth: 45,
+                    store : workerListStore,
+                    displayField : 'workerName',
+                    valueField : 'id',
+                    editable : true,
                 },
                 {
                 xtype : 'button',
@@ -447,7 +475,7 @@ Ext.define('product.product_Basic_Info_Input', {
                 handler : function() {
 
                     // 取出grid的字段名字段类型
-                    var select = Ext.getCmp('addDataGrid').getStore()
+                    var select = Ext.getCmp('addProBaseDataGrid').getStore()
                         .getData();
                     var s = new Array();
                     select.each(function(rec) {
@@ -472,6 +500,10 @@ Ext.define('product.product_Basic_Info_Input', {
                         success : function(response) {
                             //var message =Ext.decode(response.responseText).showmessage;
                             Ext.MessageBox.alert("提示","添加成功" );
+
+                            //刷新
+                            Ext.getCmp('addProBaseDataGrid').getStore().removeAll();
+
                         },
                         failure : function(response) {
                             //var message =Ext.decode(response.responseText).showmessage;
@@ -486,7 +518,7 @@ Ext.define('product.product_Basic_Info_Input', {
 
 
         var grid = Ext.create("Ext.grid.Panel", {
-            id : 'addDataGrid',
+            id : 'addProBaseDataGrid',
             //dockedItems : [toolbar2],
             store : {
                 fields: [//'projectName','buildingName',
