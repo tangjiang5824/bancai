@@ -481,6 +481,11 @@ Ext.define('material.material_Receive',{
                     type : 'json',
                     rootProperty: 'response',
                 },
+                // params : {
+                //     requisitionOrderId:requisitionOrderId,
+                //     // type:4,
+                //     // origin:origin
+                // }
             },
             autoLoad : true
         });
