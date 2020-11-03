@@ -140,6 +140,7 @@ public class new_panel_match {
                         case 302: materialName=info.getaValue()+"*"+info.getbValue()+" IC";
                         specification=info.getmValue()+"mm";
                         break;
+                        default: materialName=info.getTypeId().getTypeName();
                     }
                     inf.setMaterialName(materialName);
                     inf.setSpecification(specification);
