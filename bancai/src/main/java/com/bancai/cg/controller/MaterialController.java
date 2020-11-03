@@ -557,7 +557,7 @@ public class MaterialController {
                 while (deCount > 0 && index < storeList.size()) {
                     DataRow dataRow = storeList.get(index);
                     Double storeCount = Double.valueOf(dataRow.get("countStore") + "");
-                    Double mValue = Double.valueOf(dataRow.get("mValue") + "");
+                   // Double mValue = Double.valueOf(dataRow.get("mValue") + "");
                     HashMap<String, String> map = new HashMap<>();
                     map.put("storeId", dataRow.get("storeId") + "");
                     map.put("materialId", dataRow.get("materialId") + "");
