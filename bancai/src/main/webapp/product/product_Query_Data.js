@@ -179,7 +179,10 @@ Ext.define('product.product_Query_Data',{
             //id: 'uploadRecordsMain',
             store: uploadRecordsStore,
             viewConfig : {
-                enableTextSelection : true
+                enableTextSelection : true,
+                forceFit: false,
+            emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+            deferEmptyText: false
             },
             //readOnly:true,
             columns : [

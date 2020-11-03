@@ -330,6 +330,11 @@ Ext.define('project.project_worksheet',{
             id : 'productPickingListGrid',
             store:productListStore,
             dock: 'bottom',
+            viewConfig: {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>无数据</div>",
+                deferEmptyText: false
+            },
             columns:[
                 {
                     dataIndex:'productName',

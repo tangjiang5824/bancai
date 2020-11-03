@@ -295,6 +295,11 @@ Ext.define('product.product_Query_Records',{
 
             ],
             flex:1,
+            viewConfig: {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false
+            },
             //selType:'checkboxmodel',
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 2
@@ -351,6 +356,12 @@ Ext.define('product.product_Query_Records',{
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 3
             })],
+            viewConfig: {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false
+            },
+
             tbar:toobar,
             dockedItems:[{
                 xtype: 'pagingtoolbar',

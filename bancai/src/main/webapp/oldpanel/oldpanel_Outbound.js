@@ -307,6 +307,11 @@ Ext.define('oldpanel.oldpanel_Outbound',{
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 2
             })],
+            viewConfig: {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false
+            },
             // listeners: {
             //     //监听修改
             //     validateedit: function (editor, e) {
@@ -370,8 +375,10 @@ Ext.define('oldpanel.oldpanel_Outbound',{
                     },
                 }
             ],
-
             viewConfig : {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false,
                 plugins : {
                     ptype : "gridviewdragdrop",
                     dragText : "可用鼠标拖拽进行上下排序"

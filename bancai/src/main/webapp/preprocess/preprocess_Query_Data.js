@@ -300,6 +300,9 @@ Ext.define('preprocess.preprocess_Query_Data',{
             id: 'uploadRecordsMain',
             store: uploadRecordsStore,
             viewConfig : {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false,
                 enableTextSelection : true
             },
             //readOnly:true,

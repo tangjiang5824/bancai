@@ -245,7 +245,20 @@ Ext.define('project.project_check_designList',{
             id : 'designList_Grid',
             store:designList_Store,
             dock: 'bottom',
+            //默认无数据
+            viewConfig: {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>无数据</div>",
+                deferEmptyText: false
+            },
             columns:[
+                {
+                    // header: '序号',
+                    xtype: 'rownumberer',
+                    width: 45,
+                    align: 'center',
+                    sortable: false
+                },
                 {
                     dataIndex:'designlistLogId',
                     text:'设计清单号',
@@ -304,7 +317,7 @@ Ext.define('project.project_check_designList',{
             flex:1,
             // height:'100%',
             tbar: toolbar,
-            selType:'checkboxmodel', //选择框
+            // selType:'checkboxmodel', //选择框
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 2
             })],
