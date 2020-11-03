@@ -164,6 +164,9 @@ Ext.define('unuseMaterial.unuseMaterial_Query_Data',{
             title: "废料仓库信息记录",
             store: unusual_Query_Data_Store,
             viewConfig : {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false,
                 enableTextSelection : true,
                 editable:true
             },
