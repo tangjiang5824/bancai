@@ -278,6 +278,11 @@ Ext.define('project.project_create_picklist',{
             id : 'worksheet_Grid',
             store:worksheetListStore,
             dock: 'bottom',
+            viewConfig: {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>无数据</div>",
+                deferEmptyText: false
+            },
             columns:[
                 {
                     dataIndex:'projectName',

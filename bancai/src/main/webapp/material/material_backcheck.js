@@ -317,6 +317,11 @@ Ext.define('material.material_backcheck',{
             // id : 'PickingListGrid',
             store:backListStore,//修改
             dock: 'bottom',
+            viewConfig: {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false
+            },
             columns:[{
                 dataIndex:'returnOrderId',
                 text:'退料单号',
@@ -563,6 +568,11 @@ Ext.define('material.material_backcheck',{
             dock: 'bottom',
             // closable:true,
             closeAction: 'hide',
+            viewConfig: {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false
+            },
             columns:[
                 {
                     header: '序号',
@@ -871,6 +881,11 @@ Ext.define('material.material_backcheck',{
             store:old_pickList,
             dock: 'bottom',
             autoScroll: true, //超过长度带自动滚动条
+            viewConfig: {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>无数据</div>",
+                deferEmptyText: false
+            },
             columns:[
                 //序号
                 {

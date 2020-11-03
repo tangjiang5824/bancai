@@ -479,7 +479,7 @@ Ext.define('material.material_Receive',{
                 url : 'material/requisition.do',//根据材料名匹配仓库中的原材料
                 reader : {
                     type : 'json',
-                    rootProperty: 'value',
+                    rootProperty: 'response',
                 },
             },
             autoLoad : true
@@ -1107,18 +1107,45 @@ Ext.define('material.material_Receive',{
                     sortable: false
                 },
 
-                {dataIndex:'name', text:'材料名',flex :1 },
+                {
+                    dataIndex:'materialName',
+                    text:'材料名',
+                    flex :1
+                },
                 {
                     dataIndex:'count',//countTemp
-                    text:'领取数量',
+                    text:'待领数量',
                     flex :1
                     //editor:{xtype : 'textfield', allowBlank : true},
+                },
+                {
+                    dataIndex:'warehouseName',
+                    text:'仓库名',
+                    flex :1
+                },
+                {
+                    dataIndex:'countStore',//countTemp
+                    text:'库存数量',
+                    flex :1
+                    //editor:{xtype : 'textfield', allowBlank : true},
+                },
+                {
+                    dataIndex:'pickCount',
+                    text:'领取数量',
+                    flex :1,
+                    editor : {
+                        xtype : 'textfield',
+                        allowBlank : true
+                    }
                 },
                 ],
             // height:'100%',
             flex:1,
             tbar:toobar_right,
             // selType:'checkboxmodel', //复选框
+            plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
+                clicksToEdit : 2
+            })],
             viewConfig: {
                 forceFit: false,
                 emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>无数据</div>",

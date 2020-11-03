@@ -419,6 +419,10 @@ Ext.define('project.management.project_process_status',{
             id: 'material_Query_Data_Main',
             store: process_status_Store,
             viewConfig : {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>无数据</div>",
+                deferEmptyText: false,
+
                 enableTextSelection : true,
                 editable:true
             },
