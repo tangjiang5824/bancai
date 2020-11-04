@@ -530,8 +530,8 @@ Ext.define('project.project_check_overpicklist',{
                                         Ext.Ajax.request({
                                             url:"overOrder/overRequisitionCheck.do",  //审核
                                             params:{
-                                                id:requisitionOrderId,  //工单id
-                                                type:1,//审核通过
+                                                requisitionOrderId:requisitionOrderId,  //工单id
+                                                // type:1,//审核通过
                                             },
                                             success:function (response) {
                                                 Ext.MessageBox.alert("提示", "审核通过!");
@@ -566,16 +566,16 @@ Ext.define('project.project_check_overpicklist',{
                             var requisitionOrderId = Ext.getCmp("requisitionOrderId").getValue();
                             Ext.Msg.show({
                                 title: '操作确认',
-                                message: '将驳回工单，选择“是”否确认？',
+                                message: '将驳回超领单，选择“是”否确认？',
                                 buttons: Ext.Msg.YESNO,
                                 icon: Ext.Msg.QUESTION,
                                 fn: function (btn) {
                                     if (btn === 'yes') {
                                         Ext.Ajax.request({
-                                            url:"order/workApproval.do",  //入库记录撤销
+                                            url:"overOrder/overRequisitionReject.do",  //入库记录撤销
                                             params:{
-                                                id:requisitionOrderId,  //工单id
-                                                type:2,//驳回审核
+                                                requisitionOrderId:requisitionOrderId,  //工单id
+                                                // type:2,//驳回审核
                                             },
                                             success:function (response) {
                                                 //console.log(response.responseText);
