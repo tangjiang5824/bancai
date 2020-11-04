@@ -487,7 +487,7 @@ Ext.define('material.material_Receive',{
                 //     // origin:origin
                 // }
             },
-            autoLoad : true
+            autoLoad : false
         });
 
 

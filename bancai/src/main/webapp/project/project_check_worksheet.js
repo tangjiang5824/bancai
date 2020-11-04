@@ -516,7 +516,7 @@ Ext.define('project.project_check_worksheet',{
                 return;
             }
             console.log("grid.columns[columnIndex]：",Ext.getCmp('worksheet_Grid').columns[columnIndex-1])
-            var fieldName = Ext.getCmp('worksheet_Grid').columns[columnIndex-1].text;
+            var fieldName = Ext.getCmp('worksheet_Grid').columns[columnIndex].text;
             var sm = Ext.getCmp('worksheet_Grid').getSelectionModel();
             // var isrollback = Ext.getCmp('isrollback').getValue();
             var materialArr = sm.getSelection();
@@ -525,7 +525,7 @@ Ext.define('project.project_check_worksheet',{
             var workorderlogId = e.data.id;  //选中记录的logid,工单号
 
             var isActive = e.data.isActive;
-            console.log("e.data：",e.data)
+
             if (fieldName == "操作") {
 
                 //设置监听事件getSelectionModel().getSelection()

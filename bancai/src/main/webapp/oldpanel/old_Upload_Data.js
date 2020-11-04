@@ -456,7 +456,7 @@ Ext.define('oldpanel.old_Upload_Data', {
                                 }else{
                                     Ext.MessageBox.alert("提示","入库成功" );
                                     //刷新
-                                    Ext.getCmp('uploadRecordsMain').getStore().remove();
+                                    Ext.getCmp('uploadRecordsMain').getStore().removeAll();
                                 }
 
                             },
