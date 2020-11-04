@@ -410,20 +410,24 @@ Ext.define("menu.MenuRole_bc0", {
 						text : '项目创建领料单',
 						id : 'project.project_create_picklist',
 						leaf : true
-					},
-					{
-						text : '原材料超领单',
-						id : 'project.material_over_pick',
-						leaf : true
-					},
-					{
+					},{
 						text : '项目领料单查询',
 						id : 'project.project_query_picklist',
 						leaf : true
 					},
 					{
+						text : '项目原材料超领单',
+						id : 'project.material_over_pick',
+						leaf : true
+					},
+					{
 						text : '项目原材料超领单查询',
 						id : 'project.project_query_overpicklist',
+						leaf : true
+					},
+					{
+						text : '项目原材料超领单审核',
+						id : 'project.project_check_overpicklist',
 						leaf : true
 					},
 					// {
