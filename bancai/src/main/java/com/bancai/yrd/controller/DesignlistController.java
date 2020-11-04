@@ -427,6 +427,27 @@ public class DesignlistController {
 //        response.getWriter().close();
 //    }
 
+
+    /*
+     *  超领单审批
+     */
+    @RequestMapping("/overOrder/overRequisitionCheck.do")
+    public boolean overRequisitionCheck(Integer requisitionOrderId){
+        String sql="update over_requisition_order set isActive=1 where id="+requisitionOrderId;
+        insertProjectService.update(sql);
+        return true;
+    }
+
+    /*
+     *  超领单驳回
+     */
+    @RequestMapping("/overOrder/overRequisitionReject.do")
+    public boolean overRequisitionReject(Integer requisitionOrderId){
+        String sql="update over_requisition_order set isActive=0 where id="+requisitionOrderId;
+        insertProjectService.update(sql);
+        return true;
+    }
+
     /*
      * 查询某张领料单细节
      * */
