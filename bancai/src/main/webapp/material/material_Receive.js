@@ -483,7 +483,7 @@ Ext.define('material.material_Receive',{
                 },
 
             },
-            autoLoad : true
+            autoLoad : false
         });
 
 
