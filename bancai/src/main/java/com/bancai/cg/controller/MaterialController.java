@@ -535,19 +535,19 @@ public class MaterialController {
                     map.put("materialId",dataRow.get("materialId")+"");
                     map.put("materialName",dataRow.get("materialName")+"");
                     map.put("partNo",dataRow.get("partNo")+"");
-                    map.put("countStore",dataRow.get("countStore")+"");
+                    map.put("countStore",JPAObjectUtil.rvZeroAndDot(dataRow.get("countStore")+""));
                     map.put("warehouseName",dataRow.get("warehouseName")+"");
                     if(deCount<=storeCount*mValue){
-                        map.put("count",Math.ceil(deCount/mValue)+"");
+                        map.put("count",JPAObjectUtil.rvZeroAndDot(Math.ceil(deCount/mValue)+""));
                         deCount=0.0;
                     }else {
-                        map.put("count",storeCount+"");
+                        map.put("count",JPAObjectUtil.rvZeroAndDot(storeCount));
                         deCount-=storeCount*mValue;
                     }
                     response.add(map);
                     index++;
                 }
-                if(index>=storeList.size()||deCount>0) System.out.println("没有足够的库存");
+                if(index>=storeList.size()||deCount>0) System.out.println("长度拼接"+info.getMaterialName()+"没有足够的库存");
             }else {
                 //完全匹配，扣除个数
                 String sql = "select * from material_store_view where materialId=" + info.getMaterialid() + " and countStore>0";
@@ -566,16 +566,16 @@ public class MaterialController {
                     map.put("countStore", dataRow.get("countStore") + "");
                     map.put("warehouseName", dataRow.get("warehouseName") + "");
                     if (deCount <= storeCount) {
-                        map.put("count", deCount + "");
+                        map.put("count", JPAObjectUtil.rvZeroAndDot(deCount));
                         deCount = 0.0;
                     } else {
-                        map.put("count", storeCount + "");
+                        map.put("count", JPAObjectUtil.rvZeroAndDot(storeCount));
                         deCount -= storeCount;
                     }
                     response.add(map);
                     index++;
                 }
-                if (index >= storeList.size() || deCount > 0) System.out.println("没有足够的库存");
+                if (index >= storeList.size() || deCount > 0) System.out.println(info.getMaterialName()+"没有足够的库存");
             }
         }
         JSONObject object=new JSONObject();
