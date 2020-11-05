@@ -574,22 +574,24 @@ Ext.define('project.project_create_picklist',{
 
         var toobar_right = Ext.create('Ext.toolbar.Toolbar',{
             items: [
-                // {
-                //     fieldLabel : '创建人',
-                //     xtype : 'combo',
-                //     name : 'operator',
-                //     id : 'operator',
-                //     margin: '0 40 0 0',
-                //     width: 180,
-                //     labelWidth: 45,
-                //     store : workerListStore,
-                //     displayField : 'workerName',
-                //     valueField : 'id',
-                //     editable : true,
-                // },
                 {
-                    xtype: 'textfield',
-                    margin : '0 40 0 0',
+                    fieldLabel : '创建人',
+                    xtype : 'combo',
+                    name : 'operator',
+                    id : 'operator',
+                    // disabled : true,
+                    // width:'95%',
+                    margin: '0 40 0 0',
+                    width: 180,
+                    labelWidth: 45,
+                    store : workerListStore,
+                    displayField : 'workerName',
+                    valueField : 'id',
+                    editable : true,
+                },
+                {
+                    xtype: 'datefield',
+                    margin : '0 30 0 0',
                     fieldLabel: '创建时间',
                     id :'pickTime',
                     width: 200,
@@ -597,46 +599,12 @@ Ext.define('project.project_create_picklist',{
                     name: 'pickTime',
                     format : 'Y-m-d',
                     editable : false,
-                    disabled : true,
                     // value:Ext.util.Format.date(Ext.Date.add(new Date(),Ext.Date.MONTH,-1),"Y-m-d")
                     value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
                 },
                 {
-                    xtype : 'button',
-                    text : '修改',
-                    margin: '0 40 0 0',
-                    id : 'editMaterial',
-                    handler : function() {
-                        var select = Ext.getCmp('pickingcreate_Grid').getSelectionModel().getSelection();
-                        console.log('11111',select)
-
-                        if(select.length==0)
-                            Ext.Msg.alert('错误', '请选择要修改的数据');
-                        else
-                        {
-                            var materialId = select[0].get('materialId');
-                            var materialName = select[0].get('materialName');
-                            var partNo = select[0].get('partNo');//品号
-                            var warehouseName = select[0].get('warehouseName');
-                            var countStore = select[0].get('countStore');//库存数量
-                            var count = select[0].get('count');
-
-                            var edit = Ext.create('material.edit.materialPickEdit',{
-                                //页面传参数
-                                materialId:materialId,
-                                materialName: materialName,
-                                partNo:partNo,
-                                warehouseName:warehouseName,
-                                countStore:countStore,
-                                count:count
-                            });
-                            edit.show();
-                        }
-                    }
-                },
-                {
                     xtype:'button',
-                    margin: '0 0 0 0',
+                    margin: '0 0 0 40',
                     text:'创建领料单',
                     // itemId:'move_right',
                     handler:function() {
@@ -714,13 +682,6 @@ Ext.define('project.project_create_picklist',{
                 //     flex :1
                 // },
                 {
-                    // header: '序号',
-                    xtype: 'rownumberer',
-                    width: 60,
-                    align: 'center',
-                    sortable: false
-                },
-                {
                     dataIndex:'name', //工单号
                     text:'材料名',
                     flex :1
@@ -738,6 +699,11 @@ Ext.define('project.project_create_picklist',{
                     text:'数量',
                     flex :1
                 },
+                // {
+                //     dataIndex:'warehouseName', //工单号
+                //     text:'仓库名',
+                //     flex :1
+                // },
                 // {
                 //     dataIndex:'countTemp',//countTemp
                 //     text:'领取数量',
