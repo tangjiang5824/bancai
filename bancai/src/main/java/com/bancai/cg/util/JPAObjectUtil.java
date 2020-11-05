@@ -317,4 +317,17 @@ public class JPAObjectUtil {
         String partNo=prefix+type2+id2;
         return partNo;
     }
+    public static String rvZeroAndDot(String s){
+        if (s.isEmpty()) {
+            return null;
+        }
+        if(s.indexOf(".") > 0){
+            s = s.replaceAll("0+?$", "");//去掉多余的0
+            s = s.replaceAll("[.]$", "");//如最后一位是.则去掉
+        }
+        return s;
+    }
+    public static String rvZeroAndDot(Double i){
+        return rvZeroAndDot(i+"");
+    }
 }

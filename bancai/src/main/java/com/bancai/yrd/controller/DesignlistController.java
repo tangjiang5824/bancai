@@ -387,7 +387,7 @@ public class DesignlistController {
      * 查询超领单
      * */
     @RequestMapping("/order/queryOverRequisitionOrder.do")
-    public WebResponse queryOverRequisitionOrder(String projectId, String operator,String requisitionOrderId, String timeStart, String timeEnd,Integer start,Integer limit){
+    public WebResponse queryOverRequisitionOrder(String projectId, String operator,String requisitionOrderId, String timeStart, String timeEnd,Integer status,Integer isActive,Integer start,Integer limit){
         mysqlcondition c=new mysqlcondition();
         if (null!=projectId&&projectId.length() != 0) {
             c.and(new mysqlcondition("projectId", "=", projectId));
@@ -403,6 +403,12 @@ public class DesignlistController {
         }
         if (null!=timeEnd&&timeEnd.length() != 0) {
             c.and(new mysqlcondition("time", "<=", timeEnd));
+        }
+        if (null!=isActive) {
+            c.and(new mysqlcondition("isActive", "=", isActive));
+        }
+        if (null!=status) {
+            c.and(new mysqlcondition("status", "=", status));
         }
         return queryService.queryDataPage(start, limit, c, "over_requisition_order_view");
     }
@@ -420,6 +426,27 @@ public class DesignlistController {
 //        response.getWriter().flush();
 //        response.getWriter().close();
 //    }
+
+
+    /*
+     *  超领单审批
+     */
+    @RequestMapping("/overOrder/overRequisitionCheck.do")
+    public boolean overRequisitionCheck(Integer requisitionOrderId){
+        String sql="update over_requisition_order set isActive=1 where id="+requisitionOrderId;
+        insertProjectService.update(sql);
+        return true;
+    }
+
+    /*
+     *  超领单驳回
+     */
+    @RequestMapping("/overOrder/overRequisitionReject.do")
+    public boolean overRequisitionReject(Integer requisitionOrderId){
+        String sql="update over_requisition_order set isActive=0 where id="+requisitionOrderId;
+        insertProjectService.update(sql);
+        return true;
+    }
 
     /*
      * 查询某张领料单细节
