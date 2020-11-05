@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -247,6 +249,81 @@ public class PanelMatchService extends BaseService{
                     "product_format ON (product_info.productFormatId=product_format.id) WHERE product_info.id=?",productId).get(0);
             String productFormat = productInfo.get("productFormat").toString();
             String productFormatId = productInfo.get("productFormatId").toString();
+            DataList rulesList = queryService.query("select * from zmatch_oldpanel_match_rules_view where productFormatId=? and isValid=1 order by priority asc",productFormatId);
+            for (DataRow rulesRow : rulesList) {
+//                String[] pCon = new String[]{rulesRow.get("pCon1").toString(),rulesRow.get("pCon2").toString(),
+//                        rulesRow.get("pCon3").toString(),rulesRow.get("pCon4").toString()};
+                if(!isProductFitRule(productFormat,rulesRow,productInfo))
+                    continue;
+                String oldpanelFormatId = rulesRow.get("oldpanelFormatId").toString();
+                String oldpanelFormat = queryService.query("select * from oldpanel_format where id=?",oldpanelFormatId).get(0).get("oldpanelFormat").toString();
+                String isCompleteMatch = rulesRow.get("isCompleteMatch").toString();
+                String queryOldpanelFitRule = "SELECT oldpanel_info.oldpanelName AS oldpanelName,oldpanel_info.mValue AS mValue,oldpanel_info.nValue AS nValue,oldpanel_info.pValue AS pValue," +
+                        "oldpanel_info.aValue AS aValue,oldpanel_info.bValue AS bValue,oldpanel_info.mAngle AS mAngle,oldpanel_info.nAngle AS nAngle,oldpanel_info.pAngle AS pAngle," +
+                        "oldpanel_info.suffix AS suffix,oldpanel_info.onlyCompleteMatch AS onlyCompleteMatch,oldpanel_store.id AS id,oldpanel_store.countUse AS countUse " +
+                        "FROM oldpanel_store LEFT JOIN oldpanel_info ON (oldpanel_store.oldpanelId=oldpanel_info.id) " +
+                        "WHERE oldpanel_store.countUse>0 AND oldpanel_info.oldpanelFormatId=?";
+                queryOldpanelFitRule = oldpanelFitRuleSQL(queryOldpanelFitRule,rulesRow,productInfo,oldpanelFormat);
+                System.out.println(queryOldpanelFitRule);
+                DataList oldpanelList = queryService.query(queryOldpanelFitRule,oldpanelFormatId);
+                if(oldpanelList.isEmpty())
+                    continue;
+                for (DataRow oldpanelRow : oldpanelList) {
+                    //匹配
+//                    System.out.println(oldpanelRow.toString());
+                    if(oldpanelRow.get("onlyCompleteMatch").toString().equals("0")&&isCompleteMatch.equals("1"))
+                        continue;
+                    int storeId = Integer.parseInt(oldpanelRow.get("id").toString());
+                    double countUse = Double.parseDouble(oldpanelRow.get("countUse").toString());
+                    String matchName = oldpanelRow.get("oldpanelName").toString();
+                    if (num > countUse) {
+                        while (countUse >= 1) {
+                            String position = value.get(num - 1);
+                            int designlistId = updateDesignlist(projectId, buildingId, position, 3);
+                            int resultId = insertMatchResult(designlistId,storeId,isCompleteMatch,matchName,3);
+                            value.remove(num - 1);
+                            num--;
+                            countUse--;
+                        }
+                        updateStoreCount("oldpanel",countUse,storeId);
+                    } else {
+                        while (num > 0) {
+                            String position = value.get(num - 1);
+                            int designlistId = updateDesignlist(projectId, buildingId, position, 3);
+                            int resultId = insertMatchResult(designlistId,storeId,isCompleteMatch,matchName,3);
+                            value.remove(num - 1);
+                            num--;
+                            countUse--;
+                        }
+                        updateStoreCount("oldpanel",countUse,storeId);
+                        break;
+                    }
+                }
+                if(num==0){
+                    iterator.remove();
+                    break;
+                }
+            }
+        }
+//        String[] analyzeProductName = AnalyzeNameService.analyzeProductName(productName);
+        //String[]{format,productType,m,n,a,b,mnAngle,suffix,igSuffix,productTypeName}
+    }
+    @Transactional
+    public void matchOldpanel1(String projectId, String buildingId, String buildingpositionId){
+        Map<String,ArrayList<String>> map = findMatchMap(projectId,buildingId,buildingpositionId);
+        Iterator iterator = map.keySet().iterator();
+        while (iterator.hasNext()) {
+            String productId = iterator.next().toString();
+            ArrayList<String> value = map.get(productId);
+//            String productId = key.split("N")[0];
+//            String productName = key.substring(productId.length()+1);
+            System.out.println("Oldmatch===productId="+productId+"===position="+value);
+
+            int num = value.size();
+            DataRow productInfo = queryService.query("SELECT * FROM product_info LEFT JOIN " +
+                    "product_format ON (product_info.productFormatId=product_format.id) WHERE product_info.id=?",productId).get(0);
+            String productFormat = productInfo.get("productFormat").toString();
+            String productFormatId = productInfo.get("productFormatId").toString();
 //            int mValue = Integer.parseInt(productInfo.get("mValue").toString());
 //            int nValue = Integer.parseInt(productInfo.get("nValue").toString());
 //            int pValue = Integer.parseInt(productInfo.get("pValue").toString());
@@ -360,7 +437,8 @@ public class PanelMatchService extends BaseService{
     @Transactional
     public String oldpanelFitRuleSQL(String queryOldpanelFitRule, DataRow rulesRow, DataRow productInfo,String oldpanelFormat){
         int value;
-        String con = "";
+        int low;
+        int high;
         StringBuilder queryOldpanelFitRuleBuilder = new StringBuilder(queryOldpanelFitRule);
         for (int i = 0; i < oldpanelFormat.length(); i++) {
             switch (oldpanelFormat.charAt(i)){
@@ -368,62 +446,67 @@ public class PanelMatchService extends BaseService{
                 case '1':
                     break;
                 case '2':
-                    if((rulesRow.get("mConO")!=null)&&(rulesRow.get("mConO").toString().length()!=0)){
-                        con = rulesRow.get("mConO").toString();
+                    if((rulesRow.get("om1")!=null)&&(rulesRow.get("om1").toString().length()!=0)&&(rulesRow.get("om2")!=null)&&(rulesRow.get("om2").toString().length()!=0)){
                         value = Integer.parseInt(productInfo.get("mValue").toString());
-                        queryOldpanelFitRuleBuilder.append(" AND oldpanel_info.mValue>=").append(value + Integer.parseInt(con.split("&")[0])).append(" AND oldpanel_info.mValue<=").append(value + Integer.parseInt(con.split("&")[1]));
-                    }
+                        low = Integer.parseInt(rulesRow.get("om1").toString());
+                        high = Integer.parseInt(rulesRow.get("om2").toString());
+                        queryOldpanelFitRuleBuilder.append(" AND (oldpanel_info.mValue BETWEEN ").append(value + low).append("AND ").append(value + high).append(")");
+                        }
                     break;
                 case '3':
-                    if((rulesRow.get("nConO")!=null)&&(rulesRow.get("nConO").toString().length()!=0)){
-                        con = rulesRow.get("nConO").toString();
+                    if((rulesRow.get("on1")!=null)&&(rulesRow.get("on1").toString().length()!=0)&&(rulesRow.get("on2")!=null)&&(rulesRow.get("on2").toString().length()!=0)){
                         value = Integer.parseInt(productInfo.get("nValue").toString());
-                        queryOldpanelFitRuleBuilder.append(" AND oldpanel_info.nValue>=").append(value + Integer.parseInt(con.split("&")[0])).append(" AND oldpanel_info.nValue<=").append(value + Integer.parseInt(con.split("&")[1]));
+                        low = Integer.parseInt(rulesRow.get("on1").toString());
+                        high = Integer.parseInt(rulesRow.get("on2").toString());
+                        queryOldpanelFitRuleBuilder.append(" AND (oldpanel_info.nValue BETWEEN ").append(value + low).append("AND ").append(value + high).append(")");
                     }
                     break;
                 case '4':
                 case '5':
                 case '9':
-                    if((rulesRow.get("aConO")!=null)&&(rulesRow.get("aConO").toString().length()!=0)){
-                        con = rulesRow.get("aConO").toString();
+                    if((rulesRow.get("oa1")!=null)&&(rulesRow.get("oa1").toString().length()!=0)&&(rulesRow.get("oa2")!=null)&&(rulesRow.get("oa2").toString().length()!=0)){
                         value = Integer.parseInt(productInfo.get("aValue").toString());
-                        queryOldpanelFitRuleBuilder.append(" AND oldpanel_info.aValue>=").append(value + Integer.parseInt(con.split("&")[0])).append(" AND oldpanel_info.aValue<=").append(value + Integer.parseInt(con.split("&")[1]));
+                        low = Integer.parseInt(rulesRow.get("oa1").toString());
+                        high = Integer.parseInt(rulesRow.get("oa2").toString());
+                        queryOldpanelFitRuleBuilder.append(" AND (oldpanel_info.aValue BETWEEN ").append(value + low).append("AND ").append(value + high).append(")");
                     }
-                    if((rulesRow.get("bConO")!=null)&&(rulesRow.get("bConO").toString().length()!=0)){
-                        con = rulesRow.get("bConO").toString();
+                    if((rulesRow.get("ob1")!=null)&&(rulesRow.get("ob1").toString().length()!=0)&&(rulesRow.get("ob2")!=null)&&(rulesRow.get("ob2").toString().length()!=0)){
                         value = Integer.parseInt(productInfo.get("bValue").toString());
-                        queryOldpanelFitRuleBuilder.append(" AND oldpanel_info.bValue>=").append(value + Integer.parseInt(con.split("&")[0])).append(" AND oldpanel_info.bValue<=").append(value + Integer.parseInt(con.split("&")[1]));
+                        low = Integer.parseInt(rulesRow.get("ob1").toString());
+                        high = Integer.parseInt(rulesRow.get("ob2").toString());
+                        queryOldpanelFitRuleBuilder.append(" AND (oldpanel_info.bValue BETWEEN ").append(value + low).append("AND ").append(value + high).append(")");
                     }
                     break;
                 case '8':
-                    if((rulesRow.get("pConO")!=null)&&(rulesRow.get("pConO").toString().length()!=0)){
-                        con = rulesRow.get("pConO").toString();
+                    if((rulesRow.get("op1")!=null)&&(rulesRow.get("op1").toString().length()!=0)&&(rulesRow.get("op2")!=null)&&(rulesRow.get("op2").toString().length()!=0)){
                         value = Integer.parseInt(productInfo.get("pValue").toString());
-                        queryOldpanelFitRuleBuilder.append(" AND oldpanel_info.pValue>=").append(value + Integer.parseInt(con.split("&")[0])).append(" AND oldpanel_info.pValue<=").append(value + Integer.parseInt(con.split("&")[1]));
+                        low = Integer.parseInt(rulesRow.get("op1").toString());
+                        high = Integer.parseInt(rulesRow.get("op2").toString());
+                        queryOldpanelFitRuleBuilder.append(" AND (oldpanel_info.pValue BETWEEN ").append(value + low).append("AND ").append(value + high).append(")");
                     }
-                    con = rulesRow.get("pAngleO").toString();
-                    queryOldpanelFitRuleBuilder.append(" AND pAngle=").append(con);
+                    if(rulesRow.get("opa")!=null)
+                        queryOldpanelFitRuleBuilder.append(" AND pAngle=").append(rulesRow.get("opa").toString());
                 case '6':
-                    if((rulesRow.get("mConO")!=null)&&(rulesRow.get("mConO").toString().length()!=0)){
-                        con = rulesRow.get("mConO").toString();
+                    if((rulesRow.get("om1")!=null)&&(rulesRow.get("om1").toString().length()!=0)&&(rulesRow.get("om2")!=null)&&(rulesRow.get("om2").toString().length()!=0)){
                         value = Integer.parseInt(productInfo.get("mValue").toString());
-                        queryOldpanelFitRuleBuilder.append(" AND oldpanel_info.mValue>=").append(value + Integer.parseInt(con.split("&")[0])).append(" AND oldpanel_info.mValue<=").append(value + Integer.parseInt(con.split("&")[1]));
+                        low = Integer.parseInt(rulesRow.get("om1").toString());
+                        high = Integer.parseInt(rulesRow.get("om2").toString());
+                        queryOldpanelFitRuleBuilder.append(" AND (oldpanel_info.mValue BETWEEN ").append(value + low).append("AND ").append(value + high).append(")");
                     }
-                    con = rulesRow.get("mAngleO").toString();
-                    queryOldpanelFitRuleBuilder.append(" AND mAngle=").append(con);
-                    if((rulesRow.get("nConO")!=null)&&(rulesRow.get("nConO").toString().length()!=0)){
-                        con = rulesRow.get("nConO").toString();
+                    if(rulesRow.get("oma")!=null)
+                        queryOldpanelFitRuleBuilder.append(" AND mAngle=").append(rulesRow.get("oma").toString());
+                    if((rulesRow.get("on1")!=null)&&(rulesRow.get("on1").toString().length()!=0)&&(rulesRow.get("on2")!=null)&&(rulesRow.get("on2").toString().length()!=0)){
                         value = Integer.parseInt(productInfo.get("nValue").toString());
-                        queryOldpanelFitRuleBuilder.append(" AND oldpanel_info.nValue>=").append(value + Integer.parseInt(con.split("&")[0])).append(" AND oldpanel_info.nValue<=").append(value + Integer.parseInt(con.split("&")[1]));
+                        low = Integer.parseInt(rulesRow.get("on1").toString());
+                        high = Integer.parseInt(rulesRow.get("on2").toString());
+                        queryOldpanelFitRuleBuilder.append(" AND (oldpanel_info.nValue BETWEEN ").append(value + low).append("AND ").append(value + high).append(")");
                     }
-                    con = rulesRow.get("nAngleO").toString();
-                    queryOldpanelFitRuleBuilder.append(" AND nAngle=").append(con);
+                    if(rulesRow.get("ona")!=null)
+                        queryOldpanelFitRuleBuilder.append(" AND nAngle=").append(rulesRow.get("ona").toString());
                     break;
                 case '7':
-                    if((rulesRow.get("suffixO")!=null)&&(rulesRow.get("suffixO").toString().length()!=0)){
-                        con = rulesRow.get("suffixO").toString();
-                        queryOldpanelFitRuleBuilder.append(" AND oldpanel_info.suffix=\"").append(con).append("\"");
-                    }
+                    if((rulesRow.get("os")!=null)&&(rulesRow.get("os").toString().length()!=0))
+                        queryOldpanelFitRuleBuilder.append(" AND oldpanel_info.suffix=\"").append(rulesRow.get("os").toString()).append("\"");
                     break;
             }
         }
@@ -433,69 +516,133 @@ public class PanelMatchService extends BaseService{
 
     @Transactional
     public boolean isProductFitRule(String productFormat, DataRow rulesRow, DataRow productInfo){
+        if(rulesRow.get("extra")!=null){
+            if(isProductRangeNotFit(rulesRow.get("pRange").toString(),productInfo)) return false;
+        }
         for (int i = 0; i < productFormat.length(); i++) {
-            int aValueP;
-            int bValueP;
-            int mValueP;
-            int nValueP;
-            int pValueP;
-            int mAngleP;
-            int nAngleP;
-            int pAngleP;
-            String suffixP = "";
             switch (productFormat.charAt(i)){
-                case '0':
-                case '1':
-                    break;
-                case '2':
-                    mValueP = Integer.parseInt(productInfo.get("mValue").toString());
-                    if(!isValueFit(mValueP,rulesRow.get("mConP").toString()))
-                        return false;
-                    break;
-                case '3':
-                    nValueP = Integer.parseInt(productInfo.get("nValue").toString());
-                    if(!isValueFit(nValueP,rulesRow.get("nConP").toString()))
-                        return false;
-                    break;
-                case '4':
-                case '5':
-                case '9':
-                    aValueP = Integer.parseInt(productInfo.get("aValue").toString());
-                    bValueP = Integer.parseInt(productInfo.get("bValue").toString());
-                    if((!isValueFit(aValueP,rulesRow.get("aConP").toString()))||(!isValueFit(bValueP,rulesRow.get("bConP").toString())))
-                        return false;
-                    break;
                 case '6':
-                    mValueP = Integer.parseInt(productInfo.get("mValue").toString());
-                    nValueP = Integer.parseInt(productInfo.get("nValue").toString());
-                    mAngleP = Integer.parseInt(productInfo.get("mAngle").toString());
-                    nAngleP = Integer.parseInt(productInfo.get("nAngle").toString());
-                    if((!isValueFit(mValueP,rulesRow.get("mConP").toString()))||(!isValueFit(nValueP,rulesRow.get("nConP").toString()))
-                            ||(!isAngleFit(mAngleP,rulesRow.get("mAngleP").toString()))||(!isAngleFit(nAngleP,rulesRow.get("nAngleP").toString())))
-                        return false;
-                    break;
-                case '7':
-                    if(productInfo.get("suffix")!=null)
-                        suffixP = productInfo.get("suffix").toString();
-                    if(!isSuffixFit(suffixP,rulesRow.get("suffixP").toString()))
+                    if(isAngleNotFit(productInfo.get("mAngle").toString(),rulesRow.get("pma").toString())||
+                            isAngleNotFit(productInfo.get("nAngle").toString(),rulesRow.get("pna").toString()))
                         return false;
                     break;
                 case '8':
-                    mValueP = Integer.parseInt(productInfo.get("mValue").toString());
-                    nValueP = Integer.parseInt(productInfo.get("nValue").toString());
-                    pValueP = Integer.parseInt(productInfo.get("pValue").toString());
-                    mAngleP = Integer.parseInt(productInfo.get("mAngle").toString());
-                    nAngleP = Integer.parseInt(productInfo.get("nAngle").toString());
-                    pAngleP = Integer.parseInt(productInfo.get("pAngle").toString());
-                    if((!isValueFit(mValueP,rulesRow.get("mConP").toString()))||(!isValueFit(nValueP,rulesRow.get("nConP").toString()))
-                            ||(!isValueFit(pValueP,rulesRow.get("pConP").toString()))||(!isAngleFit(pAngleP,rulesRow.get("pAngleP").toString()))
-                            ||(!isAngleFit(mAngleP,rulesRow.get("mAngleP").toString()))||(!isAngleFit(nAngleP,rulesRow.get("nAngleP").toString())))
+                    if(isAngleNotFit(productInfo.get("mAngle").toString(),rulesRow.get("pma").toString())||
+                            isAngleNotFit(productInfo.get("nAngle").toString(),rulesRow.get("pna").toString())||
+                            isAngleNotFit(productInfo.get("pAngle").toString(),rulesRow.get("ppa").toString()))
                         return false;
+                    break;
+                case '7':
+                    String suffixP = "";
+                    if(productInfo.get("suffix")!=null)
+                        suffixP = productInfo.get("suffix").toString();
+                    if(!isSuffixFit(suffixP,rulesRow.get("ps").toString()))
+                        return false;
+                    break;
+                default:
                     break;
             }
         }
         return true;
     }
+    private boolean isStringValueNotBetween(String value, String low, String high){
+        boolean b = false;
+        if(low.length()!=0)
+            b=b|(Integer.parseInt(value)>=Integer.parseInt(low));
+        if(high.length()!=0)
+            b=b|(Integer.parseInt(value)<=Integer.parseInt(high));
+        return b;
+    }
+    private boolean isAngleNotFit(String angle, String condition){
+        if((null!=condition)&&(condition.length()!=0))
+            return !angle.equals(condition);
+        return true;
+    }
+    private boolean isProductRangeNotFit(String pRange,DataRow productInfo){
+        if(pRange.length()==0) return false;
+        try{
+            ScriptEngineManager manager = new ScriptEngineManager();
+            ScriptEngine engine = manager.getEngineByName("js");
+            if(pRange.contains("m"))
+                engine.put("m",Integer.parseInt(productInfo.get("mValue").toString()));
+            if(pRange.contains("n"))
+                engine.put("n",Integer.parseInt(productInfo.get("nValue").toString()));
+            if(pRange.contains("p"))
+                engine.put("p",Integer.parseInt(productInfo.get("pValue").toString()));
+            if(pRange.contains("a"))
+                engine.put("a",Integer.parseInt(productInfo.get("aValue").toString()));
+            if(pRange.contains("b"))
+                engine.put("b",Integer.parseInt(productInfo.get("bValue").toString()));
+            Object result = engine.eval(pRange);
+            return Boolean.parseBoolean(result.toString());
+        }catch (Exception e){
+            return true;
+        }
+    }
+//    public boolean isProductFitRule(String productFormat, DataRow rulesRow, DataRow productInfo){
+//        for (int i = 0; i < productFormat.length(); i++) {
+//            int aValueP;
+//            int bValueP;
+//            int mValueP;
+//            int nValueP;
+//            int pValueP;
+//            int mAngleP;
+//            int nAngleP;
+//            int pAngleP;
+//            String suffixP = "";
+//            switch (productFormat.charAt(i)){
+//                case '0':
+//                case '1':
+//                    break;
+//                case '2':
+//                    mValueP = Integer.parseInt(productInfo.get("mValue").toString());
+//                    if(!isValueFit(mValueP,rulesRow.get("mConP").toString()))
+//                        return false;
+//                    break;
+//                case '3':
+//                    nValueP = Integer.parseInt(productInfo.get("nValue").toString());
+//                    if(!isValueFit(nValueP,rulesRow.get("nConP").toString()))
+//                        return false;
+//                    break;
+//                case '4':
+//                case '5':
+//                case '9':
+//                    aValueP = Integer.parseInt(productInfo.get("aValue").toString());
+//                    bValueP = Integer.parseInt(productInfo.get("bValue").toString());
+//                    if((!isValueFit(aValueP,rulesRow.get("aConP").toString()))||(!isValueFit(bValueP,rulesRow.get("bConP").toString())))
+//                        return false;
+//                    break;
+//                case '6':
+//                    mValueP = Integer.parseInt(productInfo.get("mValue").toString());
+//                    nValueP = Integer.parseInt(productInfo.get("nValue").toString());
+//                    mAngleP = Integer.parseInt(productInfo.get("mAngle").toString());
+//                    nAngleP = Integer.parseInt(productInfo.get("nAngle").toString());
+//                    if((!isValueFit(mValueP,rulesRow.get("mConP").toString()))||(!isValueFit(nValueP,rulesRow.get("nConP").toString()))
+//                            ||(!isAngleFit(mAngleP,rulesRow.get("mAngleP").toString()))||(!isAngleFit(nAngleP,rulesRow.get("nAngleP").toString())))
+//                        return false;
+//                    break;
+//                case '7':
+//                    if(productInfo.get("suffix")!=null)
+//                        suffixP = productInfo.get("suffix").toString();
+//                    if(!isSuffixFit(suffixP,rulesRow.get("suffixP").toString()))
+//                        return false;
+//                    break;
+//                case '8':
+//                    mValueP = Integer.parseInt(productInfo.get("mValue").toString());
+//                    nValueP = Integer.parseInt(productInfo.get("nValue").toString());
+//                    pValueP = Integer.parseInt(productInfo.get("pValue").toString());
+//                    mAngleP = Integer.parseInt(productInfo.get("mAngle").toString());
+//                    nAngleP = Integer.parseInt(productInfo.get("nAngle").toString());
+//                    pAngleP = Integer.parseInt(productInfo.get("pAngle").toString());
+//                    if((!isValueFit(mValueP,rulesRow.get("mConP").toString()))||(!isValueFit(nValueP,rulesRow.get("nConP").toString()))
+//                            ||(!isValueFit(pValueP,rulesRow.get("pConP").toString()))||(!isAngleFit(pAngleP,rulesRow.get("pAngleP").toString()))
+//                            ||(!isAngleFit(mAngleP,rulesRow.get("mAngleP").toString()))||(!isAngleFit(nAngleP,rulesRow.get("nAngleP").toString())))
+//                        return false;
+//                    break;
+//            }
+//        }
+//        return true;
+//    }
 
     @Transactional
     public boolean isOldpanelMatchRange(String oldpanelFormat, String[] oRan, DataRow oldpanelRow, DataRow productInfo){
@@ -910,11 +1057,14 @@ public class PanelMatchService extends BaseService{
     }
 
     private boolean isSuffixFit(String suffix, String con){
-        if((con!=null)&&(!con.equals(""))){
+        if((con!=null)&&(con.length()!=0)){
+//            if(con.equals("@")) return suffix.length()==0;
             String[] sxC = con.split("&");
             for (String s : sxC) {
-                char conm = s.charAt(0);//>,<,=
+                char conm = s.charAt(0);
                 switch (conm) {
+                    case '=':
+                        return suffix.equals(s.substring(1));
                     case '#':
                         if (!suffix.contains(s.substring(1)))
                             return false;
@@ -923,6 +1073,8 @@ public class PanelMatchService extends BaseService{
                         if (suffix.contains(s.substring(1)))
                             return false;
                         break;
+                    default:
+                        return false;
                 }
             }
         }
