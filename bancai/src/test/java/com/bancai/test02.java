@@ -6,13 +6,17 @@ import com.bancai.domain.DataList;
 import com.bancai.domain.DataRow;
 import org.junit.Test;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import java.io.InputStream;
 import java.util.*;
 
 public class test02 {
     private QueryAllService queryService;
     private InsertProjectService insertProjectService;
     @Test
-    public void test() {
+    public void test() throws ScriptException {
         String isPureWord = "^[A-Za-z]+$";
         String isNumber = "^[-\\\\+]?([0-9]+\\\\.?)?[0-9]+$";
         String isPureNumber = "[0-9]+";
@@ -246,7 +250,15 @@ public class test02 {
 //        System.out.println(s.matches(t));
         String s = "200%150%null%null%null%0%0%0%%";
         System.out.println(s.split("%").length);
-
+        String str = "a>=0&&(b%100)==5";
+        ScriptEngineManager manager = new ScriptEngineManager();
+        ScriptEngine engine = manager.getEngineByName("js");
+        engine.put("a", 4);
+        engine.put("b", 5);
+        Object result = engine.eval(str);
+        System.out.println("结果类型:" + result.getClass().getName() + ",计算结果:" + result);
+        boolean b =Boolean.parseBoolean(result.toString());
+        System.out.println(b);
 
     }
 
