@@ -12,6 +12,8 @@ Ext.define('project.import_design_list', {
 		var record_start_bottom = 0;
 		var record_start_pop = 0;
 
+		Ext.Ajax.timeout=9000000;//设置超时时间
+
 // 		var toolbar2 = Ext.create("Ext.toolbar.Toolbar", {
 // 			dock : "top",
 // 			items : [{
@@ -90,6 +92,63 @@ Ext.define('project.import_design_list', {
 // 						}
 // 					}]
 // 		});
+		//单条录入和添加记录按钮
+		var toolbar_one = Ext.create('Ext.toolbar.Toolbar', {
+			dock : "top",
+			items: [
+				{
+					xtype:'tbtext',
+					text:'<strong>单条录入:</strong>',
+					margin: '0 40 0 0',
+				},
+				{   xtype : 'button',
+					margin: '0 40 0 0',
+					iconAlign : 'center',
+					iconCls : 'rukuicon ',
+					text : '添加记录',
+					handler: function(){
+						// var productName = Ext.getCmp('productName').getValue();
+						// var count = Ext.getCmp('count').getValue();
+						// var warehouseName = Ext.getCmp('storePosition').rawValue;
+						var data = [{
+							'品名' : '',
+							'位置编号' : '',
+							'图号':'',
+						}];
+
+						Ext.getCmp('addlistDataGrid').getStore().loadData(data, true);
+					}
+				},
+				//删除行数据
+				{
+					xtype : 'button',
+					margin: '0 0 0 0',
+					iconAlign : 'center',
+					iconCls : 'rukuicon ',
+					text : '删除',
+					handler: function(){
+						var sm = Ext.getCmp('addlistDataGrid').getSelectionModel();
+						var productArr = sm.getSelection();
+						if (productArr.length != 0) {
+							Ext.Msg.confirm("提示", "共选中" + productArr.length + "条数据，是否确认删除？", function (btn) {
+								if (btn == 'yes') {
+									//先删除后台再删除前台
+									//ajax 删除后台数据 成功则删除前台数据；失败则不删除前台数据
+									//Extjs 4.x 删除
+									Ext.getCmp('addlistDataGrid').getStore().remove(productArr);
+								} else {
+									return;
+								}
+							});
+						} else {
+							//Ext.Msg.confirm("提示", "无选中数据");
+							Ext.Msg.alert("提示", "无选中数据");
+						}
+					}
+				}
+
+			]
+		});
 		//错误类型：枚举类型
 		Ext.define('designlist.errorcode.type', {
 			statics: { // 关键
@@ -112,16 +171,6 @@ Ext.define('project.import_design_list', {
 			store : designlistStore,
 			title:"清单明细",
 			columns : [
-				// {
-				// 	dataIndex : '产品编号',
-				// 	name : '产品编号',
-				// 	text : '产品编号',
-				// 	//width : 110,
-				// 	editor : {// 文本字段
-				// 		xtype : 'textfield',
-				// 		allowBlank : false
-				// 	}
-				// },
 				{
 					// dataIndex : '序号',
 					name : '序号',
@@ -141,7 +190,7 @@ Ext.define('project.import_design_list', {
 						xtype : 'textfield',
 						allowBlank : false,
 					},
-					editable:false,
+					editable:true,
 					// flex:0.2
 				},
 
@@ -161,11 +210,19 @@ Ext.define('project.import_design_list', {
 					text : '位置编号',
 					width : 200,
 					// flex:0.2
+					editor : {
+						xtype : 'textfield',
+						allowBlank : false,
+					},
 				},
 				{
 					dataIndex : '图号',
 					text:'图号',
 					name:'图号',
+					editor : {
+						xtype : 'textfield',
+						allowBlank : false,
+					},
 				},
 			],
 			viewConfig : {
@@ -178,6 +235,9 @@ Ext.define('project.import_design_list', {
 			// 			clicksToEdit : 3
 			// 		})],
 			selType : 'rowmodel',
+			plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
+				clicksToEdit : 1
+			})],
 			dockedItems: [{
 				xtype: 'pagingtoolbar',
 				store: designlistStore,   // same store GridPanel is using
@@ -217,29 +277,29 @@ Ext.define('project.import_design_list', {
 				},
 				{
 					text: '品名',
-					//dataIndex: 'productName',
-					dataIndex: '品名',
+					dataIndex: 'productName',
+					// dataIndex: '品名',
 					flex :1,
 					width:"80"
 				},
 				{
 					text: '位置',
-					//dataIndex: 'position',
-					dataIndex: '位置',
+					dataIndex: 'position',
+					// dataIndex: '位置',
 					flex :1,
 					width:"80"
 				},
 				{
 					text: '图号',
-					//dataIndex: 'figureNum',
-					dataIndex: '图号',
+					dataIndex: 'figureNum',
+					// dataIndex: '图号',
 					flex :1,
 					width:"80"
 				},
 				{
 					text: '错误原因',
 					flex :1,
-					//dataIndex: 'errorType',
+					dataIndex: 'errorType',
 					// dataIndex: 'errorCode',
 					// renderer: function (value) {
 					// 	return designlist.errorcode.type[value].name; // key-value
@@ -579,6 +639,10 @@ Ext.define('project.import_design_list', {
 
 					]//exceluploadform
 		});
+
+		//防止按钮重复点击，发送多次请求，post_flag
+		var post_flag = false;
+
 		var toolbar2 = Ext.create('Ext.toolbar.Toolbar', {
 			dock : "top",
 			id : "toolbar2",
@@ -589,6 +653,11 @@ Ext.define('project.import_design_list', {
 				// 	margin: '0 0 0 40',
 				// 	text:'选择文件:',
 				// },
+				{
+					xtype:'tbtext',
+					text:'<strong>批量上传:</strong>',
+					margin: '0 40 0 0',
+				},
 				exceluploadform,
 				{
 					xtype : 'button',
@@ -597,6 +666,18 @@ Ext.define('project.import_design_list', {
 					margin: '0 0 0 40',
 					layout: 'right',
 					handler: function(){
+						if(post_flag){
+							return;
+						}
+						post_flag = true;
+
+						// self.saveOrderBtnCanUse = true;//按钮不能点击
+						// setTimeout(() => {
+						// 	//防止重复点击发送请求
+						// 	self.saveOrderBtnCanUse = false;//按钮不可以点击
+						// }, 90000);
+						// // 正常代码再执行
+
 						var select = Ext.getCmp('addlistDataGrid').getStore()
 							.getData();
 						var s = new Array();
@@ -610,23 +691,25 @@ Ext.define('project.import_design_list', {
 
 
 						//显示匹配进度
-						Ext.MessageBox.show(
-							{
-								title:'请稍候',
-								msg:'产品匹配中，请耐心等待...',
-								progressText:'',    //进度条文本
-								width:300,
-								progress:true,
-								closable:false
-							}
-						);
+						// Ext.MessageBox.show(
+						// 	{
+						// 		title:'请稍候',
+						// 		msg:'产品匹配中，请耐心等待...',
+						// 		progressText:'',    //进度条文本
+						// 		width:300,
+						// 		progress:true,
+						// 		closable:false
+						// 	}
+						// );
+
 						console.log("s--------------",s)
 						//获取数据
-						Ext.Ajax.timeout=900000;
+						// Ext.Ajax.timeout=900000;//设置超时时间
 						Ext.Ajax.request({
 							url : 'designlist/uploadData.do', //上传匹配数据
 							method:'POST',
 							//submitEmptyText : false,
+							timeout:90000000,//超时时间
 							params : {
 								s : "[" + s + "]",//存储选择领料的数量
 								projectId:projectId,
@@ -660,6 +743,8 @@ Ext.define('project.import_design_list', {
 													//点击确认，显示重复的数据
 													errorlistStore.loadData(errorList);
 													win_errorInfo_outbound.show();
+
+													post_flag =false;
 												}
 											}
 										});
@@ -667,23 +752,30 @@ Ext.define('project.import_design_list', {
 									else if(errorCode == 300){
 										Ext.MessageBox.hide();
 										Ext.MessageBox.alert("提示","产品匹配失败！请重新导入" );
+
+										post_flag =false;
 									}
 									else if(errorCode == 1000){
 										Ext.MessageBox.hide();
 										Ext.MessageBox.alert("提示","匹配失败，未知错误！请重新导入" );
+
+										post_flag =false;
 									}
 								}else{
 									Ext.MessageBox.hide();
 									Ext.MessageBox.alert("提示","匹配成功" );
-
 									//刷新页面
 									Ext.getCmp('addlistDataGrid').getStore().removeAll();
+
+									post_flag =false;
 								}
 								//var message =Ext.decode(response.responseText).showmessage;
 
 							},
 							failure : function(response) {
-								Ext.MessageBox.hide();
+
+								post_flag =false;//防止发送多次请求
+								// Ext.MessageBox.hide();
 								//var message =Ext.decode(response.responseText).showmessage;
 								Ext.MessageBox.alert("提示","匹配失败" );
 							}
@@ -693,13 +785,20 @@ Ext.define('project.import_design_list', {
 			]//exceluploadform
 		});
 
-		// this.dockedItems = [toolbar2,grid];
 		//多行toolbar
-		this.dockedItems=[{
+		this.dockedItems=[
+
+			{
 			xtype : 'toolbar',
 			dock : 'top',
 			items : [toolbar1]
-		},{
+		},
+			{
+				xtype : 'toolbar',
+				dock : 'top',
+				items : [toolbar_one]
+			},
+			{
 			xtype : 'toolbar',
 			dock : 'top',
 			style:'border-width:0 0 0 0;',

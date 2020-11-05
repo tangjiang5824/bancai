@@ -166,6 +166,11 @@ Ext.define('project.project_query_worksheet',{
             id : 'worksheet_Grid',
             store:worksheetListStore,
             dock: 'bottom',
+            viewConfig: {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>无数据</div>",
+                deferEmptyText: false
+            },
             columns:[
                 {
                     dataIndex:'id',
@@ -196,7 +201,7 @@ Ext.define('project.project_query_worksheet',{
                     renderer: function (value) {
                         return Worksheet.check.State[value].name; // key-value
                     },
-                    editor:{xtype : 'textfield', allowBlank : false}
+                    // editor:{xtype : 'textfield', allowBlank : false}
                 },
                 {
                     // name : '操作',
@@ -221,7 +226,7 @@ Ext.define('project.project_query_worksheet',{
             flex:1,
             // height:'100%',
             tbar: toolbar,
-            selType:'checkboxmodel', //选择框
+            // selType:'checkboxmodel', //选择框
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 2
             })],
@@ -235,38 +240,32 @@ Ext.define('project.project_query_worksheet',{
                 emptyMsg:'无数据'
             }
             ],
-            listeners: {
-                // 双击表行响应事件
-                itemdblclick: function(me, record, item, index,rowModel){
-                    var select = record.data;
-                    //工单id
-                    var workorderlogId = select.id;
-
-                    //var pickNumber = select.
-
-                    //工单的具体信息
-                    var specific_worksheet_List = Ext.create('Ext.data.Store',{
-                        //id,materialName,length,width,materialType,number
-                        fields:['materialName','length','materialType','width','specification','number'],
-                        proxy : {
-                            type : 'ajax',
-                            url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName='+table_workoderLogDetail+'&columnName=workorderlogId'+'&columnValue='+workorderlogId,//获取同类型的原材料  +'&pickNum='+pickNum
-                            reader : {
-                                type : 'json',
-                                rootProperty: table_workoderLogDetail,
-                            },
-                        },
-                        autoLoad : true
-                    });
-
-                    Ext.getCmp("toolbar_pop").items.items[0].setText(workorderlogId);//修改id为win_num的值，动态显示在窗口中
-                    // //传rowNum响应的行号:index+1
-                    // Ext.getCmp("toolbar5").items.items[2].setText(index+1)
-                    specific_workorder_outbound_query.setStore(specific_worksheet_List);
-                    win_showworkorder_outbound.show();
-                }
-
-            }
+            // listeners: {
+            //     // 双击表行响应事件
+            //     itemdblclick: function(me, record, item, index,rowModel){
+            //         var select = record.data;
+            //         //工单id
+            //         var workorderlogId = select.id;
+            //         //var pickNumber = select.
+            //         //工单的具体信息
+            //         var specific_worksheet_List = Ext.create('Ext.data.Store',{
+            //             //id,materialName,length,width,materialType,number
+            //             fields:['materialName','length','materialType','width','specification','number'],
+            //             proxy : {
+            //                 type : 'ajax',
+            //                 url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName='+table_workoderLogDetail+'&columnName=workorderlogId'+'&columnValue='+workorderlogId,//获取同类型的原材料  +'&pickNum='+pickNum
+            //                 reader : {
+            //                     type : 'json',
+            //                     rootProperty: table_workoderLogDetail,
+            //                 },
+            //             },
+            //             autoLoad : true
+            //         });
+            //         Ext.getCmp("toolbar_pop").items.items[0].setText(workorderlogId);//修改id为win_num的值，动态显示在窗口中
+            //         specific_workorder_outbound_query.setStore(specific_worksheet_List);
+            //         win_showworkorder_outbound_query.show();
+            //     }
+            // }
 
         });
 
@@ -347,14 +346,14 @@ Ext.define('project.project_query_worksheet',{
             // }
         });
 
-        var win_showworkorder_outbound = Ext.create('Ext.window.Window', {
-            // id:'win_showworkorder_outbound',
+        var win_showworkorder_outbound_query = Ext.create('Ext.window.Window', {
             title: '工单详情',
             height: 500,
             width: 750,
             layout: 'fit',
             closable : true,
             draggable:true,
+            modal :true, //除了窗口，不能操作其他
             closeAction : 'hidden',
             tbar:toolbar_pop_query,
             items:specific_workorder_outbound_query,
@@ -404,7 +403,7 @@ Ext.define('project.project_query_worksheet',{
                 // //传rowNum响应的行号:index+1
                 // Ext.getCmp("toolbar5").items.items[2].setText(index+1)
                 specific_workorder_outbound_query.setStore(specific_worksheet_List);
-                win_showworkorder_outbound.show();
+                win_showworkorder_outbound_query.show();
             }
             if (fieldName == "打印") {
                 console.log("zzzzzzzzzzzzzzzzzyyyyyyyyyyyyyyyyyyyzzzzz")

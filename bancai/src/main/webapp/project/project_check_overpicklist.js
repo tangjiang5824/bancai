@@ -1,16 +1,26 @@
-Ext.define('project.project_check_worksheet',{
+Ext.define('project.project_check_overpicklist',{
     extend:'Ext.panel.Panel',
     region: 'center',
     layout:'fit',
-    title: '工单审核',
-    initComponent: function(){
-        var itemsPerPage = 50;
-        var table_workoderLog="work_order_log_view";
+    title: '超领单审核',
+    initComponent: function()
+    {
         var table_workoderLogDetail="work_order_detail_view";
         //var materialType="1";
 
         //存放所选的原材料的具体规格
         var materialList = '';
+        //原件类型：枚举类型
+        Ext.define('product.model.originType', {
+            statics: { // 关键s
+                0: { value: '0', name: '未匹配' },
+                1: { value: '1', name: '退库成品' },
+                2: { value: '2', name: '预加工半产品' },
+                3: { value: '3', name: '旧板' },
+                4: { value: '4', name: '原材料' },
+                9: { value: '5', name: '未匹配成功' },
+            }
+        });
         //职员信息
         var workerListStore = Ext.create('Ext.data.Store',{
             fields : [ 'typeName'],
@@ -50,7 +60,7 @@ Ext.define('project.project_check_worksheet',{
         var tableList = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '项目名',
             labelWidth : 45,
-            width : '35%',
+            width : 550,
             id :  'projectName',
             name : '项目名称',
             matchFieldWidth: true,
@@ -82,22 +92,66 @@ Ext.define('project.project_check_worksheet',{
                     }
                 },
             }
-            //
+        });
+
+        var buildingName = Ext.create('Ext.form.ComboBox',{
+            fieldLabel : '楼栋名',
+            labelWidth : 45,
+            width : 250,
+            id :  'buildingName',
+            name : 'buildingName',
+            matchFieldWidth: false,
+            margin: '0 0 0 40',
+            emptyText : "--请选择楼栋名--",
+            displayField: 'buildingName',
+            valueField: 'id',//楼栋的id
+            editable : false,
+            autoLoad: true,
+            //store: tableListStore2,
+        });
+        var buildingPositionStore = Ext.create('Ext.data.Store',{
+            fields : [ 'buildingPosition'],
+            proxy : {
+                type : 'ajax',
+                url : 'material/findAllBytableName.do?tableName=building_position',
+
+                reader : {
+                    type : 'json',
+                    rootProperty: 'building_position',
+                }
+            },
+            autoLoad : true
+        });
+        var buildingPositionList = Ext.create('Ext.form.ComboBox',{
+            fieldLabel : '位置',
+            labelWidth : 40,
+            width : 200,
+            margin: '0 0 0 40',
+            id :  'positionName',
+            name : 'positionName',
+            matchFieldWidth: true,
+            // emptyText : "--请选择项目--",
+            displayField: 'positionName',
+            valueField: 'id',
+            // typeAhead : true,
+            editable : true,
+            store: buildingPositionStore,
+
         });
 
 
-        //查询的工单数据存放位置---上界面
-        var worksheetListStore = Ext.create('Ext.data.Store',{
+        //查询领料单
+        var overpickListStore = Ext.create('Ext.data.Store',{
             fields:['materialName','materialCount','countReceived','countNotReceived','countTemp'],
             proxy : {
                 type : 'ajax',
-                url : 'order/workApprovalview.do',
+                url : 'order/queryOverRequisitionOrder.do', //领料单查询
                 reader : {
                     type : 'json',
                     rootProperty: 'value',
                 }
             },
-            autoLoad : false
+            autoLoad : true
         });
 
         //是否审核
@@ -110,32 +164,121 @@ Ext.define('project.project_check_worksheet',{
                 //...
             ]
         });
-
         var isActiveList = Ext.create('Ext.form.ComboBox', {
-            fieldLabel: '工单状态',
+            fieldLabel: '超领单状态',
             name: 'isActiveList',
             id: 'isActiveList',
             store: isActiveListStore,
             queryMode: 'local',
             displayField: 'name',
             valueField: 'abbr',
-            margin : '0 20 0 40',
-            width: 160,
-            labelWidth: 60,
+            margin : '0 0 0 40',
+            width: 180,
+            labelWidth: 80,
             renderTo: Ext.getBody()
         });
+
+        // //是否领完
+        // var receiveStatusStore = Ext.create('Ext.data.Store', {
+        //     fields: ['abbr', 'name'],
+        //     data : [
+        //         {"abbr":"0", "name":"未领完"},
+        //         {"abbr":"1", "name":"已领完"},
+        //     ]
+        // });
+        // var receiveStatus = Ext.create('Ext.form.ComboBox', {
+        //     fieldLabel: '是否领完',
+        //     name: 'receiveStatus',
+        //     id: 'receiveStatus',
+        //     store: receiveStatusStore,
+        //     queryMode: 'local',
+        //     displayField: 'name',
+        //     valueField: 'abbr',
+        //     margin : '0 20 0 40',
+        //     width: 160,
+        //     labelWidth: 60,
+        //     renderTo: Ext.getBody()
+        // });
 
         var toolbar = Ext.create('Ext.toolbar.Toolbar',{
             dock : "top",
             id : "toolbar",
             items: [tableList,
+                buildingName,
+                // buildingPositionList,
+                //是否领完
+                // receiveStatus,
                 //是否审核
                 isActiveList,
+
+                ]
+        });
+
+        var toolbar2 = Ext.create('Ext.toolbar.Toolbar', {
+            dock: "top",
+            id: "toolbar2",
+            items: [
+                {
+                    xtype: 'textfield',
+                    margin : '0 40 0 15',
+                    fieldLabel: '单号',
+                    id :'picklistNum',
+                    width: 200,
+                    labelWidth: 30,
+                    name: 'picklistNum',
+                    value:"",
+                },
+                {
+                    fieldLabel : '创建人',
+                    xtype : 'combo',
+                    name : 'operator',
+                    id : 'operator',
+                    // disabled : true,
+                    // width:'95%',
+                    margin: '0 40 0 0',
+                    width: 160,
+                    labelWidth: 45,
+                    store : workerListStore,
+                    displayField : 'workerName',
+                    valueField : 'id',
+                    editable : true,
+                },
+                {
+                    xtype : 'datefield',
+                    margin : '0 0 0 0',
+                    fieldLabel : '创建时间',
+                    width : 180,
+                    labelWidth : 60,
+                    id : "startTime",
+                    name : 'startTime',
+                    format : 'Y-m-d',
+                    editable : false,
+                    renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')
+
+                    //value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
+                },{
+                    xtype:'tbtext',
+                    text:'---',
+                },
+                {
+                    xtype : 'datefield',
+                    margin : '0 0 0 0',
+                    // fieldLabel : '结束时间',
+                    width : 120,
+                    // labelWidth : 60,
+                    id : "endTime",
+                    name : 'endTime',
+                    //align: 'right',
+                    format : 'Y-m-d',
+                    editable : false,
+                    //value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
+                },
+
                 {
                     xtype : 'button',
-                    text: '项目工单查询',
+                    text: '项目超料单查询',
                     width: 100,
-                    margin: '0 0 0 10',
+                    margin: '0 0 0 40',
                     layout: 'right',
                     handler: function(){
                         // var url='material/materiaPickingWin.jsp';
@@ -144,24 +287,25 @@ Ext.define('project.project_check_worksheet',{
                         console.log('sss')
                         //传入所选项目的id
                         console.log(Ext.getCmp('projectName').getValue())
-                        worksheetListStore.load({
+                        overpickListStore.load({
                             params : {
                                 projectId:Ext.getCmp('projectName').getValue(),
-                                isActive:Ext.getCmp('isActiveList').getValue(),
-                                // tableName:table_workoderLog,
-                                // columnName:'projectId',
-                                // columnValue:Ext.getCmp('projectName').getValue(),
+                                // isActive:Ext.getCmp('isActiveList').getValue(),
+                                operator:Ext.getCmp('operator').getValue(),
+                                timeStart:Ext.getCmp('startTime').getValue(),
+                                timeEnd:Ext.getCmp('endTime').getValue(),
                             }
                         });
                     }
-                }]
+                }
+            ]
         });
 
 
-        var worksheet_Grid=Ext.create('Ext.grid.Panel',{
+        var overpicklist_Grid=Ext.create('Ext.grid.Panel',{
             // title: '工单查询',
-            id : 'worksheet_Grid',
-            store:worksheetListStore,
+            id : 'overpicklist_Grid',
+            store:overpickListStore,
             dock: 'bottom',
             viewConfig: {
                 forceFit: false,
@@ -169,28 +313,39 @@ Ext.define('project.project_check_worksheet',{
                 deferEmptyText: false
             },
             columns:[
+                new Ext.grid.RowNumberer(),//序号
                 {
                     dataIndex:'id',
-                    text:'工单号',
-                    flex :1
-                },
-                {
-                    dataIndex:'projectName',
-                    text:'所属项目',
+                    text:'超领单号',
                     flex :1
                 },
                 {
                     dataIndex:'workerName',
-                    text:'创建人',
+                    text:'负责人',
                     flex :1
                 },
                 {
                     dataIndex:'time',
                     text:'创建时间',
-                    //editor:{xtype : 'textfield', allowBlank : false}
                     flex :1,
-                    renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')
-                }, {
+                    renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')  //
+                },
+                {
+                    dataIndex:'projectName',
+                    text:'所属项目',
+                    flex :1,
+                },
+                {
+                    dataIndex:'buildingName',
+                    text:'楼栋名',
+                    flex :1,
+                },
+                {
+                    dataIndex:'description',
+                    text:'超领原因',
+                    flex :1,
+                },
+                {
                     dataIndex:'isActive',
                     text:'是否审核',
                     //editor:{xtype : 'textfield', allowBlank : false}
@@ -208,12 +363,10 @@ Ext.define('project.project_check_worksheet',{
                         return "<INPUT type='button' value='审核' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
                     }
                 },
-
-
             ],
             flex:1,
             // height:'100%',
-            tbar: toolbar,
+            // tbar: toolbar,
             // selType:'checkboxmodel', //选择框
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 2
@@ -221,7 +374,7 @@ Ext.define('project.project_check_worksheet',{
             dockedItems: [
                 {
                 xtype: 'pagingtoolbar',
-                store: worksheetListStore,   // same store GridPanel is using
+                store: overpickListStore,   // same store GridPanel is using
                 dock: 'bottom',
                 displayInfo: true,
                 displayMsg:'显示{0}-{1}条，共{2}条',
@@ -266,11 +419,11 @@ Ext.define('project.project_check_worksheet',{
                 {
                     xtype: 'textfield',
                     margin : '0 40 0 0',
-                    fieldLabel: '工单号',
-                    id :'worksheet_Id',
+                    fieldLabel: '超领单号',
+                    id :'requisitionOrderId',
                     width: 250,
                     labelWidth: 50,
-                    name: 'worksheet_Id',
+                    name: 'requisitionOrderId',
                     value:"",
                     editable : false,//不可修改
                     disabled : true,//隐藏显示
@@ -364,8 +517,8 @@ Ext.define('project.project_check_worksheet',{
                         //若工单已审核，则不能再审核
                         var isAct = Ext.getCmp("pop_isActive").text;
                         if(isAct == 0){
-                            var worksheet_Id = Ext.getCmp("worksheet_Id").getValue();
-                            console.log("worksheet_Id---------",worksheet_Id)
+                            var requisitionOrderId = Ext.getCmp("requisitionOrderId").getValue();
+                            console.log("requisitionOrderId---------",requisitionOrderId)
                             //    material/backMaterialstore.do
                             Ext.Msg.show({
                                 title: '操作确认',
@@ -375,16 +528,16 @@ Ext.define('project.project_check_worksheet',{
                                 fn: function (btn) {
                                     if (btn === 'yes') {
                                         Ext.Ajax.request({
-                                            url:"order/workApproval.do",  //审核
+                                            url:"overOrder/overRequisitionCheck.do",  //审核
                                             params:{
-                                                id:worksheet_Id,  //工单id
-                                                type:1,//审核通过
+                                                requisitionOrderId:requisitionOrderId,  //工单id
+                                                // type:1,//审核通过
                                             },
                                             success:function (response) {
                                                 Ext.MessageBox.alert("提示", "审核通过!");
                                                 win_showworkorder_outbound.close();//关闭窗口
                                                 //刷新页面
-                                                Ext.getCmp("worksheet_Grid").getStore().load()
+                                                Ext.getCmp("overpicklist_Grid").getStore().load()
                                             },
                                             failure : function(response){
                                                 Ext.MessageBox.alert("提示", "审核失败!");
@@ -410,26 +563,26 @@ Ext.define('project.project_check_worksheet',{
                         var isAct = Ext.getCmp("pop_isActive").text;
                         console.log("e.data：")
                         if(isAct == 1){
-                            var worksheet_Id = Ext.getCmp("worksheet_Id").getValue();
+                            var requisitionOrderId = Ext.getCmp("requisitionOrderId").getValue();
                             Ext.Msg.show({
                                 title: '操作确认',
-                                message: '将驳回工单，选择“是”否确认？',
+                                message: '将驳回超领单，选择“是”否确认？',
                                 buttons: Ext.Msg.YESNO,
                                 icon: Ext.Msg.QUESTION,
                                 fn: function (btn) {
                                     if (btn === 'yes') {
                                         Ext.Ajax.request({
-                                            url:"order/workApproval.do",  //入库记录撤销
+                                            url:"overOrder/overRequisitionReject.do",  //入库记录撤销
                                             params:{
-                                                id:worksheet_Id,  //工单id
-                                                type:2,//驳回审核
+                                                requisitionOrderId:requisitionOrderId,  //工单id
+                                                // type:2,//驳回审核
                                             },
                                             success:function (response) {
                                                 //console.log(response.responseText);
                                                 Ext.MessageBox.alert("提示", "驳回成功!");
                                                 win_showworkorder_outbound.close();//关闭窗口
                                                 //页面刷新
-                                                Ext.getCmp("worksheet_Grid").getStore().load()
+                                                Ext.getCmp("overpicklist_Grid").getStore().load()
                                             },
                                             failure : function(response){
                                                 Ext.MessageBox.alert("提示", "驳回失败!");
@@ -447,42 +600,56 @@ Ext.define('project.project_check_worksheet',{
             ]
         });
 
+        //超领单详情
+        var specificOverMaterialList_detail = Ext.create('Ext.data.Store',{
+            fields:['materialName','length','materialType','width','specification','number'],
+            proxy : {
+                type : 'ajax',
+                url : 'order/zzyqueryOverRequisitionOrderDetail.do',//获取同类型的原材料  +'&pickNum='+pickNum
+                reader : {
+                    type : 'json',
+                    rootProperty: 'value',
+                },
+            },
+            autoLoad : false
+        });
+
         //弹出框，出入库详细记录
         var specific_workorder_outbound=Ext.create('Ext.grid.Panel',{
             id : 'specific_workorder_outbound',
             tbar: toolbar_pop,
-            // store:material_Query_Records_store1,//oldpanellogdetailList，store1的数据固定
+            store:specificOverMaterialList_detail,//oldpanellogdetailList，store1的数据固定
             dock: 'bottom',
             columns:[
                 {
-                    text: '楼栋名',
-                    dataIndex: 'buildingName',
-                    flex :1,
-                    width:"80"
+                    dataIndex:'name',
+                    text:'材料名',
+                    flex :1
                 },
                 {
-                    text: '清单位置',
-                    dataIndex: 'positionName',
+                    dataIndex:'type',
+                    text:'类型',
                     flex :1,
-                    width:"80"
+                    renderer: function (value) {
+                        return product.model.originType[value].name; // key-value
+                    },
                 },
                 {
-                    text: '产品名',
-                    dataIndex: 'productName',
+                    dataIndex:'countAll',
+                    text:'总数量',
                     flex :1,
-                    width:"80"
                 },
                 {
-                    text: '产品数量',
+                    dataIndex:'countRec',
+                    text:'待领数量',
                     flex :1,
-                    dataIndex: 'count'
                 },
-                {
-                    text: '工单创建时间',
-                    flex :1,
-                    dataIndex: 'time',
-                    renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')
-                },
+                // {
+                //     text: '工单创建时间',
+                //     flex :1,
+                //     dataIndex: 'time',
+                //     renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')
+                // },
 
                 //fields:['oldpanelId','oldpanelName','count'],specification
 
@@ -510,53 +677,57 @@ Ext.define('project.project_check_worksheet',{
 
 
         //添加cell单击事件
-        worksheet_Grid.addListener('cellclick', cellclick);
+        overpicklist_Grid.addListener('cellclick', cellclick);
         function cellclick(grid, rowIndex, columnIndex, e) {
             if (rowIndex < 0) {
                 return;
             }
-            console.log("grid.columns[columnIndex]：",Ext.getCmp('worksheet_Grid').columns[columnIndex-1])
-            var fieldName = Ext.getCmp('worksheet_Grid').columns[columnIndex].text;
-            var sm = Ext.getCmp('worksheet_Grid').getSelectionModel();
+            console.log("grid.columns[columnIndex]：",Ext.getCmp('overpicklist_Grid').columns[columnIndex-1])
+            var fieldName = Ext.getCmp('overpicklist_Grid').columns[columnIndex].text;
+            var sm = Ext.getCmp('overpicklist_Grid').getSelectionModel();
             // var isrollback = Ext.getCmp('isrollback').getValue();
             var materialArr = sm.getSelection();
-            var worksheetNum = e.data.id;  //选中记录的logid,工单号
+            // var worksheetNum = e.data.id;  //选中记录的logid,工单号
             var projectName = e.data.projectName;  //选中记录的项目名
-            var workorderlogId = e.data.id;  //选中记录的logid,工单号
+            var requisitionOrderId = e.data.id;  //选中记录的logid,工单号
 
             var isActive = e.data.isActive;
 
+            console.log(e.data)
             if (fieldName == "操作") {
 
-                //设置监听事件getSelectionModel().getSelection()
-                //工单的具体信息
-                var specific_worksheet_List = Ext.create('Ext.data.Store',{
-                    //id,materialName,length,width,materialType,number
-                    fields:['materialName','length','materialType','width','specification','number'],
-                    proxy : {
-                        type : 'ajax',
-                        url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName='+table_workoderLogDetail+'&columnName=workorderlogId'+'&columnValue='+workorderlogId,//获取同类型的原材料  +'&pickNum='+pickNum
-                        reader : {
-                            type : 'json',
-                            rootProperty: table_workoderLogDetail,
-                        },
-                    },
-                    autoLoad : true
-                });
-                Ext.getCmp("toolbar_pop1").items.items[0].setValue(worksheetNum);//修改id为win_num的值，动态显示在窗口中
+                Ext.getCmp("toolbar_pop1").items.items[0].setValue(requisitionOrderId);//修改id为win_num的值，动态显示在窗口中
                 Ext.getCmp("toolbar_pop1").items.items[1].setValue(projectName);//修改id为win_num的值，动态显示在窗口中
 
-                Ext.getCmp("toolbar_pop").items.items[0].setText(workorderlogId);//修改id为win_num的值，动态显示在窗口中
+                Ext.getCmp("toolbar_pop").items.items[0].setText(requisitionOrderId);//修改id为win_num的值，动态显示在窗口中
                 Ext.getCmp("toolbar_pop").items.items[1].setText(isActive);//修改id为win_num的值，动态显示在窗口中
 
-                // //传rowNum响应的行号:index+1
-                // Ext.getCmp("toolbar5").items.items[2].setText(index+1)
-                specific_workorder_outbound.setStore(specific_worksheet_List);
+
+                specificOverMaterialList_detail.load({
+                    params : {
+                        requisitionOrderId:requisitionOrderId,
+                        //projectId:'1',
+                    }
+                });
+
                 win_showworkorder_outbound.show();
             }
         }
+        this.dockedItems=[{
+            xtype : 'toolbar',
+            dock : 'top',
+            style:'border-width:0 0 0 0;',
+            items : [toolbar]
+        },
+            {
+                xtype : 'toolbar',
+                dock : 'top',
+                style:'border-width:0 0 0 0;',
+                items : [toolbar2]
+            },
+        ];
 
-        this.items = [worksheet_Grid];
+        this.items = [overpicklist_Grid];
         this.callParent(arguments);
     }
 })

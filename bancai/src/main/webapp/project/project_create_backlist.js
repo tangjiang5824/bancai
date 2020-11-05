@@ -12,84 +12,68 @@ Ext.define('project.project_create_backlist', {
 		var record_start_bottom = 0;
 		var record_start_pop = 0;
 
-// 		var toolbar2 = Ext.create("Ext.toolbar.Toolbar", {
-// 			dock : "top",
-// 			items : [{
-// 						xtype : 'button',
-// 						iconAlign : 'center',
-// 						iconCls : 'rukuicon ',
-// 						text : '添加产品',
-// 						handler : function() {
-// 							//fields: ['品号', '品名','规格','库存单位','仓库编号','数量','成本','存放位置']
-// 							var data = [{
-// 										'产品编号' : '',
-// 										'productName' : '',
-// 										'产品安装位置' : '',
-// 										'是否由旧板生产' : '',
-// 									}];
-// 							//Ext.getCmp('backlist_DataGrid')返回定义的对象
-// 							Ext.getCmp('backlist_DataGrid').getStore().loadData(data,
-// 									true);
-// 						}
-// 					}, {
-// 						xtype : 'button',
-// 						iconAlign : 'center',
-// 						iconCls : 'rukuicon ',
-// 						text : '保存',
-//
-// 						handler : function() {
-// 							// 取出grid的字段名字段类型
-// 							//var userid="<%=session.getAttribute('userid')%>";
-// 							var select = Ext.getCmp('backlist_DataGrid').getStore()
-// 									.getData();
-// 							var s = new Array();
-// 							select.each(function(rec) {
-// 										//delete rec.data.id;
-// 										s.push(JSON.stringify(rec.data));
-// 										//alert(JSON.stringify(rec.data));//获得表格中的数据
-// 									});
-// 							//alert(s);//数组s存放表格中的数据，每条数据以json格式存放
-//
-// 							Ext.Ajax.request({
-// 								url : 'addData.do', //HandleDataController
-// 								method:'POST',
-// 								//submitEmptyText : false,
-// 								params : {
-// 									tableName:tableName,
-// 									materialType:materialtype,
-// 									s : "[" + s + "]",
-// 									//userid: userid + ""
-// //									tableName : tabName,
-// //									organizationId : organizationId,
-// //									tableType : tableType,
-// //									uploadCycle : uploadCycle,
-// //									cycleStart : cycleStart
-//
-// 								},
-// 								success : function(response) {
-// 									Ext.MessageBox.alert("提示", "保存成功！");
-// 							     	me.close();
-// //									var obj = Ext.decode(response.responseText);
-// //									if (obj) {
-// //
-// //										Ext.MessageBox.alert("提示", "保存成功！");
-// //										me.close();
-// //
-// //									} else {
-// //										// 数据库约束，返回值有问题
-// //										Ext.MessageBox.alert("提示", "保存失败！");
-// //
-// //									}
-//
-// 								},
-// 								failure : function(response) {
-// 									Ext.MessageBox.alert("提示", "保存失败！");
-// 								}
-// 							});
-//
-// 						}
-// 					}]
-// 		});
+		//单条录入和添加记录按钮
+		var toolbar_one = Ext.create('Ext.toolbar.Toolbar', {
+			dock : "top",
+			items: [
+				{
+					xtype:'tbtext',
+					text:'<strong>单条录入:</strong>',
+					margin: '0 40 0 0',
+				},
+				{   xtype : 'button',
+					margin: '0 40 0 0',
+					iconAlign : 'center',
+					iconCls : 'rukuicon ',
+					text : '添加记录',
+					handler: function(){
+						var data = [{
+							'name' : '',
+							'count' : '',
+							'backWarehouseName':'',
+							'warehouseName' : '',
+							'inventoryUnit' : '',
+							'unitArea':'',
+							'unitWeight' : '',
+							'totalArea' : '',
+							'totalWeight':'',
+							'remark':'',
+						}];
+
+						Ext.getCmp('backlist_DataGrid').getStore().loadData(data, true);
+					}
+				},
+				//删除行数据
+				{
+					xtype : 'button',
+					margin: '0 0 0 0',
+					iconAlign : 'center',
+					iconCls : 'rukuicon ',
+					text : '删除',
+					handler: function(){
+						var sm = Ext.getCmp('backlist_DataGrid').getSelectionModel();
+						var productArr = sm.getSelection();
+						if (productArr.length != 0) {
+							Ext.Msg.confirm("提示", "共选中" + productArr.length + "条数据，是否确认删除？", function (btn) {
+								if (btn == 'yes') {
+									//先删除后台再删除前台
+									//ajax 删除后台数据 成功则删除前台数据；失败则不删除前台数据
+									//Extjs 4.x 删除
+									Ext.getCmp('backlist_DataGrid').getStore().remove(productArr);
+								} else {
+									return;
+								}
+							});
+						} else {
+							//Ext.Msg.confirm("提示", "无选中数据");
+							Ext.Msg.alert("提示", "无选中数据");
+						}
+					}
+				}
+
+			]
+		});
+
 		//错误类型：枚举类型
 		Ext.define('designlist.errorcode.type', {
 			statics: { // 关键
@@ -144,16 +128,6 @@ Ext.define('project.project_create_backlist', {
 					editable:false,
 					// flex:0.2
 				},
-				// {
-				// 	dataIndex : '编号',
-				// 	text:'编号',
-				// 	name:'编号',
-				// 	//width : 110,
-				// 	editor : {// 文本字段
-				// 		xtype : 'textfield',
-				// 		allowBlank : false,
-				// 	}
-				// },
 				{
 					dataIndex : 'count',
 					text:'退料数量',
@@ -239,6 +213,10 @@ Ext.define('project.project_create_backlist', {
 					name : '备注',
 					text : '备注',
 					width : 200,
+					editor : {// 文本字段
+						xtype : 'textfield',
+						allowBlank : false,
+					}
 					// flex:0.2
 				}
 
@@ -249,9 +227,9 @@ Ext.define('project.project_create_backlist', {
 					dragText : "可用鼠标拖拽进行上下排序"
 				}
 			},
-			// plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
-			// 			clicksToEdit : 3
-			// 		})],
+			plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
+						clicksToEdit : 1
+					})],
 			selType : 'rowmodel',
 			dockedItems: [{
 				xtype: 'pagingtoolbar',
@@ -342,6 +320,7 @@ Ext.define('project.project_create_backlist', {
 			draggable:true,
 			closeAction : 'hidden',
 			// tbar:toolbar_pop1,
+			modal :true,
 			items:specific_errorlist_outbound,
 		});
 
@@ -363,7 +342,7 @@ Ext.define('project.project_create_backlist', {
 			queryMode: 'local',
 			displayField: 'name',
 			valueField: 'abbr',
-			margin : '0 20 0 0',
+			margin : '0 0 0 40',
 			width: 160,
 			labelWidth: 60,
 			renderTo: Ext.getBody()
@@ -469,7 +448,7 @@ Ext.define('project.project_create_backlist', {
 												}else if(ob.errorCode==200){
 													Ext.Msg.show({
 														title: '提示',
-														message: '匹配失败，存在不合法材料记录！\n是否查看具体错误数据',
+														message: '上传失败，存在不合法材料记录！\n是否查看具体错误数据',
 														buttons: Ext.Msg.YESNO,
 														icon: Ext.Msg.QUESTION,
 														fn: function (btn) {
@@ -511,9 +490,10 @@ Ext.define('project.project_create_backlist', {
 
 
 		var tableList1 = Ext.create('Ext.form.ComboBox',{
-			fieldLabel : '项目名',
-			labelWidth : 45,
-			width : 550,//'35%'
+			fieldLabel : '项目名称',
+			labelWidth : 60,
+			width : 570,//'35%'
+			// margin:'0 0 0 20',
 			queryMode: 'local',
 			id :  'projectName',
 			name : 'projectName',
@@ -681,9 +661,10 @@ Ext.define('project.project_create_backlist', {
 			dock : "top",
 			id : "toolbar1",
 			items : [   tableList1,
-						buildingName
+						buildingName,
 						// buildingPositionList,
-
+						//退库类型
+						optionType,
 
 					]//exceluploadform
 		});
@@ -691,14 +672,12 @@ Ext.define('project.project_create_backlist', {
 			dock : "top",
 			id : "toolbar2",
 			items : [
-				// {
-				// 	xtype: 'tbtext',
-				// 	//id: 'uploadFile',
-				// 	margin: '0 0 0 40',
-				// 	text:'选择文件:',
-				// },
-				//退库类型
-				optionType,
+				{
+					xtype:'tbtext',
+					text:'<strong>批量上传:</strong>',
+					margin: '0 40 0 0',
+				},
+
 				exceluploadform,
 			]//exceluploadform
 		});
@@ -739,7 +718,7 @@ Ext.define('project.project_create_backlist', {
 					id : 'back_operator',
 					// disabled : true,
 					// width:'95%',
-					margin: '0 30 0 0',
+					margin: '0 40 0 0',
 					width: 150,
 					labelWidth: 45,
 					store : workerListStore,
@@ -819,6 +798,9 @@ Ext.define('project.project_create_backlist', {
 
 								}else{
 									Ext.MessageBox.alert("提示","创建退料单成功！" );
+									//刷新
+									Ext.getCmp('backlist_DataGrid').getStore().remove();
+
 								}
 								//var message =Ext.decode(response.responseText).showmessage;
 								//刷新页面
@@ -834,17 +816,23 @@ Ext.define('project.project_create_backlist', {
 			]//exceluploadform
 		});
 
-		// this.dockedItems = [toolbar2,grid];
+
 		//多行toolbar
-		this.dockedItems=[{
+		this.dockedItems=[
+			{
+				xtype : 'toolbar',
+				dock : 'top',
+				items : [toolbar_one]
+			},
+			{
 			xtype : 'toolbar',
 			dock : 'top',
-			items : [toolbar1]
+			items : [toolbar2]
 		},{
 			xtype : 'toolbar',
 			dock : 'top',
 			style:'border-width:0 0 0 0;',
-			items : [toolbar2]
+			items : [toolbar1]
 		},
 		{
 			xtype : 'toolbar',

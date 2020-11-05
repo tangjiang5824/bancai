@@ -192,22 +192,30 @@ Ext.define('project.project_query_overpicklist',{
             },
             autoLoad : true
         });
-        var buildingPositionList = Ext.create('Ext.form.ComboBox',{
-            fieldLabel : '位置',
-            labelWidth : 40,
-            width : 200,
-            margin: '0 0 0 40',
-            id :  'positionName',
-            name : 'positionName',
-            matchFieldWidth: true,
-            // emptyText : "--请选择项目--",
-            displayField: 'positionName',
-            valueField: 'id',
-            // typeAhead : true,
-            editable : true,
-            store: buildingPositionStore,
 
+        //是否领完
+        var receiveStatusStore = Ext.create('Ext.data.Store', {
+            fields: ['abbr', 'name'],
+            data : [
+                {"abbr":"0", "name":"未领完"},
+                {"abbr":"1", "name":"已领完"},
+            ]
         });
+
+        var receiveStatus = Ext.create('Ext.form.ComboBox', {
+            fieldLabel: '是否领完',
+            name: 'receiveStatus',
+            id: 'receiveStatus',
+            store: receiveStatusStore,
+            queryMode: 'local',
+            displayField: 'name',
+            valueField: 'abbr',
+            margin : '0 0 0 40',
+            width: 160,
+            labelWidth: 60,
+            renderTo: Ext.getBody()
+        });
+
         //职员信息
         var workerListStore = Ext.create('Ext.data.Store',{
             fields : [ 'typeName'],
@@ -226,7 +234,8 @@ Ext.define('project.project_query_overpicklist',{
             id : "toolbar1",
             items : [   tableList1,
                 buildingName,
-                buildingPositionList,
+                receiveStatus
+                // buildingPositionList,
             ]//exceluploadform
         });
 
@@ -292,9 +301,9 @@ Ext.define('project.project_query_overpicklist',{
 
                 {
                     xtype : 'button',
-                    text: '项目领料单查询',
+                    text: '项目超料单查询',
                     width: 100,
-                    margin: '0 0 0 40',
+                    margin: '0 0 0 80',
                     layout: 'right',
                     handler: function(){
                         // var url='material/materiaPickingWin.jsp';
@@ -336,7 +345,7 @@ Ext.define('project.project_query_overpicklist',{
                 new Ext.grid.RowNumberer(),//序号
                 {
                 dataIndex:'id',
-                text:'领料单号',
+                text:'超领单号',
                 flex :1
             },
                 {
@@ -447,7 +456,7 @@ Ext.define('project.project_query_overpicklist',{
             fields:['materialName','length','materialType','width','specification','number'],
             proxy : {
                 type : 'ajax',
-                url : 'order/queryOverRequisitionOrderDetail.do',//获取同类型的原材料  +'&pickNum='+pickNum
+                url : 'order/zzyqueryOverRequisitionOrderDetail.do',//获取同类型的原材料  +'&pickNum='+pickNum
                 reader : {
                     type : 'json',
                     rootProperty: 'value',
@@ -457,7 +466,7 @@ Ext.define('project.project_query_overpicklist',{
         });
 
         var grid__query_pickList_specific=Ext.create('Ext.grid.Panel',{
-            title:'领料单明细',
+            title:'超领单明细',
             id : 'grid__query_pickList_specific',
             // tbar:toolbar_specific,
             store:specificMaterialList,
@@ -477,11 +486,11 @@ Ext.define('project.project_query_overpicklist',{
                         return product.model.originType[value].name; // key-value
                     },
                 },
-                {
-                    dataIndex:'warehouseName',
-                    text:'仓库名',
-                    flex :1,
-                },
+                // {
+                //     dataIndex:'warehouseName',
+                //     text:'仓库名',
+                //     flex :1,
+                // },
                 {
                     dataIndex:'countAll',
                     text:'总数量',
@@ -598,15 +607,15 @@ Ext.define('project.project_query_overpicklist',{
             var sm = Ext.getCmp('PickingListGrid').getSelectionModel();
             //var isrollback = Ext.getCmp('isrollback').getValue();
             var materialArr = sm.getSelection();
-            var requisitionOrderId = e.data.requisitionOrderId;  //选中记录的logid,工单号
+            var requisitionOrderId = e.data.id;  //选中记录的logid,工单号
             var projectName = e.data.projectName;  //选中记录的项目名
             var workerName = e.data.workerName;  //选中记录的项目名
             var time = e.data.time;  //选中记录的项目名
             console.log("e.data：",e.data);
             console.log("requisitionOrderId "+requisitionOrderId+" projectName "+projectName+" workerName "+workerName+" time "+time);
-            if (columnIndex == 3) {
-                console.log("zzzzzzzzzzzzzzzzzyyyyyyyyyyyyyyyyyyyzzzzz打印")
-                console.log("requisitionOrderId="+requisitionOrderId)
+            if (columnIndex == 7) {
+                //console.log("zzzzzzzzzzzzzzzzzyyyyyyyyyyyyyyyyyyyzzzzz打印")
+                console.log("张仲逸requisitionOrderId="+requisitionOrderId)
                 Ext.Ajax.request({
                     url : 'project/printOverRequisitionOrder.do', //打印
                     method:'POST',

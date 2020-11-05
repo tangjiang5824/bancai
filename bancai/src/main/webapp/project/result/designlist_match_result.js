@@ -380,9 +380,9 @@ Ext.define('project.result.designlist_match_result',{
             queryMode: 'local',
             displayField: 'name',
             valueField: 'abbr',
-            margin : '0 20 0 40',
-            width: 160,
-            labelWidth: 60,
+            margin : '0 0 0 40',
+            width: 180,
+            labelWidth: 80,
             renderTo: Ext.getBody()
         });
 
@@ -501,7 +501,7 @@ Ext.define('project.result.designlist_match_result',{
                     xtype : 'button',
                     text: '查询',
                     width: 80,
-                    margin: '0 0 0 15',
+                    margin: '0 40 0 0',
                     layout: 'right',
                     handler: function(){
                         // var Id = Ext.getCmp("positionName").getValue();
@@ -628,7 +628,7 @@ Ext.define('project.result.designlist_match_result',{
         //匹配结果
         var allpanel_Store = Ext.create('Ext.data.Store',{
             id: 'allpanel_Store',
-            autoLoad: true,
+            autoLoad: false,
             fields: ['productName_Des','materialName','materialCount'],
             pageSize: itemsPerPage, // items per page
             proxy:{
@@ -679,8 +679,13 @@ Ext.define('project.result.designlist_match_result',{
             // groupField : "projectName",
             viewConfig : {
                 enableTextSelection : true,
-                editable:true
+                editable:true,
+
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>无数据</div>",
+                deferEmptyText: false
             },
+
             columns : [
                 { text: '项目', dataIndex: 'projectName', flex :1.2,hidden:true},
                 { text: '楼栋名', dataIndex: 'buildingName', flex :0.8,hidden:true },

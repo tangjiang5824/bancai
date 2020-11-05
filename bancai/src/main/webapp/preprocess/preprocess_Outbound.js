@@ -340,6 +340,11 @@ Ext.define('preprocess.preprocess_Outbound',{
 
             ],
             flex:1,
+            viewConfig: {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false
+            },
             //selType:'checkboxmodel',
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 2
@@ -408,6 +413,9 @@ Ext.define('preprocess.preprocess_Outbound',{
             ],
 
             viewConfig : {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false,
                 plugins : {
                     ptype : "gridviewdragdrop",
                     dragText : "可用鼠标拖拽进行上下排序"

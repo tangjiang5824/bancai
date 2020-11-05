@@ -251,10 +251,6 @@ Ext.define('material.material_Query_Data',{
             id: 'material_Query_Data_Main',
             title: "原材料仓库信息记录",
             store: material_Query_Data_Store,
-            viewConfig : {
-                enableTextSelection : true,
-                editable:true
-            },
             columns : [
                 {
                     dataIndex : 'materialName',
@@ -302,7 +298,6 @@ Ext.define('material.material_Query_Data',{
                     text : '单重',
                     //width : 160,
                     flex :1,
-
                 },
                 {
                     dataIndex : 'unitArea',
@@ -310,7 +305,6 @@ Ext.define('material.material_Query_Data',{
                     text : '单面积',
                     //width : 160,
                     flex :1,
-
                 },
                 {
                     dataIndex : 'totalWeight',
@@ -337,6 +331,15 @@ Ext.define('material.material_Query_Data',{
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 3
             })],
+            viewConfig: {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false,
+
+                enableTextSelection : true,
+                editable:true
+            },
+
             // tbar: toobar,
             dockedItems: [{
                 xtype: 'pagingtoolbar',
@@ -363,9 +366,6 @@ Ext.define('material.material_Query_Data',{
                             //console.log(response.responseText);
                         }
                     })
-                    // console.log("value is "+e.value);
-                    // console.log(e.record.data["id"]);
-
                 }
             }
         });

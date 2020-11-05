@@ -258,6 +258,7 @@ Ext.define('material.material_Query_Records',{
         //弹出框
         var material_Query_Records_specific_data_grid=Ext.create('Ext.grid.Panel',{
             id : 'material_Query_Records_specific_data_grid',
+            // emptyText: '暂无数据',// 支持HTML标签
             store:material_Query_Records_store1,//oldpanellogdetailList，store1的数据固定
             dock: 'bottom',
             columns:[
@@ -267,16 +268,7 @@ Ext.define('material.material_Query_Records',{
                     flex :1,
                     width:"80"
                 },
-                // {
-                //     text: '长',
-                //     dataIndex: 'length'
-                // },{
-                //     text: '类型',
-                //     dataIndex: 'materialType'
-                // },{
-                //     text: '宽',
-                //     dataIndex: 'width'
-                // },
+
                 {
                     // id:'outOrinNum',
                     text: '数量',
@@ -291,6 +283,12 @@ Ext.define('material.material_Query_Records',{
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 2
             })],
+            viewConfig: {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false
+            },
+
             listeners: {
                 //监听修改
                 validateedit: function (editor, e) {
@@ -308,6 +306,7 @@ Ext.define('material.material_Query_Records',{
             layout: 'fit',
             closable : true,
             draggable:true,
+            modal :true,
             closeAction : 'hidden',
             items:material_Query_Records_specific_data_grid,
         });
@@ -385,16 +384,29 @@ Ext.define('material.material_Query_Records',{
                     });
                     // 根据出入库0/1，决定弹出框表格列名
                     var col = material_Query_Records_specific_data_grid.columns[1];
-                    if(opType == 1){
-                        col.setText("出库数量");
-                    }
-                    if(opType == 2){
-                        col.setText("退库数量");
-                    }
-                    else{
+
+
+                    if(opType == 0){
                         col.setText("入库数量");
                     }
-
+                    else if(opType == 1){
+                        col.setText("出库数量");
+                    }
+                    else if(opType == 2){
+                        col.setText("退库数量");
+                    }
+                    else if(opType == 3){
+                        col.setText("撤销入库数量");
+                    }
+                    else if(opType == 4){
+                        col.setText("撤销出库数量");
+                    }
+                    else if(opType == 5) {
+                        col.setText("撤销退库数量");
+                    }
+                    else {
+                        col.setText("数量");
+                    }
 
                     material_Query_Records_specific_data_grid.setStore(materiallogdetailList);
                     console.log(materiallogdetailList);

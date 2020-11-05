@@ -19,6 +19,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.script.ScriptException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class new_panel_match {
@@ -35,7 +36,7 @@ public class new_panel_match {
     @Autowired
     private materialinfodao materialinfodao;
     @Autowired
-    private materialstoredao materialstoredao;
+    private materialTypedao materialTypedao;
     @Autowired
     private matchresultdao matchresultdao;
     @Autowired
@@ -106,7 +107,12 @@ public class new_panel_match {
             for (int j=0;j<list.size();j++){
                 MaterialInfo info=(MaterialInfo) list.get(j).get(0);
                 mysqlcondition condition=new mysqlcondition();
-                if(info.getTypeId()!=null) condition.and(new mysqlcondition("typeId","=",info.getTypeId().getId()));
+                Integer typeId=info.getTypeId().getId();
+                if(info.getTypeId()==null) break;
+                condition.and(new mysqlcondition("typeId","=",typeId));
+                MaterialType materialType = materialTypedao.findById(typeId).orElse(null);
+                Integer materialPrefix=materialType.getMaterialPrefix();
+
                 if(info.getnValue()!=null&&info.getnValue()!=0) condition.and(new mysqlcondition("nValue","=",info.getnValue()));
                 if(info.getmValue()!=null&&info.getmValue()!=0) condition.and(new mysqlcondition("mValue","=",info.getmValue()));
                 if(info.getpValue()!=null&&info.getpValue()!=0) condition.and(new mysqlcondition("pValue","=",info.getpValue()));
@@ -115,10 +121,34 @@ public class new_panel_match {
                 if(info.getOrientation()!=null) condition.and(new mysqlcondition("orientation","=",info.getOrientation()));
                 DataList dataList=insertProjectService.findObjectId("material_info",condition);
                 if(dataList.size()==0)  {
-                    log.error("匹配中 没有找到对应的原材料id 设计清单id"+designlist.getId()+"  产品id "+productInfo.getId());
-                    flag=false;
-                    break;
-                }
+                    // log.error("匹配中 没有找到对应的原材料id 设计清单id"+designlist.getId()+"  产品id "+productInfo.getId());
+                    MaterialInfo inf=new MaterialInfo();
+                    inf.setTypeId(materialType);
+                    inf.setnValue(info.getnValue());
+                    inf.setmValue(info.getmValue());
+                    inf.setpValue(info.getpValue());
+                    inf.setaValue(info.getaValue());
+                    inf.setbValue(info.getbValue());
+                    inf.setOrientation(info.getOrientation());
+                    String materialName=null;
+                    String specification=null;
+                    switch (materialPrefix){
+                        //U板
+                        case 301: materialName=info.getnValue()+" U铝膜板";
+                        specification=info.getmValue()+"mm";
+                        break;
+                        case 302: materialName=info.getaValue()+"*"+info.getbValue()+" IC";
+                        specification=info.getmValue()+"mm";
+                        break;
+                        default: materialName=info.getTypeId().getTypeName();
+                    }
+                    inf.setMaterialName(materialName);
+                    inf.setSpecification(specification);
+                    materialinfodao.save(inf);
+                    inf.setPartNo(JPAObjectUtil.getPartNo(materialPrefix,typeId,inf.getMaterialid()));
+                    info=inf;
+
+                }else
                 info=materialinfodao.findById(Integer.parseInt(dataList.get(0).get("id")+"")).orElse(null);
                 /*------------------------------------
                 上面通过匹配规则找到了materialinfo

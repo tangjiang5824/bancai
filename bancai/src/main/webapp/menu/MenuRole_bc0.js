@@ -6,14 +6,14 @@ Ext.define("menu.MenuRole_bc0", {
 	},
 	store : {
 		root : {
-			expanded : true,
+			expanded : true,//菜单项 展开
 			children : [{
 				text : '仓库管理',
 				expanded : true,
 				children : [
 						{
 				text : '旧板管理',
-				expanded : true,
+				// expanded : true,
 				children : [
 					{
 					text : '入库',
@@ -46,7 +46,7 @@ Ext.define("menu.MenuRole_bc0", {
 					leaf : true
 				},
 				{
-					text : '退料',
+					text : '退料审核',
 					id : 'oldpanel.oldpanel_backcheck',
 					leaf : true
 				},
@@ -63,7 +63,7 @@ Ext.define("menu.MenuRole_bc0", {
 				]
 			} ,{
 				text : '原材料管理',
-				expanded : true,
+				// expanded : true,
 				children : [
 					{
 					text : '入库',
@@ -85,11 +85,7 @@ Ext.define("menu.MenuRole_bc0", {
 					id : 'material.material_Query_Data',
 					leaf : true
 				},
-				// 	{
-				// 	text : '原材料退库',
-				// 	id : 'material.material_Back',
-				// 	leaf : true
-				// },
+
 					{
 						text : '领料',
 						id : 'material.material_Receive',
@@ -100,8 +96,13 @@ Ext.define("menu.MenuRole_bc0", {
 						id : 'material.material_Receive_input',
 						leaf : true
 					},
+					// 	{
+					// 	text : '原材料退库',
+					// 	id : 'material.material_Back',
+					// 	leaf : true
+					// },
 					{
-						text : '退料',
+						text : '退料审核',
 						id : 'material.material_backcheck',
 						leaf : true
 					},
@@ -126,7 +127,7 @@ Ext.define("menu.MenuRole_bc0", {
 				}]
 			}, {
 				text : '预加工仓库管理',
-				expanded : true,
+				// expanded : true,
 				children : [
 				// 	{
 				// 	text : '半成品预加工',
@@ -137,11 +138,23 @@ Ext.define("menu.MenuRole_bc0", {
 					text : '入库',
 					id : 'preprocess.preprocess_Inbound',
 					leaf : true
-				} ,{
-					text : '批量入库',
-					id : 'preprocess.preprocess_Upload_Data',
-					leaf : true
-				} ,{
+				} ,
+					{
+						text : '误入库撤销',
+						id : 'preprocess.preprocess_Outbound',
+						leaf : true
+					},
+					// {
+					// 	text : '入库',
+					// 	id : 'preprocess.preprocess_Inbound_old',
+					// 	leaf : true
+					// } ,
+				// 	{
+				// 	text : '批量入库',
+				// 	id : 'preprocess.preprocess_Upload_Data',
+				// 	leaf : true
+				// } ,
+					{
 					text : '库存查询',
 					id : 'preprocess.preprocess_Query_Data',
 					leaf : true
@@ -156,11 +169,7 @@ Ext.define("menu.MenuRole_bc0", {
 						id : 'preprocess.preprocess_backcheck',
 						leaf : true
 					},
-					{
-						text : '误入库撤销',
-						id : 'preprocess.preprocess_Outbound',
-						leaf : true
-					},
+
 					{
 						text : '出入库记录查询',
 						id : 'preprocess.preprocess_Query_Records',
@@ -174,12 +183,19 @@ Ext.define("menu.MenuRole_bc0", {
 				]
 			},{
 				text : '退库成品仓库管理',
-				expanded : true,
-				children : [  {
+				// expanded : true,
+				children : [
+					{
 					text : '入库',
 					id : 'backproduct.backproduct_Inbound',
 					leaf : true
-				} ,{
+				} ,
+					{
+						text : '误入库撤销',
+						id : 'backproduct.backproduct_Outbound',
+						leaf : true
+					},
+					{
 					text : '库存查询',
 					id : 'backproduct.backproduct_Query_Data',
 					leaf : true
@@ -195,11 +211,6 @@ Ext.define("menu.MenuRole_bc0", {
 						leaf : true
 					},
 					{
-					text : '误入库撤销',
-					id : 'backproduct.backproduct_Outbound',
-					leaf : true
-				},
-					{
 					text : '出入库记录查询',
 					id : 'backproduct.backproduct_Query_Records',
 					leaf : true
@@ -212,7 +223,7 @@ Ext.define("menu.MenuRole_bc0", {
 				]
 			},{
 				text : '产品成品仓库管理',
-				expanded : true,
+				// expanded : true,
 				children : [
 				// 	{
 				// 	text : '单件产品成品入库',
@@ -238,15 +249,17 @@ Ext.define("menu.MenuRole_bc0", {
 					text : '出入库记录查询',
 					id : 'product.product_Query_Records',
 					leaf : true
-				}, {
-					text : '出入库记录统计',
-					id : 'product.product_Statistics_Records',
-					leaf : true
-				}]
+				},
+				// 	{
+				// 	text : '出入库记录统计',
+				// 	id : 'product.product_Statistics_Records',
+				// 	leaf : true
+				// }
+				]
 			},
 					{
 						text : '废料仓库管理',
-						expanded : true,
+						// expanded : true,
 						children : [
 							{
 								text : '入库',
@@ -300,7 +313,7 @@ Ext.define("menu.MenuRole_bc0", {
 			// },
 				{
 				text : '项目管理',
-				expanded : true,
+				// expanded : true,
 				children : [ {
 					text : '项目立项',
 					id : 'project.management.buildproject',
@@ -329,11 +342,11 @@ Ext.define("menu.MenuRole_bc0", {
 						id : 'project.project_check_designList',//
 						leaf : true
 					} ,
-					{
-						text : '项目匹配结果总览',
-						id : 'project.result.project_match_result',//project.import_planList
-						leaf : true
-					},
+					// {
+					// 	text : '项目匹配结果总览',
+					// 	id : 'project.result.project_match_result',//project.import_planList
+					// 	leaf : true
+					// },
 					{
 						text : '项目匹配结果查询',
 						id : 'project.result.designlist_match_result',//project.import_planList
@@ -397,20 +410,24 @@ Ext.define("menu.MenuRole_bc0", {
 						text : '项目创建领料单',
 						id : 'project.project_create_picklist',
 						leaf : true
-					},
-					{
-						text : '原材料超领单',
-						id : 'project.material_over_pick',
-						leaf : true
-					},
-					{
+					},{
 						text : '项目领料单查询',
 						id : 'project.project_query_picklist',
 						leaf : true
 					},
 					{
+						text : '项目原材料超领单',
+						id : 'project.material_over_pick',
+						leaf : true
+					},
+					{
 						text : '项目原材料超领单查询',
 						id : 'project.project_query_overpicklist',
+						leaf : true
+					},
+					{
+						text : '项目原材料超领单审核',
+						id : 'project.project_check_overpicklist',
 						leaf : true
 					},
 					// {
@@ -452,10 +469,11 @@ Ext.define("menu.MenuRole_bc0", {
 				{
 				text : '基础信息管理',
 				expanded : true,
-				children : [ {
+				children : [
+					{
 					text : '原材料种类管理',
 					//leaf : true
-					expanded : true,
+					// expanded : true,
 					children : [
 						{
 							text : '原材料类型',
@@ -466,7 +484,7 @@ Ext.define("menu.MenuRole_bc0", {
 						id : 'material.add_Mcatergory_baseInfo',
 						leaf : true
 					},{
-						text : '查看原材料类型',
+						text : '查看原材料基础信息',
 						id : 'material.query_Mcatergory_baseInfo',
 						leaf : true
 					},
@@ -481,12 +499,19 @@ Ext.define("menu.MenuRole_bc0", {
 						id : 'material.add_material_rules',
 
 						leaf : true
-					}
+					},
+						{
+
+							text : '查询修改新板匹配规则',
+							id : 'material.query_Newpanel_Rules',
+
+							leaf : true
+						},
 					]
 				} , {
 					text : '旧版种类管理',
 					//leaf : true
-					expanded : true,
+					// expanded : true,
 					children : [
 						// {
 						// 	text : '添加新的类型',
@@ -528,7 +553,7 @@ Ext.define("menu.MenuRole_bc0", {
 				} , {
 					text : '产品种类管理',
 					//leaf : true
-					expanded : true,
+					// expanded : true,
 					children : [
 						// {
 						// 	text : '添加新的类型',
@@ -568,7 +593,7 @@ Ext.define("menu.MenuRole_bc0", {
 				},{
 					//
 					text : '部门职员管理',
-					expanded : true,
+					// expanded : true,
 					children : [ {
 						text : '职员信息',
 						id : 'userManagement.department_worker',

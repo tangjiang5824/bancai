@@ -275,6 +275,11 @@ Ext.define('unuseMaterial.unuseMaterial_Inbound', {
                 //fields:['oldpanelId','oldpanelName','count'],specification
 
             ],
+            viewConfig : {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false,
+            },
             flex:1,
             //selType:'checkboxmodel',
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
@@ -821,6 +826,9 @@ Ext.define('unuseMaterial.unuseMaterial_Inbound', {
                 // }
             ],
             viewConfig : {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false,
                 plugins : {
                     ptype : "gridviewdragdrop",
                     dragText : "可用鼠标拖拽进行上下排序"

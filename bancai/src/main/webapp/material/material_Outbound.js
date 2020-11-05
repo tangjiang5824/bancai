@@ -237,6 +237,9 @@ Ext.define('material.material_Outbound',{
             }]
         });
 
+        //防止按钮重复点击，发送多次请求，post_flag
+        var post_flag = false;
+
         //弹出框的表头
         var toolbar_pop = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
@@ -285,6 +288,11 @@ Ext.define('material.material_Outbound',{
                     margin: '0 0 0 40',
                     layout: 'right',
                     handler: function(){
+                        if(post_flag){
+                            return;
+                        }
+                        post_flag = true;
+
                         var material_logId = Ext.getCmp("log_id").text;
                         var is_rollback = Ext.getCmp("is_rollback").text;
                         var operator = Ext.getCmp("operator_back").getValue();
@@ -308,13 +316,25 @@ Ext.define('material.material_Outbound',{
                                             success:function (response) {
                                                 //console.log(response.responseText);
                                                 var ob=JSON.parse(response.responseText);
-                                                if(ob.success==false)
+                                                if(ob.success==false){
                                                     Ext.MessageBox.alert("提示", ob.msg);
-                                                else
+                                                    post_flag =false;
+                                                }
+                                                else{
                                                     Ext.MessageBox.alert("提示", "撤销成功!");
+
+                                                    //成功后，关闭窗口
+                                                    win_showmaterialData_outbound.close();
+
+                                                    //重新刷新页面
+                                                    Ext.getCmp('addDataGrid').getStore().load();
+
+                                                    post_flag =false;
+                                                }
                                             },
                                             failure : function(response){
                                                 Ext.MessageBox.alert("提示", "撤销失败!");
+                                                post_flag =false;
                                             }
                                         })
                                     }
@@ -359,13 +379,11 @@ Ext.define('material.material_Outbound',{
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 2
             })],
-            // listeners: {
-            //     //监听修改
-            //     validateedit: function (editor, e) {
-            //         var field = e.field
-            //         var id = e.record.data.id
-            //     },
-            // }
+            viewConfig: {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false
+            },
         });
 
         var win_showmaterialData_outbound = Ext.create('Ext.window.Window', {
@@ -376,6 +394,7 @@ Ext.define('material.material_Outbound',{
             layout: 'fit',
             closable : true,
             draggable:true,
+            modal :true,
             closeAction : 'hidden',
             items:specific_data_grid_outbound,
         });
@@ -567,6 +586,9 @@ Ext.define('material.material_Outbound',{
             ],
 
             viewConfig : {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false,
                 plugins : {
                     ptype : "gridviewdragdrop",
                     dragText : "可用鼠标拖拽进行上下排序"

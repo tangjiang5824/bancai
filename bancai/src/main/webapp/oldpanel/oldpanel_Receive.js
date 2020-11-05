@@ -267,15 +267,22 @@ Ext.define('oldpanel.oldpanel_Receive',{
             store:oldpickListStore,
             dock: 'bottom',
             columns:[
+                // {
+                //     // dataIndex : '序号',
+                //     name : '序号',
+                //     text : '序号',
+                //     width : 45,
+                //     value:'99',
+                //     renderer:function(value,metadata,record,rowIndex){
+                //         return　record_start_bottom　+　1　+　rowIndex;
+                //     }
+                // },
                 {
-                    // dataIndex : '序号',
-                    name : '序号',
-                    text : '序号',
-                    width : 45,
-                    value:'99',
-                    renderer:function(value,metadata,record,rowIndex){
-                        return　record_start_bottom　+　1　+　rowIndex;
-                    }
+                    // header: '序号',
+                    xtype: 'rownumberer',
+                    width: 45,
+                    align: 'center',
+                    sortable: false
                 },
                 {
                     dataIndex:'requisitionOrderId',
@@ -302,6 +309,11 @@ Ext.define('oldpanel.oldpanel_Receive',{
             flex:1,
             // height:'100%',
             tbar: toolbar,
+            viewConfig: {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false
+            },
             // selType:'checkboxmodel', //选择框
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 2
@@ -656,24 +668,24 @@ Ext.define('oldpanel.oldpanel_Receive',{
             // closable:true,
             closeAction: 'hide',
             columns:[
-                {
-                    // dataIndex : '序号',
-                    name : '序号',
-                    text : '序号',
-                    width : 60,
-                    value:'99',
-                    renderer:function(value,metadata,record,rowIndex){
-                        return　record_start_rec　+　1　+　rowIndex;
-                    }
-                },
-                // new Ext.grid.RowNumberer(),//序号
                 // {
-                //     header: '序号',
-                //     xtype: 'rownumberer',
-                //     width: 60,
-                //     align: 'center',
-                //     sortable: false
+                //     // dataIndex : '序号',
+                //     name : '序号',
+                //     text : '序号',
+                //     width : 60,
+                //     value:'99',
+                //     renderer:function(value,metadata,record,rowIndex){
+                //         return　record_start_rec　+　1　+　rowIndex;
+                //     }
                 // },
+                // new Ext.grid.RowNumberer(),//序号
+                {
+                    header: '序号',
+                    xtype: 'rownumberer',
+                    width: 60,
+                    align: 'center',
+                    sortable: false,
+                },
                 {
                     dataIndex:'name',
                     text:'材料名',
@@ -742,6 +754,11 @@ Ext.define('oldpanel.oldpanel_Receive',{
                 // },
             ],
             // height:'100%',
+            viewConfig: {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false
+            },
             flex:1,
             selType:'checkboxmodel' ,//每行的复选框
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
@@ -791,14 +808,11 @@ Ext.define('oldpanel.oldpanel_Receive',{
             dock: 'bottom',
             columns:[
                 {
-                    // dataIndex : '序号',
-                    name : '序号',
-                    text : '序号',
-                    width : 60,
-                    value:'99',
-                    renderer:function(value,metadata,record,rowIndex){
-                        return　record_start_pop　+　1　+　rowIndex;
-                    }
+                    // header: '序号',
+                    xtype: 'rownumberer',
+                    width: 60,
+                    align: 'center',
+                    sortable: false
                 },
 
                 {
@@ -817,6 +831,11 @@ Ext.define('oldpanel.oldpanel_Receive',{
             ],
             flex:1,
             //selType:'checkboxmodel',
+            viewConfig: {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false
+            },
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 2
             })],
@@ -1030,14 +1049,11 @@ Ext.define('oldpanel.oldpanel_Receive',{
             columns:[
                 //序号
                 {
-                    // dataIndex : '序号',
-                    name : '序号',
-                    text : '序号',
-                    width : 60,
-                    value:'99',
-                    renderer:function(value,metadata,record,rowIndex){
-                        return　record_start_rec　+　1　+　rowIndex;
-                    }
+                    header: '序号',
+                    xtype: 'rownumberer',
+                    width: 60,
+                    align: 'center',
+                    sortable: false
                 },
                 {dataIndex:'name', text:'材料名',flex :1 },
                 {
@@ -1048,6 +1064,11 @@ Ext.define('oldpanel.oldpanel_Receive',{
                 },
             ],
             // height:'100%',
+            viewConfig: {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false
+            },
             flex:1,
             tbar:toobar_right,
             selType:'checkboxmodel',
@@ -1095,6 +1116,7 @@ Ext.define('oldpanel.oldpanel_Receive',{
                                     old_pickList.add(records[i]);
                                 }
                             }
+                            grid_old_query_pickList_specific.store.remove(records);
                             //若要领数量<领取数量，则不能直接remove，需要更改数量值
 
                         }

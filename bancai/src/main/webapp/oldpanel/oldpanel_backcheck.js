@@ -270,7 +270,7 @@ Ext.define('oldpanel.oldpanel_backcheck',{
 
 
 
-        var backlistgrid1=Ext.create('Ext.grid.Panel',{
+        var backlistgrid1 = Ext.create('Ext.grid.Panel',{
             // id : 'PickingListGrid',
             store:backListStore,//修改
             dock: 'bottom',
@@ -307,6 +307,11 @@ Ext.define('oldpanel.oldpanel_backcheck',{
                 },
             ],
             flex:1,
+            viewConfig: {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false
+            },
             // height:'100%',
             // tbar: toolbar,
             // selType:'checkboxmodel', //选择框
@@ -586,6 +591,11 @@ Ext.define('oldpanel.oldpanel_backcheck',{
             ],
             // height:'100%',
             flex:1,
+            viewConfig: {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false
+            },
             selType:'checkboxmodel' ,//每行的复选框
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 2
@@ -656,6 +666,11 @@ Ext.define('oldpanel.oldpanel_backcheck',{
 
             ],
             flex:1,
+            viewConfig: {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false
+            },
             //selType:'checkboxmodel',
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 2
@@ -681,10 +696,8 @@ Ext.define('oldpanel.oldpanel_backcheck',{
                 {
                     fieldLabel : '确认人',
                     xtype : 'combo',
-                    name : 'operator_back',
-                    id : 'operator_back',
-                    // disabled : true,
-                    // width:'95%',
+                    name : 'operator_back1',
+                    id : 'operator_back1',
                     margin: '0 40 0 0',
                     width: 200,
                     labelWidth: 45,
@@ -713,7 +726,7 @@ Ext.define('oldpanel.oldpanel_backcheck',{
                         });
                         console.log(s)
                         console.log('2===========')
-                        var operator = Ext.getCmp('operator_back').getValue();
+                        var operator = Ext.getCmp('operator_back1').getValue();
                         //判断条件：若无数据或者没有操作人员则报错，不能提交
                         if(s.length != 0 && operator != null ){
                             //获取数据
@@ -846,6 +859,11 @@ Ext.define('oldpanel.oldpanel_backcheck',{
             ],
             // height:'100%',
             flex:1,
+            viewConfig: {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false
+            },
             tbar:toobar_choose,
             selType:'checkboxmodel',
             dockedItems: [

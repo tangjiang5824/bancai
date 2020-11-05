@@ -309,4 +309,25 @@ public class JPAObjectUtil {
         }
         return true;
     }
+    public static String getPartNo(Integer prefix, Integer type, Integer id) {
+        String type1= String.valueOf(type+100);
+        String type2=type1.substring(type1.length()-2);
+        String id1= String.valueOf(id+10000);
+        String id2=id1.substring(id1.length()-4);
+        String partNo=prefix+type2+id2;
+        return partNo;
+    }
+    public static String rvZeroAndDot(String s){
+        if (s.isEmpty()) {
+            return null;
+        }
+        if(s.indexOf(".") > 0){
+            s = s.replaceAll("0+?$", "");//去掉多余的0
+            s = s.replaceAll("[.]$", "");//如最后一位是.则去掉
+        }
+        return s;
+    }
+    public static String rvZeroAndDot(Double i){
+        return rvZeroAndDot(i+"");
+    }
 }

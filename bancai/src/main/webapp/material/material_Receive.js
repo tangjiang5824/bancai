@@ -108,6 +108,20 @@ Ext.define('material.material_Receive',{
             fields:['materialName','materialCount'],
         });
 
+        //查询领料单
+        var MaterialpickListStore = Ext.create('Ext.data.Store',{
+            fields:['materialName','materialCount','countReceived','countNotReceived','countTemp'],
+            proxy : {
+                type : 'ajax',
+                url : 'order/queryRequisitionOrder.do', //领料单查询
+                reader : {
+                    type : 'json',
+                    rootProperty: 'value',
+                }
+            },
+            autoLoad : true
+        });
+
 
 
         //确认入库按钮，
@@ -272,14 +286,11 @@ Ext.define('material.material_Receive',{
             dock: 'bottom',
             columns:[
                 {
-                    // dataIndex : '序号',
-                    name : '序号',
-                    text : '序号',
-                    width : 45,
-                    value:'99',
-                    renderer:function(value,metadata,record,rowIndex){
-                        return　record_start_bottom　+　1　+　rowIndex;
-                    }
+                    // header: '序号',
+                    xtype: 'rownumberer',
+                    width: 45,
+                    align: 'center',
+                    sortable: false
                 },
                 {
                 dataIndex:'requisitionOrderId',
@@ -318,6 +329,11 @@ Ext.define('material.material_Receive',{
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 2
             })],
+            viewConfig: {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false
+            },
             dockedItems: [
                 {
                     xtype: 'pagingtoolbar',
@@ -359,6 +375,14 @@ Ext.define('material.material_Receive',{
                             requisitionOrderId:requisitionOrderId,
                             type:4,
                             origin:origin
+                        }
+                    });
+                    //对应仓库中原材料
+                    adaptMaterialList.load({
+                        params : {
+                            requisitionOrderId:requisitionOrderId,
+                            // type:4,
+                            // origin:origin
                         }
                     });
 
@@ -432,6 +456,7 @@ Ext.define('material.material_Receive',{
             }
         });
 
+        //领料单具体信息
         var specificMaterialList = Ext.create('Ext.data.Store',{
             //id,materialName,length,width,materialType,number
             fields:['materialName','length','materialType','width','specification','number'],
@@ -445,6 +470,22 @@ Ext.define('material.material_Receive',{
             },
             autoLoad : true
         });
+
+        //材料适配
+        var adaptMaterialList = Ext.create('Ext.data.Store',{
+            fields:['materialName','length','materialType','width','specification','number'],
+            proxy : {
+                type : 'ajax',
+                url : 'material/requisition.do',//根据材料名匹配仓库中的原材料
+                reader : {
+                    type : 'json',
+                    rootProperty: 'response',
+                },
+
+            },
+            autoLoad : false
+        });
+
 
         //弹框的toolbar
         var buildingName = Ext.create('Ext.form.ComboBox',{
@@ -506,20 +547,20 @@ Ext.define('material.material_Receive',{
             },
             autoLoad : true
         });
-        var storePosition = Ext.create('Ext.form.ComboBox',{
-            fieldLabel : '仓库名',
-            labelWidth : 50,
-            width : 250,
-            margin: '0 0 0 21',
-            id :  'storePosition',
-            name : 'storePosition',
-            matchFieldWidth: true,
-            emptyText : "--请选择--",
-            displayField: 'warehouseName',
-            valueField: 'id',
-            editable : false,
-            store: storeNameList,
-        });
+        // var storePosition = Ext.create('Ext.form.ComboBox',{
+        //     fieldLabel : '仓库名',
+        //     labelWidth : 50,
+        //     width : 250,
+        //     margin: '0 0 0 21',
+        //     id :  'storePosition',
+        //     name : 'storePosition',
+        //     matchFieldWidth: true,
+        //     emptyText : "--请选择--",
+        //     displayField: 'warehouseName',
+        //     valueField: 'id',
+        //     editable : false,
+        //     store: storeNameList,
+        // });
 
         var toolbar_specific_pickList = Ext.create('Ext.toolbar.Toolbar',{
             dock : "top",
@@ -550,7 +591,8 @@ Ext.define('material.material_Receive',{
                 //位置
                 buildingPositionList,
                 //仓库
-                storePosition,
+                // storePosition,
+
                 {
                     xtype : 'button',
                     text: '领料单明细查询',
@@ -568,6 +610,7 @@ Ext.define('material.material_Receive',{
                         console.log('sss')
                         //传入所选项目的id
                         console.log(Ext.getCmp('projectName').getValue())
+                        //领料单明细
                         specificMaterialList.load({
                             params : {
                                 buildingId:buildingId,
@@ -578,6 +621,17 @@ Ext.define('material.material_Receive',{
                                 requisitionOrderId:requisitionOrderId,
                                 type:4,//原材料
                                 origin:origin
+                            }
+                        });
+                        //对应原材料匹配明细
+                        adaptMaterialList.load({
+                            params : {
+                                buildingId:buildingId,
+                                buildingpositionId:buildingpositionId,
+                                //type和领料单Id
+                                requisitionOrderId:requisitionOrderId,
+                                // type:4,//原材料
+                                // origin:origin
                             }
                         });
                     }
@@ -659,24 +713,24 @@ Ext.define('material.material_Receive',{
             // closable:true,
             closeAction: 'hide',
             columns:[
-                {
-                    // dataIndex : '序号',
-                    name : '序号',
-                    text : '序号',
-                    width : 60,
-                    value:'99',
-                    renderer:function(value,metadata,record,rowIndex){
-                        return　record_start_rec　+　1　+　rowIndex;
-                    }
-                },
-                // new Ext.grid.RowNumberer(),//序号
                 // {
-                //     header: '序号',
-                //     xtype: 'rownumberer',
-                //     width: 60,
-                //     align: 'center',
-                //     sortable: false
+                //     // dataIndex : '序号',
+                //     name : '序号',
+                //     text : '序号',
+                //     width : 60,
+                //     value:'99',
+                //     renderer:function(value,metadata,record,rowIndex){
+                //         return　record_start_rec　+　1　+　rowIndex;
+                //     }
                 // },
+                // new Ext.grid.RowNumberer(),//序号
+                {
+                    // header: '序号',
+                    xtype: 'rownumberer',
+                    width: 60,
+                    align: 'center',
+                    sortable: false
+                },
                 {
                     dataIndex:'name',
                     text:'材料名',
@@ -700,16 +754,16 @@ Ext.define('material.material_Receive',{
                     text:'位置',
                     flex :1,
                 },
-                {
-                    dataIndex:'warehouseName',
-                    text:'仓库名',
-                    flex :1,
-                },
-                {
-                    dataIndex:'countStore',
-                    text:'库存数量',
-                    flex :1,
-                },
+                // {
+                //     dataIndex:'warehouseName',
+                //     text:'仓库名',
+                //     flex :1,
+                // },
+                // {
+                //     dataIndex:'countStore',
+                //     text:'库存数量',
+                //     flex :1,
+                // },
                 {
                     dataIndex:'countAll',
                     text:'领取总数',
@@ -720,15 +774,16 @@ Ext.define('material.material_Receive',{
                     text:'待领数量',
                     flex :1,
                 },
-                {
-                    dataIndex:'count',
-                    text:'领取数量',
-                    flex :1,
-                    editor : {
-                        xtype : 'textfield',
-                        allowBlank : true
-                    }
-                },
+                // {
+                //     dataIndex:'count',
+                //     text:'领取数量',
+                //     flex :1,
+                //     editor : {
+                //         xtype : 'textfield',
+                //         allowBlank : true
+                //     }
+                // },
+
                 // {
                 //     dataIndex:'',
                 //     text:'错误原因',
@@ -741,10 +796,17 @@ Ext.define('material.material_Receive',{
             ],
             // height:'100%',
             flex:1,
-            selType:'checkboxmodel' ,//每行的复选框
+            // selType:'checkboxmodel' ,//每行的复选框
+
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 2
             })],
+            //无数据时，默认显示 无数据
+            viewConfig: {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false
+            },
             dockedItems: [
                 {
                     xtype: 'pagingtoolbar',
@@ -788,15 +850,22 @@ Ext.define('material.material_Receive',{
             store:m_receive_errorlistStore,//oldpanellogdetailList，store1的数据固定
             dock: 'bottom',
             columns:[
+                // {
+                //     // dataIndex : '序号',
+                //     name : '序号',
+                //     text : '序号',
+                //     width : 60,
+                //     value:'99',
+                //     renderer:function(value,metadata,record,rowIndex){
+                //         return　record_start_pop　+　1　+　rowIndex;
+                //     }
+                // },
                 {
-                    // dataIndex : '序号',
-                    name : '序号',
-                    text : '序号',
-                    width : 60,
-                    value:'99',
-                    renderer:function(value,metadata,record,rowIndex){
-                        return　record_start_pop　+　1　+　rowIndex;
-                    }
+                    // header: '序号',
+                    xtype: 'rownumberer',
+                    width: 45,
+                    align: 'center',
+                    sortable: false
                 },
 
                 {
@@ -875,6 +944,38 @@ Ext.define('material.material_Receive',{
                 //     // value:Ext.util.Format.date(Ext.Date.add(new Date(),Ext.Date.MONTH,-1),"Y-m-d")
                 //     value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
                 // },
+
+                {
+                    xtype : 'button',
+                    text : '修改',
+                    margin: '0 0 0 40',
+                    id : 'editUser',
+                    handler : function() {
+                        var select = Ext.getCmp('addWorkerGrid').getSelectionModel().getSelection();
+
+                        //选择的记录id
+                        var userId = select[0].get('id');
+                        var workerName = select[0].get('workerName');
+                        var tel = select[0].get('tel');
+                        var departmentName = select[0].get('departmentName');
+                        var departmentId = select[0].get('departmentId');
+                        console.log('11111',select)
+                        if(select.length==0)
+                            Ext.Msg.alert('错误', '请选择要修改的数据');
+                        else
+                        {
+                            var edit = Ext.create('userManagement.userEdit',{
+                                //页面传参数
+                                userId:userId,
+                                workerName: workerName,
+                                tel:tel,
+                                departmentName:departmentName,
+                                departmentId:departmentId
+                            });
+                            edit.show();
+                        }
+                    }
+                    },
                 {
                     xtype : 'button',
                     iconAlign : 'center',
@@ -996,10 +1097,12 @@ Ext.define('material.material_Receive',{
 
                                         //  领料页面重置
                                         Ext.getCmp('operator').setValue("");
-                                        pickList.removeAll();
+                                        // pickList.removeAll();
 
                                         //  领料单查询重新加载
                                         grid__query_pickList_specific.getStore().load();
+
+                                        grid2.getStore().load();
                                     }
                                     // if(response == true){
                                     //     Ext.MessageBox.alert("提示","领取成功" );
@@ -1017,43 +1120,74 @@ Ext.define('material.material_Receive',{
                         }
                     }
                 }
-
             ]
         });
 
+
         var grid2=Ext.create('Ext.grid.Panel',{
             id : 'pro_picking_MaterialGrid',
-            store:pickList,
+            store:adaptMaterialList,
+            // store:pickList,//
             dock: 'bottom',
             autoScroll: true, //超过长度带自动滚动条
             columns:[
                 //序号
                 {
-                    // dataIndex : '序号',
-                    name : '序号',
-                    text : '序号',
-                    width : 60,
-                    value:'99',
-                    renderer:function(value,metadata,record,rowIndex){
-                        return　record_start_rec　+　1　+　rowIndex;
-                    }
+                    // header: '序号',
+                    xtype: 'rownumberer',
+                    width: 45,
+                    align: 'center',
+                    sortable: false
                 },
-                {dataIndex:'name', text:'材料名',flex :1 },
+
+                {
+                    dataIndex:'materialName',
+                    text:'材料名',
+                    flex :1
+                },
                 {
                     dataIndex:'count',//countTemp
-                    text:'领取数量',
+                    text:'待领数量',
                     flex :1
                     //editor:{xtype : 'textfield', allowBlank : true},
+                },
+                {
+                    dataIndex:'warehouseName',
+                    text:'仓库名',
+                    flex :1
+                },
+                {
+                    dataIndex:'countStore',//countTemp
+                    text:'库存数量',
+                    flex :1
+                    //editor:{xtype : 'textfield', allowBlank : true},
+                },
+                {
+                    dataIndex:'pickCount',
+                    text:'领取数量',
+                    flex :1,
+                    editor : {
+                        xtype : 'textfield',
+                        allowBlank : true
+                    }
                 },
                 ],
             // height:'100%',
             flex:1,
             tbar:toobar_right,
-            selType:'checkboxmodel',
+            // selType:'checkboxmodel', //复选框
+            plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
+                clicksToEdit : 2
+            })],
+            viewConfig: {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>无数据</div>",
+                deferEmptyText: false
+            },
             dockedItems: [
                 {
                     xtype: 'pagingtoolbar',
-                    store: pickList,   // same store GridPanel is using
+                    store: adaptMaterialList,   // same store GridPanel is using
                     dock: 'bottom',
                     displayInfo: true,
                     displayMsg:'显示{0}-{1}条，共{2}条',
@@ -1093,41 +1227,42 @@ Ext.define('material.material_Receive',{
             // autoDestroy: false,
             items:[
                 grid__query_pickList_specific,
-                {
-                    xtype:'container',
-                    // flex:0.3,
-                    items:[{
-                        xtype:'button',
-                        // margin: '0 0 0 30',
-                        text:'选择',
-                        itemId:'move_right',
-                        handler:function() {
-                            var records = grid__query_pickList_specific.getSelectionModel().getSelection();
-                            console.log(records)
-                            console.log("测试")
-                            console.log(records[0])
 
-                            for (i = 0; i < records.length; i++) {
-                                console.log(records[i].data['countTemp'])
-                                if(records[i].data['countTemp'] != 0){
-                                    console.log("添加")
-                                    pickList.add(records[i]);
-                                }
-                            }
-                            //若要领数量<领取数量，则不能直接remove，需要更改数量值
-
-                        }
-                    },{
-                        xtype:'button',
-                        text:'撤销',
-                        itemId:'move_left',
-                        handler:function(){
-                            var records=grid2.getSelectionModel().getSelection();
-                            pickList.remove(records);
-                            grid__query_pickList_specific.store.add(records);//grid__query_pickList_specific
-                        }
-                    }]
-                },
+                // {
+                //     xtype:'container',
+                //     // flex:0.3,
+                //     items:[{
+                //         xtype:'button',
+                //         // margin: '0 0 0 30',
+                //         text:'选择',
+                //         itemId:'move_right',
+                //         handler:function() {
+                //             var records = grid__query_pickList_specific.getSelectionModel().getSelection();
+                //             console.log(records)
+                //             console.log("测试")
+                //             console.log(records[0])
+                //
+                //             for (i = 0; i < records.length; i++) {
+                //                 console.log(records[i].data['countTemp'])
+                //                 if(records[i].data['countTemp'] != 0){
+                //                     console.log("添加")
+                //                     pickList.add(records[i]);
+                //                 }
+                //             }
+                //             //若要领数量<领取数量，则不能直接remove，需要更改数量值
+                //
+                //         }
+                //     },{
+                //         xtype:'button',
+                //         text:'撤销',
+                //         itemId:'move_left',
+                //         handler:function(){
+                //             var records=grid2.getSelectionModel().getSelection();
+                //             pickList.remove(records);
+                //             grid__query_pickList_specific.store.add(records);//grid__query_pickList_specific
+                //         }
+                //     }]
+                // },
                 grid2,
             ],
             // listeners:{

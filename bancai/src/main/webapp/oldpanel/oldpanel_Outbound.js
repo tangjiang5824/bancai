@@ -2,7 +2,7 @@ Ext.define('oldpanel.oldpanel_Outbound',{
     extend:'Ext.panel.Panel',
     region: 'center',
     layout:'fit',
-    title: '旧板特殊出库',
+    title: '旧板误入库撤销',
     reloadPage : function() {
         var p = Ext.getCmp('functionPanel');
         p.removeAll();
@@ -19,7 +19,8 @@ Ext.define('oldpanel.oldpanel_Outbound',{
         var me = this;
         var tableName="oldpanel";
         var itemsPerPage=20;
-
+        //防止按钮重复点击，发送多次请求，post_flag
+        var post_flag = false;
         //操作类型：枚举类型
         Ext.define('Soims.model.application.ApplicationState', {
             statics: { // 关键
@@ -225,6 +226,10 @@ Ext.define('oldpanel.oldpanel_Outbound',{
                     margin: '0 0 0 40',
                     layout: 'right',
                     handler: function(){
+                        if(post_flag){
+                            return;
+                        }
+                        post_flag = true;
                         var oldpanel_logId = Ext.getCmp("log_id").text;
                         var is_rollback = Ext.getCmp("is_rollback").text;
                         var operator = Ext.getCmp("operator_back").getValue();
@@ -247,13 +252,17 @@ Ext.define('oldpanel.oldpanel_Outbound',{
                                             success:function (response) {
                                                 //console.log(response.responseText);
                                                 var ob=JSON.parse(response.responseText);
-                                                if(ob.success==false)
+                                                if(ob.success==false){
                                                     Ext.MessageBox.alert("提示", ob.msg);
-                                                else
-                                                Ext.MessageBox.alert("提示", "撤销成功!");
+                                                post_flag =false;}
+                                                else {
+                                                    Ext.MessageBox.alert("提示", "撤销成功!");
+                                                    post_flag =false;
+                                                }
                                             },
                                             failure : function(response){
                                                 Ext.MessageBox.alert("提示", "撤销失败!");
+                                                post_flag =false;
                                             }
                                         })
                                     }
@@ -298,6 +307,11 @@ Ext.define('oldpanel.oldpanel_Outbound',{
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 2
             })],
+            viewConfig: {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false
+            },
             // listeners: {
             //     //监听修改
             //     validateedit: function (editor, e) {
@@ -314,6 +328,7 @@ Ext.define('oldpanel.oldpanel_Outbound',{
             layout: 'fit',
             closable : true,
             draggable:true,
+            modal :true,
             closeAction : 'hidden',
             items:specific_data_grid_outbound,
         });
@@ -360,8 +375,10 @@ Ext.define('oldpanel.oldpanel_Outbound',{
                     },
                 }
             ],
-
             viewConfig : {
+                forceFit: false,
+                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
+                deferEmptyText: false,
                 plugins : {
                     ptype : "gridviewdragdrop",
                     dragText : "可用鼠标拖拽进行上下排序"

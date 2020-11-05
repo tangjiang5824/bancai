@@ -4,7 +4,7 @@ Ext.define("menu.BaseMenu", {
 			config : {
 				roleId : undefined
 			},
-			collapsed : false,
+			collapsed : false,//菜单树折叠
 			collapsible : true,
 			rootVisible : false,
 			region : "west",

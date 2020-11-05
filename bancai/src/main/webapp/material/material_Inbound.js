@@ -548,6 +548,9 @@ Ext.define('material.material_Inbound', {
             autoLoad : true
         });
 
+        //防止按钮重复点击，发送多次请求，post_flag
+        var post_flag = false;
+
         //确认入库按钮，
         var toolbar3 = Ext.create('Ext.toolbar.Toolbar', {
             dock : "bottom",
@@ -560,16 +563,7 @@ Ext.define('material.material_Inbound', {
                 layout: 'right'
             },
             items : [
-                // {
-                //     xtype: 'textfield',
-                //     margin: '0 40 0 0',
-                //     fieldLabel: ' 入库人',
-                //     id: 'operator',
-                //     width: 150,
-                //     labelWidth: 45,
-                //     name: 'operator',
-                //     value: "",
-                // },
+
                 {
                     fieldLabel : '入库人',
                     xtype : 'combo',
@@ -577,7 +571,7 @@ Ext.define('material.material_Inbound', {
                     id : 'operator',
                     // disabled : true,
                     // width:'95%',
-                    margin: '0 40 0 0',
+                    margin: '0 40 0 40',
                     width: 150,
                     labelWidth: 45,
                     store : workerListStore,
@@ -593,6 +587,10 @@ Ext.define('material.material_Inbound', {
                 region:'center',
                 bodyStyle: 'background:#fff;',
                 handler : function() {
+                    if(post_flag){
+                        return;
+                    }
+                    post_flag = true;
 
                     var operator = Ext.getCmp('operator').value;
                     // 取出grid的字段名字段类型
@@ -633,15 +631,20 @@ Ext.define('material.material_Inbound', {
                                 //错误输入
                                 Ext.MessageBox.alert("提示",Msg);
 
+                                post_flag =false;
+
                             }else{
                                 Ext.MessageBox.alert("提示","入库成功" );
                                 //刷新
                                 Ext.getCmp('addDataGrid').getStore().removeAll();
+
+                                post_flag =false;
                             }
                         },
                         failure : function(response) {
                             //var message =Ext.decode(response.responseText).showmessage;
                             Ext.MessageBox.alert("提示","入库失败" );
+                            post_flag =false;
                         }
                     });
 
