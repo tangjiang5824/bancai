@@ -84,4 +84,11 @@ public class Project_import_design_list_service extends BaseService{
             jo.update(sql, proNum,length,type,width,scale,respo,respoNum,count,cost,location,materialtype,userid);
         }
     }
+
+    @Transactional
+    public DataList findMaterial_SpecificationList(String materialName){
+        String sql = "select specification from material where materialName = '"+materialName+"'";
+        DataList list = queryService.query(sql);
+        return list;
+    }
 }

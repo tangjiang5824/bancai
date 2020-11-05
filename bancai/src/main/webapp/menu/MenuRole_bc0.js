@@ -318,6 +318,10 @@ Ext.define("menu.MenuRole_bc0", {
 					text : '项目立项',
 					id : 'project.management.buildproject',
 					leaf : true
+				},{
+					text : '项目结项',
+					id : 'project.management.finishproject',
+					leaf : true
 				}, {
 					text : '项目信息查询',
 					id : 'project.management.queryproject',

@@ -132,7 +132,30 @@ public class Select_specification_from_materialName_controller {
 
 		return true;
 	}
+	//项目状态改变
+	@RequestMapping(value = "/project/editProjectStatus.do")
+	@Transactional
+	public boolean editProjectStatus(Integer projectId,HttpSession session ,Integer statusId) throws JSONException {
+		if(null==projectId||projectId.equals("")) {
+			return false;
+		}
+		if(null==statusId||statusId.equals("")) {
+			return false;
+		}
 
+		String userid = (String) session.getAttribute("userid");
+//		Date date=new Date();
+//		SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String updateSql="update project set statusId=?,endTime=? where id=?";
+		//把isrollback改为1
+		if(insertProjectService.insertIntoTableBySQL(updateSql,statusId+"",new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()),projectId+"")){
+			return true;
+		}//更新project表
+		else{
+
+			return false;
+		}
+	}
 
 	/*
 	 * 根据原材料名称如400U找出其所有的规格。（原材料领料模块）周洁
