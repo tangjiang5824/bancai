@@ -29,7 +29,7 @@ Ext.define('project.management.queryproject',{
             fields : [ 'projectName'],
             proxy : {
                 type : 'ajax',
-                url : 'project/findProjectList.do',
+                url : 'project/findAllProjectList.do',
 
                 reader : {
                     type : 'json',

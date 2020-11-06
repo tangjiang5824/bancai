@@ -616,5 +616,28 @@ public class Select_specification_from_materialName_controller {
 		WebResponse wr=queryAllService.queryDataPage(start, limit, c, tableName);
 		return wr;
 	}
+	//查询旧板匹配规则
+	@RequestMapping(value = "/project/queryOldPanelMatchRules.do")
+	public WebResponse queryOldPanelMatchRules(Integer start, Integer limit, Integer productTypeId,Integer oldpanelFormatId,
+											   Integer oldpanelTypeId,Integer productFormatId,String tableName) throws ParseException {
+		if(null==start||start.equals("")) start=0;
+		if(null==limit||limit.equals("")) limit=50;
+		//String madeBy = "4";
+		mysqlcondition c=new mysqlcondition();
+		if (productTypeId!=null) {
+			c.and(new mysqlcondition("productTypeId", "=", productTypeId));
+		}
+		if (oldpanelTypeId!=null) {
+			c.and(new mysqlcondition("oldpanelTypeId", "=", oldpanelTypeId));
+		}
+		if (productFormatId!=null) {
+			c.and(new mysqlcondition("productFormatId", "=", productFormatId));
+		}
+		if (oldpanelFormatId!=null) {
+			c.and(new mysqlcondition("oldpanelFormatId", "=", oldpanelFormatId));
+		}
+		WebResponse wr=queryAllService.queryDataPage(start, limit, c, tableName);
+		return wr;
+	}
 
 }

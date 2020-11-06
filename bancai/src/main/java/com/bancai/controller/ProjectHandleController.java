@@ -342,6 +342,26 @@ public class ProjectHandleController {
     }
 
     /*
+     * 查询所有的project，
+     * */
+    @RequestMapping(value="/project/findAllProjectList.do")
+    public void findAllProjectList(HttpServletResponse response) throws IOException, JSONException {
+        // System.out.println("???????????");
+        DataList projectList = projectService.findAllProjectList();
+        // System.out.println(projectList);
+        //写回前端
+        JSONObject object = new JSONObject();
+        JSONArray array = new JSONArray(projectList);
+        object.put("projectList", array);
+        System.out.println("类型1：--"+array.getClass().getName().toString());
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html");
+        response.getWriter().write(object.toString());
+        response.getWriter().flush();
+        response.getWriter().close();
+
+    }
+    /*
     * 展示每个project中具体数据
     * */
     @RequestMapping(value="/project/showProject.do")

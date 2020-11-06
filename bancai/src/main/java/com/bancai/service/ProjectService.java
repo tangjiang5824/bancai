@@ -190,10 +190,16 @@ public class ProjectService extends BaseService {
     /*
     * 查询所有的project
     * */
+    @Transactional
+    public DataList findAllProjectList(){
+        String sql = "select * from project order by id DESC";
+        DataList namelist = queryService.query(sql);
+        return namelist;
 
+    }
     @Transactional
     public DataList findProjectList(){
-        String sql = "select * from project where statusId <>3 order by id DESC";
+        String sql = "select * from project where statusId <>9 order by id DESC";
         DataList namelist = queryService.query(sql);
         return namelist;
 

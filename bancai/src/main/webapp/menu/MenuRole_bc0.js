@@ -552,7 +552,11 @@ Ext.define("menu.MenuRole_bc0", {
 							id : 'oldpanel.oldpanel_Format_Input',
 							leaf : true
 						},
-
+						{
+							text : '查询旧板匹配规则',
+							id : 'oldpanel.query_Oldpanel_Rules',
+							leaf : true
+						},
 					]
 				} , {
 					text : '产品种类管理',
