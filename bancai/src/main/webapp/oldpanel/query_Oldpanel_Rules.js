@@ -1,11 +1,11 @@
-Ext.define('material.query_Newpanel_Rules',{
+Ext.define('oldpanel.query_Oldpanel_Rules',{
     extend:'Ext.panel.Panel',
     region: 'center',
     layout:'fit',
-    title: '查询新板匹配规则',
+    title: '查询旧板匹配规则',
     initComponent: function(){
         var itemsPerPage = 50;
-        var tableName="material_matchrules_view";
+        var tableName="zzyquery_oldpanel_match_rules_pair";
         Ext.define('Soims.model.application.ApplicationState', {
             statics: { // 关键
                 0: { value: '0', name: '墙板' },
@@ -43,6 +43,39 @@ Ext.define('material.query_Newpanel_Rules',{
                 select: function(combo, record, index) {
 
                     console.log(productTypeList.getValue());// MaterialTypeList.getValue()获得选择的类型
+                    //console.log(record[0].data.materialName);
+                }
+            }
+
+        });
+        var oldpanelTypeNameStore = Ext.create('Ext.data.Store',{
+            fields : [ 'oldpanelTypeName'],
+            proxy : {
+                type : 'ajax',
+                url : 'material/findAllBytableName.do?tableName=oldpaneltype',
+                reader : {
+                    type : 'json',
+                    rootProperty: 'oldpaneltype',
+                }
+            },
+            autoLoad : true
+        });
+        var oldpanelTypeNameList = Ext.create('Ext.form.ComboBox',{
+            fieldLabel : '旧板类型',
+            labelWidth : 70,
+            width : 230,
+            id :  'oldpanelTypeName',
+            name : 'oldpanelTypeName',
+            matchFieldWidth: false,
+            emptyText : "--请选择--",
+            displayField: 'oldpanelTypeName',
+            valueField: 'id',
+            editable : false,
+            store: oldpanelTypeNameStore,
+            listeners:{
+                select: function(combo, record, index) {
+
+                    console.log(oldpanelList.getValue());// MaterialTypeList.getValue()获得选择的类型
                     //console.log(record[0].data.materialName);
                 }
             }
@@ -118,11 +151,47 @@ Ext.define('material.query_Newpanel_Rules',{
             editable : true,
             store: productFormatStore,
         });
+        var oldpanelFormatStore = Ext.create('Ext.data.Store',{
+            fields : [ 'oldpanelFormat'],
+            proxy : {
+                type : 'ajax',
+                url : 'material/findAllBytableName.do?tableName=oldpanel_format',
+                reader : {
+                    type : 'json',
+                    rootProperty: 'oldpanel_format',
+                },
+                fields : ['id','oldpanelFormat']
+            },
+            //字段拼接
+            // listeners:{
+            //     load:function(store,records){
+            //         for(var i=0;i<records.length;i++){
+            //             records[i].set('material_name',records[i].get('materialName')+"(规格:"+records[i].get('specification')+")");
+            //         }
+            //     }
+            // },
+            autoLoad : true
+        });
+        var oldpanelFormatList = Ext.create('Ext.form.ComboBox',{
+            fieldLabel : '旧板格式',
+            labelWidth : 70,
+            width : 260,
+            id :  'oldpanelFormat',
+            name : 'oldpanelFormat',
+            matchFieldWidth: true,
+            // allowBlank:false,
+            emptyText : "--请选择--",
+            displayField: 'oldpanelFormat',
+            valueField: 'id', //显示name
+            editable : true,
+            store: oldpanelFormatStore,
+        });
 
         var toolbar1 = Ext.create('Ext.toolbar.Toolbar',{
             items: [productTypeNameList,
-                MaterialTypeNameList,
+                oldpanelTypeNameList,
                 productFormatList,
+                oldpanelFormatList,
                 {
                     xtype : 'button',
                     text: '查询',
@@ -133,8 +202,9 @@ Ext.define('material.query_Newpanel_Rules',{
                         uploadRecordsStore.load({
                             params : {
                                 productTypeId:Ext.getCmp('productTypeName').getValue(),
-                                materialTypeId:Ext.getCmp('typeName').getValue(),
+                                oldpanelTypeId:Ext.getCmp('oldpanelTypeName').getValue(),
                                 productFormatId:Ext.getCmp('productFormat').getValue(),
+                                oldpanelFormatId:Ext.getCmp('oldpanelFormat').getValue(),
                                 tableName:tableName,
 
                             }
@@ -210,7 +280,7 @@ Ext.define('material.query_Newpanel_Rules',{
             pageSize: itemsPerPage, // items per page
             proxy:{
                 //url:"hisExcelList.do",
-                url : "project/queryNewPanelMatchRules.do",
+                url : "project/queryOldPanelMatchRules.do",
                 type: 'ajax',
                 method:'POST',
                 reader:{
@@ -232,8 +302,9 @@ Ext.define('material.query_Newpanel_Rules',{
                         // endLength:Ext.getCmp('endLength').getValue(),
                         // mType:Ext.getCmp('mType').getValue(),
                         productTypeId:Ext.getCmp('productTypeName').getValue(),
-                        materialTypeId:Ext.getCmp('typeName').getValue(),
+                        oldpanelTypeId:Ext.getCmp('oldpanelTypeName').getValue(),
                         productFormatId:Ext.getCmp('productFormat').getValue(),
+                        oldpanelFormatId:Ext.getCmp('oldpanelFormat').getValue(),
                         tableName:tableName,
 
                     });
@@ -242,55 +313,100 @@ Ext.define('material.query_Newpanel_Rules',{
             }
 
         });
+        //弹出表格，楼栋信息表
+        var building_grid_query=Ext.create('Ext.grid.Panel',{
+            id : 'building_grid_query',
+            // store:store1,//specificMaterialList，store1的数据固定
+            dock: 'bottom',
+            // bbar:toolbar4,
+            columns:[
+                {
+                    text: '楼栋编号',
+                    dataIndex: 'buildingNo',
+                    flex :1
+                },{
+                    dataIndex : 'buildingName',
+                    text : '楼栋名',
+                    flex :1
+                },{
+                    dataIndex : 'buildingLeaderName',
+                    text : '楼栋负责人',
+                    flex :1
+                }
+            ],
+            flex:1,
+            //selType:'checkboxmodel',
+            plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
+                clicksToEdit : 2
+            })],
 
+        });
+
+        //弹出窗口
+        var win_showbuildingData_query = Ext.create('Ext.window.Window', {
+            // id:'win_showbuildingData_query',
+            title: '项目楼栋信息',
+            height: 500,
+            width: 650,
+            layout: 'fit',
+            closable : true,
+            draggable:true,
+            // tbar:toolbar5,
+            items:building_grid_query,
+            closeAction : 'hidden',
+            modal:true,//模态窗口，背景窗口不可编辑
+        });
         var grid = Ext.create('Ext.grid.Panel',{
             id: 'uploadRecordsMain',
             store: uploadRecordsStore,
             viewConfig : {
-                forceFit: false,
-                emptyText: "<div style='text-align:center;padding:8px;font-size:16px;'>查询无数据</div>",
-                deferEmptyText: false,
                 enableTextSelection : true,
                 ptype : "gridviewdragdrop",
                 dragText : "可用鼠标拖拽进行上下排序"
             },
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
-                clicksToEdit : 2
+                clicksToEdit : 1
             })],
             //readOnly:true,
             columns : [
-                {dataIndex : 'productTypeName', text : '产品类型', flex :1,
-                    //editor : {xtype : 'textfield', allowBlank : false,} ,
-                    editor : productTypeNameList,
-                    renderer:function(value, cellmeta, record){
-                        var index = productTypeNameStore.find(productTypeNameList.valueField,value);
-                        var ehrRecord = productTypeNameStore.getAt(index);
-                        var returnvalue = "";
-                        if (ehrRecord) {
-                            returnvalue = ehrRecord.get('productTypeName');
-                        }
-                        return returnvalue;
-                    },
-                    render:{}
-                    },
-                //{dataIndex : 'classificationName', text : '分类', flex :1, },
-                {text: '分类', dataIndex: 'classificationName', flex :1,  editor : {xtype : 'textfield', allowBlank : false,}  },
+                {dataIndex : 'productTypeName', text : '产品类型', flex :1,editor : {xtype : 'textfield', allowBlank : false,} ,
+                    // renderer:function(value, cellmeta, record){
+                    //     var index = productTypeNameStore.find(productTypeNameList.valueField,value);
+                    //     var ehrRecord = productTypeNameStore.getAt(index);
+                    //     var returnvalue = "";
+                    //     if (ehrRecord) {
+                    //         returnvalue = ehrRecord.get('productTypeName');
+                    //     }
+                    //     return returnvalue;
+                    // },
+                    // render:{},
+                },
+                //{text: '分类', dataIndex: 'classificationName', flex :1,  editor : {xtype : 'textfield', allowBlank : false,}  },
                 {dataIndex : 'productFormat', text : '产品格式', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'typeName', text : '匹配原材料类型', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'nValue', text : 'n值', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'mValue', text : 'm值', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'aValue', text : 'a值', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'bValue', text : 'b值', flex :1,editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'pValue', text : 'p值', flex :1,editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'upWidth', text : '标准值', flex :1,editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'countValue', text : '数量', flex :1,editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'orientation', text : '方向', flex :1,editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'condition1', text : '条件1', flex :1,editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'condition2', text : '条件2', flex :1,editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'suffix', text : '后缀', flex :1,editor : {xtype : 'textfield', allowBlank : false,}},
-                // {dataIndex : 'length', text : '长', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // {dataIndex : 'width', text : '宽', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                // {dataIndex : 'remark', text : '备注', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'oldpanelTypeName', text : '旧板类型', flex :1,editor : {xtype : 'textfield', allowBlank : false,} ,
+                    // renderer:function(value, cellmeta, record){
+                    //     var index = oldpanelTypeNameStore.find(oldpanelTypeNameList.valueField,value);
+                    //     var ehrRecord = oldpanelTypeNameStore.getAt(index);
+                    //     var returnvalue = "";
+                    //     if (ehrRecord) {
+                    //         returnvalue = ehrRecord.get('oldpanelTypeName');
+                    //     }
+                    //     return returnvalue;
+                    // },
+                    // render:{},
+                },
+                {dataIndex : 'oldpanelFormat', text : '旧板格式', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'priority', text : '优先级', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'isCompleteMatch', text : '是否完全匹配', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'isValid', text : '是否启用', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {
+                    // name : '操作',
+                    text : '查看约束',
+                    flex :1 ,
+                    renderer:function(value, cellmeta){
+                        return "<INPUT type='button' value='查看约束' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
+                    }
+                },
             ],
 
             //tbar: toobar,
@@ -365,6 +481,44 @@ Ext.define('material.query_Newpanel_Rules',{
             // 	}
             // }
         });
+
+        //添加cell单击事件
+        grid.addListener('cellclick', cellclick);
+        function cellclick(grid, rowIndex, columnIndex, e) {
+            if (rowIndex < 0) {
+                return;
+            }
+            console.log(e)
+            console.log("zzy e.data:"+e.data.rulesRangeId)
+            console.log("zzy e.data.id:"+e.data.id)
+            //console.log("zzy columnIndex"+columnIndex)
+            if (columnIndex == 7) {
+                //var select = record.data
+                //项目id
+                var rulesRangeId = e.data.rulesRangeId;//项目名对应的id
+                var buildinglList_projectId = Ext.create('Ext.data.Store',{
+                    //id,materialName,length,width,materialType,number
+                    fields:['buildingNo','buildingName','buildingLeader'],
+                    proxy : {
+                        type : 'ajax',
+                        url : 'project/findBuilding.do?projectId='+projectId,//获取同类型的原材料  +'&pickNum='+pickNum
+                        reader : {
+                            type : 'json',
+                            rootProperty: 'building',
+                        },
+                        // params:{
+                        //     materialName:materialName,
+                        //     // start: 0,
+                        //     // limit: itemsPerPage
+                        // }
+                    },
+                    autoLoad : true
+                });
+                building_grid_query.setStore(buildinglList_projectId);
+                win_showbuildingData_query.show();
+            }
+        }
+
 
         this.items = [grid];
         this.callParent(arguments);

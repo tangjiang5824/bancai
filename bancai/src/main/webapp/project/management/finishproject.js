@@ -1,8 +1,8 @@
-Ext.define('project.management.queryproject',{
+Ext.define('project.management.finishproject',{
     extend:'Ext.panel.Panel',
     region: 'center',
     layout:'fit',
-    title: '项目信息查询',
+    title: '项目结项',
     initComponent: function(){
         var itemsPerPage = 50;
         var tableName="project_username_statusName";
@@ -521,6 +521,14 @@ Ext.define('project.management.queryproject',{
                         return "<INPUT type='button' value='查看详情' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
                     }
                 },
+                {
+                    // name : '操作',
+                    text : '项目结项',
+                    flex :1 ,
+                    renderer:function(value, cellmeta){
+                        return "<INPUT type='button' value='项目结项' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
+                    }
+                },
             ],
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 2
@@ -586,7 +594,7 @@ Ext.define('project.management.queryproject',{
                 }
             }
         });
-//添加cell单击事件
+        //添加cell单击事件
         grid.addListener('cellclick', cellclick);
         function cellclick(grid, rowIndex, columnIndex, e) {
             if (rowIndex < 0) {
@@ -601,23 +609,23 @@ Ext.define('project.management.queryproject',{
             // var projectName = e.data.projectName;  //选中记录的项目名
             // var workorderlogId = e.data.id;  //选中记录的logid,工单号
             //var isActive = e.data.isActive;
-            console.log("zzy e.data:" + e.data)
-            console.log("zzy e.data.id:" + e.data.id)
-            console.log("zzy e.data.statusId:" + e.data.statusId)
-            console.log("zzy columnIndex" + columnIndex)
-            console.log("zzy rowIndex" + rowIndex)
+            console.log("zzy e.data:"+e.data)
+            console.log("zzy e.data.id:"+e.data.id)
+            console.log("zzy e.data.statusId:"+e.data.statusId)
+            console.log("zzy columnIndex"+columnIndex)
+            console.log("zzy rowIndex"+rowIndex)
             if (columnIndex == 11) {
                 //var select = record.data
                 //项目id
                 var projectId = e.data.id;//项目名对应的id
-                var buildinglList_projectId = Ext.create('Ext.data.Store', {
+                var buildinglList_projectId = Ext.create('Ext.data.Store',{
                     //id,materialName,length,width,materialType,number
-                    fields: ['buildingNo', 'buildingName', 'buildingLeader'],
-                    proxy: {
-                        type: 'ajax',
-                        url: 'project/findBuilding.do?projectId=' + projectId,//获取同类型的原材料  +'&pickNum='+pickNum
-                        reader: {
-                            type: 'json',
+                    fields:['buildingNo','buildingName','buildingLeader'],
+                    proxy : {
+                        type : 'ajax',
+                        url : 'project/findBuilding.do?projectId='+projectId,//获取同类型的原材料  +'&pickNum='+pickNum
+                        reader : {
+                            type : 'json',
                             rootProperty: 'building',
                         },
                         // params:{
@@ -626,12 +634,53 @@ Ext.define('project.management.queryproject',{
                         //     // limit: itemsPerPage
                         // }
                     },
-                    autoLoad: true
+                    autoLoad : true
                 });
 
                 building_grid_query.setStore(buildinglList_projectId);
                 win_showbuildingData_query.show();
             }
+            if (columnIndex == 12) {
+                //若工单已审核，则不能再审核
+                var statusId = e.data.statusId;//项目名对应的状态id
+                var projectId = e.data.id;//项目名对应的id
+                if(statusId != 9){
+                    Ext.Msg.show({
+                        title: '操作确认',
+                        message: '将进行项目结项，选择“是”否确认？',
+                        buttons: Ext.Msg.YESNO,
+                        icon: Ext.Msg.QUESTION,
+                        fn: function (btn) {
+                            if (btn === 'yes') {
+                                Ext.Ajax.request({
+                                    url:"project/editProjectStatus.do",  //审核
+                                    params:{
+                                        projectId:projectId,  //工单id
+                                        statusId:9//审核通过
+                                    },
+                                    success:function (response) {
+                                        console.log(response)
+                                        if(response.responseText==='true'){
+                                            Ext.MessageBox.alert("提示", "项目结项成功!");
+                                            //win_showworkorder_outbound.close();//关闭窗口
+                                            //刷新页面
+                                            Query_Project_Store.load()
+                                            Ext.getCmp("worksheet_Grid").getStore().load()
+                                        }
+                                        else{
+                                            Ext.MessageBox.alert("提示", "发生错误，结项失败!");
+                                        }
+                                    },
+                                })
+                            }
+                        }
+                    });
+                }
+                else{
+                    Ext.MessageBox.alert("提示", "项目已结项，无法再次结项!");
+                }
+            }
+
         }
 
         this.dockedItems=[{

@@ -353,7 +353,6 @@ Ext.define('material.material_Receive',{
                     console.log("origin--======",origin);
                     var requisitionOrderId = select.requisitionOrderId;//领料单号
                     var projectId = select.projectId;
-                    var projectName = select.projectName;
 
                     //var pickNumber = select.
                     // var specificMaterialList = Ext.create('Ext.data.Store',{
@@ -421,11 +420,8 @@ Ext.define('material.material_Receive',{
                     // Ext.getCmp('toolbar_specific_pickList').items.items[0].setValue(requisitionOrderId);
 
 
-                    // toolbar_specific_pickList.items.items[0].setValue(requisitionOrderId);
-                    // toolbar_specific_pickList.items.items[1].setValue(projectId);
-                    toolbar_show.items.items[0].setValue(requisitionOrderId);
-                    toolbar_show.items.items[1].setValue(projectId);
-                    toolbar_show.items.items[2].setValue(projectName);
+                    toolbar_specific_pickList.items.items[0].setValue(requisitionOrderId);
+                    toolbar_specific_pickList.items.items[1].setValue(projectId);
 
                     console.log("--------------requisitionOrderId:",requisitionOrderId)
                     // //弹框
@@ -485,7 +481,11 @@ Ext.define('material.material_Receive',{
                     type : 'json',
                     rootProperty: 'response',
                 },
-
+                // params : {
+                //     requisitionOrderId:requisitionOrderId,
+                //     // type:4,
+                //     // origin:origin
+                // }
             },
             autoLoad : false
         });
@@ -566,80 +566,30 @@ Ext.define('material.material_Receive',{
         //     store: storeNameList,
         // });
 
-        var toolbar_show = Ext.create('Ext.toolbar.Toolbar',{
+        var toolbar_specific_pickList = Ext.create('Ext.toolbar.Toolbar',{
             dock : "top",
-            id : "toolbar_show",
+            // id : "toolbar_specific_pickList",
             items: [
                 {
                     xtype: 'textfield',
-                    fieldLabel : '领料单号',
-                    margin : '0 40 0 0',
+                    margin : '0 10 0 0',
                     id :'picklistId',
-                    width: 200,
-                    labelWidth: 60,
+                    width: 180,
+                    labelWidth: 30,
                     name: 'picklistId',
                     value:"",
-                    disabled : true,
-                    editable : false
-                },
-                {
-                    xtype: 'textfield',
-                    margin : '0 10 0 0',
-                    fieldLabel : '所属项目',
-                    id :'project_Id',
-                    width: 550,
-                    labelWidth: 60,
-                    name: 'project_Id',
-                    value:"",
-                    disabled : true,
-                    editable : false,
                     hidden:true
                 },
                 {
                     xtype: 'textfield',
                     margin : '0 10 0 0',
-                    fieldLabel : '所属项目',
-                    id :'project_Name',
-                    width: 550,
-                    labelWidth: 60,
-                    name: 'project_Name',
+                    id :'project_Id',
+                    width: 180,
+                    labelWidth: 30,
+                    name: 'project_Id',
                     value:"",
-                    disabled : true,
-                    editable : false
-                    // hidden:true
+                    hidden:true
                 },
-                //楼栋
-                buildingName,
-                //位置
-                buildingPositionList,
-
-            ]
-        });
-
-        var toolbar_specific_pickList = Ext.create('Ext.toolbar.Toolbar',{
-            dock : "top",
-            // id : "toolbar_specific_pickList",
-            items: [
-                // {
-                //     xtype: 'textfield',
-                //     margin : '0 10 0 0',
-                //     id :'picklistId',
-                //     width: 180,
-                //     labelWidth: 30,
-                //     name: 'picklistId',
-                //     value:"",
-                //     hidden:true
-                // },
-                // {
-                //     xtype: 'textfield',
-                //     margin : '0 10 0 0',
-                //     id :'project_Id',
-                //     width: 180,
-                //     labelWidth: 30,
-                //     name: 'project_Id',
-                //     value:"",
-                //     hidden:true
-                // },
                 //楼栋
                 buildingName,
                 //位置
@@ -998,61 +948,6 @@ Ext.define('material.material_Receive',{
                 //     // value:Ext.util.Format.date(Ext.Date.add(new Date(),Ext.Date.MONTH,-1),"Y-m-d")
                 //     value : Ext.util.Format.date(Ext.Date.add(new Date(), Ext.Date.DAY), "Y-m-d")
                 // },
-
-                {
-                    xtype : 'button',
-                    text : '修改',
-                    margin: '0 0 0 40',
-                    id : 'editUser',
-                    handler : function() {
-                        var select = Ext.getCmp('pro_picking_MaterialGrid').getSelectionModel().getSelection();
-
-                        //选择的记录id
-                        // var userId = select[0].get('id');
-                        // var workerName = select[0].get('workerName');
-                        // var tel = select[0].get('tel');
-                        // var departmentName = select[0].get('departmentName');
-                        // var departmentId = select[0].get('departmentId');
-                        console.log('11111',select)
-                        // if(select.length==0)
-                        //     Ext.Msg.alert('错误', '请选择要修改的数据');
-                        // else
-                        // {
-                        //     var edit = Ext.create('userManagement.userEdit',{
-                        //         //页面传参数
-                        //         userId:userId,
-                        //         workerName: workerName,
-                        //         tel:tel,
-                        //         departmentName:departmentName,
-                        //         departmentId:departmentId
-                        //     });
-                        //     edit.show();
-                        // }
-
-                        if(select.length==0)
-                            Ext.Msg.alert('错误', '请选择要修改的数据');
-                        else
-                        {
-                            var materialId = select[0].get('materialId');
-                            var materialName = select[0].get('materialName');
-                            var partNo = select[0].get('partNo');//品号
-                            var warehouseName = select[0].get('warehouseName');
-                            var countStore = select[0].get('countStore');//库存数量
-                            var count = select[0].get('count');
-
-                            var edit = Ext.create('material.edit.materialPickEdit',{
-                                //页面传参数
-                                materialId:materialId,
-                                materialName: materialName,
-                                partNo:partNo,
-                                warehouseName:warehouseName,
-                                countStore:countStore,
-                                count:count
-                            });
-                            edit.show();
-                        }
-                    }
-                    },
                 {
                     xtype : 'button',
                     iconAlign : 'center',
@@ -1063,27 +958,22 @@ Ext.define('material.material_Receive',{
                     bodyStyle: 'background:#fff;',
                     handler : function() {
 
-
-                        //原始领料单中的原材料数据
-                        // var select = Ext.getCmp('pro_picking_MaterialGrid').getStore()
-                        //     .getData();
-
                         // 取出grid的字段名字段类型pro_picking_MaterialGrid
                         console.log('1===========')
                         var select = Ext.getCmp('pro_picking_MaterialGrid').getStore()
                             .getData();
                         // console.log(select)
                         var projectId = Ext.getCmp('project_Id').getValue();
-                        var s2 = new Array();
+                        var s = new Array();
                         select.each(function(rec) {
-                            s2.push(JSON.stringify(rec.data));
+                            s.push(JSON.stringify(rec.data));
                         });
-                        console.log(s2)
+                        console.log(s)
                         console.log('2===========')
                         var operator = Ext.getCmp('operator_pick').getValue();
                         console.log('2===========',operator)
                         //判断条件：若无数据或者没有操作人员则报错，不能提交
-                        if(s2.length != 0 && operator != null ){
+                        if(s.length != 0 && operator != null ){
                             //获取数据
                             Ext.Ajax.request({
                                 url : 'order/finishRequisitionOrder.do', //领料
@@ -1093,7 +983,7 @@ Ext.define('material.material_Receive',{
                                     requisitionOrderId:Ext.getCmp('picklistId').getValue(),
                                     projectId:projectId,
                                     operator:operator,
-                                    s2 : "[" + s2 + "]",//存储选择领料的数量
+                                    s : "[" + s + "]",//存储选择领料的数量
                                 },
                                 success : function(response) {
                                     //var message =Ext.decode(response.responseText).showmessage;
@@ -1202,9 +1092,9 @@ Ext.define('material.material_Receive',{
                         }
                     }
                 }
+
             ]
         });
-
 
         var grid2=Ext.create('Ext.grid.Panel',{
             id : 'pro_picking_MaterialGrid',
@@ -1302,7 +1192,6 @@ Ext.define('material.material_Receive',{
                 type:'vbox',
                 align:'stretch'
             },
-            tbar:toolbar_show,
             width:'100%',
             height:500,
             // closable:true,

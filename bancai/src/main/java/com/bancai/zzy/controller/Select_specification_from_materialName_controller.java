@@ -132,7 +132,30 @@ public class Select_specification_from_materialName_controller {
 
 		return true;
 	}
+	//项目状态改变
+	@RequestMapping(value = "/project/editProjectStatus.do")
+	@Transactional
+	public boolean editProjectStatus(Integer projectId,HttpSession session ,Integer statusId) throws JSONException {
+		if(null==projectId||projectId.equals("")) {
+			return false;
+		}
+		if(null==statusId||statusId.equals("")) {
+			return false;
+		}
 
+		String userid = (String) session.getAttribute("userid");
+//		Date date=new Date();
+//		SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String updateSql="update project set statusId=?,endTime=? where id=?";
+		//把isrollback改为1
+		if(insertProjectService.insertIntoTableBySQL(updateSql,statusId+"",new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()),projectId+"")){
+			return true;
+		}//更新project表
+		else{
+
+			return false;
+		}
+	}
 
 	/*
 	 * 根据原材料名称如400U找出其所有的规格。（原材料领料模块）周洁
@@ -589,6 +612,29 @@ public class Select_specification_from_materialName_controller {
 		}
 		if (productFormatId!=null) {
 			c.and(new mysqlcondition("productFormatId", "=", productFormatId));
+		}
+		WebResponse wr=queryAllService.queryDataPage(start, limit, c, tableName);
+		return wr;
+	}
+	//查询旧板匹配规则
+	@RequestMapping(value = "/project/queryOldPanelMatchRules.do")
+	public WebResponse queryOldPanelMatchRules(Integer start, Integer limit, Integer productTypeId,Integer oldpanelFormatId,
+											   Integer oldpanelTypeId,Integer productFormatId,String tableName) throws ParseException {
+		if(null==start||start.equals("")) start=0;
+		if(null==limit||limit.equals("")) limit=50;
+		//String madeBy = "4";
+		mysqlcondition c=new mysqlcondition();
+		if (productTypeId!=null) {
+			c.and(new mysqlcondition("productTypeId", "=", productTypeId));
+		}
+		if (oldpanelTypeId!=null) {
+			c.and(new mysqlcondition("oldpanelTypeId", "=", oldpanelTypeId));
+		}
+		if (productFormatId!=null) {
+			c.and(new mysqlcondition("productFormatId", "=", productFormatId));
+		}
+		if (oldpanelFormatId!=null) {
+			c.and(new mysqlcondition("oldpanelFormatId", "=", oldpanelFormatId));
 		}
 		WebResponse wr=queryAllService.queryDataPage(start, limit, c, tableName);
 		return wr;

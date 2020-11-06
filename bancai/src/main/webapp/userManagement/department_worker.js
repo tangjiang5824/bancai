@@ -22,11 +22,6 @@ Ext.define('userManagement.department_worker', {
         //定义表名
         var tableName="department_info_work";
 
-        var rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
-            clicksToMoveEditor: 1,
-            autoCancel: false
-        });
-
         //部门信息
         var departmentListStore = Ext.create('Ext.data.Store',{
             fields : [ 'typeName'],
@@ -128,6 +123,7 @@ Ext.define('userManagement.department_worker', {
             },{
                 xtype : 'button',
                 text : '修改',
+                margin: '0 0 0 40',
                 id : 'editUser',
                 handler : function() {
                     var select = Ext.getCmp('addWorkerGrid').getSelectionModel().getSelection();
@@ -254,7 +250,7 @@ Ext.define('userManagement.department_worker', {
             // plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
             //     clicksToEdit : 1
             // })],
-            plugins : [rowEditing], //行编辑
+            // plugins : [rowEditing], //行编辑
 
             selType : 'rowmodel',
             listeners: {

@@ -142,6 +142,17 @@ public class AnalyzeNameService extends BaseService {
         }
         return "218080"+classificationId+typeIdBuilder.toString()+infoIdBuilder.toString();
     }
+//    @Transactional
+//    public DataList OldpanelMatchRulesExplanation(DataList idList){
+//        if(idList!=null&&idList.size()!=0){
+//            for (int i = 0; i < idList.size(); i++) {
+//                DataRow ruleRow = queryService.query("select * from zmatch_oldpanel_match_rules left join  where id=?",idList.get(i).get("id").toString()).get(0);
+//                String explanation =
+//            }
+//        }
+//        return idList;
+//    }
+
     /**
      * 根据旧板类型名获取类型ID
      */
@@ -274,12 +285,14 @@ public class AnalyzeNameService extends BaseService {
         String format = formatBuilder.toString() + "";
         String suffix = (suffixBuilder.toString() + "").trim();
         if((format.contains("3"))&&(n.equals(SetLengthAndWidth(m,n)[0]))){
-            String temp = m + n;
-            n = temp.substring(0, temp.length()-n.length());
-            m = temp.substring(n.length());
-            format = format.replace("3","l");
-            format = format.replace("2","3");
-            format = format.replace("l","2");
+            if(!m.equals(n)){
+                String temp = m + n;
+                n = temp.substring(0, temp.length()-n.length());
+                m = temp.substring(n.length());
+                format = format.replace("3","l");
+                format = format.replace("2","3");
+                format = format.replace("l","2");
+            }
         }
         System.out.println("AnaResult======="+ Arrays.toString(new String[]{oldpanelName,format,oldpanelTypeId,classificationId,
                 m,n,p,a,b,mAngle,nAngle,pAngle,suffix,oldpanelTypeName}));
@@ -537,12 +550,14 @@ public class AnalyzeNameService extends BaseService {
         String format = formatBuilder.toString() + "";
         String suffix = (suffixBuilder.toString() + "").trim();
         if((format.contains("3"))&&(n.equals(SetLengthAndWidth(m,n)[0]))){
-            String temp = m + n;
-            n = temp.substring(0, temp.length()-n.length());
-            m = temp.substring(n.length());
-            format = format.replace("3","l");
-            format = format.replace("2","3");
-            format = format.replace("l","2");
+            if(!m.equals(n)){
+                String temp = m + n;
+                n = temp.substring(0, temp.length()-n.length());
+                m = temp.substring(n.length());
+                format = format.replace("3","l");
+                format = format.replace("2","3");
+                format = format.replace("l","2");
+            }
         }
         System.out.println("AnaResult======="+ Arrays.toString(new String[]{productName,format,productTypeId,classificationId,
                 m,n,p,a,b, mAngle,nAngle,pAngle,suffix,igSuffix,productTypeName}));
