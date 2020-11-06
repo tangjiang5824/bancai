@@ -1,5 +1,6 @@
 package com.bancai.yrd.controller;
 
+import com.bancai.cg.controller.MaterialController;
 import com.bancai.cg.service.InsertProjectService;
 import com.bancai.commonMethod.AllExcelService;
 import com.bancai.commonMethod.AnalyzeNameService;
@@ -50,6 +51,8 @@ public class DesignlistController {
     private AllExcelService allExcelService;
     @Autowired
     private AnalyzeNameService analyzeNameService;
+    @Autowired
+    private MaterialController materialController;
 
     Logger log=Logger.getLogger(DesignlistController.class);
 
@@ -281,7 +284,7 @@ public class DesignlistController {
     @ApiOperation("根据选取工单生成领料单材料汇总预览")
     public WebResponse requisitionCreatePreview(String s) throws JSONException {
         WebResponse response = new WebResponse();
-        try {
+
             JSONArray jsonArray = new JSONArray(s);
             if(jsonArray.length()==0){
                 response.setSuccess(false);
@@ -290,7 +293,7 @@ public class DesignlistController {
                 return response;
             }
             DataList createList = new DataList();
-            StringBuilder sb =new StringBuilder("select type,name,sum(singleNum) AS count from requisition_create_preview_work_order_match_store where workOrderDetailId in (\"");
+            StringBuilder sb =new StringBuilder("select type,name,sum(singleNum) AS count,storeId from requisition_create_preview_work_order_match_store where workOrderDetailId in (\"");
             //StringBuilder sb =new StringBuilder("select type,name,warehouseName,sum(singleNum) AS count from requisition_create_preview_work_order_match_store where workOrderDetailId in (\"");
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonTemp = jsonArray.getJSONObject(i);
@@ -304,6 +307,20 @@ public class DesignlistController {
             sb.append(") group by type,storeId");
             System.out.println(sb.toString());
             createList = queryService.query(sb.toString());
+            int len=createList.size();
+            for(int i=0;i<len;i++){
+                DataRow row=createList.get(i);
+                if(null!=row.get("type")&&(row.get("type")+"").equals("4")){
+                    Integer materialId=Integer.valueOf(row.get("storeId")+"");
+                    Double count=Double.valueOf(row.get("count")+"");
+                    DataList list= materialController.findMaterialStore(materialId,count);
+                    createList.addAll(list);
+                    createList.remove(createList.get(i));
+                    i--;
+                    len--;
+                }
+
+            }
             response.put("createList",createList);
             if(createList.isEmpty()) {
                 response.setSuccess(false);
@@ -312,11 +329,7 @@ public class DesignlistController {
             }
             else
                 response.setSuccess(true);
-        } catch (Exception e) {
-            response.setSuccess(false);
-            response.setErrorCode(1000); //未知错误
-            response.setMsg(e.getMessage());
-        }
+
         return response;
     }
 
