@@ -260,18 +260,18 @@ Ext.define('material.query_Newpanel_Rules',{
             //readOnly:true,
             columns : [
                 {dataIndex : 'productTypeName', text : '产品类型', flex :1,
-                    //editor : {xtype : 'textfield', allowBlank : false,} ,
-                    editor : productTypeNameList,
-                    renderer:function(value, cellmeta, record){
-                        var index = productTypeNameStore.find(productTypeNameList.valueField,value);
-                        var ehrRecord = productTypeNameStore.getAt(index);
-                        var returnvalue = "";
-                        if (ehrRecord) {
-                            returnvalue = ehrRecord.get('productTypeName');
-                        }
-                        return returnvalue;
-                    },
-                    render:{}
+                    editor : {xtype : 'textfield', allowBlank : false,} ,
+                    // editor : productTypeNameList,
+                    // renderer:function(value, cellmeta, record){
+                    //     var index = productTypeNameStore.find(productTypeNameList.valueField,value);
+                    //     var ehrRecord = productTypeNameStore.getAt(index);
+                    //     var returnvalue = "";
+                    //     if (ehrRecord) {
+                    //         returnvalue = ehrRecord.get('productTypeName');
+                    //     }
+                    //     return returnvalue;
+                    // },
+                    // render:{}
                     },
                 //{dataIndex : 'classificationName', text : '分类', flex :1, },
                 {text: '分类', dataIndex: 'classificationName', flex :1,  editor : {xtype : 'textfield', allowBlank : false,}  },
