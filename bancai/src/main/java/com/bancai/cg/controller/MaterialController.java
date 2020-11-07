@@ -585,7 +585,7 @@ public class MaterialController {
     }
 
 
-    public  DataList findMaterialStore(Integer materialId,Double count){
+    public  DataList findMaterialStore(Integer materialId,Double count,DataRow rowList){
         DataList response=new DataList();
         MaterialInfo info=materialinfodao.findById(materialId).orElse(null);
         MaterialType type=info.getTypeId();
@@ -628,7 +628,13 @@ public class MaterialController {
                 Double storeCount=Double.valueOf(dataRow.get("countStore")+"");
                 Double mValue=Double.valueOf(dataRow.get("mValue")+"");
                 DataRow map=new DataRow();
+                map.put("workOrderDetailId",rowList.get("workOrderDetailId"));
                 map.put("type","4");
+                map.put("productId",rowList.get("productId"));
+                map.put("projectId",rowList.get("projectId"));
+                map.put("buildingId",rowList.get("buildingId"));
+                map.put("buildingpositionId",rowList.get("buildingpositionId"));
+                map.put("isCompleteMatch",rowList.get("isCompleteMatch"));
                 map.put("storeId",dataRow.get("storeId")+"");
                 map.put("materialId",dataRow.get("materialId")+"");
                 map.put("name",dataRow.get("materialName")+"");

@@ -313,7 +313,7 @@ public class DesignlistController {
                 if(null!=row.get("type")&&(row.get("type")+"").equals("4")){
                     Integer materialId=Integer.valueOf(row.get("storeId")+"");
                     Double count=Double.valueOf(row.get("count")+"");
-                    DataList list= materialController.findMaterialStore(materialId,count);
+                    DataList list= materialController.findMaterialStore(materialId,count,createList.get(i));
                     createList.addAll(list);
                     createList.remove(createList.get(i));
                     i--;
@@ -329,6 +329,62 @@ public class DesignlistController {
             }
             else
                 response.setSuccess(true);
+
+        return response;
+    }
+
+    /*
+     * 根据选取工单生成领料单材料仓库信息
+     * */
+    @RequestMapping("/order/requisitionCreateTable.do")
+    @ApiOperation("根据选取工单生成领料单原材料旧板仓库数量信息")
+    public WebResponse requisitionCreateTable(String s) throws JSONException {
+        WebResponse response = new WebResponse();
+
+        JSONArray jsonArray = new JSONArray(s);
+        if(jsonArray.length()==0){
+            response.setSuccess(false);
+            response.setErrorCode(100);//接收到的为空
+            response.setMsg("接收到的数据为空");
+            return response;
+        }
+        DataList createList = new DataList();
+        StringBuilder sb =new StringBuilder("select id as workOrderDetailId, productId,projectId,buildingId,buildingpositionId,isCompleteMatch,type,name,sum(singleNum) AS count,storeId from requisition_create_preview_work_order_match_store where workOrderDetailId in (\"");
+        //StringBuilder sb =new StringBuilder("select type,name,warehouseName,sum(singleNum) AS count from requisition_create_preview_work_order_match_store where workOrderDetailId in (\"");
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonTemp = jsonArray.getJSONObject(i);
+            String workOrderDetailId=jsonTemp.get("workOrderDetailId")+"";
+            System.out.println("第" + i + "个workOrderDetailId---" + workOrderDetailId);
+            sb.append(workOrderDetailId).append("\",\"");
+//                createList = designlistService.createRequisitionPreview(createList, workOrderDetailId);
+        }
+        sb.deleteCharAt(sb.length()-1);
+        sb.deleteCharAt(sb.length()-1);
+        sb.append(") group by workOrderDetailId,type,storeId,isCompleteMatch");
+        System.out.println(sb.toString());
+        createList = queryService.query(sb.toString());
+        int len=createList.size();
+        for(int i=0;i<len;i++){
+            DataRow row=createList.get(i);
+            if(null!=row.get("type")&&(row.get("type")+"").equals("4")){
+                Integer materialId=Integer.valueOf(row.get("storeId")+"");
+                Double count=Double.valueOf(row.get("count")+"");
+                DataList list= materialController.findMaterialStore(materialId,count,createList.get(i));
+                createList.addAll(list);
+                createList.remove(createList.get(i));
+                i--;
+                len--;
+            }
+
+        }
+        response.put("createList",createList);
+        if(createList.isEmpty()) {
+            response.setSuccess(false);
+            response.setErrorCode(200);//生成的领料单为空
+            response.setMsg("生成的领料单为空");
+        }
+        else
+            response.setSuccess(true);
 
         return response;
     }
