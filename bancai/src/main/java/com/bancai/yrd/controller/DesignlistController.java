@@ -349,7 +349,7 @@ public class DesignlistController {
             return response;
         }
         DataList createList = new DataList();
-        StringBuilder sb =new StringBuilder("select id as workOrderDetailId, productId,projectId,buildingId,buildingpositionId,isCompleteMatch,type,name,sum(singleNum) AS count,storeId from requisition_create_preview_work_order_match_store where workOrderDetailId in (\"");
+        StringBuilder sb =new StringBuilder("select id as workOrderDetailId, productId,productName,projectId,projectName,buildingId,buildingName,buildingpositionId,buildingpositionName,isCompleteMatch,type,name,sum(singleNum) AS count,storeId from requisition_create_preview_work_order_match_store where workOrderDetailId in (\"");
         //StringBuilder sb =new StringBuilder("select type,name,warehouseName,sum(singleNum) AS count from requisition_create_preview_work_order_match_store where workOrderDetailId in (\"");
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonTemp = jsonArray.getJSONObject(i);
