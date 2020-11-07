@@ -324,7 +324,7 @@ Ext.define('project.project_create_picklist',{
 
                         Ext.Ajax.request({
                             // url : 'order/requisitionCreatePreview.do', //原材料入库
-                            url : 'order/requisitionCreatePreview.do', //原材料入库
+                            url : 'order/requisitionCreateTable.do', //原材料入库
                             method:'POST',
                             //submitEmptyText : false,
                             params : {
@@ -726,6 +726,11 @@ Ext.define('project.project_create_picklist',{
                     flex :1
                 },
                 {
+                    dataIndex:'partNo', //品号
+                    text:'品号',
+                    flex :1
+                },
+                {
                     dataIndex:'type', //工单号
                     text:'材料类型',
                     flex :1,
@@ -734,8 +739,19 @@ Ext.define('project.project_create_picklist',{
                     },
                 },
                 {
+                    dataIndex:'warehouseName',
+                    text:'仓库名',
+                    flex :1
+                },
+                {
+                    dataIndex:'countStore',//countTemp
+                    text:'库存数量',
+                    flex :1
+                    //editor:{xtype : 'textfield', allowBlank : true},
+                },
+                {
                     dataIndex:'count', //工单号
-                    text:'数量',
+                    text:'需求数量',
                     flex :1
                 },
                 // {
