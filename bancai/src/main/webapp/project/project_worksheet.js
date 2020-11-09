@@ -764,8 +764,14 @@ Ext.define('project.project_worksheet',{
             store:'',
             dock: 'bottom',
             columns:[
+
+                // {
+                //     dataIndex:'id',
+                //     text:'工单号',
+                //     flex :1
+                // },
                 {
-                    dataIndex:'id',
+                    dataIndex:'workOrderNo',
                     text:'工单号',
                     flex :1
                 },
