@@ -24,6 +24,8 @@ public class ProductInfo {
     private String suffix;
     private String ignoredSuffix;
     private Integer userId;
+    private Integer partNoNew;
+    private Integer partNoOld;
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)

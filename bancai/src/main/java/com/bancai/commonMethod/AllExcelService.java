@@ -180,20 +180,38 @@ public class AllExcelService extends BaseService {
 			DataRow row=new DataRow();
 			int index=-1;
 			String materialName = dataList.get(i).get("原材料名") + "";
-			List<MaterialInfo> materialList=materialinfodao.findByMaterialName(materialName);
-			if(materialList.size()!=1) {
-				errorlist.add(dataList.get(i));
-				index=errorlist.size()-1;
-				if(materialList.size()>1){
-					errorlist.get(index).put("错误原因","存在多个相同原材料名； ");
-				}else {
-					//materialList.size()<1
-					if(materialName.equals("null")){
-						errorlist.get(index).put("错误原因","原材料名为空； ");
-					}else
-					errorlist.get(index).put("错误原因","系统中不存在该原材料，请在原材料基础信息中进行添加； ");
+			String partNo=dataList.get(i).get("品号")+"";
+			if(partNo!=null&&!partNo.equals("null")){
+				List<MaterialInfo> list=materialinfodao.findAllByPartNo(partNo);
+				if(list.size()!=1) {
+					errorlist.add(dataList.get(i));
+					index=errorlist.size()-1;
+					errorlist.get(index).put("错误原因","存在多个相同品号； ");
+
 				}
+				dataList.get(i).put("品号",partNo);
+				dataList.get(i).put("原材料名",list.get(0).getMaterialName());
+
+			}else {
+				List<MaterialInfo> materialList=materialinfodao.findByMaterialName(materialName);
+				if(materialList.size()!=1) {
+					errorlist.add(dataList.get(i));
+					index=errorlist.size()-1;
+					if(materialList.size()>1){
+						errorlist.get(index).put("错误原因","存在多个相同原材料名，也无品号区分； ");
+					}else {
+						//materialList.size()<1
+						if(materialName.equals("null")){
+							errorlist.get(index).put("错误原因","原材料名为空； ");
+						}else
+							errorlist.get(index).put("错误原因","系统中不存在该原材料，请在原材料基础信息中进行添加； ");
+					}
+				}
+				dataList.get(i).put("品号",materialList.get(0).getPartNo());
+				//dataList.get(i).put("原材料名",materialList.get(0).getMaterialName());
+
 			}
+
 			String warehouseName=dataList.get(i).get("仓库名称")+"";
 			String sql="select * from storeposition where warehouseName=?";
 			if(queryService.query(sql,warehouseName).size()==0){
@@ -260,6 +278,7 @@ public class AllExcelService extends BaseService {
 			}
 			row.put("序号",dataList.get(i).get("序号") +"");
 			row.put("materialName",dataList.get(i).get("原材料名") +"");
+			row.put("partNo",dataList.get(i).get("品号") +"");
 			row.put("warehouseName",dataList.get(i).get("仓库名称") +"");
 			row.put("description",dataList.get(i).get("备注") +"");
 			retList.add(row);

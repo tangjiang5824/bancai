@@ -128,7 +128,7 @@ public class MaterialDataController {
      * */
     @RequestMapping(value = "/uploadMaterialExcel.do")
     @Transactional
-    public WebResponse uploadMaterial(MultipartFile uploadFile, String tableName, Integer operator ,HttpSession session) {
+    public WebResponse uploadMaterial(MultipartFile uploadFile, String tableName, Integer operator ,HttpSession session) throws IOException {
         WebResponse response = new WebResponse();
 //        String userid = (String) session.getAttribute("userid");
 //        MaterialLog log=new MaterialLog();
@@ -140,7 +140,7 @@ public class MaterialDataController {
 //        log.setOperator(operator);
 //        logdao.save(log);
       //  JSONArray array = new JSONArray();
-        try {
+
             //UploadDataResult result = allExcelService.uploadExcelData(uploadFile.getInputStream(),userid,tableName,log);
             UploadDataResult result = allExcelService.uploadExcelData(uploadFile.getInputStream());
             if(result.success==true){
@@ -153,12 +153,6 @@ public class MaterialDataController {
                 response.put("totalCount", result.dataList.size());
             }
 
-        } catch (IOException e) {
-            e.printStackTrace();
-            response.setSuccess(false);
-            response.setErrorCode(1000); //未知错误
-            response.setMsg(e.getMessage());
-        }
 
        // System.out.println(response.get("success"));
        // System.out.println(response.get("value"));

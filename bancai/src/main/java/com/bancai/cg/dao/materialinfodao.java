@@ -12,5 +12,7 @@ public interface materialinfodao extends JpaRepository<MaterialInfo,Integer>, Jp
 
     public List<MaterialInfo> findByMaterialName(String materialName);
 
+    public List<MaterialInfo> findAllByPartNo(String partNo);
+
 
 }
