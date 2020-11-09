@@ -29,11 +29,11 @@ Ext.define('material.material_Inbound', {
             proxy : {
                 type : 'ajax',
                 url : 'material/findAllBytableName.do?tableName='+tableName,
-                limit:-1,
                 reader : {
                     type : 'json',
                     rootProperty: 'material_info',
                 },
+
                 fields : ['id','materialName']
             },
 

@@ -181,7 +181,7 @@ public class AllExcelService extends BaseService {
 			int index=-1;
 			String materialName = dataList.get(i).get("原材料名") + "";
 			String partNo=dataList.get(i).get("品号")+"";
-			if(partNo!=null&&!partNo.equals("null")){
+			if(partNo!=null&&!partNo.equals("null")&&partNo.length()!=0){
 				List<MaterialInfo> list=materialinfodao.findAllByPartNo(partNo);
 				if(list.size()!=1) {
 					errorlist.add(dataList.get(i));

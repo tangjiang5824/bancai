@@ -327,7 +327,7 @@ Ext.define('oldpanel.Old_Query_Data',{
             //readOnly:true,
             columns : [
                 {dataIndex : 'oldpanelName', text : '旧板名称', flex :1, },
-                {dataIndex : 'oldpanelNo', text : '旧板品号', flex :1, },
+                {dataIndex : 'partNo', text : '旧板品号', flex :1, },
                 //{dataIndex : 'classificationName', text : '分类', flex :1, },
                 {text: '分类', dataIndex: 'classificationId', flex :1,
                     //枚举，1：出库，0：入库
