@@ -367,7 +367,7 @@ Ext.define('project.project_query_worksheet',{
                 return;
             }
             //console.log("grid.columns[columnIndex]：",Ext.getCmp('worksheet_Grid').columns[columnIndex-1])
-            var fieldName = Ext.getCmp('worksheet_Grid').columns[columnIndex-1].text;
+            var fieldName = Ext.getCmp('worksheet_Grid').columns[columnIndex].text;
             var sm = Ext.getCmp('worksheet_Grid').getSelectionModel();
             // var isrollback = Ext.getCmp('isrollback').getValue();
             var materialArr = sm.getSelection();
