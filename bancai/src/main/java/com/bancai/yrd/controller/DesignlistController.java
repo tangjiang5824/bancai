@@ -396,6 +396,7 @@ public class DesignlistController {
 
     /*
      * 新建领料单
+     * Auhor :yrd
      * */
     @RequestMapping(value = "/order/addRequisitionOrder.do")
     @ApiOperation("新建领料单")
@@ -425,6 +426,46 @@ public class DesignlistController {
             response.setErrorCode(1000); //未知错误
             response.setMsg(e.getMessage());
         }
+        return response;
+    }
+
+    /*
+     * 新建领料单
+     * Auhor :cg
+     * */
+    @RequestMapping(value = "/order2/addRequisitionOrder.do")
+    @ApiOperation("新建领料单")
+    public WebResponse addRequisitionOrder2(String s, HttpSession session) throws JSONException {
+        WebResponse response = new WebResponse();
+        JSONArray jsonArray = new JSONArray(s);
+        if(jsonArray.length()==0){
+            response.setSuccess(false);
+            response.setErrorCode(100);//接收到的为空
+            response.setMsg("接收到的数据为空");
+            return response;
+        }
+        String userId = (String)session.getAttribute("userid");
+        String projectId = jsonArray.getJSONObject(0).get("projectId")+"";
+        int requisitionOrderId = designlistService.createRequisitionOrderBackId(userId,userId,projectId);
+        int requisitionOrderLogId = designlistService.requisitionOrderAddLogBackId("1",String.valueOf(requisitionOrderId),userId,userId);
+        for (int i=0;i<jsonArray.length();i++) {
+            JSONObject object=jsonArray.getJSONObject(i);
+            String workOrderDetailId = object.get("workOrderDetailId")+"";
+            String type = object.get("type")+"";
+            String storeId = object.get("storeId")+"";
+            String productId = object.get("productId")+"";
+            String count = object.get("count")+"";
+            String buildingId = object.get("buildingId")+"";
+            String buildingpositionId = object.get("buildingpositionId")+"";
+            String isCompleteMatch = object.get("isCompleteMatch")+"";
+            int requisitionOrderDetailId = designlistService.createRequisitionOrderDetailBackId(String.valueOf(requisitionOrderId),workOrderDetailId,
+                    type,storeId,productId,count,buildingId,buildingpositionId,isCompleteMatch);
+            String sql_updateStatus = "update work_order_detail set status=1 where id="+workOrderDetailId;
+            insertProjectService.update(sql_updateStatus);
+            designlistService.requisitionOrderAddLogDetail(String.valueOf(requisitionOrderLogId), String.valueOf(requisitionOrderDetailId), count);
+        }
+
+        response.setSuccess(true);
         return response;
     }
 
