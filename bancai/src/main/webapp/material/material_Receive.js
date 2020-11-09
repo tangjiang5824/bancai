@@ -696,24 +696,15 @@ Ext.define('material.material_Receive',{
             // closable:true,
             closeAction: 'hide',
             columns:[
+
+                // // new Ext.grid.RowNumberer(),//序号
                 // {
-                //     // dataIndex : '序号',
-                //     name : '序号',
-                //     text : '序号',
-                //     width : 60,
-                //     value:'99',
-                //     renderer:function(value,metadata,record,rowIndex){
-                //         return　record_start_rec　+　1　+　rowIndex;
-                //     }
+                //     header: '序号',
+                //     xtype: 'rownumberer',
+                //     width: 60,
+                //     align: 'center',
+                //     sortable: false,
                 // },
-                // new Ext.grid.RowNumberer(),//序号
-                {
-                    header: '序号',
-                    xtype: 'rownumberer',
-                    width: 60,
-                    align: 'center',
-                    sortable: false,
-                },
                 {
                     dataIndex:'name',
                     text:'材料名',
@@ -1016,7 +1007,6 @@ Ext.define('material.material_Receive',{
                                                             //标红
                                                             console.log("tr--------->>>",tr);
                                                             tr.style.backgroundColor = '#FF0000';//行标红
-
                                                         }
                                                     }
                                                 }
@@ -1076,13 +1066,13 @@ Ext.define('material.material_Receive',{
             autoScroll: true, //超过长度带自动滚动条
             columns:[
                 //序号
-                {
-                    header: '序号',
-                    xtype: 'rownumberer',
-                    width: 60,
-                    align: 'center',
-                    sortable: false
-                },
+                // {
+                //     header: '序号',
+                //     xtype: 'rownumberer',
+                //     width: 60,
+                //     align: 'center',
+                //     sortable: false
+                // },
                 {dataIndex:'name', text:'材料名',flex :1 },
                 {
                     dataIndex:'count',//countTemp
@@ -1144,7 +1134,8 @@ Ext.define('material.material_Receive',{
                                     pickList.add(records[i]);
                                 }
                             }
-                            grid_old_query_pickList_specific.store.remove(records);
+
+                            // grid_old_query_pickList_specific.store.remove(records);
                             //若要领数量<领取数量，则不能直接remove，需要更改数量值
 
                         }
@@ -1154,6 +1145,7 @@ Ext.define('material.material_Receive',{
                         itemId:'move_left',
                         handler:function(){
                             var records=grid2.getSelectionModel().getSelection();
+
                             pickList.remove(records);
                             grid_old_query_pickList_specific.store.add(records);//grid_old_query_pickList_specific
                         }

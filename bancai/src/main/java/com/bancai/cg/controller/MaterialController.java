@@ -621,6 +621,7 @@ public class MaterialController {
             String sql="select *  from material_store_view where materialId in "+id+" and countStore>0 order by mValue";
             DataList storeList=insertProjectService.query(sql);
             //计算总共需要m大小
+            if(info.getmValue()==null) System.out.println(info.getMaterialName()+"M值为空");
             Double deCount=info.getmValue()*count;
             int index=0;
             while (deCount>0&&index<storeList.size()){
