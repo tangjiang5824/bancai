@@ -334,6 +334,53 @@ public class AllExcelService extends BaseService {
 		return result;
 	}
 	/**
+	 * 旧板上传基础信息数据
+	 *
+	 * @param inputStream
+	 * @return
+	 * @throws IOException
+	 */
+	@Transactional
+	public UploadDataResult uploadOldpanelExcelBasicInfo(InputStream inputStream) throws IOException {
+		UploadDataResult result = new UploadDataResult();
+		Excel excel = new Excel(inputStream);
+		DataList excelList = excel.readExcelContent();
+		Iterator it = excelList.iterator();
+		DataList dataList = new DataList();
+		while (it.hasNext()){
+			DataRow dataRow = (DataRow) it.next();
+			String oldpanelName = (dataRow.get("品名") + "").trim().toUpperCase();
+			if(oldpanelName.length()==0){
+				it.remove();
+				continue;
+			} else if (oldpanelName.equals("合计")){
+				it.remove();
+				break;
+			}
+			String partNo = (dataRow.get("品号") + "").trim();
+			String unitWeight = (dataRow.get("单重/KG") + "").trim();
+			if(unitWeight==""||unitWeight.isEmpty()||unitWeight==null) unitWeight = "0";
+			String unitArea = (dataRow.get("单面积/m2") + "").trim();
+			if(unitArea==""||unitArea.isEmpty()||unitArea==null) unitArea = "0";
+			String inventoryUnit = (dataRow.get("单位") + "").trim();
+//			String classificationName = dataRow.get("分类") + "";
+//			String inventoryUnit = dataRow.get("单位") + "";
+			//String count = (dataRow.get("入库数量") + "").trim().toUpperCase();
+			//String warehouseName = (dataRow.get("入库仓库") + "").trim().toUpperCase();
+			String remark = (dataRow.get("备注") + "").trim();
+			DataRow row = new DataRow();
+			row.put("oldpanelName",oldpanelName);
+			row.put("inventoryUnit",inventoryUnit);
+			row.put("partNo",partNo);
+			row.put("unitWeight",unitWeight);
+			row.put("unitArea",unitArea);
+			row.put("remark",remark);
+			dataList.add(row);
+		}
+		result.dataList = dataList;
+		return result;
+	}
+	/**
 	 * 预加工上传数据
 	 *
 	 * @param inputStream

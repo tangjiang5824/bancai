@@ -261,13 +261,21 @@ Ext.define('project.project_create_picklist',{
                         console.log('sss')
                         //传入所选项目的id
                         console.log(Ext.getCmp('projectName').getValue())
-                        worksheetListStore.load({
-                            params : {
-                                projectId:Ext.getCmp("projectName").getValue(),
-                                buildingId:Ext.getCmp("buildingName").getValue(),
-                                buildingpositionId:Ext.getCmp("positionName").getValue(),
-                            }
-                        });
+                        var projectId = Ext.getCmp("projectName").getValue()
+                        if(projectId){
+                            worksheetListStore.load({
+                                params : {
+                                    projectId:projectId,
+                                    buildingId:Ext.getCmp("buildingName").getValue(),
+                                    buildingpositionId:Ext.getCmp("positionName").getValue(),
+                                }
+                            });
+                        }else{
+                            Ext.MessageBox.alert("提示","项目名为空,请选择具体项目!" );
+                            //重新刷新
+                            worksheetListStore.removeAll();
+                        }
+
                     }
                 },
                 {
@@ -669,7 +677,8 @@ Ext.define('project.project_create_picklist',{
                         // );
 
                         Ext.Ajax.request({
-                            url : 'order/addRequisitionOrder.do', //创建领料单
+                            // url : 'order/addRequisitionOrder.do', //创建领料单
+                            url :'order2/addRequisitionOrder.do',
                             method:'POST',
                             //submitEmptyText : false,
                             params : {

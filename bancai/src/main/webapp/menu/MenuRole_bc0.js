@@ -70,12 +70,12 @@ Ext.define("menu.MenuRole_bc0", {
 					id : 'material.material_Inbound',
 					leaf : true
 				} ,
-
+				// 	{
+				// 	text : '批量入库',
+				// 	id : 'material.material_Upload_Data',
+				// 	leaf : true
+				// },
 					{
-					text : '批量入库',
-					id : 'material.material_Upload_Data',
-					leaf : true
-				}, {
 						text : '误入库撤销',
 						id : 'material.material_Outbound',
 						leaf : true
@@ -91,11 +91,11 @@ Ext.define("menu.MenuRole_bc0", {
 						id : 'material.material_Receive',
 						leaf : true
 					},
-					{
-						text : '领料(自定义)',
-						id : 'material.material_Receive_input',
-						leaf : true
-					},
+					// {
+					// 	text : '领料(自定义)',
+					// 	id : 'material.material_Receive_input',
+					// 	leaf : true
+					// },
 					// 	{
 					// 	text : '原材料退库',
 					// 	id : 'material.material_Back',

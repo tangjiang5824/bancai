@@ -41,7 +41,7 @@ public class OldpanelDataService extends BaseService {
     public DataList oldpanelAddInsertRowToInfoList(DataList insertList,String oldpanelFormatId,String classificatioanId,String oldpanelTypeId,String oldpanelName,String inventoryUnit,
                                                   String unitWeight,String unitArea,String remark,String mValue,String nValue,String pValue,
                                                   String aValue,String bValue,String mAngle,String nAngle,String pAngle,
-                                                  String suffix){
+                                                  String suffix,String partNo){
         DataRow row = new DataRow();
         row.put("oldpanelFormatId",oldpanelFormatId);
         row.put("oldpanelTypeId",oldpanelTypeId);
@@ -51,6 +51,7 @@ public class OldpanelDataService extends BaseService {
         row.put("unitWeight",unitWeight);
         row.put("unitArea",unitArea);
         row.put("remark",remark);
+        row.put("partNo",partNo);
         if(suffix.length()==0)
             suffix = "null";
         String values = mValue + "%" + nValue + "%" + pValue + "%" + aValue + "%" + bValue + "%" + mAngle +
@@ -92,6 +93,7 @@ public class OldpanelDataService extends BaseService {
             String unitWeight = dataRow.get("unitWeight").toString();
             String unitArea = dataRow.get("unitArea").toString();
             String remark = dataRow.get("remark").toString();
+            String partNo = dataRow.get("partNo").toString();
             String[] values = dataRow.get("values").toString().split("%");
             String mValue = null;
             String nValue = null;
@@ -116,7 +118,8 @@ public class OldpanelDataService extends BaseService {
                             "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                     oldpanelName,inventoryUnit,unitWeight,unitArea,remark,oldpanelFormatId,mValue,nValue,pValue,aValue,bValue
                     ,values[5],values[6],values[7],values[8],userId);
-            String partNo = analyzeNameService.oldpanelPartNoGenerator(oldpanelTypeId,String.valueOf(oldpanelId),classificatioanId);
+            if(partNo.length()==0||partNo.equals("NULL"))
+                partNo = analyzeNameService.oldpanelPartNoGenerator(oldpanelTypeId,String.valueOf(oldpanelId),classificatioanId);
             jo.update("update oldpanel_info set partNo=\""+partNo+"\" where id=\""+oldpanelId+"\"");
             b = b&insertProjectService.insertIntoTableBySQL("insert into oldpanel_logdetail (oldpanellogId,oldpanelId) values (?,?)",
                     String.valueOf(logId), String.valueOf(oldpanelId));

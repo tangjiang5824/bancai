@@ -254,13 +254,19 @@ Ext.define('project.project_query_picklist',{
 
         var PickingListGrid=Ext.create('Ext.grid.Panel',{
             id : 'PickingListGrid',
+            // resizable: true,//panle伸缩
             store:MaterialpickListStore,
             dock: 'bottom',
-            columns:[{
+            columns:[
+                {
                 dataIndex:'requisitionOrderId',
                 text:'领料单号',
                 flex :1
-            },
+            },{
+                    dataIndex:'projectName',
+                    text:'所属项目',
+                    flex :1
+                },
                 {
                     dataIndex:'workerName',
                     text:'负责人',
@@ -272,6 +278,7 @@ Ext.define('project.project_query_picklist',{
                     flex :1,
                     renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')  //
                 },
+
                 {
                     // name : '操作',
                     // name : '操作',
@@ -364,6 +371,7 @@ Ext.define('project.project_query_picklist',{
         var grid__query_pickList_specific=Ext.create('Ext.grid.Panel',{
             title:'领料单明细',
             id : 'grid__query_pickList_specific',
+            resizable: true,
             // tbar:toolbar_specific,
             store:specificMaterialList,
             autoScroll: true, //超过长度带自动滚动条
