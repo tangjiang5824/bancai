@@ -8,6 +8,7 @@ import com.bancai.cg.dao.workorderlogdao;
 import com.bancai.cg.dao.workordermatchresultdao;
 import com.bancai.cg.entity.*;
 import com.bancai.cg.service.InsertProjectService;
+import com.bancai.cg.util.JPAObjectUtil;
 import com.bancai.cg.util.newPanelMatch;
 import com.bancai.commonMethod.AnalyzeNameService;
 import com.bancai.commonMethod.NewCondition;
@@ -864,6 +865,9 @@ public class ProjectController {
         log.setTime(new Date());
         log.setIsActive(0);
         log.setProjectId(projectId);
+        workorderlogdao.save(log);
+        String workOrderNo= JPAObjectUtil.getListNo(400,log.getId());
+        log.setWorkOrderNo(workOrderNo);
         workorderlogdao.save(log);
         JSONArray array = new JSONArray(s);
         for (int i = 0; i < array.length(); i++) {

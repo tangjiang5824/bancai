@@ -332,7 +332,7 @@ public class ProjectHandleController {
         JSONObject object = new JSONObject();
         JSONArray array = new JSONArray(projectList);
         object.put("projectList", array);
-        System.out.println("类型1：--"+array.getClass().getName().toString());
+        System.out.println("类型1：--"+array.getClass().getName());
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html");
         response.getWriter().write(object.toString());

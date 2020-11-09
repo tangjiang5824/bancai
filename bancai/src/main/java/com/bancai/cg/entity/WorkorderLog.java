@@ -16,6 +16,7 @@ public class WorkorderLog {
     private Integer projectId;
     private Integer isActive;
     private Date time;
+    private String workOrderNo;
 
 
 
