@@ -24,6 +24,7 @@ Ext.define('oldpanel.oldpanel_Basic_Info_Input', {
         var buildingId = "-1";
         //防止按钮重复点击，发送多次请求，post_flag
         var post_flag = false;
+        Ext.Ajax.timeout=9000000;//设置超时时间
         Ext.define('Soims.model.application.ApplicationState', {
             statics: { // 关键
                 0: { value: '0', name: '墙板' },
@@ -232,7 +233,35 @@ Ext.define('oldpanel.oldpanel_Basic_Info_Input', {
                                 fn : function(btn) {
                                     if (btn === 'yes') {
                                         //var check=Ext.getCmp("check").getValue();
-
+                                        //显示上传进度
+                                        Ext.MessageBox.show(
+                                            {
+                                                title:'请稍候',
+                                                msg:'上传数据中......',
+                                                progressText:'',    //进度条文本
+                                                width:300,
+                                                progress:true,
+                                                closable:false
+                                            }
+                                        );
+                                        //控制进度条速度
+                                        var f=function(v){
+                                            return function(){
+                                                if(v==12)
+                                                {
+                                                    Ext.MessageBox.hide();
+                                                }
+                                                else
+                                                {
+                                                    var i=v/11;
+                                                    Ext.MessageBox.updateProgress(i,Math.round(100*i)+"% 完成");
+                                                }
+                                            }
+                                        }
+                                        for(var i=1;i<13;i++)
+                                        {
+                                            setTimeout(f(i),i*500);//从点击时就开始计时，所以500*i表示每500ms就执行一次
+                                        }
                                         form.submit({
                                             url : 'oldpanel/uploadExcelBasicInfo.do', //上传excel文件，并回显数据，退库成品批量上传
                                             waitMsg : '正在上传...',
@@ -546,16 +575,16 @@ Ext.define('oldpanel.oldpanel_Basic_Info_Input', {
                         });
                         console.log(s);
                         //显示匹配进度
-                        Ext.MessageBox.show(
-                            {
-                                title:'请稍候',
-                                msg:'数据上传中，请耐心等待...',
-                                progressText:'',    //进度条文本
-                                width:300,
-                                progress:true,
-                                closable:false
-                            }
-                        );
+                        // Ext.MessageBox.show(
+                        //     {
+                        //         title:'请稍候',
+                        //         msg:'数据上传中，请耐心等待...',
+                        //         progressText:'',    //进度条文本
+                        //         width:300,
+                        //         progress:true,
+                        //         closable:false
+                        //     }
+                        // );
 
                         //获取数据
                         //获得当前操作时间
@@ -563,6 +592,7 @@ Ext.define('oldpanel.oldpanel_Basic_Info_Input', {
                         Ext.Ajax.request({
                             url : 'oldpanel/addInfo.do',  //入库
                             method:'POST',
+                            timeout:90000000,//超时时间
                             //submitEmptyText : false,
                             params : {
                                 s : "[" + s + "]",
