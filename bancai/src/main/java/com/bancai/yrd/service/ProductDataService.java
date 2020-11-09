@@ -165,9 +165,11 @@ public class ProductDataService extends BaseService{
     @Transactional
     public int productAddSingleInfo(String productName, String inventoryUnit, String unitWeight,
                                  String unitArea, String remark, String userId) {
-        if(analyzeNameService.isInfoExist("product",productName)!=0)
-            return 0;
-        return productSaveInfo(productName, inventoryUnit, unitWeight, unitArea, remark, userId);
+        int infoId = analyzeNameService.isInfoExist("product",productName);
+        if(infoId!=0)
+            return infoId;
+        else
+            return productSaveInfo(productName, inventoryUnit, unitWeight, unitArea, remark, userId);
     }
 
     /**
@@ -175,38 +177,26 @@ public class ProductDataService extends BaseService{
      */
     @Transactional
     public int addProductInfoIfNameValid(String productName,String userId){
-        int productId = analyzeNameService.isInfoExist("product", productName);
-        if (productId == 0) {
-            DataList list = analyzeNameService.getTypeByProductName(productName);
-            if (list.size() == 0)
+        DataList list = analyzeNameService.getTypeByProductName(productName);
+        if (list.size() == 0)
+            return 0;
+        else {
+            String productTypeId = list.get(0).get("id").toString();
+            String classificationId = list.get(0).get("classificationId").toString();
+            String sql_addLog = "insert into product_log (type,userId,time) values(?,?,?)";
+            int productId = productAddSingleInfo(productName, "", "", "", "", userId);
+            if (productId == 0)
                 return 0;
-            else {
-                String productTypeId = list.get(0).get("id").toString();
-                String classificationId = list.get(0).get("classificationId").toString();
-                String sql_addLog = "insert into product_log (type,userId,time) values(?,?,?)";
-                int productIdNew = productAddSingleInfo(productName, "", "", "", "", userId);
-                if (productIdNew == 0)
-                    return 0;
-                int productlogIdNew = insertProjectService.insertDataToTable(sql_addLog, "6", "0", analyzeNameService.getTime());
-                String partNoNew = analyzeNameService.productPartNoNewGenerator(productTypeId,String.valueOf(productIdNew),classificationId);
-                jo.update("update product_info set partNo=\""+partNoNew+"\" where id=\""+productId+"\"");
-                boolean isLogRightNew = insertProjectService.insertIntoTableBySQL("insert into product_logdetail (productlogId,productId) values (?,?)",
-                        String.valueOf(productlogIdNew), String.valueOf(productIdNew));
-                if (!isLogRightNew)
-                    return 0;
-                int productIdOld = productAddSingleInfo(productName, "", "", "", "", userId);
-                if (productIdOld == 0)
-                    return 0;
-                int productlogIdOld = insertProjectService.insertDataToTable(sql_addLog, "6", "0", analyzeNameService.getTime());
-                String partNoOld = analyzeNameService.productPartNoOldGenerator(productTypeId,String.valueOf(productIdOld),classificationId);
-                jo.update("update product_info set partNo=\""+partNoOld+"\" where id=\""+productId+"\"");
-                boolean isLogRightOld = insertProjectService.insertIntoTableBySQL("insert into product_logdetail (productlogId,productId) values (?,?)",
-                        String.valueOf(productlogIdOld), String.valueOf(productIdOld));
-                if (!isLogRightOld)
-                    return 0;
-            }
+            int productlogId = insertProjectService.insertDataToTable(sql_addLog, "6", "0", analyzeNameService.getTime());
+            String partNoNew = analyzeNameService.productPartNoNewGenerator(productTypeId,String.valueOf(productId),classificationId);
+            String partNoOld = analyzeNameService.productPartNoOldGenerator(productTypeId,String.valueOf(productId),classificationId);
+            jo.update("update product_info set partNoNew=\""+partNoNew+"\",partNoOld=\""+partNoOld+"\" where id=\""+productId+"\"");
+            boolean isLogRight = insertProjectService.insertIntoTableBySQL("insert into product_logdetail (productlogId,productId) values (?,?)",
+                    String.valueOf(productlogId), String.valueOf(productId));
+            if (!isLogRight)
+                return 0;
+            return productId;
         }
-        return productId;
     }
 
     private int productSaveInfo(String productName, String inventoryUnit, String unitWeight,

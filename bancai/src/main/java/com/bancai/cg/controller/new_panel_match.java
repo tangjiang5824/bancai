@@ -165,6 +165,7 @@ public class new_panel_match {
                 Match_result match_result=new Match_result();
                 match_result.setDesignlistId(designlist.getId());
                 match_result.setMatchId(info.getMaterialid());
+                if (dataList.size()==0) System.out.println("datalist为空");
                 match_result.setName(dataList.get(0).get("materialName") + "");
                 match_result.setMadeBy(4);
                 match_result.setIsCompleteMatch(0);
