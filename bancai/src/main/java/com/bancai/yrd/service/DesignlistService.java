@@ -359,21 +359,57 @@ public class DesignlistService extends BaseService{
         }
         return b;
     }
-    private int createRequisitionOrderBackId(String userId,String operator,String projectId){
+
+    /*
+     * 创建领料单
+     * Auhor :cg
+     * */
+    @Transactional
+    public boolean createRequisitionOrder(String workOrderDetailIdString, String userId, String operator){
+        //requisition_order
+        //requisition_order_log
+        //fori:requisition_order_detail,requisition_order_logdetail
+        String sql_query = "select id,type,storeId,productId,projectId,buildingId,buildingpositionId,isCompleteMatch,sum(singleNum) as count from " +
+                "requisition_create_preview_work_order_match_store where workOrderDetailId in ("+workOrderDetailIdString
+                +") group by workOrderDetailId,type,storeId,isCompleteMatch";
+        DataList insertList = queryService.query(sql_query);
+        String projectId = insertList.get(0).get("projectId").toString();
+        int requisitionOrderId = createRequisitionOrderBackId(userId,operator,projectId);
+        int requisitionOrderLogId = requisitionOrderAddLogBackId("1",String.valueOf(requisitionOrderId),userId,operator);
+        String sql_updateStatus = "update work_order_detail set status=1 where id=\"";
+        boolean b = true;
+        for (DataRow dataRow : insertList) {
+            String workOrderDetailId = dataRow.get("id").toString();
+            String type = dataRow.get("type").toString();
+            String storeId = dataRow.get("storeId").toString();
+            String productId = dataRow.get("productId").toString();
+            String count = dataRow.get("count").toString();
+            String buildingId = dataRow.get("buildingId").toString();
+            String buildingpositionId = dataRow.get("buildingpositionId").toString();
+            String isCompleteMatch = dataRow.get("isCompleteMatch").toString();
+            int requisitionOrderDetailId = createRequisitionOrderDetailBackId(String.valueOf(requisitionOrderId),workOrderDetailId,
+                    type,storeId,productId,count,buildingId,buildingpositionId,isCompleteMatch);
+            jo.update(sql_updateStatus+workOrderDetailId+"\"");
+            b = b&requisitionOrderAddLogDetail(String.valueOf(requisitionOrderLogId), String.valueOf(requisitionOrderDetailId), count);
+        }
+        return b;
+    }
+
+    public  int createRequisitionOrderBackId(String userId,String operator,String projectId){
         return insertProjectService.insertDataToTable("insert into requisition_order (userId,operator,time,projectId,status) values (?,?,?,?,?)",
                 userId,operator,analyzeNameService.getTime(),projectId,"0");
     }
-    private int createRequisitionOrderDetailBackId(String requisitionOrderId,String workOrderDetailId,String type, String storeId,
+    public int createRequisitionOrderDetailBackId(String requisitionOrderId,String workOrderDetailId,String type, String storeId,
                                                    String productId,String count,String buildingId,String buildingpositionId,String isCompleteMatch){
         return insertProjectService.insertDataToTable("insert into requisition_order_detail (requisitionOrderId,workOrderDetailId," +
                         "type,storeId,productId,countRec,countAll,buildingId,buildingpositionId,isCompleteMatch) values (?,?,?,?,?,?,?,?,?,?)",
                 requisitionOrderId, workOrderDetailId, type, storeId, productId, count, count, buildingId, buildingpositionId,isCompleteMatch);
     }
-    private int requisitionOrderAddLogBackId(String type, String requisitionOrderId, String userId, String operator){
+    public int requisitionOrderAddLogBackId(String type, String requisitionOrderId, String userId, String operator){
         return insertProjectService.insertDataToTable("insert into requisition_order_log (type,requisitionOrderId,userId,time,operator) values(?,?,?,?,?)",
                 type,requisitionOrderId,userId,analyzeNameService.getTime(),operator);
     }
-    private boolean requisitionOrderAddLogDetail(String requisitionOrderLogId,String requisitionOrderDetailId,String count){
+    public boolean requisitionOrderAddLogDetail(String requisitionOrderLogId,String requisitionOrderDetailId,String count){
         return insertProjectService.insertIntoTableBySQL("insert into requisition_order_logdetail (requisitionOrderLogId,requisitionOrderDetailId,count) values (?,?,?)",
                 requisitionOrderLogId,requisitionOrderDetailId,count);
     }
