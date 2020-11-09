@@ -160,7 +160,7 @@ width : 380,
 						var sc = Ext.getCmp("pickingcreate_Grid").getSelectionModel().getSelection()[0];
 
 						// var sc = Ext.getCmp("pro_picking_MaterialGrid").getSelectionModel().getSelection()[0];
-						sc.set('materialName',materialName);
+						sc.set('name',materialName);
 						sc.set('count',count);
 						sc.set('countStore',countStore);
 						sc.set('warehouseName',warehouseName);
