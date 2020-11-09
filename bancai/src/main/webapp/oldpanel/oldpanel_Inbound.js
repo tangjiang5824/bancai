@@ -651,7 +651,8 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                     dataIndex : 'warehouseName',
                     text : '仓库名称',
                     flex :1,
-                    editor:storePosition,renderer:function(value, cellmeta, record){
+                    editor:storePosition,
+                    renderer:function(value, cellmeta, record){
                         //   console.log(storeNameList.find('warehouseName','105'));
                         //   console.log(storeNameList.find('id','1'));
                         var index = storeNameList.find(storePosition.valueField,value);
