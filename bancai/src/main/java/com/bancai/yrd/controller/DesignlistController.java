@@ -471,7 +471,29 @@ public class DesignlistController {
         }
         return queryService.queryDataPage(start, limit, c, "requisition_order_union_view");
     }
-
+    /*
+     *原材料领料界面查询领料单
+     * */
+    @RequestMapping("/order/queryOverAndRequisitionOrder.do")
+    public WebResponse queryOverAndRequisitionOrder(String projectId, String operator,String requisitionOrderId, String timeStart, String timeEnd,Integer start,Integer limit){
+        mysqlcondition c=new mysqlcondition();
+        if (null!=projectId&&projectId.length() != 0) {
+            c.and(new mysqlcondition("projectId", "=", projectId));
+        }
+        if (null!=requisitionOrderId&&requisitionOrderId.length() != 0) {
+            c.and(new mysqlcondition("requisitionOrderId", "=", requisitionOrderId));
+        }
+        if (null!=operator&&operator.length() != 0) {
+            c.and(new mysqlcondition("operator", "=", operator));
+        }
+        if (null!=timeStart&&timeStart.length() != 0) {
+            c.and(new mysqlcondition("time", ">=", timeStart));
+        }
+        if (null!=timeEnd&&timeEnd.length() != 0) {
+            c.and(new mysqlcondition("time", "<=", timeEnd));
+        }
+        return queryService.queryDataPage(start, limit, c, "requisition_order_union_view");
+    }
     /*
      * 查询超领单
      * */
@@ -555,10 +577,17 @@ public class DesignlistController {
             response.setMsg("未获取到领料单号");
             return response;
         }
+//        if (null!=type&&type.length() != 0) {
+//            System.out.println(type);
+//            if((!type.equals("4"))||(origin.equals("1"))) c.and(new mysqlcondition("type", "=", type));
+//            else tableName = "over_requisition_order_detail_view";
+//        }
         if (null!=type&&type.length() != 0) {
-            System.out.println(type);
-            if((!type.equals("4"))||(origin.equals("1"))) c.and(new mysqlcondition("type", "=", type));
-            else tableName = "over_requisition_order_detail_view";
+            c.and(new mysqlcondition("type", "=", type));
+        }
+        if (null!=origin&&origin.length() != 0) {
+            if(origin.equals("2"))
+                tableName = "over_requisition_order_detail_view";
         }
         if (null!=warehouseName&&warehouseName.length() != 0) {
             c.and(new mysqlcondition("warehouseName", "=", warehouseName));

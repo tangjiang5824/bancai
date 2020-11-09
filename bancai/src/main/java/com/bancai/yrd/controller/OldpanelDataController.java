@@ -305,6 +305,29 @@ public class OldpanelDataController {
         response.setSuccess(true);
         return response;
     }
+
+    /*
+     * 旧板基础信息上传excel文件
+     * */
+
+    //produces = {"text/html;charset=UTF-8"}
+    @RequestMapping(value = "/oldpanel/uploadExcelBasicInfo.do")
+    public WebResponse uploadOldpanelBasicInfo(MultipartFile uploadFile) {
+        WebResponse response = new WebResponse();
+        try {
+            UploadDataResult result = allExcelService.uploadOldpanelExcelBasicInfo(uploadFile.getInputStream());
+            response.put("dataList",result.dataList);
+            response.put("listSize", result.dataList.size());
+            response.setSuccess(true);
+        } catch (IOException e) {
+            e.printStackTrace();
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误
+            response.setMsg(e.getMessage());
+        }
+        return response;
+    }
+
 //    public String oldpanelUploadData(MultipartFile uploadFile, HttpSession session) {
 //        WebResponse response = new WebResponse();
 //        String tableName = "oldpanel";
