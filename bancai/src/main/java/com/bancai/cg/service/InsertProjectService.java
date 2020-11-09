@@ -179,7 +179,10 @@ public class InsertProjectService extends BaseService {
     //通用接口 重载 全查 只用传入tablename
     @Transactional
     public DataList findallbytableName(String tablename,String start,String limit){
-        String sql = "select * from "+tablename+" limit "+start+","+limit;
+        String sql=null;
+        if(limit.equals("-1")){
+            sql= "select * from "+tablename;
+        }else sql = "select * from "+tablename+" limit "+start+","+limit;
         DataList typelist = queryService.query(sql);
         return typelist;
     }

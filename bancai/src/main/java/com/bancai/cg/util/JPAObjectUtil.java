@@ -7,6 +7,7 @@ import org.hibernate.Session;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class JPAObjectUtil {
@@ -329,5 +330,16 @@ public class JPAObjectUtil {
     }
     public static String rvZeroAndDot(Double i){
         return rvZeroAndDot(i+"");
+    }
+
+    //申请单据号
+    public static String getListNo(int pre,int id){
+        int no=1000;
+        no+=id;
+        String n=no+"";
+        String s=n.substring(n.length()-3);
+        SimpleDateFormat sf=new SimpleDateFormat("yyyyMMddHHmm");
+        Date date=new Date();
+        return pre+sf.format(date)+s;
     }
 }

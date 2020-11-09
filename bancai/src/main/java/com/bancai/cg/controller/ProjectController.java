@@ -10,6 +10,7 @@ import com.bancai.cg.entity.*;
 import com.bancai.cg.service.InsertProjectService;
 import com.bancai.cg.util.newPanelMatch;
 import com.bancai.commonMethod.AnalyzeNameService;
+import com.bancai.commonMethod.NewCondition;
 import com.bancai.commonMethod.QueryAllService;
 import com.bancai.db.mysqlcondition;
 import com.bancai.domain.DataList;
@@ -395,11 +396,9 @@ public class ProjectController {
      * @throws IOException
      */
     @RequestMapping(value = "/material/findAllBytableName.do")
-    public void findAllbyTableName(HttpServletResponse response, String tableName, String start, String limit) throws IOException, JSONException {
+    public void findAllbyTableName(HttpServletResponse response, String tableName) throws IOException, JSONException {
         //thisPage，thisStart，thislimit用作分页，代码可以复用
-        if (start == null) start = "0";
-        if (limit == null) limit = "50";
-        DataList table = insertProjectService.findallbytableName(tableName, start, limit);
+        DataList table = insertProjectService.findallbytableName(tableName,"0","-1");
         //写回前端
         JSONObject object = new JSONObject();
         JSONArray StoreArray = new JSONArray(table);
@@ -410,6 +409,22 @@ public class ProjectController {
         response.getWriter().flush();
         response.getWriter().close();
     }
+
+    /**
+     * 返回任意表的所有字段
+     *
+     *@throws IOException
+     */
+    @RequestMapping(value = "/material/findAllBytableNameWithLimit.do")
+    public WebResponse findAllbyTableNameWithLimit( String tableName,Integer start,Integer limit) throws IOException, JSONException {
+        //thisPage，thisStart，thislimit用作分页，代码可以复用
+      //  DataList table = insertProjectService.findallbytableName(tableName,"0","-1");
+        WebResponse  response=queryAllService.queryPage(start,limit,new NewCondition(),tableName);
+        return response;
+
+    }
+
+
 
     /**
      * 返回任意表的所有字段,需要传递一个字段和值作为查询条件
