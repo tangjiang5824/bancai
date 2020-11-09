@@ -858,7 +858,7 @@ public class DesignlistController {
      * 查询退料单
      * */
     @RequestMapping("/backStore/queryReturnOrder.do")
-    public WebResponse queryReturnOrder(String type,String projectId, String buildingId,String operator,String returnOrderId, String timeStart, String timeEnd,Integer start,Integer limit){
+    public WebResponse queryReturnOrder(String type,String projectId, String buildingId,String operator,String returnOrderNo, String timeStart, String timeEnd,Integer start,Integer limit){
         mysqlcondition c=new mysqlcondition();
         if (null!=type&&type.length() != 0) {
             c.and(new mysqlcondition("type", "=", type));
@@ -875,8 +875,8 @@ public class DesignlistController {
         if (null!=buildingId&&buildingId.length() != 0) {
             c.and(new mysqlcondition("buildingId", "=", projectId));
         }
-        if (null!=returnOrderId&&returnOrderId.length() != 0) {
-            c.and(new mysqlcondition("returnOrderId", "=", returnOrderId));
+        if (null!=returnOrderNo&&returnOrderNo.length() != 0) {
+            c.and(new mysqlcondition("returnOrderId", "=", returnOrderNo));
         }
         if (null!=operator&&operator.length() != 0) {
             c.and(new mysqlcondition("operator", "=", operator));

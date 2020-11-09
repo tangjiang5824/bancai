@@ -800,8 +800,11 @@ public class DesignlistService extends BaseService{
     }
 
     private int addReturnOrderBackId(String type,String projectId,String buildingId,String description,String operator,String userId){
-        return insertProjectService.insertDataToTable("insert into return_order (type,projectId,buildingId,description,operator,userId,status,time) values (?,?,?,?,?,?,?,?)"
+        int id = insertProjectService.insertDataToTable("insert into return_order (type,projectId,buildingId,description,operator,userId,status,time) values (?,?,?,?,?,?,?,?)"
                 , type,projectId,buildingId,description,operator,userId,"0",analyzeNameService.getTime());
+        String returnOrderNo = JPAObjectUtil.getListNo(700,id);
+        jo.update("update return_order set returnOrderNo=\""+returnOrderNo+"\" where id=\""+id+"\"");
+        return id;
     }
     private int addReturnOrderLogBackId(String orderId,String userId,String operator,String type){
         return insertProjectService.insertDataToTable("insert into return_order_log (returnOrderId,userId,operator,type,time) values (?,?,?,?,?)"
@@ -941,8 +944,11 @@ public class DesignlistService extends BaseService{
         return true;
     }
     private int addOverReqBackId(String projectId,String buildingId,String buildingpositionId,String description,String operator,String userId){
-        return insertProjectService.insertDataToTable("insert into over_requisition_order (projectId,buildingId,buildingpositionId,description,operator,userId,status,time) values (?,?,?,?,?,?,?,?)"
+        int id = insertProjectService.insertDataToTable("insert into over_requisition_order (projectId,buildingId,buildingpositionId,description,operator,userId,status,time) values (?,?,?,?,?,?,?,?)"
                 , projectId,buildingId,buildingpositionId,description,operator,userId,"0",analyzeNameService.getTime());
+        String requisitionOrderNo = JPAObjectUtil.getListNo(600,id);
+        jo.update("update over_requisition_order set requisitionOrderNo=\""+requisitionOrderNo+"\" where id=\""+id+"\"");
+        return id;
     }
     private int addOverReqOrderDetailBackId(String orderId,String storeId,String count,String buildingId,String buildingpositionId){
         return insertProjectService.insertDataToTable("insert into over_requisition_order_detail (overReqOrderId,storeId,countAll,countRec,type,buildingId,buildingpositionId) values (?,?,?,?,?,?,?)",
