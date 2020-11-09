@@ -146,6 +146,7 @@ public class new_panel_match {
                     inf.setSpecification(specification);
                     materialinfodao.save(inf);
                     inf.setPartNo(JPAObjectUtil.getPartNo(materialPrefix,typeId,inf.getMaterialid()));
+                    materialinfodao.save(inf);
                     info=inf;
 
                 }else
