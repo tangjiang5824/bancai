@@ -119,6 +119,7 @@ public class OldpanelDataController {
             JSONObject jsonTemp = jsonArray.getJSONObject(i);
             String id = jsonTemp.get("id")+"";
             String oldpanelName = (jsonTemp.get("oldpanelName") + "").trim().toUpperCase();
+            String partNo = (jsonTemp.get("partNo") + "").trim().toUpperCase();
             String inventoryUnit = (jsonTemp.get("inventoryUnit") + "").trim().toUpperCase();
             String unitWeight = (jsonTemp.get("unitWeight") + "").trim().toUpperCase();
             String unitArea = (jsonTemp.get("unitArea") + "").trim().toUpperCase();
@@ -128,6 +129,7 @@ public class OldpanelDataController {
             map.put("unitWeight",unitWeight);
             map.put("unitArea",unitArea);
             map.put("remark",remark);
+            map.put("partNo",remark);
             if(analyzeNameService.isInfoExist("oldpanel",oldpanelName)!=0)
                 errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"已经存在这种旧板",map);
             else if(analyzeNameService.isStringNotNonnegativeNumber(unitWeight))
@@ -144,7 +146,7 @@ public class OldpanelDataController {
                         errorList = analyzeNameService.addErrorRowToErrorList(errorList, id, "未找到这种旧板格式",map);
                     else
                         insertList = oldpanelDataService.oldpanelAddInsertRowToInfoList(insertList, String.valueOf(formatId),a[1],a[2], oldpanelName, inventoryUnit,
-                                unitWeight, unitArea, remark,a[3], a[4], a[5], a[6], a[7], a[8], a[9], a[10], a[11]);
+                                unitWeight, unitArea, remark,a[3], a[4], a[5], a[6], a[7], a[8], a[9], a[10], a[11],partNo);
                 }
             }
         }
