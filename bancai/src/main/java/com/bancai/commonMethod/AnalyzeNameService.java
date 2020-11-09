@@ -222,7 +222,7 @@ public class AnalyzeNameService extends BaseService {
                         if(m.contains("A")){
                             m = m.substring(0,m.length()-1);
                             mAngle = "1";
-                        } else if(p.contains("B")){
+                        } else if(n.contains("B")){
                             m = m.substring(0,m.length()-1);
                             mAngle = "2";
                         } else
@@ -243,7 +243,7 @@ public class AnalyzeNameService extends BaseService {
                         if(m.contains("A")){
                             m = m.substring(0,m.length()-1);
                             mAngle = "1";
-                        } else if(p.contains("B")){
+                        } else if(m.contains("B")){
                             m = m.substring(0,m.length()-1);
                             mAngle = "2";
                         } else

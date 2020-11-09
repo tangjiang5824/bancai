@@ -450,7 +450,7 @@ public class PanelMatchService extends BaseService{
                         value = Integer.parseInt(productInfo.get("mValue").toString());
                         low = Integer.parseInt(rulesRow.get("om1").toString());
                         high = Integer.parseInt(rulesRow.get("om2").toString());
-                        queryOldpanelFitRuleBuilder.append(" AND (oldpanel_info.mValue BETWEEN ").append(value + low).append("AND ").append(value + high).append(")");
+                        queryOldpanelFitRuleBuilder.append(" AND (oldpanel_info.mValue BETWEEN ").append(value + low).append(" AND ").append(value + high).append(")");
                         }
                     break;
                 case '3':
@@ -458,7 +458,7 @@ public class PanelMatchService extends BaseService{
                         value = Integer.parseInt(productInfo.get("nValue").toString());
                         low = Integer.parseInt(rulesRow.get("on1").toString());
                         high = Integer.parseInt(rulesRow.get("on2").toString());
-                        queryOldpanelFitRuleBuilder.append(" AND (oldpanel_info.nValue BETWEEN ").append(value + low).append("AND ").append(value + high).append(")");
+                        queryOldpanelFitRuleBuilder.append(" AND (oldpanel_info.nValue BETWEEN ").append(value + low).append(" AND ").append(value + high).append(")");
                     }
                     break;
                 case '4':
@@ -468,13 +468,13 @@ public class PanelMatchService extends BaseService{
                         value = Integer.parseInt(productInfo.get("aValue").toString());
                         low = Integer.parseInt(rulesRow.get("oa1").toString());
                         high = Integer.parseInt(rulesRow.get("oa2").toString());
-                        queryOldpanelFitRuleBuilder.append(" AND (oldpanel_info.aValue BETWEEN ").append(value + low).append("AND ").append(value + high).append(")");
+                        queryOldpanelFitRuleBuilder.append(" AND (oldpanel_info.aValue BETWEEN ").append(value + low).append(" AND ").append(value + high).append(")");
                     }
                     if((rulesRow.get("ob1")!=null)&&(rulesRow.get("ob1").toString().length()!=0)&&(rulesRow.get("ob2")!=null)&&(rulesRow.get("ob2").toString().length()!=0)){
                         value = Integer.parseInt(productInfo.get("bValue").toString());
                         low = Integer.parseInt(rulesRow.get("ob1").toString());
                         high = Integer.parseInt(rulesRow.get("ob2").toString());
-                        queryOldpanelFitRuleBuilder.append(" AND (oldpanel_info.bValue BETWEEN ").append(value + low).append("AND ").append(value + high).append(")");
+                        queryOldpanelFitRuleBuilder.append(" AND (oldpanel_info.bValue BETWEEN ").append(value + low).append(" AND ").append(value + high).append(")");
                     }
                     break;
                 case '8':
@@ -482,7 +482,7 @@ public class PanelMatchService extends BaseService{
                         value = Integer.parseInt(productInfo.get("pValue").toString());
                         low = Integer.parseInt(rulesRow.get("op1").toString());
                         high = Integer.parseInt(rulesRow.get("op2").toString());
-                        queryOldpanelFitRuleBuilder.append(" AND (oldpanel_info.pValue BETWEEN ").append(value + low).append("AND ").append(value + high).append(")");
+                        queryOldpanelFitRuleBuilder.append(" AND (oldpanel_info.pValue BETWEEN ").append(value + low).append(" AND ").append(value + high).append(")");
                     }
                     if(rulesRow.get("opa")!=null)
                         queryOldpanelFitRuleBuilder.append(" AND pAngle=").append(rulesRow.get("opa").toString());
@@ -491,7 +491,7 @@ public class PanelMatchService extends BaseService{
                         value = Integer.parseInt(productInfo.get("mValue").toString());
                         low = Integer.parseInt(rulesRow.get("om1").toString());
                         high = Integer.parseInt(rulesRow.get("om2").toString());
-                        queryOldpanelFitRuleBuilder.append(" AND (oldpanel_info.mValue BETWEEN ").append(value + low).append("AND ").append(value + high).append(")");
+                        queryOldpanelFitRuleBuilder.append(" AND (oldpanel_info.mValue BETWEEN ").append(value + low).append(" AND ").append(value + high).append(")");
                     }
                     if(rulesRow.get("oma")!=null)
                         queryOldpanelFitRuleBuilder.append(" AND mAngle=").append(rulesRow.get("oma").toString());
@@ -499,7 +499,7 @@ public class PanelMatchService extends BaseService{
                         value = Integer.parseInt(productInfo.get("nValue").toString());
                         low = Integer.parseInt(rulesRow.get("on1").toString());
                         high = Integer.parseInt(rulesRow.get("on2").toString());
-                        queryOldpanelFitRuleBuilder.append(" AND (oldpanel_info.nValue BETWEEN ").append(value + low).append("AND ").append(value + high).append(")");
+                        queryOldpanelFitRuleBuilder.append(" AND (oldpanel_info.nValue BETWEEN ").append(value + low).append(" AND ").append(value + high).append(")");
                     }
                     if(rulesRow.get("ona")!=null)
                         queryOldpanelFitRuleBuilder.append(" AND nAngle=").append(rulesRow.get("ona").toString());
