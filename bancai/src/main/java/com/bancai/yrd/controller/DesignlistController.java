@@ -447,13 +447,13 @@ public class DesignlistController {
      * 查询领料单
      * */
     @RequestMapping("/order/queryRequisitionOrder.do")
-    public WebResponse queryRequisitionOrder(String origin,String projectId, String operator,String requisitionOrderId, String timeStart, String timeEnd,Integer start,Integer limit){
+    public WebResponse queryRequisitionOrder(String origin,String projectId, String operator,String requisitionOrderNo, String timeStart, String timeEnd,Integer start,Integer limit){
         mysqlcondition c=new mysqlcondition();
         if (null!=projectId&&projectId.length() != 0) {
             c.and(new mysqlcondition("projectId", "=", projectId));
         }
-        if (null!=requisitionOrderId&&requisitionOrderId.length() != 0) {
-            c.and(new mysqlcondition("requisitionOrderId", "=", requisitionOrderId));
+        if (null!=requisitionOrderNo&&requisitionOrderNo.length() != 0) {
+            c.and(new mysqlcondition("requisitionOrderNo", "=", requisitionOrderNo));
         }
         if (null!=operator&&operator.length() != 0) {
             c.and(new mysqlcondition("operator", "=", operator));
@@ -475,13 +475,13 @@ public class DesignlistController {
      *原材料领料界面查询领料单
      * */
     @RequestMapping("/order/queryOverAndRequisitionOrder.do")
-    public WebResponse queryOverAndRequisitionOrder(String projectId, String operator,String requisitionOrderId, String timeStart, String timeEnd,Integer start,Integer limit){
+    public WebResponse queryOverAndRequisitionOrder(String projectId, String operator,String requisitionOrderNo, String timeStart, String timeEnd,Integer start,Integer limit){
         mysqlcondition c=new mysqlcondition();
         if (null!=projectId&&projectId.length() != 0) {
             c.and(new mysqlcondition("projectId", "=", projectId));
         }
-        if (null!=requisitionOrderId&&requisitionOrderId.length() != 0) {
-            c.and(new mysqlcondition("requisitionOrderId", "=", requisitionOrderId));
+        if (null!=requisitionOrderNo&&requisitionOrderNo.length() != 0) {
+            c.and(new mysqlcondition("requisitionOrderId", "=", requisitionOrderNo));
         }
         if (null!=operator&&operator.length() != 0) {
             c.and(new mysqlcondition("operator", "=", operator));
@@ -498,13 +498,13 @@ public class DesignlistController {
      * 查询超领单
      * */
     @RequestMapping("/order/queryOverRequisitionOrder.do")
-    public WebResponse queryOverRequisitionOrder(String projectId, String operator,String requisitionOrderId, String timeStart, String timeEnd,Integer status,Integer isActive,Integer start,Integer limit){
+    public WebResponse queryOverRequisitionOrder(String projectId, String operator,String requisitionOrderNo, String timeStart, String timeEnd,Integer status,Integer isActive,Integer start,Integer limit){
         mysqlcondition c=new mysqlcondition();
         if (null!=projectId&&projectId.length() != 0) {
             c.and(new mysqlcondition("projectId", "=", projectId));
         }
-        if (null!=requisitionOrderId&&requisitionOrderId.length() != 0) {
-            c.and(new mysqlcondition("requisitionOrderId", "=", requisitionOrderId));
+        if (null!=requisitionOrderNo&&requisitionOrderNo.length() != 0) {
+            c.and(new mysqlcondition("requisitionOrderId", "=", requisitionOrderNo));
         }
         if (null!=operator&&operator.length() != 0) {
             c.and(new mysqlcondition("operator", "=", operator));

@@ -2,6 +2,7 @@ package com.bancai.yrd.service;
 
 import com.bancai.cg.controller.new_panel_match;
 import com.bancai.cg.service.InsertProjectService;
+import com.bancai.cg.util.JPAObjectUtil;
 import com.bancai.commonMethod.AnalyzeNameService;
 import com.bancai.commonMethod.PanelMatchService;
 import com.bancai.commonMethod.QueryAllService;
@@ -395,9 +396,12 @@ public class DesignlistService extends BaseService{
         return b;
     }
 
-    public  int createRequisitionOrderBackId(String userId,String operator,String projectId){
-        return insertProjectService.insertDataToTable("insert into requisition_order (userId,operator,time,projectId,status) values (?,?,?,?,?)",
+    public int createRequisitionOrderBackId(String userId,String operator,String projectId){
+        int id = insertProjectService.insertDataToTable("insert into requisition_order (userId,operator,time,projectId,status) values (?,?,?,?,?)",
                 userId,operator,analyzeNameService.getTime(),projectId,"0");
+        String requisitionOrderNo = JPAObjectUtil.getListNo(500,id);
+        jo.update("update requisition_order set requisitionOrderNo=\""+requisitionOrderNo+"\" where id=\""+id+"\"");
+        return id;
     }
     public int createRequisitionOrderDetailBackId(String requisitionOrderId,String workOrderDetailId,String type, String storeId,
                                                    String productId,String count,String buildingId,String buildingpositionId,String isCompleteMatch){
