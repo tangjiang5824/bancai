@@ -22,6 +22,7 @@ Ext.define('preprocess.preprocess_Inbound', {
         var record_start = 0;
         var projectId = "-1";
         var buildingId = "-1";
+        Ext.Ajax.timeout=9000000;//设置超时时间
         Ext.define('Soims.model.application.ApplicationState', {
             statics: { // 关键
                 0: { value: '0', name: '墙板' },
@@ -407,6 +408,12 @@ Ext.define('preprocess.preprocess_Inbound', {
                     flex :1,
                     width:"80",
                 },
+                // {
+                //     text: '库存单位',
+                //     dataIndex: 'inventoryUnit',
+                //     flex :1,
+                //     width:"80",
+                // },
                 {
                     text: '入库数量',
                     dataIndex: 'count',
@@ -517,16 +524,16 @@ Ext.define('preprocess.preprocess_Inbound', {
                         });
                         console.log(s);
                         //显示匹配进度
-                        Ext.MessageBox.show(
-                            {
-                                title:'请稍候',
-                                msg:'数据上传中，请耐心等待...',
-                                progressText:'',    //进度条文本
-                                width:300,
-                                progress:true,
-                                closable:false
-                            }
-                        );
+                        // Ext.MessageBox.show(
+                        //     {
+                        //         title:'请稍候',
+                        //         msg:'数据上传中，请耐心等待...',
+                        //         progressText:'',    //进度条文本
+                        //         width:300,
+                        //         progress:true,
+                        //         closable:false
+                        //     }
+                        // );
 
                         //获取数据
                         //获得当前操作时间
@@ -534,6 +541,7 @@ Ext.define('preprocess.preprocess_Inbound', {
                         Ext.Ajax.request({
                             url : 'preprocess/addData.do',  //入库
                             method:'POST',
+                            timeout:90000000,//超时时间
                             //submitEmptyText : false,
                             params : {
                                 s : "[" + s + "]",
@@ -545,7 +553,7 @@ Ext.define('preprocess.preprocess_Inbound', {
                                 console.log("12312312312321",response.responseText);
 
                                 //关闭进度条
-                                Ext.MessageBox.hide();
+                                //Ext.MessageBox.hide();
 
                                 var res = response.responseText;
                                 var jsonobj = JSON.parse(res);//将json字符串转换为对象
@@ -585,7 +593,7 @@ Ext.define('preprocess.preprocess_Inbound', {
                             },
                             failure : function(response) {
                                 //关闭进度条
-                                Ext.MessageBox.hide();
+                                //Ext.MessageBox.hide();
 
                                 //var message =Ext.decode(response.responseText).showmessage;
                                 Ext.MessageBox.alert("提示","入库失败" );
@@ -626,15 +634,15 @@ Ext.define('preprocess.preprocess_Inbound', {
                     },
                     render:{}
                 },
-                {
-                    dataIndex : 'partNo',
-                    text : '产品品号',
-                    flex :1,
-                    editor : {
-                        xtype : 'textfield',
-                        allowBlank : false,
-                    }
-                    },
+                // {
+                //     dataIndex : 'partNo',
+                //     text : '产品品号',
+                //     flex :1,
+                //     editor : {
+                //         xtype : 'textfield',
+                //         allowBlank : false,
+                //     }
+                //     },
                 {
                     dataIndex : 'warehouseName',
                     text : '仓库名称',
@@ -652,6 +660,7 @@ Ext.define('preprocess.preprocess_Inbound', {
                     },
                     render:{}
                 },
+                //{dataIndex : 'inventoryUnit', text : '库存单位', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'count', text : '入库数量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'remark', text : '备注', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
 
