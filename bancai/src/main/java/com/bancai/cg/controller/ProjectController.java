@@ -256,9 +256,50 @@ public class ProjectController {
 
     //返回有查询条件的项目信息
     @RequestMapping("/project/findprojectBycondition.do")
-    public WebResponse findProjectbyCondition(Integer start, Integer limit, String projectName, String startTime, String endTime, String proStartTime, String proEndTime, String planLeader, String produceLeader, String purchaseLeader, String financeLeader, String storeLeader) {
+    public WebResponse findProjectbyCondition(Integer start, Integer limit, String projectName, String startTime, String endTime, String proStartTime, String proEndTime, String planLeader, String produceLeader, String purchaseLeader, String financeLeader, String storeLeader, String statusId) {
         mysqlcondition c = new mysqlcondition();
         String tableName = "project_view";
+        if (null != projectName && projectName.length() != 0) {
+            c.and(new mysqlcondition("projectName", "=", projectName));
+        }
+        if (null != startTime && startTime.length() != 0) {
+            c.and(new mysqlcondition("startTime", ">=", startTime));
+        }
+        if (null != endTime && endTime.length() != 0) {
+            c.and(new mysqlcondition("endTime", "<=", endTime));
+        }
+        if (null != proStartTime && proStartTime.length() != 0) {
+            c.and(new mysqlcondition("proStartTime", ">=", proStartTime));
+        }
+        if (null != proEndTime && proEndTime.length() != 0) {
+            c.and(new mysqlcondition("proEndTime", "<=", proEndTime));
+        }
+        if (null != planLeader && planLeader.length() != 0) {
+            c.and(new mysqlcondition("planLeaderId", "=", planLeader));
+        }
+        if (null != produceLeader && produceLeader.length() != 0) {
+            c.and(new mysqlcondition("produceLeaderId", "=", produceLeader));
+        }
+        if (null != purchaseLeader && purchaseLeader.length() != 0) {
+            c.and(new mysqlcondition("purchaseLeaderId", "=", purchaseLeader));
+        }
+        if (null != financeLeader && financeLeader.length() != 0) {
+            c.and(new mysqlcondition("financeLeaderId", "=", financeLeader));
+        }
+        if (null != storeLeader && storeLeader.length() != 0) {
+            c.and(new mysqlcondition("storeLeaderId", "=", storeLeader));
+        }
+        if (null != statusId && statusId.length() != 0) {
+            c.and(new mysqlcondition("statusId", "=", statusId));
+        }
+        return queryAllService.queryDataPage(start, limit, c, tableName);
+    }
+
+    @RequestMapping("/project/findValidProjectByCondition.do")
+    public WebResponse findValidProjectbyCondition(Integer start, Integer limit, String projectName, String startTime, String endTime, String proStartTime, String proEndTime, String planLeader, String produceLeader, String purchaseLeader, String financeLeader, String storeLeader) {
+        mysqlcondition c = new mysqlcondition();
+        String tableName = "project_view";
+        c.and(new mysqlcondition("statusId", "<>", "9"));
         if (null != projectName && projectName.length() != 0) {
             c.and(new mysqlcondition("projectName", "=", projectName));
         }

@@ -91,67 +91,83 @@ public class JPAObjectUtil {
                 arrayList.add(count);
                 list.add(arrayList);
             }else if(classification_name.equals("两转转角")||classification_name.equals("三转转角")||classification_name.equals("企口转角")){
-                if(rule.getOrientation()!=null&&rule.getOrientation().trim().length()!=0){
-                    material.setOrientation(rule.getOrientation());
-                    material=getValue(rule,material,productInfo,"a");
-                    material=getValue(rule,material,productInfo,"b");
-                    if(rule.getOrientation().equals("m")){
-                        int angle_value=0;
-                        if(productInfo.getmAngle()!=null){
-                            if(productInfo.getmAngle()==1) angle_value=60;
-                            else if(productInfo.getmAngle()==2) angle_value=10;
-                        }
-                        if(rule.getmValue()!=null&&rule.getmValue().trim().length()!=0){
-                            String match=rule.getmValue();
-                            String match_rs=match;
-                            if(productInfo.getmValue()!=null) match_rs = match_rs.replace("m", productInfo.getmValue()+"");
-                            if(productInfo.getaValue()!=null) match_rs = match_rs.replace("a", productInfo.getaValue()+"");
-                            material.setmValue(Integer.parseInt(jse.eval(match_rs).toString())+angle_value);
-                        }else if(rule.getmNum()!=null){
-                            material.setmValue(rule.getmNum()+angle_value);
-                        }
-                    }else if(rule.getOrientation().equals("n")){
-                        int angle_value=0;
-                        if(productInfo.getnAngle()!=null){
-                            if(productInfo.getnAngle()==1) angle_value=60;
-                            else if(productInfo.getnAngle()==2) angle_value=10;
-                        }
-                        if(rule.getnValue()!=null&&rule.getnValue().trim().length()!=0){
-                            String match=rule.getnValue();
-                            String match_rs=match;
-                            if(productInfo.getnValue()!=null) match_rs = match_rs.replace("n", productInfo.getnValue()+"");
-                            if(productInfo.getaValue()!=null) match_rs = match_rs.replace("a", productInfo.getaValue()+"");
-                            material.setnValue(Integer.parseInt(jse.eval(match_rs).toString())+angle_value);
-                        }else if(rule.getnNum()!=null){
-                            material.setnValue(rule.getnNum()+angle_value);
-                        }
-                    }else if(rule.getOrientation().equals("p")){
-                        int angle_value=0;
-                        if(productInfo.getpAngle()!=null){
-                            if(productInfo.getpAngle()==1) angle_value=60;
-                            else if(productInfo.getpAngle()==2) angle_value=10;
-                        }
-                        if(rule.getpValue()!=null&&rule.getpValue().trim().length()!=0){
-                            String match=rule.getpValue();
-                            String match_rs=match;
-                            if(productInfo.getpValue()!=null) match_rs = match_rs.replace("p", productInfo.getpValue()+"");
-                            if(productInfo.getaValue()!=null) match_rs = match_rs.replace("a", productInfo.getaValue()+"");
-                            material.setpValue(Integer.parseInt(jse.eval(match_rs).toString())+angle_value);
-                        }else if(rule.getpNum()!=null){
-                            material.setpValue(rule.getpNum()+angle_value);
-                        }
-                    }
-
-                }else {
+//                if(rule.getOrientation()!=null&&rule.getOrientation().trim().length()!=0){
+//                    material.setOrientation(rule.getOrientation());
+//                    material=getValue(rule,material,productInfo,"a");
+//                    material=getValue(rule,material,productInfo,"b");
+//                    if(rule.getOrientation().equals("m")){
+//                        int angle_value=0;
+//                        if(productInfo.getmAngle()!=null){
+//                            if(productInfo.getmAngle()==1) angle_value=60;
+//                            else if(productInfo.getmAngle()==2) angle_value=10;
+//                        }
+//                        if(rule.getmValue()!=null&&rule.getmValue().trim().length()!=0){
+//                            String match=rule.getmValue();
+//                            String match_rs=match;
+//                            if(productInfo.getmValue()!=null) match_rs = match_rs.replace("m", productInfo.getmValue()+"");
+//                            if(productInfo.getaValue()!=null) match_rs = match_rs.replace("a", productInfo.getaValue()+"");
+//                            material.setmValue(Integer.parseInt(jse.eval(match_rs).toString())+angle_value);
+//                        }else if(rule.getmNum()!=null){
+//                            material.setmValue(rule.getmNum()+angle_value);
+//                        }
+//                    }else if(rule.getOrientation().equals("n")){
+//                        int angle_value=0;
+//                        if(productInfo.getnAngle()!=null){
+//                            if(productInfo.getnAngle()==1) angle_value=60;
+//                            else if(productInfo.getnAngle()==2) angle_value=10;
+//                        }
+//                        if(rule.getnValue()!=null&&rule.getnValue().trim().length()!=0){
+//                            String match=rule.getnValue();
+//                            String match_rs=match;
+//                            if(productInfo.getnValue()!=null) match_rs = match_rs.replace("n", productInfo.getnValue()+"");
+//                            if(productInfo.getaValue()!=null) match_rs = match_rs.replace("a", productInfo.getaValue()+"");
+//                            material.setnValue(Integer.parseInt(jse.eval(match_rs).toString())+angle_value);
+//                        }else if(rule.getnNum()!=null){
+//                            material.setnValue(rule.getnNum()+angle_value);
+//                        }
+//                    }else if(rule.getOrientation().equals("p")){
+//                        int angle_value=0;
+//                        if(productInfo.getpAngle()!=null){
+//                            if(productInfo.getpAngle()==1) angle_value=60;
+//                            else if(productInfo.getpAngle()==2) angle_value=10;
+//                        }
+//                        if(rule.getpValue()!=null&&rule.getpValue().trim().length()!=0){
+//                            String match=rule.getpValue();
+//                            String match_rs=match;
+//                            if(productInfo.getpValue()!=null) match_rs = match_rs.replace("p", productInfo.getpValue()+"");
+//                            if(productInfo.getaValue()!=null) match_rs = match_rs.replace("a", productInfo.getaValue()+"");
+//                            material.setpValue(Integer.parseInt(jse.eval(match_rs).toString())+angle_value);
+//                        }else if(rule.getpNum()!=null){
+//                            material.setpValue(rule.getpNum()+angle_value);
+//                        }
+//                    }
+//
+//                }else {
                     //含方向产品中的普通原材料
                     material=getValue(rule,material,productInfo,"m");
                     //计算原材料n的值，公式中含有m或n
                     material=getValue(rule,material,productInfo,"n");
+                    material=getValue(rule,material,productInfo,"p");
                     //计算原材料a的值，公式中含有a
                     material=getValue(rule,material,productInfo,"a");
                     //计算原材料b的值，公式中含有b
                     material=getValue(rule,material,productInfo,"b");
+
+                int angle_value=0;
+                if(productInfo.getnAngle()!=null){
+                    if(productInfo.getnAngle()==1) angle_value=60;
+                    else if(productInfo.getnAngle()==2) angle_value=10;
                 }
+                if(productInfo.getmAngle()!=null){
+                    if(productInfo.getmAngle()==1) angle_value+=60;
+                    else if(productInfo.getmAngle()==2) angle_value+=10;
+                }
+                if(productInfo.getpAngle()!=null){
+                    if(productInfo.getpAngle()==1) angle_value+=60;
+                    else if(productInfo.getpAngle()==2) angle_value+=10;
+                }
+                material.setmValue(material.getmValue()+angle_value);
+//                            }
                 //数量 分析匹配规则后暂定只和a，b有关
                 if(rule.getCountValue()!=null&&rule.getCountValue().trim().length()!=0){
                     String match=rule.getCountValue();
@@ -167,6 +183,16 @@ public class JPAObjectUtil {
                 arrayList.add(count);
                 list.add(arrayList);
             }else {
+                material=getValue(rule,material,productInfo,"m");
+                material=getValue(rule,material,productInfo,"n");
+                material=getValue(rule,material,productInfo,"p");
+                material=getValue(rule,material,productInfo,"a");
+                material=getValue(rule,material,productInfo,"b");
+                count=(int)(double) rule.getCount();
+                arrayList.add(material);
+                arrayList.add(count);
+                list.add(arrayList);
+
 
             }
             //a,b
@@ -187,6 +213,10 @@ public class JPAObjectUtil {
                String match=rule.getmValue();
                String match_rs=match;
                if(productInfo.getmValue()!=null) match_rs = match_rs.replace("m", productInfo.getmValue()+"");
+               if(productInfo.getnValue()!=null) match_rs = match_rs.replace("n", productInfo.getnValue()+"");
+               if(productInfo.getpValue()!=null) match_rs = match_rs.replace("p", productInfo.getpValue()+"");
+               if(productInfo.getaValue()!=null) match_rs = match_rs.replace("a", productInfo.getaValue()+"");
+               if(productInfo.getbValue()!=null) match_rs = match_rs.replace("b", productInfo.getbValue()+"");
                //   if(productInfo.getnValue()!=null) match_rs = match.replace("n", productInfo.getnValue()+"");
                material.setmValue(Integer.parseInt(jse.eval(match_rs).toString()));
            }else if(rule.getmNum()!=null){
@@ -201,6 +231,16 @@ public class JPAObjectUtil {
                material.setnValue(Integer.parseInt(jse.eval(match_rs).toString()));
            }else if(rule.getnNum()!=null){
                material.setnValue(rule.getnNum());
+           }
+       }else if(type.equals("p")){
+           if(rule.getpValue()!=null&&rule.getpValue().trim().length()!=0){
+               String match=rule.getpValue();
+               String match_rs=match;
+               //    if(productInfo.getmValue()!=null) match_rs = match.replace("m", productInfo.getmValue()+"");
+               if(productInfo.getpValue()!=null) match_rs = match_rs.replace("p", productInfo.getpValue()+"");
+               material.setpValue(Integer.parseInt(jse.eval(match_rs).toString()));
+           }else if(rule.getpNum()!=null){
+               material.setpValue(rule.getpNum());
            }
        }else if(type.equals("a")){
            if(rule.getaValue()!=null&&rule.getaValue().trim().length()!=0){
