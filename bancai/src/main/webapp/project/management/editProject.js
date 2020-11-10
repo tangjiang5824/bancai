@@ -327,7 +327,7 @@ Ext.define('project.management.editProject',{
             pageSize: itemsPerPage, // items per page
             proxy:{
                 // url : "material/findAllBytableName.do?tableName="+tableName,
-                url:"project/findprojectBycondition.do",
+                url:"project/findValidProjectByCondition.do",
                 type: 'ajax',
                 reader:{
                     type : 'json',
