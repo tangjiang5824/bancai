@@ -327,7 +327,27 @@ public class OldpanelDataController {
         }
         return response;
     }
+    /*
+     * 产品基础信息上传excel文件
+     * */
 
+    //produces = {"text/html;charset=UTF-8"}
+    @RequestMapping(value = "/product/uploadExcelBasicInfo.do")
+    public WebResponse uploadProductBasicInfo(MultipartFile uploadFile) {
+        WebResponse response = new WebResponse();
+        try {
+            UploadDataResult result = allExcelService.uploadProductExcelBasicInfo(uploadFile.getInputStream());
+            response.put("dataList",result.dataList);
+            response.put("listSize", result.dataList.size());
+            response.setSuccess(true);
+        } catch (IOException e) {
+            e.printStackTrace();
+            response.setSuccess(false);
+            response.setErrorCode(1000); //未知错误
+            response.setMsg(e.getMessage());
+        }
+        return response;
+    }
 //    public String oldpanelUploadData(MultipartFile uploadFile, HttpSession session) {
 //        WebResponse response = new WebResponse();
 //        String tableName = "oldpanel";
@@ -480,10 +500,11 @@ public class OldpanelDataController {
         if(null==start||start.equals("")) start=0;
         if(null==limit||limit.equals("")) limit=50;
         mysqlcondition c=new mysqlcondition();
-        if (classificationId.length() != 0) {
+        if (classificationId != null&&!classificationId.equals("")) {
+
             c.and(new mysqlcondition("classificationId", "=", classificationId));
         }
-        if (typeId.length() != 0) {
+        if (typeId != null&&!typeId.equals("")) {
             c.and(new mysqlcondition(tableName+"TypeId", "=", typeId));
         }
         return queryService.queryDataPage(start, limit, c, tableName+"_info_view");

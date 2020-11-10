@@ -55,7 +55,7 @@ Ext.define('product.query_Pcatergory_baseInfo',{
                 },
                 //单号
                 {
-                    fieldLabel : '位置',
+                    fieldLabel : '分类',
                     xtype : 'combo',
                     name : 'classification',
                     id : 'classification',
@@ -131,7 +131,7 @@ Ext.define('product.query_Pcatergory_baseInfo',{
             },
             columns : [
                 { text: '品名',  dataIndex: 'productName' ,flex :1,editor : {xtype : 'textfield', allowBlank : false}},
-                { text: '品名',  dataIndex: 'classificationName' ,flex :1,editor : {xtype : 'textfield', allowBlank : false}},
+                { text: '分类',  dataIndex: 'classificationName' ,flex :1,editor : {xtype : 'textfield', allowBlank : false}},
 
                 { text: '类型',  dataIndex: 'productTypeName' ,flex :1,editor : {xtype : 'textfield', allowBlank : false}},
                 { text: '描述',  dataIndex: 'description' ,flex :1, editor : {xtype : 'textfield', allowBlank : false}}

@@ -138,6 +138,7 @@ Ext.define('material.add_Mtype_baseInfo', {
         var MtypeStore = Ext.create('Ext.data.Store',{
             //id,materialName,length,width,materialType,number
             fields:[],
+            pageSize: itemsPerPage, // 每页显示记录数
             proxy : {
                 type : 'ajax',
                 url : 'material/findAllBytableNameWithLimit.do?tableName='+tableName,//获取同类型的原材料  +'&pickNum='+pickNum
