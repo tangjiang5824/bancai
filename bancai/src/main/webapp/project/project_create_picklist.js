@@ -81,35 +81,34 @@ Ext.define('project.project_create_picklist',{
                     //buildingName,下拉框重新加载数据
                     buildingName.setStore(tableListStore2);
                 },
-                listeners:{
-                    //下拉框搜索
-                    beforequery :function(e){
-                        var combo = e.combo;
-                        combo.collapse();//收起
-                        var value = combo.getValue();
-                        if (!e.forceAll) {//如果不是通过选择，而是文本框录入
-                            combo.store.clearFilter();
-                            combo.store.filterBy(function(record, id) {
-                                var text = record.get(combo.displayField);
-                                // 用自己的过滤规则,如写正则式
-                                return (text.indexOf(value) != -1);
-                            });
-                            combo.onLoad();//不加第一次会显示不出来
-                            combo.expand();
-                            return false;
-                        }
-                        if(!value) {
-                            //如果文本框没值，清除过滤器
-                            combo.store.clearFilter();
-                        }
-                    },
-                }
+                //下拉框搜索
+                beforequery :function(e){
+                    var combo = e.combo;
+                    combo.collapse();//收起
+                    var value = combo.getValue();
+                    if (!e.forceAll) {//如果不是通过选择，而是文本框录入
+                        combo.store.clearFilter();
+                        combo.store.filterBy(function(record, id) {
+                            var text = record.get(combo.displayField);
+                            // 用自己的过滤规则,如写正则式
+                            return (text.indexOf(value) != -1);
+                        });
+                        combo.onLoad();//不加第一次会显示不出来
+                        combo.expand();
+                        return false;
+                    }
+                    if(!value) {
+                        //如果文本框没值，清除过滤器
+                        combo.store.clearFilter();
+                    }
+                },
+
             }
         });
         var buildingName = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '楼栋名',
             labelWidth : 45,
-            width : 300,
+            width : '20%',
             id :  'buildingName',
             name : 'buildingName',
             matchFieldWidth: false,
@@ -139,7 +138,7 @@ Ext.define('project.project_create_picklist',{
         var buildingPositionList = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '清单位置',
             labelWidth : 60,
-            width : 200,
+            width : '20%',
             id :  'positionName',
             name : 'positionName',
             matchFieldWidth: true,
@@ -251,7 +250,7 @@ Ext.define('project.project_create_picklist',{
                 {
                     xtype : 'button',
                     text: '项目工单查询',
-                    width: 100,
+                    width: '10%',
                     margin: '0 0 0 40',
                     layout: 'right',
                     handler: function(){
@@ -281,6 +280,7 @@ Ext.define('project.project_create_picklist',{
                 {
                     xtype:'button',
                     margin: '0 0 0 40',
+                    width: '10%',
                     text:'领料单信息预览',
                     // itemId:'move_right',
                     handler:function() {
@@ -482,8 +482,13 @@ Ext.define('project.project_create_picklist',{
                     text:'清单位置',
                     flex :1
                 },
+                // {
+                //     dataIndex:'workOrderDetailId',
+                //     text:'工单号',
+                //     flex :1
+                // },
                 {
-                    dataIndex:'workOrderDetailId',
+                    dataIndex:'workOrderNo',
                     text:'工单号',
                     flex :1
                 },

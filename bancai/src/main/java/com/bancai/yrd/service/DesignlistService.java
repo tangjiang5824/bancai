@@ -2,6 +2,7 @@ package com.bancai.yrd.service;
 
 import com.bancai.cg.controller.new_panel_match;
 import com.bancai.cg.service.InsertProjectService;
+import com.bancai.cg.util.JPAObjectUtil;
 import com.bancai.commonMethod.AnalyzeNameService;
 import com.bancai.commonMethod.PanelMatchService;
 import com.bancai.commonMethod.QueryAllService;
@@ -395,9 +396,12 @@ public class DesignlistService extends BaseService{
         return b;
     }
 
-    public  int createRequisitionOrderBackId(String userId,String operator,String projectId){
-        return insertProjectService.insertDataToTable("insert into requisition_order (userId,operator,time,projectId,status) values (?,?,?,?,?)",
+    public int createRequisitionOrderBackId(String userId,String operator,String projectId){
+        int id = insertProjectService.insertDataToTable("insert into requisition_order (userId,operator,time,projectId,status) values (?,?,?,?,?)",
                 userId,operator,analyzeNameService.getTime(),projectId,"0");
+        String requisitionOrderNo = JPAObjectUtil.getListNo(500,id);
+        jo.update("update requisition_order set requisitionOrderNo=\""+requisitionOrderNo+"\" where id=\""+id+"\"");
+        return id;
     }
     public int createRequisitionOrderDetailBackId(String requisitionOrderId,String workOrderDetailId,String type, String storeId,
                                                    String productId,String count,String buildingId,String buildingpositionId,String isCompleteMatch){
@@ -796,8 +800,11 @@ public class DesignlistService extends BaseService{
     }
 
     private int addReturnOrderBackId(String type,String projectId,String buildingId,String description,String operator,String userId){
-        return insertProjectService.insertDataToTable("insert into return_order (type,projectId,buildingId,description,operator,userId,status,time) values (?,?,?,?,?,?,?,?)"
+        int id = insertProjectService.insertDataToTable("insert into return_order (type,projectId,buildingId,description,operator,userId,status,time) values (?,?,?,?,?,?,?,?)"
                 , type,projectId,buildingId,description,operator,userId,"0",analyzeNameService.getTime());
+        String returnOrderNo = JPAObjectUtil.getListNo(700,id);
+        jo.update("update return_order set returnOrderNo=\""+returnOrderNo+"\" where id=\""+id+"\"");
+        return id;
     }
     private int addReturnOrderLogBackId(String orderId,String userId,String operator,String type){
         return insertProjectService.insertDataToTable("insert into return_order_log (returnOrderId,userId,operator,type,time) values (?,?,?,?,?)"
@@ -937,8 +944,11 @@ public class DesignlistService extends BaseService{
         return true;
     }
     private int addOverReqBackId(String projectId,String buildingId,String buildingpositionId,String description,String operator,String userId){
-        return insertProjectService.insertDataToTable("insert into over_requisition_order (projectId,buildingId,buildingpositionId,description,operator,userId,status,time) values (?,?,?,?,?,?,?,?)"
+        int id = insertProjectService.insertDataToTable("insert into over_requisition_order (projectId,buildingId,buildingpositionId,description,operator,userId,status,time) values (?,?,?,?,?,?,?,?)"
                 , projectId,buildingId,buildingpositionId,description,operator,userId,"0",analyzeNameService.getTime());
+        String requisitionOrderNo = JPAObjectUtil.getListNo(600,id);
+        jo.update("update over_requisition_order set requisitionOrderNo=\""+requisitionOrderNo+"\" where id=\""+id+"\"");
+        return id;
     }
     private int addOverReqOrderDetailBackId(String orderId,String storeId,String count,String buildingId,String buildingpositionId){
         return insertProjectService.insertDataToTable("insert into over_requisition_order_detail (overReqOrderId,storeId,countAll,countRec,type,buildingId,buildingpositionId) values (?,?,?,?,?,?,?)",

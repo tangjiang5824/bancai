@@ -52,29 +52,27 @@ Ext.define('project.project_query_picklist',{
                 select: function(combo, record, index) {
                     console.log(record[0].data.projectName);
                 },
-                listeners:{
-                    //下拉框搜索
-                    beforequery :function(e){
-                        var combo = e.combo;
-                        combo.collapse();//收起
-                        var value = combo.getValue();
-                        if (!e.forceAll) {//如果不是通过选择，而是文本框录入
-                            combo.store.clearFilter();
-                            combo.store.filterBy(function(record, id) {
-                                var text = record.get(combo.displayField);
-                                // 用自己的过滤规则,如写正则式
-                                return (text.indexOf(value) != -1);
-                            });
-                            combo.onLoad();//不加第一次会显示不出来
-                            combo.expand();
-                            return false;
-                        }
-                        if(!value) {
-                            //如果文本框没值，清除过滤器
-                            combo.store.clearFilter();
-                        }
-                    },
-                }
+                //下拉框搜索
+                beforequery :function(e){
+                    var combo = e.combo;
+                    combo.collapse();//收起
+                    var value = combo.getValue();
+                    if (!e.forceAll) {//如果不是通过选择，而是文本框录入
+                        combo.store.clearFilter();
+                        combo.store.filterBy(function(record, id) {
+                            var text = record.get(combo.displayField);
+                            // 用自己的过滤规则,如写正则式
+                            return (text.indexOf(value) != -1);
+                        });
+                        combo.onLoad();//不加第一次会显示不出来
+                        combo.expand();
+                        return false;
+                    }
+                    if(!value) {
+                        //如果文本框没值，清除过滤器
+                        combo.store.clearFilter();
+                    }
+                },
             }
         });
 
@@ -177,7 +175,7 @@ Ext.define('project.project_query_picklist',{
                     margin : '0 10 0 0',
                     fieldLabel: '单号',
                     id :'picklistNum',
-                    width: 180,
+                    width: '12%',
                     labelWidth: 30,
                     name: 'picklistNum',
                     value:"",
@@ -201,7 +199,7 @@ Ext.define('project.project_query_picklist',{
                     xtype : 'datefield',
                     margin : '0 0 0 0',
                     fieldLabel : '创建时间',
-                    width : 180,
+                    width : 160,
                     labelWidth : 60,
                     id : "startTime",
                     name : 'startTime',
@@ -218,7 +216,7 @@ Ext.define('project.project_query_picklist',{
                     xtype : 'datefield',
                     margin : '0 0 0 0',
                     // fieldLabel : '结束时间',
-                    width : 120,
+                    width : 100,
                     // labelWidth : 60,
                     id : "endTime",
                     name : 'endTime',
@@ -232,7 +230,7 @@ Ext.define('project.project_query_picklist',{
                     xtype : 'button',
                     text: '项目领料单查询',
                     width: 100,
-                    margin: '0 0 0 40',
+                    margin: '0 0 0 20',
                     layout: 'right',
                     handler: function(){
                         // var url='material/materiaPickingWin.jsp';
@@ -258,11 +256,17 @@ Ext.define('project.project_query_picklist',{
             store:MaterialpickListStore,
             dock: 'bottom',
             columns:[
+                // {
+                //     dataIndex:'requisitionOrderId',
+                //     text:'领料单号',
+                //     flex :1
+                // },
                 {
-                dataIndex:'requisitionOrderId',
-                text:'领料单号',
-                flex :1
-            },{
+                    dataIndex:'requisitionOrderNo',
+                    text:'领料单号',
+                    flex :1
+                },
+                {
                     dataIndex:'projectName',
                     text:'所属项目',
                     flex :1
@@ -517,7 +521,7 @@ Ext.define('project.project_query_picklist',{
             var time = e.data.time;  //选中记录的项目名
             console.log("e.data：",e.data);
             console.log("requisitionOrderId "+requisitionOrderId+" projectName "+projectName+" workerName "+workerName+" time "+time);
-            if (columnIndex == 3) {
+            if (columnIndex == 4) {
                 console.log("zzzzzzzzzzzzzzzzzyyyyyyyyyyyyyyyyyyyzzzzz打印")
                 console.log("requisitionOrderId="+requisitionOrderId)
                 Ext.Ajax.request({

@@ -17,6 +17,7 @@ Ext.define('product.add_Ptype_baseInfo', {
 
     initComponent : function() {
         var me = this;
+        var itemsPerPage = 50;
         //定义表名
         var tableName="producttype";
         // var materialtype="0";
@@ -32,8 +33,8 @@ Ext.define('product.add_Ptype_baseInfo', {
                     var data = [{
                         'typeName':'',
                     }];
-                    //Ext.getCmp('addTypeGrid')返回定义的对象
-                    Ext.getCmp('addTypeGrid').getStore().loadData(data,
+                    //Ext.getCmp('product_addTypeGrid')返回定义的对象
+                    Ext.getCmp('product_addTypeGrid').getStore().loadData(data,
                         true);
                 }
             },
@@ -44,38 +45,41 @@ Ext.define('product.add_Ptype_baseInfo', {
                     text : '删除',
                     margin: '0 0 0 40',
                     handler : function() {
-                        //Ext.getCmp('addTypeGrid')返回定义的对象
-                        var sm = Ext.getCmp('addTypeGrid').getSelectionModel();
-                        var rec = sm.getSelection();
-
-                        console.log("删除数据-----------：",rec[0].data)
-                        console.log("删除：",rec[0].data.id);
-                        var id = rec[0].data.id;
-
-                        //弹框提醒
-                        Ext.Msg.show({
-                            title: '操作确认',
-                            message: '将删除数据，选择“是”否确认？',
-                            buttons: Ext.Msg.YESNO,
-                            icon: Ext.Msg.QUESTION,
-                            fn: function (btn) {
-                                if (btn === 'yes') {
+                        //Ext.getCmp('product_addTypeGrid')返回定义的对象
+                        var sm = Ext.getCmp('product_addTypeGrid').getSelectionModel();
+                        var Arr = sm.getSelection();
+                        //类型id
+                        console.log('------',Arr)
+                        var typeId = Arr[0].data.id;
+                        var value = Arr[0].data.typeName;
+                        if (Arr.length != 0) {
+                            Ext.Msg.confirm("提示", "共选中" + Arr.length + "条数据，是否确认删除？", function (btn) {
+                                if (btn == 'yes') {
                                     Ext.Ajax.request({
-                                        url:"product/deleteTYpe.do",  //EditDataById.do
+                                        url:"data/EditCellById.do",  //EditDataById.do
                                         params:{
-                                            id:id,
+                                            type:'delete',
+                                            tableName:tableName,
+                                            field:'typeName',
+                                            value:value,
+                                            id:typeId
                                         },
                                         success:function (response) {
                                             Ext.MessageBox.alert("提示", "删除成功!");
-                                            Ext.getCmp('addTypeGrid').getStore().remove(rec);
+                                            Ext.getCmp('product_addTypeGrid').getStore().remove(Arr);
                                         },
                                         failure : function(response){
                                             Ext.MessageBox.alert("提示", "删除失败!");
                                         }
                                     })
+                                } else {
+                                    return;
                                 }
-                            }
-                        });
+                            });
+                        } else {
+                            //Ext.Msg.confirm("提示", "无选中数据");
+                            Ext.Msg.alert("提示", "无选中数据");
+                        }
                     }
                 },
 //                 {
@@ -87,7 +91,7 @@ Ext.define('product.add_Ptype_baseInfo', {
 //                 handler : function() {
 //                     // 取出grid的字段名字段类型
 //                     //var userid="<%=session.getAttribute('userid')%>";
-//                     var select = Ext.getCmp('addTypeGrid').getStore()
+//                     var select = Ext.getCmp('product_addTypeGrid').getStore()
 //                         .getData();
 //                     var s = new Array();
 //                     select.each(function(rec) {
@@ -140,18 +144,22 @@ Ext.define('product.add_Ptype_baseInfo', {
             ]
         });
 
-        var MtypeStore = Ext.create('Ext.data.Store',{
+        var PtypeStore = Ext.create('Ext.data.Store',{
             //id,materialName,length,width,materialType,number
             fields:[],
+            pageSize: itemsPerPage, // 每页显示记录数
             proxy : {
                 type : 'ajax',
-                url : 'material/findAllBytableName.do?tableName='+tableName,//获取同类型的原材料  +'&pickNum='+pickNum
+                url : 'material/findAllBytableNameWithLimit.do?tableName='+tableName,//获取同类型的原材料  +'&pickNum='+pickNum
                 reader : {
                     type : 'json',
-                    rootProperty: 'producttype',
+                    rootProperty: 'value',
+                    totalProperty: 'totalCount'
                 },
-                // params: {
-                //     tableName:'material_type'
+                // params:{
+                //     start: 0,
+                //     limit: itemsPerPage,
+                //     // tableName:tableName,
                 // }
             },
             autoLoad : true
@@ -187,13 +195,13 @@ Ext.define('product.add_Ptype_baseInfo', {
         });
         var grid = Ext.create("Ext.grid.Panel", {
             title:'产品类型',
-            id : 'addTypeGrid',
+            id : 'product_addTypeGrid',
             // dockedItems : [toolbar2],
-            store : MtypeStore,
+            store : PtypeStore,
             columns : [
                 //序号
                 {
-                    header: '序号',
+                    // header: '序号',
                     xtype: 'rownumberer',
                     width: 45,
                     align: 'center',
@@ -225,7 +233,8 @@ Ext.define('product.add_Ptype_baseInfo', {
                     text : '分类',
                     flex :0.6,
                     //width : 110,
-                    editor:classificationList,renderer:function(value, cellmeta, record){
+                    editor:classificationList,
+                    renderer:function(value, cellmeta, record){
                         var index = classificationListStore.find(classificationList.valueField,value);
                         var ehrRecord = classificationListStore.getAt(index);
                         var returnvalue = "";
@@ -271,7 +280,7 @@ Ext.define('product.add_Ptype_baseInfo', {
                 //                                 },
                 //                                 success:function (response) {
                 //                                     Ext.MessageBox.alert("提示", "删除成功!");
-                //                                     Ext.getCmp('addTypeGrid').getStore().remove(rec);
+                //                                     Ext.getCmp('product_addTypeGrid').getStore().remove(rec);
                 //                                 },
                 //                                 failure : function(response){
                 //                                     Ext.MessageBox.alert("提示", "删除失败!");
@@ -293,10 +302,20 @@ Ext.define('product.add_Ptype_baseInfo', {
                 }
             },
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
-                clicksToEdit : 1
+                clicksToEdit : 2
             })],
-            selType : 'checkboxmodel',//'rowmodel'
+            // selType : 'checkboxmodel',//'rowmodel'
             // selType : 'rowmodel',
+            dockedItems: [
+                {
+                    xtype: 'pagingtoolbar',
+                    store: PtypeStore,   // same store GridPanel is using
+                    dock: 'bottom',
+                    displayInfo: true,
+                    displayMsg:'显示{0}-{1}条，共{2}条',
+                    emptyMsg:'无数据'
+                }
+            ],
             listeners: {
                 //监听修改
                 validateedit: function (editor, e) {
@@ -317,7 +336,7 @@ Ext.define('product.add_Ptype_baseInfo', {
                         success:function (response) {
                             Ext.MessageBox.alert("提示","修改成功" );
                             //重新加载
-                            Ext.getCmp('addTypeGrid').getStore().load();
+                            Ext.getCmp('product_addTypeGrid').getStore().load();
                         },
                         failure:function (response) {
                             Ext.MessageBox.alert("提示","修改失败" );

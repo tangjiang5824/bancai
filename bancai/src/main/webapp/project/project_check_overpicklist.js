@@ -60,7 +60,7 @@ Ext.define('project.project_check_overpicklist',{
         var tableList = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '项目名',
             labelWidth : 45,
-            width : 550,
+            width : 450,
             id :  'projectName',
             name : '项目名称',
             matchFieldWidth: true,

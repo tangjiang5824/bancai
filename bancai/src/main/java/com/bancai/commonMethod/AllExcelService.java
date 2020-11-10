@@ -457,11 +457,12 @@ public class AllExcelService extends BaseService {
 				break;
 			}
 //			String classificationName = dataRow.get("分类") + "";
-//			String inventoryUnit = dataRow.get("单位") + "";
+			String inventoryUnit = dataRow.get("单位") + "";
 			String count = (dataRow.get("入库数量") + "").trim().toUpperCase();
 			String warehouseName = (dataRow.get("入库仓库") + "").trim().toUpperCase();
 			String remark = (dataRow.get("备注") + "").trim();
 			DataRow row = new DataRow();
+			row.put("inventoryUnit",inventoryUnit);
 			row.put("productName",productName);
 			row.put("warehouseName",warehouseName);
 			row.put("count",count);

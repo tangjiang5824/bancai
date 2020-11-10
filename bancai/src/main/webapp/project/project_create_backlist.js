@@ -492,7 +492,7 @@ Ext.define('project.project_create_backlist', {
 		var tableList1 = Ext.create('Ext.form.ComboBox',{
 			fieldLabel : '项目名称',
 			labelWidth : 60,
-			width : 570,//'35%'
+			width : 500,//'35%'
 			// margin:'0 0 0 20',
 			queryMode: 'local',
 			id :  'projectName',

@@ -226,7 +226,7 @@ Ext.define('project.result.designlist_match_result',{
         var projectList = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '项目名',
             labelWidth : 45,
-            width : 550,
+            width : 400,
             id :  'projectName',
             name : '项目名称',
             matchFieldWidth: true,
@@ -316,11 +316,11 @@ Ext.define('project.result.designlist_match_result',{
         var buildingName = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '楼栋名',
             labelWidth : 45,
-            width : 300,
+            width : 200,
             id :  'buildingName',
             name : 'buildingName',
             matchFieldWidth: false,
-            margin: '0 0 0 40',
+            margin: '0 0 0 20',
             emptyText : "--请选择楼栋名--",
             displayField: 'buildingName',
             valueField: 'id',//楼栋的id
@@ -346,9 +346,9 @@ Ext.define('project.result.designlist_match_result',{
         var buildingPositionList = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '位置',
             labelWidth : 35,
-            width : 200,
+            width : 150,
             id :  'positionName',
-            margin: '0 10 0 40',
+            margin: '0 10 0 20',
             name : 'positionName',
             matchFieldWidth: true,
             // emptyText : "--请选择项目--",

@@ -92,8 +92,8 @@ Ext.define('project.management.buildproject', {
                         margin : '0 30 0 0',
                         fieldLabel: '项目名',
                         id :'projectName',
-                        // width: '35%',
-                        width: 700,
+                        width: '40%',
+                        // width: 700,
                         labelWidth: 50,
                         allowBlank:false,
                         name: 'projectName',
@@ -103,11 +103,11 @@ Ext.define('project.management.buildproject', {
                     //单选框
                     {
                         xtype:'radiogroup',
-                        fieldLabel: '项目是否为预加工',
+                        fieldLabel: '是否为预加工',
                         labelWidth:110,
                         width:230,
                         columns: 2, //设置没四个选项一行
-                        margin : '0 0 0 80',
+                        margin : '0 0 0 60',
                         id:'maintainProjectType',
                         allowBlank: false,
                         items:[
@@ -196,6 +196,7 @@ Ext.define('project.management.buildproject', {
                     displayField : 'workerName',
                     valueField : 'id',
                     editable : true,
+                    hidden:true
                 },
                 ]
         });

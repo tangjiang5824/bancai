@@ -68,29 +68,27 @@ Ext.define('project.material_over_pick',{
                     //buildingName,下拉框重新加载数据
                     buildingName.setStore(tableListStore2);
                 },
-                listeners:{
-                    //下拉框搜索
-                    beforequery :function(e){
-                        var combo = e.combo;
-                        combo.collapse();//收起
-                        var value = combo.getValue();
-                        if (!e.forceAll) {//如果不是通过选择，而是文本框录入
-                            combo.store.clearFilter();
-                            combo.store.filterBy(function(record, id) {
-                                var text = record.get(combo.displayField);
-                                // 用自己的过滤规则,如写正则式
-                                return (text.indexOf(value) != -1);
-                            });
-                            combo.onLoad();//不加第一次会显示不出来
-                            combo.expand();
-                            return false;
-                        }
-                        if(!value) {
-                            //如果文本框没值，清除过滤器
-                            combo.store.clearFilter();
-                        }
-                    },
-                }
+                //下拉框搜索
+                beforequery :function(e){
+                    var combo = e.combo;
+                    combo.collapse();//收起
+                    var value = combo.getValue();
+                    if (!e.forceAll) {//如果不是通过选择，而是文本框录入
+                        combo.store.clearFilter();
+                        combo.store.filterBy(function(record, id) {
+                            var text = record.get(combo.displayField);
+                            // 用自己的过滤规则,如写正则式
+                            return (text.indexOf(value) != -1);
+                        });
+                        combo.onLoad();//不加第一次会显示不出来
+                        combo.expand();
+                        return false;
+                    }
+                    if(!value) {
+                        //如果文本框没值，清除过滤器
+                        combo.store.clearFilter();
+                    }
+                },
             }
         });
         var buildingName = Ext.create('Ext.form.ComboBox',{
@@ -174,11 +172,11 @@ Ext.define('project.material_over_pick',{
             items: [
                 //超龄原因
                 {
-                    xtype: 'textfield',
-                    margin : '0 40 0 0',
+                    xtype: 'textarea',
+                    margin : '0 0 0 0',
                     fieldLabel: '超领原因',
                     id :'overpick_res',
-                    width: 510,
+                    width: 550,
                     labelWidth: 55,
                     name: 'overpick_res',
                     value:"",
@@ -199,6 +197,29 @@ Ext.define('project.material_over_pick',{
                 //     style:"margin-top:50px;",
                 // },
                 //申请人
+                // {
+                //     fieldLabel : '申请人',
+                //     xtype : 'combo',
+                //     name : 'operator',
+                //     id : 'operator',
+                //     // disabled : true,
+                //     // width:'95%',
+                //     margin: '0 0 0 75',
+                //     width: 215,
+                //     labelWidth: 45,
+                //     store : workerListStore,
+                //     displayField : 'workerName',
+                //     valueField : 'id',
+                //     editable : true,
+                //     allowBlank:false,
+                //     blankText  : "申请人姓名不能为空"
+                // },
+            ]
+        });
+        //新增按钮
+        var toolbar2 = Ext.create("Ext.toolbar.Toolbar", {
+            dock : "top",
+            items : [
                 {
                     fieldLabel : '申请人',
                     xtype : 'combo',
@@ -206,7 +227,7 @@ Ext.define('project.material_over_pick',{
                     id : 'operator',
                     // disabled : true,
                     // width:'95%',
-                    margin: '0 0 0 75',
+                    margin: '0 40 0 10',
                     width: 215,
                     labelWidth: 45,
                     store : workerListStore,
@@ -216,12 +237,7 @@ Ext.define('project.material_over_pick',{
                     allowBlank:false,
                     blankText  : "申请人姓名不能为空"
                 },
-            ]
-        });
-        //新增按钮
-        var toolbar2 = Ext.create("Ext.toolbar.Toolbar", {
-            dock : "top",
-            items : [{
+                {
                 xtype : 'button',
                 iconAlign : 'center',
                 iconCls : 'rukuicon ',

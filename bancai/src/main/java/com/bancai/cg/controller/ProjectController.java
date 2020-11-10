@@ -8,6 +8,7 @@ import com.bancai.cg.dao.workorderlogdao;
 import com.bancai.cg.dao.workordermatchresultdao;
 import com.bancai.cg.entity.*;
 import com.bancai.cg.service.InsertProjectService;
+import com.bancai.cg.util.JPAObjectUtil;
 import com.bancai.cg.util.newPanelMatch;
 import com.bancai.commonMethod.AnalyzeNameService;
 import com.bancai.commonMethod.NewCondition;
@@ -255,9 +256,50 @@ public class ProjectController {
 
     //返回有查询条件的项目信息
     @RequestMapping("/project/findprojectBycondition.do")
-    public WebResponse findProjectbyCondition(Integer start, Integer limit, String projectName, String startTime, String endTime, String proStartTime, String proEndTime, String planLeader, String produceLeader, String purchaseLeader, String financeLeader, String storeLeader) {
+    public WebResponse findProjectbyCondition(Integer start, Integer limit, String projectName, String startTime, String endTime, String proStartTime, String proEndTime, String planLeader, String produceLeader, String purchaseLeader, String financeLeader, String storeLeader, String statusId) {
         mysqlcondition c = new mysqlcondition();
         String tableName = "project_view";
+        if (null != projectName && projectName.length() != 0) {
+            c.and(new mysqlcondition("projectName", "=", projectName));
+        }
+        if (null != startTime && startTime.length() != 0) {
+            c.and(new mysqlcondition("startTime", ">=", startTime));
+        }
+        if (null != endTime && endTime.length() != 0) {
+            c.and(new mysqlcondition("endTime", "<=", endTime));
+        }
+        if (null != proStartTime && proStartTime.length() != 0) {
+            c.and(new mysqlcondition("proStartTime", ">=", proStartTime));
+        }
+        if (null != proEndTime && proEndTime.length() != 0) {
+            c.and(new mysqlcondition("proEndTime", "<=", proEndTime));
+        }
+        if (null != planLeader && planLeader.length() != 0) {
+            c.and(new mysqlcondition("planLeaderId", "=", planLeader));
+        }
+        if (null != produceLeader && produceLeader.length() != 0) {
+            c.and(new mysqlcondition("produceLeaderId", "=", produceLeader));
+        }
+        if (null != purchaseLeader && purchaseLeader.length() != 0) {
+            c.and(new mysqlcondition("purchaseLeaderId", "=", purchaseLeader));
+        }
+        if (null != financeLeader && financeLeader.length() != 0) {
+            c.and(new mysqlcondition("financeLeaderId", "=", financeLeader));
+        }
+        if (null != storeLeader && storeLeader.length() != 0) {
+            c.and(new mysqlcondition("storeLeaderId", "=", storeLeader));
+        }
+        if (null != statusId && statusId.length() != 0) {
+            c.and(new mysqlcondition("statusId", "=", statusId));
+        }
+        return queryAllService.queryDataPage(start, limit, c, tableName);
+    }
+
+    @RequestMapping("/project/findValidProjectByCondition.do")
+    public WebResponse findValidProjectbyCondition(Integer start, Integer limit, String projectName, String startTime, String endTime, String proStartTime, String proEndTime, String planLeader, String produceLeader, String purchaseLeader, String financeLeader, String storeLeader) {
+        mysqlcondition c = new mysqlcondition();
+        String tableName = "project_view";
+        c.and(new mysqlcondition("statusId", "<>", "9"));
         if (null != projectName && projectName.length() != 0) {
             c.and(new mysqlcondition("projectName", "=", projectName));
         }
@@ -865,6 +907,9 @@ public class ProjectController {
         log.setIsActive(0);
         log.setProjectId(projectId);
         workorderlogdao.save(log);
+        String workOrderNo= JPAObjectUtil.getListNo(400,log.getId());
+        log.setWorkOrderNo(workOrderNo);
+        workorderlogdao.save(log);
         JSONArray array = new JSONArray(s);
         for (int i = 0; i < array.length(); i++) {
             JSONObject object = array.getJSONObject(i);
@@ -1286,6 +1331,64 @@ public class ProjectController {
         return list;
     }
 
+    //删除接口
+    @RequestMapping("/delete/deleteById.do")
+    public boolean deleteById(Integer id,String tableName,HttpSession session){
+        if(session.getAttribute("userid")!=null){
+            if(insertProjectService.deletebyid(id,tableName)!=1) return false;
+        }else return false;
+        return true;
+    }
+
+    //修改原材料基本信息
+    @RequestMapping("/material/updateMaterialInfo.do")
+    public boolean updateMaterialInfo(Integer id,String materialName,String partNo,String aValue,String bValue,String mValue,String nValue,String pValue,String orientation,String description,String unitWeight,String unitArea){
+        StringBuffer sb=new StringBuffer();
+        sb.append("id="+id);
+        if(materialName!=null){
+           sb.append(",materialName=\""+materialName+"\"");
+        }
+        if(partNo!=null){
+            sb.append(",partNo=\""+partNo+"\"");
+        }
+        if(orientation!=null){
+            sb.append(",orientation=\""+orientation+"\"");
+        }
+        if(description!=null){
+            sb.append(",description=\""+description+"\"");
+        }
+        if(aValue!=null){
+            if(aValue.length()==0) aValue=null;
+            sb.append(",aValue="+aValue);
+        }
+        if(bValue!=null){
+            if(bValue.length()==0) bValue=null;
+            sb.append(",bValue="+bValue);
+        }
+        if(nValue!=null){
+            if(nValue.length()==0) nValue=null;
+            sb.append(",nValue="+nValue);
+        }
+        if(mValue!=null){
+            if(mValue.length()==0) mValue=null;
+            sb.append(",mValue="+mValue);
+        }
+        if(pValue!=null){
+            if(pValue.length()==0) pValue=null;
+            sb.append(",pValue="+pValue);
+        }
+        if(unitWeight!=null){
+            if(unitWeight.length()==0) unitWeight=null;
+            sb.append(",unitWeight="+unitWeight);
+        }
+        if(unitArea!=null){
+            if(unitArea.length()==0) unitArea=null;
+            sb.append(",unitArea="+unitArea);
+        }
+        String sql="update material_info set "+sb.toString()+" where id="+id;
+        if(insertProjectService.update(sql)==1) return true;
+        return false;
+    }
 
 
 }

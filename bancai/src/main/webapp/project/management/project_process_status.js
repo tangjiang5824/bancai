@@ -2,7 +2,7 @@ Ext.define('project.management.project_process_status',{
     extend:'Ext.panel.Panel',
     region: 'center',
     layout:'fit',
-    title: '项目进度总览',
+    title: '项目进度查询',
     autoLoad:{
         scripts:true
     },
@@ -209,7 +209,7 @@ Ext.define('project.management.project_process_status',{
             // emptyText : "--请选择--",
             displayField: 'projectName',
             valueField: 'id',
-            editable : false,
+            editable : true,
             store: projectListStore,
             listeners:{
                 //下拉框默认返回的第一个值
@@ -257,29 +257,28 @@ Ext.define('project.management.project_process_status',{
                     buildingName.setStore(tableListStore2);
 
                 },
-                listeners:{
-                    //下拉框搜索
-                    beforequery :function(e){
-                        var combo = e.combo;
-                        combo.collapse();//收起
-                        var value = combo.getValue();
-                        if (!e.forceAll) {//如果不是通过选择，而是文本框录入
-                            combo.store.clearFilter();
-                            combo.store.filterBy(function(record, id) {
-                                var text = record.get(combo.displayField);
-                                // 用自己的过滤规则,如写正则式
-                                return (text.indexOf(value) != -1);
-                            });
-                            combo.onLoad();//不加第一次会显示不出来
-                            combo.expand();
-                            return false;
-                        }
-                        if(!value) {
-                            //如果文本框没值，清除过滤器
-                            combo.store.clearFilter();
-                        }
-                    },
-                }
+                //下拉框搜索
+                beforequery :function(e){
+                    var combo = e.combo;
+                    combo.collapse();//收起
+                    var value = combo.getValue();
+                    if (!e.forceAll) {//如果不是通过选择，而是文本框录入
+                        combo.store.clearFilter();
+                        combo.store.filterBy(function(record, id) {
+                            var text = record.get(combo.displayField);
+                            // 用自己的过滤规则,如写正则式
+                            return (text.indexOf(value) != -1);
+                        });
+                        combo.onLoad();//不加第一次会显示不出来
+                        combo.expand();
+                        return false;
+                    }
+                    if(!value) {
+                        //如果文本框没值，清除过滤器
+                        combo.store.clearFilter();
+                    }
+                },
+
             }
         });
         var buildingName = Ext.create('Ext.form.ComboBox',{

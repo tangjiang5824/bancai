@@ -89,7 +89,7 @@
                     tbar:[
                         '->',
 						title,  //title+',欢迎您!',
-                        '日期:'+Ext.Date.format(new Date(),'Y-m-d'),
+                        Ext.Date.format(new Date(),'Y-m-d'),
                         // {
                         //     text:'修改密码'
                         // },
