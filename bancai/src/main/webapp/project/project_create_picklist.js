@@ -108,7 +108,7 @@ Ext.define('project.project_create_picklist',{
         var buildingName = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '楼栋名',
             labelWidth : 45,
-            width : 300,
+            width : '20%',
             id :  'buildingName',
             name : 'buildingName',
             matchFieldWidth: false,
@@ -138,7 +138,7 @@ Ext.define('project.project_create_picklist',{
         var buildingPositionList = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '清单位置',
             labelWidth : 60,
-            width : 200,
+            width : '20%',
             id :  'positionName',
             name : 'positionName',
             matchFieldWidth: true,
@@ -250,7 +250,7 @@ Ext.define('project.project_create_picklist',{
                 {
                     xtype : 'button',
                     text: '项目工单查询',
-                    width: 100,
+                    width: '10%',
                     margin: '0 0 0 40',
                     layout: 'right',
                     handler: function(){
@@ -280,6 +280,7 @@ Ext.define('project.project_create_picklist',{
                 {
                     xtype:'button',
                     margin: '0 0 0 40',
+                    width: '10%',
                     text:'领料单信息预览',
                     // itemId:'move_right',
                     handler:function() {

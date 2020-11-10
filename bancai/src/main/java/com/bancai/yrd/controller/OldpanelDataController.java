@@ -500,10 +500,11 @@ public class OldpanelDataController {
         if(null==start||start.equals("")) start=0;
         if(null==limit||limit.equals("")) limit=50;
         mysqlcondition c=new mysqlcondition();
-        if (classificationId.length() != 0) {
+        if (classificationId != null&&!classificationId.equals("")) {
+
             c.and(new mysqlcondition("classificationId", "=", classificationId));
         }
-        if (typeId.length() != 0) {
+        if (typeId != null&&!typeId.equals("")) {
             c.and(new mysqlcondition(tableName+"TypeId", "=", typeId));
         }
         return queryService.queryDataPage(start, limit, c, tableName+"_info_view");

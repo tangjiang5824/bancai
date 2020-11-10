@@ -585,7 +585,8 @@ Ext.define("menu.MenuRole_bc0", {
 						},
 						{
 						text : '查看产品基础信息',
-						id : 'product.query_Pcatergory_baseInfo',//
+						//id : 'product.query_Pcatergory_baseInfo',//
+							id :	'product.query_product_baseInfo',
 						leaf : true
 					},{
 						text : '添加产品格式',
