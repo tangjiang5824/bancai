@@ -256,11 +256,17 @@ Ext.define('project.project_query_picklist',{
             store:MaterialpickListStore,
             dock: 'bottom',
             columns:[
+                // {
+                //     dataIndex:'requisitionOrderId',
+                //     text:'领料单号',
+                //     flex :1
+                // },
                 {
-                dataIndex:'requisitionOrderId',
-                text:'领料单号',
-                flex :1
-            },{
+                    dataIndex:'requisitionOrderNo',
+                    text:'领料单号',
+                    flex :1
+                },
+                {
                     dataIndex:'projectName',
                     text:'所属项目',
                     flex :1

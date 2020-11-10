@@ -307,7 +307,7 @@ Ext.define('unuseMaterial.unuseMaterial_outBound',{
             closeAction: 'hide',
             columns:[
                 {
-                    header: '序号',
+                    // header: '序号',
                     xtype: 'rownumberer',
                     width: 45,
                     align: 'center',
