@@ -521,7 +521,7 @@ Ext.define('project.project_query_picklist',{
             var time = e.data.time;  //选中记录的项目名
             console.log("e.data：",e.data);
             console.log("requisitionOrderId "+requisitionOrderId+" projectName "+projectName+" workerName "+workerName+" time "+time);
-            if (columnIndex == 3) {
+            if (columnIndex == 4) {
                 console.log("zzzzzzzzzzzzzzzzzyyyyyyyyyyyyyyyyyyyzzzzz打印")
                 console.log("requisitionOrderId="+requisitionOrderId)
                 Ext.Ajax.request({

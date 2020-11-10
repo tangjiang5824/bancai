@@ -159,7 +159,7 @@ public class new_panel_match {
                     inf.setSpecification(specification);
                     materialinfodao.saveAndFlush(inf);
                     inf.setPartNo(JPAObjectUtil.getPartNo(materialPrefix,typeId,inf.getMaterialid()));
-                    materialinfodao.save(inf);
+                    materialinfodao.saveAndFlush(inf);
                     info=inf;
 
                 }else{
