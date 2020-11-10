@@ -1301,7 +1301,7 @@ public class ProjectController {
 
     //修改原材料基本信息
     @RequestMapping("/material/updateMaterialInfo.do")
-    public boolean updateMaterialInfo(Integer id,String materialName,String partNo,String aValue,String bValue,String mValue,String nValue,String pValue,String orintation,String description,String unitWeight,String unitArea){
+    public boolean updateMaterialInfo(Integer id,String materialName,String partNo,String aValue,String bValue,String mValue,String nValue,String pValue,String orientation,String description,String unitWeight,String unitArea){
         StringBuffer sb=new StringBuffer();
         sb.append("id="+id);
         if(materialName!=null){
@@ -1310,31 +1310,38 @@ public class ProjectController {
         if(partNo!=null){
             sb.append(",partNo=\""+partNo+"\"");
         }
-        if(orintation!=null){
-            sb.append(",orintation=\""+orintation+"\"");
+        if(orientation!=null){
+            sb.append(",orientation=\""+orientation+"\"");
         }
         if(description!=null){
             sb.append(",description=\""+description+"\"");
         }
         if(aValue!=null){
+            if(aValue.length()==0) aValue=null;
             sb.append(",aValue="+aValue);
         }
         if(bValue!=null){
+            if(bValue.length()==0) bValue=null;
             sb.append(",bValue="+bValue);
         }
         if(nValue!=null){
+            if(nValue.length()==0) nValue=null;
             sb.append(",nValue="+nValue);
         }
         if(mValue!=null){
+            if(mValue.length()==0) mValue=null;
             sb.append(",mValue="+mValue);
         }
         if(pValue!=null){
+            if(pValue.length()==0) pValue=null;
             sb.append(",pValue="+pValue);
         }
         if(unitWeight!=null){
+            if(unitWeight.length()==0) unitWeight=null;
             sb.append(",unitWeight="+unitWeight);
         }
         if(unitArea!=null){
+            if(unitArea.length()==0) unitArea=null;
             sb.append(",unitArea="+unitArea);
         }
         String sql="update material_info set "+sb.toString()+" where id="+id;

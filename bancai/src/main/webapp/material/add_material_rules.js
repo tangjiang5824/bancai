@@ -405,7 +405,27 @@ Ext.define('material.add_material_rules', {
                                             xtype: 'textfield',
                                             fieldLabel: '后缀',
                                             name: 'suffix',
-                                        }
+                                        },
+                                        // {
+                                        //     xtype: 'textfield',
+                                        //     fieldLabel: '后缀匹配',
+                                        //     name: 'isOrNotSuffix',
+                                        // },
+                                        //是否完全匹配
+                                        {
+                                            xtype:'radiogroup',
+                                            fieldLabel: '后缀匹配',
+                                            labelWidth:90,
+                                            width:210,
+                                            columns: 2, //设置没四个选项一行
+                                            margin : '0 0 0 40',
+                                            // id:'isOrNotSuffix',
+                                            // allowBlank: false,
+                                            items:[
+                                                {boxLabel: '是', name: 'isOrNotSuffix',inputValue: '1'},
+                                                {boxLabel: '否', name: 'isOrNotSuffix',inputValue: '0', }, //checked : true  默认选中
+                                            ]
+                                        },
                                     ]
                                 },
                                 // {
