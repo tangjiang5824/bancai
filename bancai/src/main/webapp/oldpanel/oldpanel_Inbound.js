@@ -3,6 +3,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
     region : 'center',
     layout : "fit",
     title : '旧板入库',
+
     reloadPage : function() {
         var p = Ext.getCmp('functionPanel');
         p.removeAll();
@@ -24,6 +25,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
         var buildingId = "-1";
         //防止按钮重复点击，发送多次请求，post_flag
         var post_flag = false;
+        Ext.Ajax.timeout=9000000;//设置超时时间
         Ext.define('Soims.model.application.ApplicationState', {
             statics: { // 关键
                 0: { value: '0', name: '墙板' },
@@ -527,16 +529,16 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                         });
                         console.log(s);
                         //显示匹配进度
-                        Ext.MessageBox.show(
-                            {
-                                title:'请稍候',
-                                msg:'数据上传中，请耐心等待...',
-                                progressText:'',    //进度条文本
-                                width:300,
-                                progress:true,
-                                closable:false
-                            }
-                        );
+                        // Ext.MessageBox.show(
+                        //     {
+                        //         title:'请稍候',
+                        //         msg:'数据上传中，请耐心等待...',
+                        //         progressText:'',    //进度条文本
+                        //         width:300,
+                        //         progress:true,
+                        //         closable:false
+                        //     }
+                        // );
 
                         //获取数据
                         //获得当前操作时间
@@ -544,6 +546,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                         Ext.Ajax.request({
                             url : 'oldpanel/addData.do',  //入库
                             method:'POST',
+                            timeout:90000000,//超时时间
                             //submitEmptyText : false,
                             params : {
                                 s : "[" + s + "]",
@@ -555,7 +558,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                                 console.log("12312312312321",response.responseText);
 
                                 //关闭进度条
-                                Ext.MessageBox.hide();
+                                //Ext.MessageBox.hide();
 
                                 var res = response.responseText;
                                 var jsonobj = JSON.parse(res);//将json字符串转换为对象
@@ -597,7 +600,7 @@ Ext.define('oldpanel.oldpanel_Inbound', {
                             },
                             failure : function(response) {
                                 //关闭进度条
-                                Ext.MessageBox.hide();
+                                //Ext.MessageBox.hide();
                                 post_flag =false;
                                 //var message =Ext.decode(response.responseText).showmessage;
                                 Ext.MessageBox.alert("提示","入库失败" );
