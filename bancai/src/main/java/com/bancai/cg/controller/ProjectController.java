@@ -1290,6 +1290,7 @@ public class ProjectController {
         return list;
     }
 
+    //删除接口
     @RequestMapping("/delete/deleteById.do")
     public boolean deleteById(Integer id,String tableName,HttpSession session){
         if(session.getAttribute("userid")!=null){
@@ -1298,6 +1299,48 @@ public class ProjectController {
         return true;
     }
 
+    //修改原材料基本信息
+    @RequestMapping("/material/updateMaterialInfo.do")
+    public boolean updateMaterialInfo(Integer id,String materialName,String partNo,String aValue,String bValue,String mValue,String nValue,String pValue,String orintation,String description,String unitWeight,String unitArea){
+        StringBuffer sb=new StringBuffer();
+        sb.append("id="+id);
+        if(materialName!=null){
+           sb.append(",materialName=\""+materialName+"\"");
+        }
+        if(partNo!=null){
+            sb.append(",partNo=\""+partNo+"\"");
+        }
+        if(orintation!=null){
+            sb.append(",orintation=\""+orintation+"\"");
+        }
+        if(description!=null){
+            sb.append(",description=\""+description+"\"");
+        }
+        if(aValue!=null){
+            sb.append(",aValue="+aValue);
+        }
+        if(bValue!=null){
+            sb.append(",bValue="+bValue);
+        }
+        if(nValue!=null){
+            sb.append(",nValue="+nValue);
+        }
+        if(mValue!=null){
+            sb.append(",mValue="+mValue);
+        }
+        if(pValue!=null){
+            sb.append(",pValue="+pValue);
+        }
+        if(unitWeight!=null){
+            sb.append(",unitWeight="+unitWeight);
+        }
+        if(unitArea!=null){
+            sb.append(",unitArea="+unitArea);
+        }
+        String sql="update material_info set "+sb.toString()+" where id="+id;
+        if(insertProjectService.update(sql)==1) return true;
+        return false;
+    }
 
 
 }
