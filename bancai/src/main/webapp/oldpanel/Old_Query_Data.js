@@ -58,8 +58,8 @@ Ext.define('oldpanel.Old_Query_Data',{
         });
         var oldpanelTypeList = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '旧板类型',
-            labelWidth : 70,
-            width : 230,
+            labelWidth : 60,
+            width : 150,
             id :  'oldpanelType',
             name : 'oldpanelType',
             matchFieldWidth: false,
@@ -141,9 +141,16 @@ Ext.define('oldpanel.Old_Query_Data',{
             //     name: 'endWidth',
             //     value:"",
             // },
-                {xtype: 'textfield', fieldLabel: '旧板品号', id: 'oldpanelNo',
-                    margin: '0 10 0 30',width: 150, labelWidth: 60,
-                    name: 'oldpanelNo', value: ""
+                {
+                    xtype: 'textfield',
+                    fieldLabel: '旧板品号',
+                    id: 'oldpanelNo',
+                    margin: '0 10 0 30',
+                    width: 150,
+                    labelWidth: 60,
+                    name: 'oldpanelNo',
+                    value: "",
+                    hidden:true,
                 },
                 {
                     xtype:'tbtext',
@@ -290,7 +297,7 @@ Ext.define('oldpanel.Old_Query_Data',{
                     minCount : Ext.getCmp('minCount').getValue(),
                     maxCount : Ext.getCmp('maxCount').getValue(),
                     oldpanelType:Ext.getCmp('oldpanelType').getValue(),
-                    oldpanelNo:Ext.getCmp('oldpanelNo').getValue(),
+                    // oldpanelNo:Ext.getCmp('oldpanelNo').getValue(),
                     warehouseName:Ext.getCmp('storePosition').rawValue,
                     tableName:tableName,
                 }
@@ -308,7 +315,7 @@ Ext.define('oldpanel.Old_Query_Data',{
                         minCount : Ext.getCmp('minCount').getValue(),
                         maxCount : Ext.getCmp('maxCount').getValue(),
                         oldpanelType:Ext.getCmp('oldpanelType').getValue(),
-                        oldpanelNo:Ext.getCmp('oldpanelNo').getValue(),
+                        // oldpanelNo:Ext.getCmp('oldpanelNo').getValue(),
                         warehouseName:Ext.getCmp('storePosition').rawValue,
                         tableName:tableName,
                     });

@@ -37,7 +37,7 @@ Ext.define('project.management.editProject',{
         var tableList = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '项目名',
             labelWidth : 60,
-            width : 550,
+            width : 450,
             id :  'projectName',
             name : 'projectName',
             matchFieldWidth: true,
@@ -127,11 +127,11 @@ Ext.define('project.management.editProject',{
                     name: 'endTime',
                     value:"",
                 },
-                {
-                    xtype:'tbtext',
-                    text:'项目计划时间:',
-                    margin : '0 10 0 20',
-                },
+                // {
+                //     xtype:'tbtext',
+                //     text:'项目计划时间:',
+                //     margin : '0 10 0 20',
+                // },
                 {
                     xtype: 'monthfield',
                     margin : '0 10 0 0',
@@ -141,10 +141,12 @@ Ext.define('project.management.editProject',{
                     // labelWidth: 60,
                     name: 'proStartTime',
                     value:"",
-                },{
-                    xtype:'tbtext',
-                    text:'---',
+                    hidden:true
                 },
+                // {
+                //     xtype:'tbtext',
+                //     text:'---',
+                // },
                 {
                     xtype: 'monthfield',
                     margin : '0 10 0 0',
@@ -153,6 +155,7 @@ Ext.define('project.management.editProject',{
                     // labelWidth: 60,
                     name: 'proEndTime',
                     value:"",
+                    hidden:true
                 }]
         });
 
@@ -257,6 +260,7 @@ Ext.define('project.management.editProject',{
                     displayField : 'workerName',
                     valueField : 'id',
                     editable : true,
+                    hidden:true
                 },
                 {
                     xtype : 'button',

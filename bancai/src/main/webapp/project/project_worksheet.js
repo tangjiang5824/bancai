@@ -37,7 +37,6 @@ Ext.define('project.project_worksheet',{
             autoLoad : true
         });
 
-
         var projectList = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '项目名',
             labelWidth : 45,

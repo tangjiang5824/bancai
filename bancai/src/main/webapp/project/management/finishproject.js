@@ -30,7 +30,6 @@ Ext.define('project.management.finishproject',{
             proxy : {
                 type : 'ajax',
                 url : 'project/findAllProjectList.do',
-
                 reader : {
                     type : 'json',
                     rootProperty: 'projectList',
@@ -43,15 +42,14 @@ Ext.define('project.management.finishproject',{
 
         var tableList = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '项目名',
-            labelWidth : 60,
-            width : 550,
+            labelWidth : 45,
+            width : 450,//550
             id :  'projectName',
             name : 'projectName',
             matchFieldWidth: true,
-            // emptyText : "--请选择项目--",
+            emptyText : "--请选择项目名--",
             displayField: 'projectName',
             valueField: 'id',
-            // typeAhead : true,
             editable : true,
             store: tableListStore,
             listeners: {
@@ -106,8 +104,9 @@ Ext.define('project.management.finishproject',{
         });
 
         var toobar = Ext.create('Ext.toolbar.Toolbar',{
+            dock : "top",
+            id : "toolbar",
             items: [
-
                 tableList,
                 {
                     xtype:'tbtext',
@@ -136,11 +135,11 @@ Ext.define('project.management.finishproject',{
                     name: 'endTime',
                     value:"",
                 },
-                {
-                    xtype:'tbtext',
-                    text:'项目计划时间:',
-                    margin : '0 10 0 20',
-                },
+                // {
+                //     xtype:'tbtext',
+                //     text:'项目计划时间:',
+                //     margin : '0 10 0 20',
+                // },
                 {
                     xtype: 'monthfield',
                     margin : '0 10 0 0',
@@ -150,10 +149,12 @@ Ext.define('project.management.finishproject',{
                     // labelWidth: 60,
                     name: 'proStartTime',
                     value:"",
-                },{
-                    xtype:'tbtext',
-                    text:'---',
+                    hidden:true
                 },
+                // {
+                //     xtype:'tbtext',
+                //     text:'---',
+                // },
                 {
                     xtype: 'monthfield',
                     margin : '0 10 0 0',
@@ -162,6 +163,7 @@ Ext.define('project.management.finishproject',{
                     // labelWidth: 60,
                     name: 'proEndTime',
                     value:"",
+                    hidden:true
                 }]
         });
 
@@ -266,6 +268,7 @@ Ext.define('project.management.finishproject',{
                     displayField : 'workerName',
                     valueField : 'id',
                     editable : true,
+                    hidden:true
                 },
                 {
                     xtype : 'button',
@@ -687,11 +690,13 @@ Ext.define('project.management.finishproject',{
             xtype : 'toolbar',
             dock : 'top',
             items : [toolbar_top]
-        },{
+        },
+            {
             xtype : 'toolbar',
             dock : 'top',
             items : [toobar]
-        },{
+        },
+            {
             xtype : 'toolbar',
             dock : 'top',
             style:'border-width:0 0 0 0;',

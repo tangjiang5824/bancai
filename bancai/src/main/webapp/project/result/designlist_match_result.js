@@ -346,7 +346,7 @@ Ext.define('project.result.designlist_match_result',{
         var buildingPositionList = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '位置',
             labelWidth : 35,
-            width : 200,
+            width : 150,
             id :  'positionName',
             margin: '0 10 0 40',
             name : 'positionName',

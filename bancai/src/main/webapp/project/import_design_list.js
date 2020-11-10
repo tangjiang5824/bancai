@@ -446,7 +446,7 @@ Ext.define('project.import_design_list', {
 		var tableList1 = Ext.create('Ext.form.ComboBox',{
 			fieldLabel : '项目名',
 			labelWidth : 45,
-			width : 550,//'35%'
+			width : 450,//'35%'
 			queryMode: 'local',
 			id :  'projectName',
 			name : 'projectName',

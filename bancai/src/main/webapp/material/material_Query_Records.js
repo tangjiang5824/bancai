@@ -95,8 +95,8 @@ Ext.define('material.material_Query_Records',{
             queryMode: 'local',
             displayField: 'name',
             valueField: 'abbr',
-            margin : '0 20 0 40',
-            width: 160,
+            margin : '0 10 0 20',
+            width: 120,
             labelWidth: 60,
             renderTo: Ext.getBody()
         });
@@ -125,8 +125,8 @@ Ext.define('material.material_Query_Records',{
                     id : 'operator',
                     // disabled : true,
                     // width:'95%',
-                    margin: '0 40 0 0',
-                    width: 150,
+                    margin: '0 20 0 0',
+                    width: 140,//150
                     labelWidth: 45,
                     store : workerListStore,
                     displayField : 'workerName',
@@ -148,13 +148,13 @@ Ext.define('material.material_Query_Records',{
                 {
                     xtype:'tbtext',
                     text:'操作时间:',
-                    margin : '0 0 0 20',
+                    margin : '0 0 0 10',
                 },
                 {
                     xtype : 'datefield',
                     margin : '0 0 0 0',
                     // fieldLabel : '开始时间',
-                    width : 120,
+                    width : 100,
                     // labelWidth : 60,
                     id : "startTime",
                     name : 'startTime',
@@ -169,7 +169,7 @@ Ext.define('material.material_Query_Records',{
                     xtype : 'datefield',
                     margin : '0 0 0 0',
                     // fieldLabel : '结束时间',
-                    width : 120,
+                    width : 100,
                     // labelWidth : 60,
                     id : "endTime",
                     name : 'endTime',

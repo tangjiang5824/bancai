@@ -123,9 +123,11 @@ Ext.define('material.material_Query_Data',{
                     // labelWidth: 60,
                     name: 'countUse_min',
                     value:"",
+                    hidden:true
                 },{
                     xtype:'tbtext',
                     text:'---',
+                    hidden:true
                 },
                 {
                     xtype: 'textfield',
@@ -135,6 +137,7 @@ Ext.define('material.material_Query_Data',{
                     // labelWidth: 60,
                     name: 'countUse_max',
                     value:"",
+                    hidden:true
                 },
 
                 {

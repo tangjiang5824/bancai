@@ -125,7 +125,7 @@ Ext.define('project.project_check_designList',{
         var buildingName = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '楼栋名',
             labelWidth : 45,
-            width : 300,
+            width : 250,
             id :  'buildingName',
             name : 'buildingName',
             matchFieldWidth: false,
