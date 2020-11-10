@@ -320,7 +320,7 @@ Ext.define('project.result.designlist_match_result',{
             id :  'buildingName',
             name : 'buildingName',
             matchFieldWidth: false,
-            margin: '0 0 0 40',
+            margin: '0 0 0 20',
             emptyText : "--请选择楼栋名--",
             displayField: 'buildingName',
             valueField: 'id',//楼栋的id
@@ -348,7 +348,7 @@ Ext.define('project.result.designlist_match_result',{
             labelWidth : 35,
             width : 150,
             id :  'positionName',
-            margin: '0 10 0 40',
+            margin: '0 10 0 20',
             name : 'positionName',
             matchFieldWidth: true,
             // emptyText : "--请选择项目--",

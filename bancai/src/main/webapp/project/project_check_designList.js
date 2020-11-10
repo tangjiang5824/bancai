@@ -565,7 +565,7 @@ Ext.define('project.project_check_designList',{
                 return;
             }
             console.log("grid.columns[columnIndex]：",Ext.getCmp('designList_Grid').columns[columnIndex-1])
-            var fieldName = Ext.getCmp('designList_Grid').columns[columnIndex-1].text;
+            var fieldName = Ext.getCmp('designList_Grid').columns[columnIndex].text;
             var sm = Ext.getCmp('designList_Grid').getSelectionModel();
             // var isrollback = Ext.getCmp('isrollback').getValue();
             var materialArr = sm.getSelection();
