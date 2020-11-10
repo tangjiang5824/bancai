@@ -445,7 +445,6 @@ Ext.define('project.project_worksheet',{
                     region:'center',
                     bodyStyle: 'background:#fff;',
                     handler : function() {
-
                         // 取出grid的字段名字段类型pickingMaterialGrid
                         console.log('1===========')
                         var select = Ext.getCmp('pickingMaterialGrid').getStore()
@@ -495,6 +494,15 @@ Ext.define('project.project_worksheet',{
                                     autoLoad : true,
                                 });
                                 grid_worksheet_specific.setStore(worksheet_specificListStore);
+                                //刷新
+                                productListStore.load({
+                                    params : {
+                                        projectId:Ext.getCmp("projectName").getValue(),
+                                        buildingId:Ext.getCmp("buildingName").getValue(),
+                                        buildingpositionId:Ext.getCmp("positionName").getValue(),
+                                    }
+                                });
+
                             },
                             failure : function(response) {
                                 //var message =Ext.decode(response.responseText).showmessage;
