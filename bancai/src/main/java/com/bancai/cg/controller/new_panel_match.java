@@ -148,7 +148,12 @@ public class new_panel_match {
                         case 302: materialName=info.getaValue()+"*"+info.getbValue()+" IC";
                         specification=info.getmValue()+"mm";
                         break;
-                        default: materialName=info.getTypeId().getTypeName();
+                        default: {
+                            StringBuffer sb=new StringBuffer();
+                            if(info.getaValue()!=null&&info.getbValue()!=null) sb.append(info.getaValue()+"*"+info.getbValue());
+                            if(info.getmValue()!=null) sb.append(info.getmValue()+"长");
+                            materialName=sb.toString()+info.getTypeId().getTypeName();
+                        }
                     }
                     inf.setMaterialName(materialName);
                     inf.setSpecification(specification);

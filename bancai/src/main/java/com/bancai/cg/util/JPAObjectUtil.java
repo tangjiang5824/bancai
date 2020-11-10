@@ -183,6 +183,16 @@ public class JPAObjectUtil {
                 arrayList.add(count);
                 list.add(arrayList);
             }else {
+                material=getValue(rule,material,productInfo,"m");
+                material=getValue(rule,material,productInfo,"n");
+                material=getValue(rule,material,productInfo,"p");
+                material=getValue(rule,material,productInfo,"a");
+                material=getValue(rule,material,productInfo,"b");
+                count=(int)(double) rule.getCount();
+                arrayList.add(material);
+                arrayList.add(count);
+                list.add(arrayList);
+
 
             }
             //a,b
