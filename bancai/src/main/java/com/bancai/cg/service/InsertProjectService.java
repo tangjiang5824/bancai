@@ -62,6 +62,12 @@ public class InsertProjectService extends BaseService {
         DataList typelist = queryService.query(sql);
         return typelist;
     }
+
+    public int deletebyid(Integer id,String tableName){
+        String sql="delete from "+tableName+" where id="+id;
+        return jo.update(sql);
+    }
+
     /**
      * 查询返回所有的旧板类型
      * @return

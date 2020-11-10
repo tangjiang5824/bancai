@@ -1290,6 +1290,14 @@ public class ProjectController {
         return list;
     }
 
+    @RequestMapping("/delete/deleteById.do")
+    public boolean deleteById(Integer id,String tableName,HttpSession session){
+        if(session.getAttribute("userid")!=null){
+            if(insertProjectService.deletebyid(id,tableName)!=1) return false;
+        }else return false;
+        return true;
+    }
+
 
 
 }
