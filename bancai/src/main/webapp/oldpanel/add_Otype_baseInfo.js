@@ -27,18 +27,66 @@ Ext.define('oldpanel.add_Otype_baseInfo', {
                 iconAlign : 'center',
                 iconCls : 'rukuicon ',
                 text : '新增类型',
+                margin:'0 40 0 0',
                 handler : function() {
                     //fields: ['品号', '品名','规格','库存单位','仓库编号','数量','成本','存放位置']
                     var data = [{
-                        'typeName':'',
+                        'oldpanelTypeName':'',
+                        'description':'',
+                        'classificationId':'',
                     }];
-                    //Ext.getCmp('addTypeGrid')返回定义的对象
-                    Ext.getCmp('addTypeGrid').getStore().loadData(data,
+                    //Ext.getCmp('old_addTypeGrid')返回定义的对象
+                    Ext.getCmp('old_addTypeGrid').getStore().loadData(data,
                         true);
-
                 }
-
             },
+                {
+                    xtype : 'button',
+                    iconAlign : 'center',
+                    iconCls : 'rukuicon ',
+                    text : '删除',
+                    handler: function() {
+                        var sm = Ext.getCmp('old_addTypeGrid').getSelectionModel();
+                        var Arr = sm.getSelection();
+                        //类型id
+                        console.log('------',Arr)
+                        var typeId = Arr[0].data.id;
+                        var value = Arr[0].data.typeName;
+
+                        if (Arr.length != 0) {
+                            Ext.Msg.confirm("提示", "共选中" + Arr.length + "条数据，是否确认删除？", function (btn) {
+                                if (btn == 'yes') {
+                                    //先删除后台再删除前台
+                                    //ajax 删除后台数据 成功则删除前台数据；失败则不删除前台数据
+                                    //Extjs 4.x 删除
+
+                                    Ext.Ajax.request({
+                                        url:"data/EditCellById.do",  //EditDataById.do
+                                        params:{
+                                            type:'delete',
+                                            tableName:tableName,
+                                            field:'typeName',
+                                            value:value,
+                                            id:typeId
+                                        },
+                                        success:function (response) {
+                                            Ext.MessageBox.alert("提示", "删除成功!");
+                                            Ext.getCmp('old_addTypeGrid').getStore().remove(Arr);
+                                        },
+                                        failure : function(response){
+                                            Ext.MessageBox.alert("提示", "删除失败!");
+                                        }
+                                    })
+                                } else {
+                                    return;
+                                }
+                            });
+                        } else {
+                            //Ext.Msg.confirm("提示", "无选中数据");
+                            Ext.Msg.alert("提示", "无选中数据");
+                        }
+                    }
+                }
 //                 {
 //                 xtype : 'button',
 //                 iconAlign : 'center',
@@ -48,7 +96,7 @@ Ext.define('oldpanel.add_Otype_baseInfo', {
 //                 handler : function() {
 //                     // 取出grid的字段名字段类型
 //                     //var userid="<%=session.getAttribute('userid')%>";
-//                     var select = Ext.getCmp('addTypeGrid').getStore()
+//                     var select = Ext.getCmp('old_addTypeGrid').getStore()
 //                         .getData();
 //                     var s = new Array();
 //                     select.each(function(rec) {
@@ -101,15 +149,16 @@ Ext.define('oldpanel.add_Otype_baseInfo', {
             ]
         });
 
-        var MtypeStore = Ext.create('Ext.data.Store',{
+        var OtypeStore = Ext.create('Ext.data.Store',{
             //id,materialName,length,width,materialType,number
             fields:[],
             proxy : {
                 type : 'ajax',
-                url : 'material/findAllBytableName.do?tableName='+tableName,//获取同类型的原材料  +'&pickNum='+pickNum
+                url : 'material/findAllBytableNameWithLimit.do?tableName='+tableName,//获取同类型的原材料  +'&pickNum='+pickNum
                 reader : {
                     type : 'json',
-                    rootProperty: 'oldpaneltype',
+                    rootProperty: 'value',
+                    totalProperty: 'totalCount'
                 },
                 // params: {
                 //     tableName:'material_type'
@@ -147,10 +196,18 @@ Ext.define('oldpanel.add_Otype_baseInfo', {
             store: classificationListStore,
         });
         var grid = Ext.create("Ext.grid.Panel", {
-            id : 'addTypeGrid',
-            dockedItems : [toolbar2],
-            store : MtypeStore,
+            id : 'old_addTypeGrid',
+            // dockedItems : [toolbar2],
+            tbar:toolbar2,
+            store : OtypeStore,
             columns : [
+                {
+                    // header: '序号',
+                    xtype: 'rownumberer',
+                    width: 45,
+                    align: 'center',
+                    sortable: false,
+                },
                 {
                     dataIndex : 'oldpanelTypeName',
                     name : '旧版类型名称',
@@ -185,56 +242,55 @@ Ext.define('oldpanel.add_Otype_baseInfo', {
                         return returnvalue;
                     }
                 },
-                {
-                    xtype:'actioncolumn',
-                    text : '删除操作',
-                    width:100,
-                    style:"text-align:center;",
-                    items: [
-                        //删除按钮
-                        {
-                            icon: 'extjs/imgs/delete.png',
-                            tooltip: 'Delete',
-                            style:"margin-right:20px;",
-                            handler: function(grid, rowIndex, colIndex) {
-                                var rec = grid.getStore().getAt(rowIndex);
-                                console.log("删除--------：",rec.data.typeName)
-                                console.log("删除--------：",rec.data.id)
-                                //类型id
-                                var typeId = rec.data.id;
-                                //弹框提醒
-                                Ext.Msg.show({
-                                    title: '操作确认',
-                                    message: '将删除数据，选择“是”否确认？',
-                                    buttons: Ext.Msg.YESNO,
-                                    icon: Ext.Msg.QUESTION,
-                                    fn: function (btn) {
-                                        if (btn === 'yes') {
-                                            Ext.Ajax.request({
-                                                url:"data/EditCellById.do",  //EditDataById.do
-                                                params:{
-                                                    type:'delete',
-                                                    tableName:tableName,
-                                                    field:'typeName',
-                                                    value:rec.data.typeName,
-                                                    id:typeId
-                                                },
-                                                success:function (response) {
-                                                    Ext.MessageBox.alert("提示", "删除成功!");
-                                                    Ext.getCmp('addTypeGrid').getStore().remove(rec);
-                                                },
-                                                failure : function(response){
-                                                    Ext.MessageBox.alert("提示", "删除失败!");
-                                                }
-                                            })
-                                        }
-                                    }
-                                });
-                                // alert("Terminate " + rec.get('firstname'));
-                            }
-                        }]
-
-                }
+                // {
+                //     xtype:'actioncolumn',
+                //     text : '删除操作',
+                //     width:100,
+                //     style:"text-align:center;",
+                //     items: [
+                //         //删除按钮
+                //         {
+                //             icon: 'extjs/imgs/delete.png',
+                //             tooltip: 'Delete',
+                //             style:"margin-right:20px;",
+                //             handler: function(grid, rowIndex, colIndex) {
+                //                 var rec = grid.getStore().getAt(rowIndex);
+                //                 console.log("删除--------：",rec.data.typeName)
+                //                 console.log("删除--------：",rec.data.id)
+                //                 //类型id
+                //                 var typeId = rec.data.id;
+                //                 //弹框提醒
+                //                 Ext.Msg.show({
+                //                     title: '操作确认',
+                //                     message: '将删除数据，选择“是”否确认？',
+                //                     buttons: Ext.Msg.YESNO,
+                //                     icon: Ext.Msg.QUESTION,
+                //                     fn: function (btn) {
+                //                         if (btn === 'yes') {
+                //                             Ext.Ajax.request({
+                //                                 url:"data/EditCellById.do",  //EditDataById.do
+                //                                 params:{
+                //                                     type:'delete',
+                //                                     tableName:tableName,
+                //                                     field:'typeName',
+                //                                     value:rec.data.typeName,
+                //                                     id:typeId
+                //                                 },
+                //                                 success:function (response) {
+                //                                     Ext.MessageBox.alert("提示", "删除成功!");
+                //                                     Ext.getCmp('old_addTypeGrid').getStore().remove(rec);
+                //                                 },
+                //                                 failure : function(response){
+                //                                     Ext.MessageBox.alert("提示", "删除失败!");
+                //                                 }
+                //                             })
+                //                         }
+                //                     }
+                //                 });
+                //                 // alert("Terminate " + rec.get('firstname'));
+                //             }
+                //         }]
+                // }
                  ],
             viewConfig : {
                 plugins : {
@@ -242,8 +298,18 @@ Ext.define('oldpanel.add_Otype_baseInfo', {
                     dragText : "可用鼠标拖拽进行上下排序"
                 }
             },
+            dockedItems: [
+                {
+                    xtype: 'pagingtoolbar',
+                    store: OtypeStore,   // same store GridPanel is using
+                    dock: 'bottom',
+                    displayInfo: true,
+                    displayMsg:'显示{0}-{1}条，共{2}条',
+                    emptyMsg:'无数据'
+                }
+            ],
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
-                clicksToEdit : 1
+                clicksToEdit : 3
             })],
             selType : 'rowmodel',
             listeners: {
@@ -266,7 +332,7 @@ Ext.define('oldpanel.add_Otype_baseInfo', {
                         success:function (response) {
                             Ext.MessageBox.alert("提示","修改成功" );
                             //重新加载
-                            Ext.getCmp('addTypeGrid').getStore().load();
+                            Ext.getCmp('old_addTypeGrid').getStore().load();
                         },
                         failure:function (response) {
                             Ext.MessageBox.alert("提示","修改失败" );
@@ -276,8 +342,8 @@ Ext.define('oldpanel.add_Otype_baseInfo', {
             }
         });
 
-        this.dockedItems = [ grid];//toolbar2,
-        //this.items = [ me.grid ];
+        // this.dockedItems = [ grid];//toolbar2,
+        this.items = [ grid ];
         this.callParent(arguments);
 
     }
