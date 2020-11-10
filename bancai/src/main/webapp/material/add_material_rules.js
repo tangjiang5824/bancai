@@ -409,7 +409,7 @@ Ext.define('material.add_material_rules', {
                                         // {
                                         //     xtype: 'textfield',
                                         //     fieldLabel: '后缀匹配',
-                                        //     name: 'isOrNotSuffix',
+                                        //     name: 'isCompleteMatch',
                                         // },
                                         //是否完全匹配
                                         {
@@ -419,11 +419,11 @@ Ext.define('material.add_material_rules', {
                                             width:210,
                                             columns: 2, //设置没四个选项一行
                                             margin : '0 0 0 40',
-                                            // id:'isOrNotSuffix',
+                                            // id:'isCompleteMatch',
                                             // allowBlank: false,
                                             items:[
-                                                {boxLabel: '是', name: 'isOrNotSuffix',inputValue: '1'},
-                                                {boxLabel: '否', name: 'isOrNotSuffix',inputValue: '0', }, //checked : true  默认选中
+                                                {boxLabel: '是', name: 'isCompleteMatch',inputValue: '1'},
+                                                {boxLabel: '否', name: 'isCompleteMatch',inputValue: '0', }, //checked : true  默认选中
                                             ]
                                         },
                                     ]

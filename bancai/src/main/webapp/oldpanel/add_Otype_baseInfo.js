@@ -17,6 +17,7 @@ Ext.define('oldpanel.add_Otype_baseInfo', {
 
     initComponent : function() {
         var me = this;
+        var itemsPerPage = 50;
         //定义表名
         var tableName="oldpaneltype";
         // var materialtype="0";
@@ -152,6 +153,7 @@ Ext.define('oldpanel.add_Otype_baseInfo', {
         var OtypeStore = Ext.create('Ext.data.Store',{
             //id,materialName,length,width,materialType,number
             fields:[],
+            pageSize: itemsPerPage, // 每页显示记录数
             proxy : {
                 type : 'ajax',
                 url : 'material/findAllBytableNameWithLimit.do?tableName='+tableName,//获取同类型的原材料  +'&pickNum='+pickNum

@@ -17,6 +17,7 @@ Ext.define('product.add_Ptype_baseInfo', {
 
     initComponent : function() {
         var me = this;
+        var itemsPerPage = 50;
         //定义表名
         var tableName="producttype";
         // var materialtype="0";
@@ -146,6 +147,7 @@ Ext.define('product.add_Ptype_baseInfo', {
         var PtypeStore = Ext.create('Ext.data.Store',{
             //id,materialName,length,width,materialType,number
             fields:[],
+            pageSize: itemsPerPage, // 每页显示记录数
             proxy : {
                 type : 'ajax',
                 url : 'material/findAllBytableNameWithLimit.do?tableName='+tableName,//获取同类型的原材料  +'&pickNum='+pickNum
@@ -154,8 +156,10 @@ Ext.define('product.add_Ptype_baseInfo', {
                     rootProperty: 'value',
                     totalProperty: 'totalCount'
                 },
-                // params: {
-                //     tableName:'material_type'
+                // params:{
+                //     start: 0,
+                //     limit: itemsPerPage,
+                //     // tableName:tableName,
                 // }
             },
             autoLoad : true
@@ -229,7 +233,8 @@ Ext.define('product.add_Ptype_baseInfo', {
                     text : '分类',
                     flex :0.6,
                     //width : 110,
-                    editor:classificationList,renderer:function(value, cellmeta, record){
+                    editor:classificationList,
+                    renderer:function(value, cellmeta, record){
                         var index = classificationListStore.find(classificationList.valueField,value);
                         var ehrRecord = classificationListStore.getAt(index);
                         var returnvalue = "";
@@ -297,7 +302,7 @@ Ext.define('product.add_Ptype_baseInfo', {
                 }
             },
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
-                clicksToEdit : 1
+                clicksToEdit : 2
             })],
             // selType : 'checkboxmodel',//'rowmodel'
             // selType : 'rowmodel',
