@@ -210,7 +210,9 @@ public class AnalyzeNameService extends BaseService {
             } else if (sOName[i].contains("*")) {
                 b = SetLengthAndWidth(sOName[i].split("\\*")[0],sOName[i].split("\\*")[1])[0];
                 a = SetLengthAndWidth(sOName[i].split("\\*")[0],sOName[i].split("\\*")[1])[1];
-                if(a.equals(sOName[i].split("\\*")[0]))
+                if(!a.matches(isPureNumber)||!b.matches(isPureNumber))
+                    formatBuilder.append("7");
+                else if(a.equals(sOName[i].split("\\*")[0]))
                     formatBuilder.append("4");
                 else
                     formatBuilder.append("5");
@@ -475,7 +477,9 @@ public class AnalyzeNameService extends BaseService {
             } else if (sPName[i].contains("X")) {
                 b = SetLengthAndWidth(sPName[i].split("X")[0],sPName[i].split("X")[1])[0];
                 a = SetLengthAndWidth(sPName[i].split("X")[0],sPName[i].split("X")[1])[1];
-                if(a.equals(sPName[i].split("X")[0]))
+                if(!a.matches(isPureNumber)||!b.matches(isPureNumber))
+                    formatBuilder.append("7");
+                else if(a.equals(sPName[i].split("X")[0]))
                     formatBuilder.append("4");
                 else
                     formatBuilder.append("5");
