@@ -62,6 +62,12 @@ public class InsertProjectService extends BaseService {
         DataList typelist = queryService.query(sql);
         return typelist;
     }
+
+    public int deletebyid(Integer id,String tableName){
+        String sql="delete from "+tableName+" where id="+id;
+        return jo.update(sql);
+    }
+
     /**
      * 查询返回所有的旧板类型
      * @return
@@ -74,6 +80,7 @@ public class InsertProjectService extends BaseService {
     }
     @Transactional
     public int update(String sql){
+        System.out.println(sql);
         return jo.update(sql);
 
     }
@@ -193,10 +200,10 @@ public class InsertProjectService extends BaseService {
         String sql=null;
         DataList list=null;
         if (value!=null&&value.trim().length()!=0) {
-         sql="select * from " + tablename + " where " + variable + "= ? limit " + start + "," + limit;
+         sql="select * from " + tablename + " where " + variable + "= ? ";
          list=queryService.query(sql,value);
         }else {
-            sql="select * from " + tablename + " limit " + start + "," + limit;
+            sql="select * from " + tablename;
             list=queryService.query(sql);
         }
 

@@ -34,6 +34,7 @@ public class MaterialMatchRules implements Serializable {
     private String upWidth;
     private String orientation;
     private String suffix;
+    private Integer isCompleteMatch;
 
     public String getSuffix() {
         return suffix;

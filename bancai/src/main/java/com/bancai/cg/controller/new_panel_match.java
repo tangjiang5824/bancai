@@ -47,7 +47,7 @@ public class new_panel_match {
 
     @Transactional(rollbackFor = Exception.class)
     public  void match( int projectId, int buildingId, int buildingpositionId) throws ScriptException {
-        Session session=getSession();
+        //Session session=getSession();
         List<Designlist> design_list =designlistdao.findAllByMadeByAndProjectIdAndBuildingIdAndBuildingpositionIdOrderByProductId(0,projectId,buildingId,buildingpositionId);
         int pre_productId=0;
         List<Match_result> pre_match_results=new ArrayList<>();
@@ -96,10 +96,17 @@ public class new_panel_match {
             pre_match_results=new ArrayList<>();
             ProductInfo productInfo = productInfodao.findById(designlist.getProductId()).orElse(null);
             List<MaterialMatchRules> rules=null;
+            List<MaterialMatchRules> rules2=materialMatchRulesRepository.findAllByProductformatIdAndIsCompleteMatch(productInfo.getProductFormatId().getId(),0);
+            //产品有后缀
             if(productInfo.getSuffix()!=null&&productInfo.getSuffix().trim().length()!=0){
-                rules=materialMatchRulesRepository.findAllByProductformatIdAndSuffix(productInfo.getProductFormatId().getId(),productInfo.getSuffix());
+                rules=materialMatchRulesRepository.findAllByProductformatIdAndIsCompleteMatchAndSuffix(productInfo.getProductFormatId().getId(),1,productInfo.getSuffix());
             }else
-             rules=materialMatchRulesRepository.findAllByProductformatId(productInfo.getProductFormatId().getId());
+             rules=materialMatchRulesRepository.findAllByProductformatIdAndIsCompleteMatchAndSuffix(productInfo.getProductFormatId().getId(),1,"");
+            rules.addAll(rules2);
+            if(rules.size()==0) {
+                System.out.println(productInfo.getProductName()+"未添加匹配规则");
+                continue;
+            }
             String type=productInfo.getProductFormatId().getProducttype().getClassification().getClassificationName();
             //通过规则进行匹配 需要放入工单
             List<List<Object>> list = JPAObjectUtil.NewPanelMatch(productInfo, type, rules);
@@ -120,6 +127,7 @@ public class new_panel_match {
                 if(info.getbValue()!=null&&info.getbValue()!=0) condition.and(new mysqlcondition("bValue","=",info.getbValue()));
                 if(info.getOrientation()!=null) condition.and(new mysqlcondition("orientation","=",info.getOrientation()));
                 DataList dataList=insertProjectService.findObjectId("material_info",condition);
+
                 if(dataList.size()==0)  {
                     // log.error("匹配中 没有找到对应的原材料id 设计清单id"+designlist.getId()+"  产品id "+productInfo.getId());
                     MaterialInfo inf=new MaterialInfo();
@@ -130,8 +138,8 @@ public class new_panel_match {
                     inf.setaValue(info.getaValue());
                     inf.setbValue(info.getbValue());
                     inf.setOrientation(info.getOrientation());
-                    String materialName=null;
                     String specification=null;
+                    String materialName=null;
                     switch (materialPrefix){
                         //U板
                         case 301: materialName=info.getnValue()+" U铝膜板";
@@ -140,16 +148,24 @@ public class new_panel_match {
                         case 302: materialName=info.getaValue()+"*"+info.getbValue()+" IC";
                         specification=info.getmValue()+"mm";
                         break;
-                        default: materialName=info.getTypeId().getTypeName();
+                        default: {
+                            StringBuffer sb=new StringBuffer();
+                            if(info.getaValue()!=null&&info.getbValue()!=null) sb.append(info.getaValue()+"*"+info.getbValue());
+                            if(info.getmValue()!=null) sb.append(info.getmValue()+"长");
+                            materialName=sb.toString()+info.getTypeId().getTypeName();
+                        }
                     }
                     inf.setMaterialName(materialName);
                     inf.setSpecification(specification);
-                    materialinfodao.save(inf);
+                    materialinfodao.saveAndFlush(inf);
                     inf.setPartNo(JPAObjectUtil.getPartNo(materialPrefix,typeId,inf.getMaterialid()));
+                    materialinfodao.save(inf);
                     info=inf;
 
-                }else
-                info=materialinfodao.findById(Integer.parseInt(dataList.get(0).get("id")+"")).orElse(null);
+                }else{
+                    info=materialinfodao.findById(Integer.parseInt(dataList.get(0).get("id")+"")).orElse(null);
+                }
+
                 /*------------------------------------
                 上面通过匹配规则找到了materialinfo
                 --------------------------------------
@@ -165,8 +181,7 @@ public class new_panel_match {
                 Match_result match_result=new Match_result();
                 match_result.setDesignlistId(designlist.getId());
                 match_result.setMatchId(info.getMaterialid());
-                if (dataList.size()==0) System.out.println("datalist为空");
-                match_result.setName(dataList.get(0).get("materialName") + "");
+                match_result.setName(info.getMaterialName());
                 match_result.setMadeBy(4);
                 match_result.setIsCompleteMatch(0);
                 match_result.setCount(de_count);

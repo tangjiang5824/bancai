@@ -268,17 +268,14 @@ Ext.define('preprocess.preprocess_Receive',{
             dock: 'bottom',
             columns:[
                 {
-                    // dataIndex : '序号',
-                    name : '序号',
-                    text : '序号',
-                    width : 45,
-                    value:'99',
-                    renderer:function(value,metadata,record,rowIndex){
-                        return　record_start_bottom　+　1　+　rowIndex;
-                    }
+                    // header: '序号',
+                    xtype: 'rownumberer',
+                    width: 45,
+                    align: 'center',
+                    sortable: false
                 },
                 {
-                    dataIndex:'requisitionOrderId',
+                    dataIndex:'requisitionOrderNo',
                     text:'领料单号',
                     flex :1
                 },
@@ -326,8 +323,10 @@ Ext.define('preprocess.preprocess_Receive',{
                 itemdblclick: function(me, record, item, index,rowModel){
                     var select = record.data;
                     console.log("select--======",select);
-                    var requisitionOrderId = select.requisitionOrderId;//领料单号
+                    var requisitionOrderId = select.requisitionOrderId;
                     var projectId = select.projectId;
+                    var requisitionOrderNo = select.requisitionOrderNo;
+                    var projectName = select.projectName;
 
                     //var pickNumber = select.
                     // var specificPreprocessList = Ext.create('Ext.data.Store',{
@@ -385,9 +384,13 @@ Ext.define('preprocess.preprocess_Receive',{
                     //将requisitionOrderId传到明细表格
                     // Ext.getCmp('toolbar_specific_pickList').items.items[0].setValue(requisitionOrderId);
 
+                    toolbar_show_pre.items.items[0].setValue(requisitionOrderId);
+                    toolbar_show_pre.items.items[1].setValue(requisitionOrderNo);
+                    toolbar_show_pre.items.items[2].setValue(projectId);
+                    toolbar_show_pre.items.items[3].setValue(projectName);
 
-                    toolbar_specific_pickList.items.items[0].setValue(requisitionOrderId);
-                    toolbar_specific_pickList.items.items[1].setValue(projectId);
+                    // toolbar_specific_pickList.items.items[0].setValue(requisitionOrderId);
+                    // toolbar_specific_pickList.items.items[1].setValue(projectId);
 
                     console.log("--------------requisitionOrderId:",requisitionOrderId)
                     // //弹框
@@ -400,7 +403,7 @@ Ext.define('preprocess.preprocess_Receive',{
                             title:'明细',
                             id:'pre_myPanel',
                             layout:'fit',
-                            items:[panel_specific],
+                            items:[panel_specific_pre],
                             closable:true,
                             closeAction:'hide',
                             autoDestroy: true,
@@ -511,30 +514,87 @@ Ext.define('preprocess.preprocess_Receive',{
             store: storeNameList,
         });
 
-        var toolbar_specific_pickList = Ext.create('Ext.toolbar.Toolbar',{
-            dock : "top",
-            // id : "toolbar_specific_pickList",
+        var toolbar_show_pre = Ext.create('Ext.toolbar.Toolbar',{
+            // dock : "top",
+            id : "toolbar_show_pre",
             items: [
                 {
                     xtype: 'textfield',
-                    margin : '0 10 0 0',
+                    fieldLabel : '单号',
+                    margin : '0 40 0 0',
                     id :'picklistId',
-                    width: 180,
-                    labelWidth: 30,
+                    width: 320,
+                    labelWidth: 60,
                     name: 'picklistId',
                     value:"",
                     hidden:true
                 },
                 {
                     xtype: 'textfield',
+                    fieldLabel : '领料单号',
+                    margin : '0 40 0 0',
+                    id :'picklistNo',
+                    width: 320,
+                    labelWidth: 60,
+                    name: 'picklistNo',
+                    value:"",
+                    disabled : true,
+                    editable : false
+                },
+                {
+                    xtype: 'textfield',
                     margin : '0 10 0 0',
+                    fieldLabel : '所属项目',
                     id :'project_Id',
-                    width: 180,
-                    labelWidth: 30,
+                    width: 550,
+                    labelWidth: 60,
                     name: 'project_Id',
                     value:"",
+                    disabled : true,
+                    editable : false,
                     hidden:true
                 },
+                {
+                    xtype: 'textfield',
+                    margin : '0 10 0 0',
+                    fieldLabel : '所属项目',
+                    id :'project_Name',
+                    width: 550,
+                    labelWidth: 60,
+                    name: 'project_Name',
+                    value:"",
+                    disabled : true,
+                    editable : false
+                    // hidden:true
+                },
+
+            ]
+        });
+
+        var toolbar_specific_pickList = Ext.create('Ext.toolbar.Toolbar',{
+            dock : "top",
+            // id : "toolbar_specific_pickList",
+            items: [
+                // {
+                //     xtype: 'textfield',
+                //     margin : '0 10 0 0',
+                //     id :'picklistId',
+                //     width: 180,
+                //     labelWidth: 30,
+                //     name: 'picklistId',
+                //     value:"",
+                //     hidden:true
+                // },
+                // {
+                //     xtype: 'textfield',
+                //     margin : '0 10 0 0',
+                //     id :'project_Id',
+                //     width: 180,
+                //     labelWidth: 30,
+                //     name: 'project_Id',
+                //     value:"",
+                //     hidden:true
+                // },
                 //楼栋
                 buildingName,
                 //位置
@@ -1073,13 +1133,14 @@ Ext.define('preprocess.preprocess_Receive',{
         // }
 
         //领料的具体材料信息Panel
-        var panel_specific = Ext.create('Ext.panel.Panel',{
+        var panel_specific_pre = Ext.create('Ext.panel.Panel',{
             // title: '领料单材料详情',
             //dock: 'bottom',
             layout:{
                 type:'vbox',
                 align:'stretch'
             },
+            tbar:toolbar_show_pre,
             width:'100%',
             height:500,
             // closable:true,

@@ -399,14 +399,17 @@ Ext.define('oldpanel.query_Oldpanel_Rules',{
                 {dataIndex : 'priority', text : '优先级', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'isCompleteMatch', text : '是否完全匹配', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'isValid', text : '是否启用', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {
-                    // name : '操作',
-                    text : '查看约束',
-                    flex :1 ,
-                    renderer:function(value, cellmeta){
-                        return "<INPUT type='button' value='查看约束' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
-                    }
-                },
+                // {
+                //     // name : '操作',
+                //     text : '查看约束',
+                //     flex :1 ,
+                //     renderer:function(value, cellmeta){
+                //         return "<INPUT type='button' value='查看约束' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
+                //     }
+                // },
+                {dataIndex : 'pDescription', text : '产品约束条件', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'oDescription', text : '旧板约束条件', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+
             ],
 
             //tbar: toobar,

@@ -417,7 +417,7 @@ Ext.define('oldpanel.add_oldpanel_rules', {
                 {
                     xtype: 'tbtext',
                     margin: '0 0 0 0',
-                    text:'<strong>旧板品名格式选择：</strong>'
+                    text:'<strong>旧板品名格式选择：</strong>',
                 },
                 oldPanel_type,
                 oldpanel_format,
@@ -812,7 +812,7 @@ Ext.define('oldpanel.add_oldpanel_rules', {
             store : {
                 fields :[]
             },
-            width:800,
+            width:500,
             // hidden:true,//隐藏
             bodyStyle: 'text-align:center;',
             // items:[],
