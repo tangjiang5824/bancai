@@ -80,6 +80,7 @@ public class InsertProjectService extends BaseService {
     }
     @Transactional
     public int update(String sql){
+        System.out.println(sql);
         return jo.update(sql);
 
     }
