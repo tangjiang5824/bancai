@@ -15,6 +15,15 @@ Ext.define('material.query_Newpanel_Rules',{
                 //
             }
         });
+
+        //是否后缀匹配：枚举类型
+        Ext.define('newPanel.material.isCompleteSuffix', {
+            statics: { // 关键s
+                0: { value: '0', name: '否' },
+                1: { value: '1', name: '是' },
+            }
+        });
+
         var productTypeNameStore = Ext.create('Ext.data.Store',{
             fields : [ 'productTypeName'],
             proxy : {
@@ -288,6 +297,13 @@ Ext.define('material.query_Newpanel_Rules',{
                 {dataIndex : 'condition1', text : '条件1', flex :1,editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'condition2', text : '条件2', flex :1,editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'suffix', text : '后缀', flex :1,editor : {xtype : 'textfield', allowBlank : false,}},
+                {
+                    dataIndex : 'isCompleteMatch',
+                    text : '后缀匹配',
+                    flex :1,
+                    renderer: function (value) {
+                        return newPanel.material.isCompleteSuffix[value].name; // key-value
+                    },},
                 // {dataIndex : 'length', text : '长', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 // {dataIndex : 'width', text : '宽', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 // {dataIndex : 'remark', text : '备注', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},

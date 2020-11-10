@@ -333,6 +333,10 @@ public class JPAObjectUtil {
     }
 
     //申请单据号
+    //工单400
+    //领料单500
+    //超领单600
+    //退料单700
     public static String getListNo(int pre,int id){
         int no=1000;
         no+=id;

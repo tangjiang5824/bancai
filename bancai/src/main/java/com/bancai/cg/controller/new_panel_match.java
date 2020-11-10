@@ -47,7 +47,7 @@ public class new_panel_match {
 
     @Transactional(rollbackFor = Exception.class)
     public  void match( int projectId, int buildingId, int buildingpositionId) throws ScriptException {
-        Session session=getSession();
+        //Session session=getSession();
         List<Designlist> design_list =designlistdao.findAllByMadeByAndProjectIdAndBuildingIdAndBuildingpositionIdOrderByProductId(0,projectId,buildingId,buildingpositionId);
         int pre_productId=0;
         List<Match_result> pre_match_results=new ArrayList<>();
@@ -96,10 +96,13 @@ public class new_panel_match {
             pre_match_results=new ArrayList<>();
             ProductInfo productInfo = productInfodao.findById(designlist.getProductId()).orElse(null);
             List<MaterialMatchRules> rules=null;
+            List<MaterialMatchRules> rules2=materialMatchRulesRepository.findAllByProductformatIdAndIsCompleteMatch(productInfo.getProductFormatId().getId(),0);
+            //产品有后缀
             if(productInfo.getSuffix()!=null&&productInfo.getSuffix().trim().length()!=0){
-                rules=materialMatchRulesRepository.findAllByProductformatIdAndSuffix(productInfo.getProductFormatId().getId(),productInfo.getSuffix());
+                rules=materialMatchRulesRepository.findAllByProductformatIdAndSuffixOrSuffixAndIsCompleteMatch(productInfo.getProductFormatId().getId(),productInfo.getSuffix(),productInfo.getSuffix(),1);
             }else
-             rules=materialMatchRulesRepository.findAllByProductformatId(productInfo.getProductFormatId().getId());
+             rules=materialMatchRulesRepository.findAllByProductformatIdAndSuffixOrSuffixAndIsCompleteMatch(productInfo.getProductFormatId().getId(),null,"",1);
+            rules.addAll(rules2);
             String type=productInfo.getProductFormatId().getProducttype().getClassification().getClassificationName();
             //通过规则进行匹配 需要放入工单
             List<List<Object>> list = JPAObjectUtil.NewPanelMatch(productInfo, type, rules);
@@ -146,6 +149,7 @@ public class new_panel_match {
                     inf.setSpecification(specification);
                     materialinfodao.save(inf);
                     inf.setPartNo(JPAObjectUtil.getPartNo(materialPrefix,typeId,inf.getMaterialid()));
+                    materialinfodao.save(inf);
                     info=inf;
 
                 }else

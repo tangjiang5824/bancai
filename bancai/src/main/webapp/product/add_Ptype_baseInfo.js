@@ -295,7 +295,7 @@ Ext.define('product.add_Ptype_baseInfo', {
             plugins : [Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit : 1
             })],
-            selType : 'checkboxmodel',//'rowmodel'
+            // selType : 'checkboxmodel',//'rowmodel'
             // selType : 'rowmodel',
             listeners: {
                 //监听修改
