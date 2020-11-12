@@ -46,7 +46,7 @@ Ext.define("menu.MenuRole_bc0", {
 					leaf : true
 				},
 				{
-					text : '退料审核',
+					text : '退料',
 					id : 'oldpanel.oldpanel_backcheck',
 					leaf : true
 				},

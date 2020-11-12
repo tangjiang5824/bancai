@@ -1074,7 +1074,26 @@ Ext.define('oldpanel.oldpanel_Receive',{
                                         old_pickList.removeAll();
 
                                         //  领料单查询重新加载
-                                        grid_old_query_pickList_specific.getStore().load();
+                                        // grid_old_query_pickList_specific.getStore().load();
+                                        var requisitionOrderId = Ext.getCmp('picklistId').getValue();
+
+                                        var buildingId = Ext.getCmp('buildingName').getValue();
+                                        var buildingpositionId = Ext.getCmp('positionName').getValue();
+                                        var warehouseName = Ext.getCmp('storePosition').rawValue;
+
+                                        console.log('sss')
+                                        //传入所选项目的id
+                                        console.log(Ext.getCmp('projectName').getValue())
+                                        specific_oldList.load({
+                                            params : {
+                                                buildingId:buildingId,
+                                                buildingpositionId:buildingpositionId,
+                                                warehouseName:warehouseName,
+                                                requisitionOrderId:requisitionOrderId,
+                                                type:3,//旧板
+                                                isCompleteMatch:Ext.getCmp('isCompleteMatch').getValue().matchType,
+                                            }
+                                        });
                                     }
                                     // if(response == true){
                                     //     Ext.MessageBox.alert("提示","领取成功" );

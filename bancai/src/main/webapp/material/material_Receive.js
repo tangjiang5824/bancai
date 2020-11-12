@@ -1089,7 +1089,29 @@ Ext.define('material.material_Receive',{
                                         pickList.removeAll();
 
                                         //  领料单查询重新加载
-                                        grid_old_query_pickList_specific.getStore().load();
+                                        // grid_old_query_pickList_specific.getStore().load();
+                                        //刷新
+                                        //材料的筛选条件
+                                        var requisitionOrderId = Ext.getCmp('picklistId').getValue();
+                                        var origin = Ext.getCmp('origin').getValue();
+                                        var buildingId = Ext.getCmp('buildingName').getValue();
+                                        var buildingpositionId = Ext.getCmp('positionName').getValue();
+                                        var warehouseName = Ext.getCmp('storePosition').rawValue;
+
+                                        console.log('sss')
+                                        console.log(origin)
+                                        //传入所选项目的id
+                                        console.log(Ext.getCmp('projectName').getValue())
+                                        specific_oldList.load({
+                                            params : {
+                                                buildingId:buildingId,
+                                                buildingpositionId:buildingpositionId,
+                                                warehouseName:warehouseName,
+                                                requisitionOrderId:requisitionOrderId,
+                                                type:4,//原材料
+                                                origin:origin,
+                                            }
+                                        });
                                     }
                                     // if(response == true){
                                     //     Ext.MessageBox.alert("提示","领取成功" );

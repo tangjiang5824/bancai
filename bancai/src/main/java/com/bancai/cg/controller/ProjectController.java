@@ -1117,7 +1117,7 @@ public class ProjectController {
         System.out.println("zzyzzyzyyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzzyyzyzyzyzy");
         System.out.println(workorderlogId);
 
-        String fileName = "C:\\Users\\Administrator\\Desktop\\单号" +workorderlogId +"工单.xlsx";
+        String fileName = "D:\\单号" +workorderlogId +"工单.xlsx";
         // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
         // 如果这里想使用03 则 传入excelType参数即可
         //write(fileName,格式类)
@@ -1148,7 +1148,7 @@ public class ProjectController {
         System.out.println("zzyzzyzyyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzzyyzyzyzyzy");
         System.out.println(requisitionOrderId);
 
-        String fileName = "C:\\Users\\Administrator\\Desktop\\单号" +requisitionOrderId +"领料单.xlsx";
+        String fileName = "D:\\单号" +requisitionOrderId +"领料单.xlsx";
         // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
         // 如果这里想使用03 则 传入excelType参数即可
         //write(fileName,格式类)
@@ -1179,7 +1179,7 @@ public class ProjectController {
         System.out.println("zzyzzyzyyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzzyyzyzyzyzy");
         System.out.println(requisitionOrderId);
 
-        String fileName = "C:\\Users\\Administrator\\Desktop\\单号" +requisitionOrderId +"超领单.xlsx";
+        String fileName = "D:\\单号" +requisitionOrderId +"超领单.xlsx";
         // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
         // 如果这里想使用03 则 传入excelType参数即可
         //write(fileName,格式类)
