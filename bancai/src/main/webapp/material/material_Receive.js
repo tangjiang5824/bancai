@@ -1087,7 +1087,7 @@ Ext.define('material.material_Receive',{
                                         //  领料页面重置
                                         Ext.getCmp('operator').setValue("");
                                         pickList.removeAll();
-
+                                        specific_oldList.load();
                                         //  领料单查询重新加载
                                         // grid_old_query_pickList_specific.getStore().load();
                                         //刷新
