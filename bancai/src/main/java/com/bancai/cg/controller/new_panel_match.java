@@ -218,7 +218,17 @@ public class new_panel_match {
 
     @RequestMapping("/material/cg/test")
     public void test() throws ScriptException {
-      // match();
+        List<MaterialInfo> all = materialinfodao.findAll();
+        for(int i=0;i<all.size();i++){
+            MaterialInfo info=all.get(i);
+            if(info.getPartNo()==null){
+                Integer typeId=info.getTypeId().getId();
+                MaterialType materialType = materialTypedao.findById(typeId).orElse(null);
+                Integer materialPrefix=materialType.getMaterialPrefix();
+                info.setPartNo(JPAObjectUtil.getPartNo(materialPrefix,typeId,info.getMaterialid()));
+                materialinfodao.save(info);
+            }
+        }
     }
 
 
