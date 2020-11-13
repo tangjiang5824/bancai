@@ -209,13 +209,13 @@ Ext.define('oldpanel.oldpanel_Outbound',{
                     xtype: 'combo',
                     margin : '0 40 0 0',
                     fieldLabel: '撤销人',
-                    id :'operator_back',
+                    id :'operator_back1',
                     store : workerListStore,
                     displayField : 'workerName',
                     valueField : 'id',
                     width: 150,
                     labelWidth: 50,
-                    name: 'operator_back',
+                    name: 'operator_back1',
                     value:"",
                 },
 
@@ -232,7 +232,7 @@ Ext.define('oldpanel.oldpanel_Outbound',{
                         post_flag = true;
                         var oldpanel_logId = Ext.getCmp("log_id").text;
                         var is_rollback = Ext.getCmp("is_rollback").text;
-                        var operator = Ext.getCmp("operator_back").getValue();
+                        var operator = Ext.getCmp("operator_back1").getValue();
                         // console.log("id为：----",is_rollback)
                         if (is_rollback != 1){
                             Ext.Msg.show({
