@@ -125,12 +125,12 @@ public class DesignlistController {
         } else {
             designlistService.createDesignlistData(validList,userId,projectId,buildingId,buildingpositionId);
             boolean matchDesignlist = designlistService.matchDesignlist(projectId, buildingId, buildingpositionId);
-            if(!matchDesignlist){
-                response.setSuccess(false);
-                response.setErrorCode(300); //匹配失败
-                response.setMsg("匹配失败");
-                return response;
-            }
+//            if(!matchDesignlist){
+//                response.setSuccess(false);
+//                response.setErrorCode(300); //匹配失败
+//                response.setMsg("匹配失败");
+//                return response;
+//            }
             response.setSuccess(true);
         }
         return response;
