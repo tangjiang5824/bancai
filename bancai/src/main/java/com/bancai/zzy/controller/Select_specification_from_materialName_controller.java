@@ -661,17 +661,26 @@ public class Select_specification_from_materialName_controller {
 	}
 	//查询打包清单
 	@RequestMapping(value = "/project/queryPackageProduct.do")
-	public WebResponse queryPackageProduct(Integer start, Integer limit, Integer packageId,String tableName) throws ParseException {
-		if(null==start||start.equals("")) start=0;
-		if(null==limit||limit.equals("")) limit=50;
+	public WebResponse queryPackageProduct(Integer start, Integer limit, Integer projectId,
+										   Integer buildingId,Integer buildingpositionId,Integer packageId,String tableName) throws ParseException {
+//		if(null==start||start.equals("")) start=0;
+//		if(null==limit||limit.equals("")) limit=50;
 		//String madeBy = "4";
 		mysqlcondition c=new mysqlcondition();
+		System.out.println("zzy print packageId"+packageId);
 		if (packageId!=null) {
-			c.and(new mysqlcondition("projectId", "=", packageId));
-			c.or(new mysqlcondition("projectId", "=", null));
-			c.or(new mysqlcondition("projectId", "=", ""));
+			c.and(new mysqlcondition("packageId is null or packageId", "=", packageId));
 		}
-		WebResponse wr=queryAllService.queryDataPage(start, limit, c, tableName);
+		if (projectId!=null) {
+			c.and(new mysqlcondition("projectId", "=", projectId));
+		}
+		if (buildingId!=null) {
+			c.and(new mysqlcondition("buildingId", "=", buildingId));
+		}
+		if (buildingpositionId!=null) {
+			c.and(new mysqlcondition("buildingpositionId", "=", buildingpositionId));
+		}
+		WebResponse wr=queryAllService.queryDataPage(start, -1, c, tableName);
 		return wr;
 	}
 }
