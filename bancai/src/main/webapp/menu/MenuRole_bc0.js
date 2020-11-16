@@ -342,6 +342,11 @@ Ext.define("menu.MenuRole_bc0", {
 					leaf : true
 					} ,
 					{
+						text : '设计清单匹配',
+						id : 'project.project_match_designList',//
+						leaf : true
+					} ,
+					{
 						text : '设计清单撤销',
 						id : 'project.project_check_designList',//
 						leaf : true
@@ -452,6 +457,11 @@ Ext.define("menu.MenuRole_bc0", {
 					{
 						text : '项目退料单查询',
 						id : 'project.project_query_backlist',
+						leaf : true
+					},
+					{
+						text : '项目打包清单',
+						id : 'project.project_package_list',
 						leaf : true
 					},
 				]
