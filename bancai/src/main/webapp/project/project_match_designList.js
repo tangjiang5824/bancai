@@ -401,9 +401,9 @@ Ext.define('project.project_match_designList',{
             ]
         });
 
-        var toolbar_back_pop = Ext.create('Ext.toolbar.Toolbar', {
+        var toolbar_import_pop = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
-            id:'toolbar_back_pop',
+            id:'toolbar_import_pop',
             items: [
                 {
                     //保存logid的值
@@ -569,7 +569,7 @@ Ext.define('project.project_match_designList',{
         //弹出框，出入库详细记录
         var designList_match_grid=Ext.create('Ext.grid.Panel',{
             id : 'designList_match_grid',
-            tbar: toolbar_back_pop,
+            tbar: toolbar_import_pop,
             // store:material_Query_Records_store1,//oldpanellogdetailList，store1的数据固定
             dock: 'bottom',
             columns:[

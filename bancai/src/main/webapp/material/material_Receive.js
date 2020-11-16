@@ -812,7 +812,19 @@ Ext.define('material.material_Receive',{
                     editor : {
                         xtype : 'textfield',
                         allowBlank : true
+                    },
+                    //默认为待领数量
+                    renderer:function(value, cellmeta, record, rowIndex, columnIndex, store){
+                        console.log("-pppppppppppp,",value)
+                        if(value == undefined){
+                            return record.data['countRec']
+                        }
+                        else {
+                            return value
+                        }
+
                     }
+
                 },
                 // {
                 //     dataIndex:'',
