@@ -184,48 +184,7 @@ Ext.define('project.management.buildproject', {
                     valueField : 'id',
                     editable : true,
                 },
-                // {
-                //     fieldLabel : '仓库负责人',
-                //     xtype : 'combo',
-                //     name : 'storeLeader',
-                //     id : 'storeLeader',
-                //     margin: '0 30 0 0',
-                //     width: 180,
-                //     labelWidth: 65,
-                //     store : workerListStore,
-                //     displayField : 'workerName',
-                //     valueField : 'id',
-                //     editable : true,
-                //     //hidden:true
-                // },
-                // {
-                //     fieldLabel : '营销负责人',
-                //     xtype : 'combo',
-                //     name : 'sellLeader',
-                //     id : 'sellLeader',
-                //     margin: '0 30 0 0',
-                //     width: 180,
-                //     labelWidth: 65,
-                //     store : workerListStore,
-                //     displayField : 'workerName',
-                //     valueField : 'id',
-                //     editable : true,
-                //     //hidden:true
-                // },
-                // {
-                //     fieldLabel : '工程负责人',
-                //     xtype : 'combo',
-                //     name : 'projectLeader',
-                //     id : 'projectLeader',
-                //     margin: '0 30 0 0',
-                //     width: 180,
-                //     labelWidth: 65,
-                //     store : workerListStore,
-                //     displayField : 'workerName',
-                //     valueField : 'id',
-                //     editable : true,
-                //     //hidden:true
-                // },
+
                 ]
         });
         var toolbar_2_1 = Ext.create('Ext.toolbar.Toolbar',{
