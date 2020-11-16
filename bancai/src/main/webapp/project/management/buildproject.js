@@ -184,6 +184,104 @@ Ext.define('project.management.buildproject', {
                     valueField : 'id',
                     editable : true,
                 },
+                // {
+                //     fieldLabel : '仓库负责人',
+                //     xtype : 'combo',
+                //     name : 'storeLeader',
+                //     id : 'storeLeader',
+                //     margin: '0 30 0 0',
+                //     width: 180,
+                //     labelWidth: 65,
+                //     store : workerListStore,
+                //     displayField : 'workerName',
+                //     valueField : 'id',
+                //     editable : true,
+                //     //hidden:true
+                // },
+                // {
+                //     fieldLabel : '营销负责人',
+                //     xtype : 'combo',
+                //     name : 'sellLeader',
+                //     id : 'sellLeader',
+                //     margin: '0 30 0 0',
+                //     width: 180,
+                //     labelWidth: 65,
+                //     store : workerListStore,
+                //     displayField : 'workerName',
+                //     valueField : 'id',
+                //     editable : true,
+                //     //hidden:true
+                // },
+                // {
+                //     fieldLabel : '工程负责人',
+                //     xtype : 'combo',
+                //     name : 'projectLeader',
+                //     id : 'projectLeader',
+                //     margin: '0 30 0 0',
+                //     width: 180,
+                //     labelWidth: 65,
+                //     store : workerListStore,
+                //     displayField : 'workerName',
+                //     valueField : 'id',
+                //     editable : true,
+                //     //hidden:true
+                // },
+                ]
+        });
+        var toolbar_2_1 = Ext.create('Ext.toolbar.Toolbar',{
+            items: [
+                // {
+                //     fieldLabel : '计划负责人',
+                //     xtype : 'combo',
+                //     name : 'planLeader',
+                //     id : 'planLeader',
+                //     margin: '0 30 0 0',
+                //     width: 180,
+                //     labelWidth: 65,
+                //     store : workerListStore,
+                //     displayField : 'workerName',
+                //     valueField : 'id',
+                //     editable : true,
+                // },
+                // {
+                //     fieldLabel : '生产负责人',
+                //     xtype : 'combo',
+                //     name : 'produceLeader',
+                //     id : 'produceLeader',
+                //     margin: '0 30 0 0',
+                //     width: 180,
+                //     labelWidth: 65,
+                //     store : workerListStore,
+                //     displayField : 'workerName',
+                //     valueField : 'id',
+                //     editable : true,
+                // },
+                // {
+                //     fieldLabel : '采购负责人',
+                //     xtype : 'combo',
+                //     name : 'purchaseLeader',
+                //     id : 'purchaseLeader',
+                //     margin: '0 30 0 0',
+                //     width: 180,
+                //     labelWidth: 65,
+                //     store : workerListStore,
+                //     displayField : 'workerName',
+                //     valueField : 'id',
+                //     editable : true,
+                // },
+                // {
+                //     fieldLabel : '财务负责人',
+                //     xtype : 'combo',
+                //     name : 'financeLeader',
+                //     id : 'financeLeader',
+                //     margin: '0 30 0 0',
+                //     width: 180,
+                //     labelWidth: 65,
+                //     store : workerListStore,
+                //     displayField : 'workerName',
+                //     valueField : 'id',
+                //     editable : true,
+                // },
                 {
                     fieldLabel : '仓库负责人',
                     xtype : 'combo',
@@ -196,9 +294,37 @@ Ext.define('project.management.buildproject', {
                     displayField : 'workerName',
                     valueField : 'id',
                     editable : true,
-                    hidden:true
+                    //hidden:true
                 },
-                ]
+                {
+                    fieldLabel : '营销负责人',
+                    xtype : 'combo',
+                    name : 'sellLeader',
+                    id : 'sellLeader',
+                    margin: '0 30 0 0',
+                    width: 180,
+                    labelWidth: 65,
+                    store : workerListStore,
+                    displayField : 'workerName',
+                    valueField : 'id',
+                    editable : true,
+                    //hidden:true
+                },
+                {
+                    fieldLabel : '工程负责人',
+                    xtype : 'combo',
+                    name : 'projectLeader',
+                    id : 'projectLeader',
+                    margin: '0 30 0 0',
+                    width: 180,
+                    labelWidth: 65,
+                    store : workerListStore,
+                    displayField : 'workerName',
+                    valueField : 'id',
+                    editable : true,
+                    //hidden:true
+                },
+            ]
         });
         var toolbar_3 = Ext.create('Ext.toolbar.Toolbar',{
             items: [
@@ -299,6 +425,8 @@ Ext.define('project.management.buildproject', {
                                 purchaseLeaderId:Ext.getCmp('purchaseLeader').getValue(),
                                 financeLeaderId:Ext.getCmp('financeLeader').getValue(),
                                 storeLeaderId:Ext.getCmp('storeLeader').getValue(),
+                                sellLeaderId:Ext.getCmp('sellLeader').getValue(),
+                                projectLeaderId:Ext.getCmp('projectLeader').getValue(),
                                 projectName:Ext.getCmp('projectName').getValue(),
                                 isPreprocess:ispreprocess, //Ext.getCmp('isPreprocess').getValue(),//项目是否为预加工
                                 s : "[" + s + "]",
@@ -441,6 +569,8 @@ Ext.define('project.management.buildproject', {
                             purchaseLeaderId:Ext.getCmp('purchaseLeader').getValue(),
                             financeLeaderId:Ext.getCmp('financeLeader').getValue(),
                             storeLeaderId:Ext.getCmp('storeLeader').getValue(),
+                            sellLeaderId:Ext.getCmp('sellLeader').getValue(),
+                            projectLeaderId:Ext.getCmp('projectLeader').getValue(),
                             projectName:Ext.getCmp('projectName').getValue(),
                             isPreprocess:Ext.getCmp('isPreprocess').getValue(),//项目是否为预加工
                             s : "[" + s + "]",
@@ -464,7 +594,7 @@ Ext.define('project.management.buildproject', {
             }]
         });
 
-        this.dockedItems = [toolbar_1,toolbar_2,toolbar_3,toolbar2, grid];
+        this.dockedItems = [toolbar_1,toolbar_2,toolbar_2_1,toolbar_3,toolbar2, grid];
         //this.items = [ me.grid ];
         this.callParent(arguments);
 
