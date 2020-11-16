@@ -359,7 +359,7 @@ Ext.define('project.project_package_list',{
                                 projectId : Ext.getCmp("projectName").getValue(),
                                 buildingId : Ext.getCmp("buildingName").getValue(),
                                 positionId : Ext.getCmp("positionName").getValue(),
-                                tableName:"package",
+                                tableName:"package_view",
 
                             }
                         });
@@ -377,7 +377,7 @@ Ext.define('project.project_package_list',{
                     margin: '0 40 0 0',
                 },
                 {   xtype : 'button',
-                    margin: '0 40 0 0',
+                    margin: '0 0 0 0',
                     iconAlign : 'center',
                     iconCls : 'rukuicon ',
                     text : '添加包',
@@ -417,32 +417,32 @@ Ext.define('project.project_package_list',{
                         }
                     }
                 },
-                {
-                    xtype : 'button',
-                    margin: '0 0 0 0',
-                    iconAlign : 'center',
-                    iconCls : 'rukuicon ',
-                    text : '删除包',
-                    handler: function(){
-                        var sm = Ext.getCmp('uploadRecordsMain').getSelectionModel();
-                        var oldpanelArr = sm.getSelection();
-                        if (oldpanelArr.length != 0) {
-                            Ext.Msg.confirm("提示", "共选中" + oldpanelArr.length + "条数据，是否确认删除？", function (btn) {
-                                if (btn == 'yes') {
-                                    //先删除后台再删除前台
-                                    //ajax 删除后台数据 成功则删除前台数据；失败则不删除前台数据
-                                    //Extjs 4.x 删除
-                                    Ext.getCmp('uploadRecordsMain').getStore().remove(oldpanelArr);
-                                } else {
-                                    return;
-                                }
-                            });
-                        } else {
-                            //Ext.Msg.confirm("提示", "无选中数据");
-                            Ext.Msg.alert("提示", "无选中数据");
-                        }
-                    }
-                },
+                // {
+                //     xtype : 'button',
+                //     margin: '0 0 0 0',
+                //     iconAlign : 'center',
+                //     iconCls : 'rukuicon ',
+                //     text : '删除包',
+                //     handler: function(){
+                //         var sm = Ext.getCmp('uploadRecordsMain').getSelectionModel();
+                //         var oldpanelArr = sm.getSelection();
+                //         if (oldpanelArr.length != 0) {
+                //             Ext.Msg.confirm("提示", "共选中" + oldpanelArr.length + "条数据，是否确认删除？", function (btn) {
+                //                 if (btn == 'yes') {
+                //                     //先删除后台再删除前台
+                //                     //ajax 删除后台数据 成功则删除前台数据；失败则不删除前台数据
+                //                     //Extjs 4.x 删除
+                //                     Ext.getCmp('uploadRecordsMain').getStore().remove(oldpanelArr);
+                //                 } else {
+                //                     return;
+                //                 }
+                //             });
+                //         } else {
+                //             //Ext.Msg.confirm("提示", "无选中数据");
+                //             Ext.Msg.alert("提示", "无选中数据");
+                //         }
+                //     }
+                // },
             ]
         });
         //自动将读取到的数据返回到页面中
@@ -467,7 +467,7 @@ Ext.define('project.project_package_list',{
                     projectId : Ext.getCmp("projectName").getValue(),
                     buildingId : Ext.getCmp("buildingName").getValue(),
                     positionId : Ext.getCmp("positionName").getValue(),
-                    tableName:"package",
+                    tableName:"package_view",
                 }
             },
             listeners : {
@@ -476,7 +476,7 @@ Ext.define('project.project_package_list',{
                         projectId : Ext.getCmp("projectName").getValue(),
                         buildingId : Ext.getCmp("buildingName").getValue(),
                         positionId : Ext.getCmp("positionName").getValue(),
-                        tableName:"package",
+                        tableName:"package_view",
 
                     });
                 }
@@ -548,109 +548,109 @@ Ext.define('project.project_package_list',{
                 },
                 {
                     text: '状态',
-                    dataIndex: 'productInPackage',
+                    dataIndex: 'inPackageId',
                     flex :1,
                     editor : {
                         xtype : 'textfield',
                         allowBlank : true
                     }
                 },
-                {
-                    text: '楼栋编号',
-                    dataIndex: 'buildingNo',
-                    flex :1,
-                    editor : {
-                        xtype : 'textfield',
-                        allowBlank : true
-                    }
-                },
-                {
-                    dataIndex : 'buildingName',
-                    text : '楼栋名',
-                    flex :1,
-                    editor : {
-                        xtype : 'textfield',
-                        allowBlank : true
-                    }
-                },{
-                    dataIndex : 'buildingLeader',
-                    text : '楼栋负责人',
-                    flex :1,
-                    editor:buildingOwnerList,renderer:function(value, cellmeta, record){
-                        var index = workerListStore.find(buildingOwnerList.valueField,value);
-                        var ehrRecord = workerListStore.getAt(index);
-                        var returnvalue = "";
-                        if (ehrRecord) {
-                            returnvalue = ehrRecord.get('workerName');
-                        }
-                        return returnvalue;
-                    }
-
-
-                },{
-                    xtype:'actioncolumn',
-                    text : '删除操作',
-                    width:100,
-                    style:"text-align:center;",
-                    items: [
-                        //修改按钮
-                        // {
-                        //     icon: 'extjs/imgs/edit.png',  // Use a URL in the icon config
-                        //     tooltip: 'Edit',
-                        //     style:"margin-right:20px;",
-                        //     handler: function(grid, rowIndex, colIndex) {
-                        //         // var records = grid.getSelectionModel();
-                        //         // var rec = records.getSelection();
-                        //
-                        //         var rec = grid.getStore().getAt(rowIndex);
-                        //         console.log("当前修改选中：",rec)
-                        //         // Ext.getCmp('building_grid').getStore().remove(rec);
-                        //     }
-                        // },
-                        //删除按钮
-                        {
-                            icon: 'extjs/imgs/delete.png',
-                            tooltip: 'Delete',
-                            style:"margin-right:20px;",
-                            handler: function(grid, rowIndex, colIndex) {
-                                var rec = grid.getStore().getAt(rowIndex);
-                                console.log("删除：",rec.data.id)
-                                //楼栋id
-                                var buildingId = rec.data.id;
-                                //弹框提醒
-                                Ext.Msg.show({
-                                    title: '操作确认',
-                                    message: '将删除数据，选择“是”否确认？',
-                                    buttons: Ext.Msg.YESNO,
-                                    icon: Ext.Msg.QUESTION,
-                                    fn: function (btn) {
-                                        if (btn === 'yes') {
-                                            Ext.Ajax.request({
-                                                // url:"material/backMaterialstore.do",  //删除楼栋信息
-                                                params:{
-                                                    buildingId:buildingId,
-                                                },
-                                                success:function (response) {
-                                                    Ext.MessageBox.alert("提示", "删除成功!");
-                                                    Ext.getCmp('building_grid').getStore().remove(rec);
-                                                },
-                                                failure : function(response){
-                                                    Ext.MessageBox.alert("提示", "删除失败!");
-                                                }
-                                            })
-                                        }
-                                    }
-                                });
-                                // alert("Terminate " + rec.get('firstname'));
-                            }
-                        }]
-                    // name : '操作',
-                    // text : '操作',
-                    // renderer:function(value, cellmeta){
-                    //     return "<INPUT type='button' value='删除' style='font-size: 6px;height:20px;width:35px;'>";
-                    //     // return "<INPUT type='button' value='删 除' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
-                    // }
-                }
+                // {
+                //     text: '楼栋编号',
+                //     dataIndex: 'buildingNo',
+                //     flex :1,
+                //     editor : {
+                //         xtype : 'textfield',
+                //         allowBlank : true
+                //     }
+                // },
+                // {
+                //     dataIndex : 'buildingName',
+                //     text : '楼栋名',
+                //     flex :1,
+                //     editor : {
+                //         xtype : 'textfield',
+                //         allowBlank : true
+                //     }
+                // },{
+                //     dataIndex : 'buildingLeader',
+                //     text : '楼栋负责人',
+                //     flex :1,
+                //     editor:buildingOwnerList,renderer:function(value, cellmeta, record){
+                //         var index = workerListStore.find(buildingOwnerList.valueField,value);
+                //         var ehrRecord = workerListStore.getAt(index);
+                //         var returnvalue = "";
+                //         if (ehrRecord) {
+                //             returnvalue = ehrRecord.get('workerName');
+                //         }
+                //         return returnvalue;
+                //     }
+                //
+                //
+                // },{
+                //     xtype:'actioncolumn',
+                //     text : '删除操作',
+                //     width:100,
+                //     style:"text-align:center;",
+                //     items: [
+                //         //修改按钮
+                //         // {
+                //         //     icon: 'extjs/imgs/edit.png',  // Use a URL in the icon config
+                //         //     tooltip: 'Edit',
+                //         //     style:"margin-right:20px;",
+                //         //     handler: function(grid, rowIndex, colIndex) {
+                //         //         // var records = grid.getSelectionModel();
+                //         //         // var rec = records.getSelection();
+                //         //
+                //         //         var rec = grid.getStore().getAt(rowIndex);
+                //         //         console.log("当前修改选中：",rec)
+                //         //         // Ext.getCmp('building_grid').getStore().remove(rec);
+                //         //     }
+                //         // },
+                //         //删除按钮
+                //         {
+                //             icon: 'extjs/imgs/delete.png',
+                //             tooltip: 'Delete',
+                //             style:"margin-right:20px;",
+                //             handler: function(grid, rowIndex, colIndex) {
+                //                 var rec = grid.getStore().getAt(rowIndex);
+                //                 console.log("删除：",rec.data.id)
+                //                 //楼栋id
+                //                 var buildingId = rec.data.id;
+                //                 //弹框提醒
+                //                 Ext.Msg.show({
+                //                     title: '操作确认',
+                //                     message: '将删除数据，选择“是”否确认？',
+                //                     buttons: Ext.Msg.YESNO,
+                //                     icon: Ext.Msg.QUESTION,
+                //                     fn: function (btn) {
+                //                         if (btn === 'yes') {
+                //                             Ext.Ajax.request({
+                //                                 // url:"material/backMaterialstore.do",  //删除楼栋信息
+                //                                 params:{
+                //                                     buildingId:buildingId,
+                //                                 },
+                //                                 success:function (response) {
+                //                                     Ext.MessageBox.alert("提示", "删除成功!");
+                //                                     Ext.getCmp('building_grid').getStore().remove(rec);
+                //                                 },
+                //                                 failure : function(response){
+                //                                     Ext.MessageBox.alert("提示", "删除失败!");
+                //                                 }
+                //                             })
+                //                         }
+                //                     }
+                //                 });
+                //                 // alert("Terminate " + rec.get('firstname'));
+                //             }
+                //         }]
+                //     // name : '操作',
+                //     // text : '操作',
+                //     // renderer:function(value, cellmeta){
+                //     //     return "<INPUT type='button' value='删除' style='font-size: 6px;height:20px;width:35px;'>";
+                //     //     // return "<INPUT type='button' value='删 除' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
+                //     // }
+                // }
             ],
             flex:1,
             selType:'checkboxmodel',
@@ -659,60 +659,60 @@ Ext.define('project.project_package_list',{
             // })],
             plugins : [rowEditing], //行编辑
 
-            listeners: {
-                //监听修改
-                validateedit: function (editor, e) {
-                    var field=e.field
-                    var id=e.record.data.id
-                    var flag=false;
-                    if(id === "" || id ==null|| isNaN(id)){
-                        flag=true;
-                        id='0'
-                    }
-                    //项目id
-                    var project_Id = Ext.getCmp("project_id").text;
-                    console.log("项目id：",project_Id)
-
-                    //修改的行数据
-                    var data = editor.context.newValues;
-                    //每个属性值
-                    var buildingNo = data.buildingNo;
-                    var buildingName = data.buildingName;
-                    var buildingLeader = data.buildingLeader;
-
-
-                    var s = new Array();
-                    //修改的一行数据
-                    s.push(JSON.stringify(data));
-                    // console.log("editor===",editor.context.newValues)  //
-
-                    Ext.Ajax.request({
-                        url:"project/addAndupdateBuiling.do",  //EditDataById.do
-                        params:{
-                            // tableName:table_name,
-                            projectId:project_Id,
-                            // field:field,
-                            // value:e.value,
-                            id:id,
-                            // s : "[" + s + "]",
-                            buildingNo:buildingNo,
-                            buildingName:buildingName,
-                            buildingLeader:buildingLeader
-                        },
-                        success:function (response) {
-                            Ext.MessageBox.alert("提示","修改成功" );
-                            if(flag){
-                                e.record.data.id=response.responseText;
-                            }
-                            //重新加载
-                            Ext.getCmp('building_grid').getStore().load();
-                        },
-                        failure:function (response) {
-                            Ext.MessageBox.alert("提示","修改失败" );
-                        }
-                    })
-                }
-            }
+            // listeners: {
+            //     //监听修改
+            //     validateedit: function (editor, e) {
+            //         var field=e.field
+            //         var id=e.record.data.id
+            //         var flag=false;
+            //         if(id === "" || id ==null|| isNaN(id)){
+            //             flag=true;
+            //             id='0'
+            //         }
+            //         //项目id
+            //         var project_Id = Ext.getCmp("project_id").text;
+            //         console.log("项目id：",project_Id)
+            //
+            //         //修改的行数据
+            //         var data = editor.context.newValues;
+            //         //每个属性值
+            //         var buildingNo = data.buildingNo;
+            //         var buildingName = data.buildingName;
+            //         var buildingLeader = data.buildingLeader;
+            //
+            //
+            //         var s = new Array();
+            //         //修改的一行数据
+            //         s.push(JSON.stringify(data));
+            //         // console.log("editor===",editor.context.newValues)  //
+            //
+            //         Ext.Ajax.request({
+            //             url:"project/addAndupdateBuiling.do",  //EditDataById.do
+            //             params:{
+            //                 // tableName:table_name,
+            //                 projectId:project_Id,
+            //                 // field:field,
+            //                 // value:e.value,
+            //                 id:id,
+            //                 // s : "[" + s + "]",
+            //                 buildingNo:buildingNo,
+            //                 buildingName:buildingName,
+            //                 buildingLeader:buildingLeader
+            //             },
+            //             success:function (response) {
+            //                 Ext.MessageBox.alert("提示","修改成功" );
+            //                 if(flag){
+            //                     e.record.data.id=response.responseText;
+            //                 }
+            //                 //重新加载
+            //                 Ext.getCmp('building_grid').getStore().load();
+            //             },
+            //             failure:function (response) {
+            //                 Ext.MessageBox.alert("提示","修改失败" );
+            //             }
+            //         })
+            //     }
+            // }
         });
 
         //弹出框的表头
@@ -800,8 +800,8 @@ Ext.define('project.project_package_list',{
             columns : [
                 {dataIndex : 'projectName', text : '项目名', flex :1,editor : {xtype : 'textfield', allowBlank : false,},},
                 {dataIndex : 'buildingName', text : '楼栋名', flex :1,editor : {xtype : 'textfield', allowBlank : false,},},
-                {dataIndex : 'buildingpositionName', text : '位置', flex :1,editor : {xtype : 'textfield', allowBlank : false,},},
-                {dataIndex : 'packageId', text : '打包编号', flex :1,editor : {xtype : 'textfield', allowBlank : false,},},
+                {dataIndex : 'positionName', text : '位置', flex :1,editor : {xtype : 'textfield', allowBlank : false,},},
+                {dataIndex : 'packageNo', text : '打包编号', flex :1,editor : {xtype : 'textfield', allowBlank : false,},},
                 {text: '包名', dataIndex: 'packageName', flex :1,  editor : {xtype : 'textfield', allowBlank : false,}  },
                 {dataIndex : 'packageWeight', text : '累计重量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {
@@ -810,7 +810,7 @@ Ext.define('project.project_package_list',{
                     text : '操作',
                     flex :1 ,
                     renderer:function(value, cellmeta){
-                        return "<INPUT type='button' value='包内产品' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
+                        return "<INPUT type='button' value='编辑包内产品' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
                     }
                 },
             ],
@@ -865,26 +865,28 @@ Ext.define('project.project_package_list',{
                 itemdblclick: function(me, record, item, index,rowModel){
                     var select = record.data
                     //项目id
-                    var projectId = select.id;//项目名对应的id
+                    var packageId = select.id;//项目名对应的id
 
                     console.log("iiiii")
-                    console.log(projectId)
+                    console.log(packageId)
 
                     var buildinglList_projectId = Ext.create('Ext.data.Store',{
                         //id,materialName,length,width,materialType,number
-                        fields:['buildingNo','buildingName','buildingLeader'],
+                        fields:['productName','position','figureNum','packageId'],
                         proxy : {
                             type : 'ajax',
-                            url : 'project/findBuilding.do?projectId='+projectId,//获取同类型的原材料  +'&pickNum='+pickNum
+                            url : 'project/queryPackageProduct.do',//获取同类型的原材料  +'&pickNum='+pickNum
                             reader : {
                                 type : 'json',
-                                rootProperty: 'building',
+                                rootProperty: 'designlist_view',
                             },
-                            // params:{
-                            //     materialName:materialName,
-                            //     // start: 0,
-                            //     // limit: itemsPerPage
-                            // }
+                            params:{
+                                tableName:'designlist_view',
+                                packageId:packageId,
+
+                                // start: 0,
+                                // limit: itemsPerPage
+                            }
                         },
                         autoLoad : true
                     });

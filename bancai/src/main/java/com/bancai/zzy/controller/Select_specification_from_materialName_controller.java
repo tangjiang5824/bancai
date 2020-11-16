@@ -659,4 +659,19 @@ public class Select_specification_from_materialName_controller {
 		WebResponse wr=queryAllService.queryDataPage(start, limit, c, tableName);
 		return wr;
 	}
+	//查询打包清单
+	@RequestMapping(value = "/project/queryPackageProduct.do")
+	public WebResponse queryPackageProduct(Integer start, Integer limit, Integer packageId,String tableName) throws ParseException {
+		if(null==start||start.equals("")) start=0;
+		if(null==limit||limit.equals("")) limit=50;
+		//String madeBy = "4";
+		mysqlcondition c=new mysqlcondition();
+		if (packageId!=null) {
+			c.and(new mysqlcondition("projectId", "=", packageId));
+			c.or(new mysqlcondition("projectId", "=", null));
+			c.or(new mysqlcondition("projectId", "=", ""));
+		}
+		WebResponse wr=queryAllService.queryDataPage(start, limit, c, tableName);
+		return wr;
+	}
 }
