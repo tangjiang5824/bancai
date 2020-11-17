@@ -78,8 +78,26 @@ public class DesignlistController {
      * */
     @RequestMapping(value = "/designlist/uploadData.do", method = RequestMethod.POST)
     @ApiOperation("提交设计清单数据")
-    public WebResponse designlistUploadData(@ApiParam("品名，位置编号，图号")String s, String projectId, String buildingId, String buildingpositionId, HttpSession session) throws ScriptException {
+    public WebResponse designlistUploadData(@ApiParam("品名，位置编号，图号")String s, String projectId, String buildingId, String buildingpositionId,String remark, HttpSession session) throws ScriptException {
         WebResponse response = new WebResponse();
+        if(projectId==null||projectId.length()==0){
+            response.setSuccess(false);
+            response.setErrorCode(100);
+            response.setMsg("未选择项目");
+            return response;
+        }
+        if(buildingId==null||buildingId.length()==0){
+            response.setSuccess(false);
+            response.setErrorCode(200);
+            response.setMsg("未选择楼栋");
+            return response;
+        }
+        if(buildingpositionId==null||buildingpositionId.length()==0){
+            response.setSuccess(false);
+            response.setErrorCode(300);
+            response.setMsg("未选择位置");
+            return response;
+        }
         DataList errorList = new DataList();
         DataList validList = new DataList();
         JSONArray jsonArray = new JSONArray(s);
@@ -108,6 +126,8 @@ public class DesignlistController {
                 errorRow.put("errorType","品名不合法");
                 errorList.add(errorRow);
             }else {
+                if(position.equals("-1"))
+                    position = analyzeNameService.designlistPositionGenerator(String.valueOf(analyzeDesignlist),projectId,buildingId);
                 DataRow validRow = new DataRow();
                 validRow.put("productId",String.valueOf(analyzeDesignlist));
                 validRow.put("position",position);
@@ -123,19 +143,30 @@ public class DesignlistController {
             response.setMsg("位置重复或品名不合法");
             return response;
         } else {
-            designlistService.createDesignlistData(validList,userId,projectId,buildingId,buildingpositionId);
-            boolean matchDesignlist = designlistService.matchDesignlist(projectId, buildingId, buildingpositionId);
-            if(!matchDesignlist){
-                response.setSuccess(false);
-                response.setErrorCode(300); //匹配失败
-                response.setMsg("匹配失败");
-                return response;
-            }
+            if(remark==null) remark = "";
+            designlistService.createDesignlistData(validList,userId,projectId,buildingId,buildingpositionId,remark);
+//            boolean matchDesignlist = designlistService.matchDesignlist(projectId, buildingId, buildingpositionId);
+//            if(!matchDesignlist){
+//                response.setSuccess(false);
+//                response.setErrorCode(300); //匹配失败
+//                response.setMsg("匹配失败");
+//                return response;
+//            }
             response.setSuccess(true);
         }
         return response;
     }
 
+    @RequestMapping(value = "/designlist/matchDataByLogId.do", method = RequestMethod.POST)
+    @ApiOperation("根据设计清单logId匹配")
+    public WebResponse designlistMatchDataByLogId(String designlistlogId) throws ScriptException {
+        return designlistService.matchDesignlistByLogId(designlistlogId);
+    }
+    @RequestMapping(value = "/designlist/matchDataByBaseId.do", method = RequestMethod.POST)
+    @ApiOperation("根据BaseId匹配对应项目、楼栋、位置的所有设计清单")
+    public WebResponse designlistMatchDataByBaseId(String projectId, String buildingId, String buildingpositionId) throws ScriptException {
+        return designlistService.matchDesignlistByBaseId(projectId,buildingId,buildingpositionId);
+    }
     /*
      * 查询导入的designlist记录
      * */
