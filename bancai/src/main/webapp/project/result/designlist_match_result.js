@@ -211,6 +211,14 @@ Ext.define('project.result.designlist_match_result',{
             }
         });
 
+        //匹配类型：枚举类型
+        Ext.define('product.model.completeType', {
+            statics: { // 关键s
+                0: { value: '0', name: '非完全匹配' },
+                1: { value: '1', name: '完全匹配' },
+            }
+        });
+
         var projectListStore = Ext.create('Ext.data.Store',{
             fields : [ "项目名称","id"],
             proxy : {
@@ -348,7 +356,7 @@ Ext.define('project.result.designlist_match_result',{
             labelWidth : 35,
             width : 150,
             id :  'positionName',
-            margin: '0 10 0 20',
+            margin: '0 0 0 20',
             name : 'positionName',
             matchFieldWidth: true,
             // emptyText : "--请选择项目--",
@@ -371,7 +379,6 @@ Ext.define('project.result.designlist_match_result',{
                 { "abbr": '5', "name": '未匹配成功'}
             ]
         });
-
         var madebyType = Ext.create('Ext.form.ComboBox', {
             fieldLabel: '匹配结果来源',
             name: 'madebyType',
@@ -380,9 +387,30 @@ Ext.define('project.result.designlist_match_result',{
             queryMode: 'local',
             displayField: 'name',
             valueField: 'abbr',
-            margin : '0 0 0 40',
+            margin : '0 0 0 20',
             width: 180,
             labelWidth: 80,
+            renderTo: Ext.getBody()
+        });
+
+        var completeTypeList = Ext.create('Ext.data.Store', {
+            fields: ['abbr', 'name'],
+            data : [
+                { "abbr": '0', "name": '非完全匹配' },
+                { "abbr": '1', "name": '完全匹配' },
+            ]
+        });
+        var isCompleteType = Ext.create('Ext.form.ComboBox', {
+            fieldLabel: '匹配类型',
+            name: 'isCompleteType',
+            id: 'isCompleteType',
+            store: completeTypeList,
+            queryMode: 'local',
+            displayField: 'name',
+            valueField: 'abbr',
+            margin : '0 0 0 20',
+            width: 160,
+            labelWidth: 55,
             renderTo: Ext.getBody()
         });
 
@@ -443,6 +471,8 @@ Ext.define('project.result.designlist_match_result',{
                 buildingPositionList,
                 //madeby
                 madebyType,
+                //是否完全匹配
+                isCompleteType,
                 // {
                 //     xtype : 'button',
                 //     text: '查询',
@@ -514,6 +544,8 @@ Ext.define('project.result.designlist_match_result',{
                                 buildingId:Ext.getCmp("buildingName").getValue(),
                                 buildingpositionId:Ext.getCmp("positionName").getValue(),
                                 madeBy:Ext.getCmp("madebyType").getValue(),
+                                //完全匹配
+                                isCompleteMatch:Ext.getCmp("isCompleteType").getValue(),
                             }
                         });
                     }
@@ -652,11 +684,10 @@ Ext.define('project.result.designlist_match_result',{
             // groupField : "projectName",
             groupField : fieldValue,
             listeners : {
-
                 //字段拼接
                 load:function(store,records){
                     for(var i=0;i<records.length;i++){
-                        records[i].set('productName_Des',records[i].get('productName')+" &nbsp;&nbsp;&nbsp;&nbsp;(序号:"+records[i].get('designlistId')+","+product.model.originType[records[i].get('productMadeBy')].name+")");
+                        records[i].set('productName_Des',records[i].get('productName')+" &nbsp;&nbsp;&nbsp;&nbsp;(序号:"+records[i].get('designlistId')+","+product.model.originType[records[i].get('productMadeBy')].name + "," + product.model.completeType[records[i].get('isCompleteMatch')].name+")");
                     }
                 },
 
@@ -665,7 +696,9 @@ Ext.define('project.result.designlist_match_result',{
                         projectId:Ext.getCmp("projectName").getValue(),
                         buildingId:Ext.getCmp("buildingName").getValue(),
                         buildingpositionId:Ext.getCmp("positionName").getValue(),
-                        madeBy:Ext.getCmp("madebyType").getValue()
+                        madeBy:Ext.getCmp("madebyType").getValue(),
+
+                        isCompleteMatch:Ext.getCmp("isCompleteType").getValue(),
                     });
                 }
             }

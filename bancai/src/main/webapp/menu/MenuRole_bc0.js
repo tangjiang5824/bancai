@@ -464,6 +464,11 @@ Ext.define("menu.MenuRole_bc0", {
 						id : 'project.project_package_list',
 						leaf : true
 					},
+					{
+						text : '项目打包清单明细',
+						id : 'project.project_package_list_detail',
+						leaf : true
+					},
 				]
 			},
 			// 	{
