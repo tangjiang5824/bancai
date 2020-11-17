@@ -1,4 +1,4 @@
-Ext.define('project.management.editProject',{
+Ext.define('project.project_package_list',{
     extend:'Ext.panel.Panel',
     region: 'center',
     layout:'fit',
@@ -319,7 +319,7 @@ Ext.define('project.management.editProject',{
                 //     name: 'storeLeader',
                 //     value:"",
                 // }
-                ]
+            ]
         });
 
 
@@ -385,6 +385,22 @@ Ext.define('project.management.editProject',{
             // bbar:toolbar4,
             columns:[
                 {
+                    text: '包编号',
+                    dataIndex: 'packageNo',
+                    flex :1,
+                    editor : {
+                        xtype : 'textfield',
+                        allowBlank : true
+                    }
+                },{
+                    dataIndex : 'packageName',
+                    text : '包名',
+                    flex :1,
+                    editor : {
+                        xtype : 'textfield',
+                        allowBlank : true
+                    }
+                },{
                     text: '楼栋编号',
                     dataIndex: 'buildingNo',
                     flex :1,
@@ -471,7 +487,7 @@ Ext.define('project.management.editProject',{
                                 });
                                 // alert("Terminate " + rec.get('firstname'));
                             }
-                    }]
+                        }]
                     // name : '操作',
                     // text : '操作',
                     // renderer:function(value, cellmeta){
@@ -544,9 +560,9 @@ Ext.define('project.management.editProject',{
         });
 
         //弹出框的表头
-        var toolbar_pop_editPro = Ext.create('Ext.toolbar.Toolbar', {
+        var toolbar_pop = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
-            id:'toolbar_pop_editPro',
+            id:'toolbar_pop',
             items: [
                 // MaterialTypeList,
                 {
@@ -593,7 +609,7 @@ Ext.define('project.management.editProject',{
             layout: 'fit',
             closable : true,
             draggable:true,
-            tbar:toolbar_pop_editPro,
+            tbar:toolbar_pop,
             items:building_grid,
             closeAction : 'hidden',
             modal:true,//模态窗口，背景窗口不可编辑
@@ -672,17 +688,21 @@ Ext.define('project.management.editProject',{
                 itemdblclick: function(me, record, item, index,rowModel){
                     var select = record.data
                     //项目id
-                    var projectId = select.id;//项目名对应的id
-
+                    var projectId = select.projectId;//项目名对应的id
+                    var buildingId = select.buildingId;
+                    var buildingpositionId = select.buildingpositionId;
+                    var packageId = select.id;
                     console.log("iiiii")
+                    console.log(select)
                     console.log(projectId)
 
                     var buildinglList_projectId = Ext.create('Ext.data.Store',{
                         //id,materialName,length,width,materialType,number
-                        fields:['buildingNo','buildingName','buildingLeader'],
+                        fields:['packageNo','packageName','buildingNo','buildingName','buildingLeader'],
                         proxy : {
                             type : 'ajax',
-                            url : 'project/findBuilding.do?projectId='+projectId,//获取同类型的原材料  +'&pickNum='+pickNum
+                            //url : 'project/findBuilding.do?projectId='+projectId,//获取同类型的原材料  +'&pickNum='+pickNum
+                            url : 'project/queryPackageList.do?tableName=designlist_view&projectId='+projectId+'&buildingId='+buildingId+'&buildingpositionId='+buildingpositionId,
                             reader : {
                                 type : 'json',
                                 rootProperty: 'building',
@@ -697,7 +717,7 @@ Ext.define('project.management.editProject',{
                     });
 
                     //将projectId传给弹出框
-                    Ext.getCmp("toolbar_pop_editPro").items.items[0].setText(projectId);
+                    Ext.getCmp("toolbar_pop").items.items[0].setText(projectId);
                     building_grid.setStore(buildinglList_projectId);
                     win_showbuildingData.show();
                 }

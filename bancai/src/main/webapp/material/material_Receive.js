@@ -812,7 +812,19 @@ Ext.define('material.material_Receive',{
                     editor : {
                         xtype : 'textfield',
                         allowBlank : true
+                    },
+                    //默认为待领数量
+                    renderer:function(value, cellmeta, record, rowIndex, columnIndex, store){
+                        console.log("-pppppppppppp,",value)
+                        if(value == undefined){
+                            return record.data['countRec']
+                        }
+                        else {
+                            return value
+                        }
+
                     }
+
                 },
                 // {
                 //     dataIndex:'',
@@ -1087,9 +1099,31 @@ Ext.define('material.material_Receive',{
                                         //  领料页面重置
                                         Ext.getCmp('operator').setValue("");
                                         pickList.removeAll();
-
+                                        specific_oldList.load();
                                         //  领料单查询重新加载
-                                        grid_old_query_pickList_specific.getStore().load();
+                                        // grid_old_query_pickList_specific.getStore().load();
+                                        //刷新
+                                        //材料的筛选条件
+                                        var requisitionOrderId = Ext.getCmp('picklistId').getValue();
+                                        var origin = Ext.getCmp('origin').getValue();
+                                        var buildingId = Ext.getCmp('buildingName').getValue();
+                                        var buildingpositionId = Ext.getCmp('positionName').getValue();
+                                        var warehouseName = Ext.getCmp('storePosition').rawValue;
+
+                                        console.log('sss')
+                                        console.log(origin)
+                                        //传入所选项目的id
+                                        console.log(Ext.getCmp('projectName').getValue())
+                                        specific_oldList.load({
+                                            params : {
+                                                buildingId:buildingId,
+                                                buildingpositionId:buildingpositionId,
+                                                warehouseName:warehouseName,
+                                                requisitionOrderId:requisitionOrderId,
+                                                type:4,//原材料
+                                                origin:origin,
+                                            }
+                                        });
                                     }
                                     // if(response == true){
                                     //     Ext.MessageBox.alert("提示","领取成功" );

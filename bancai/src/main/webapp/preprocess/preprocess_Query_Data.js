@@ -20,10 +20,20 @@ Ext.define('preprocess.preprocess_Query_Data',{
         var tableName="preprocess_info_store_type";
         Ext.define('Soims.model.application.ApplicationState', {
             statics: { // 关键
-                0: { value: '0', name: '墙板' },
-                1: { value: '1', name: '梁板' },
-                2: { value: '2', name: 'K板' },
-                3: { value: '3', name: '异型' },
+                1: { value: '0', name: '墙板' },
+                2: { value: '1', name: '其他平板' },
+                3: { value: '2', name: '飞机板' },
+                4: { value: '3', name: '支撑' },
+                5: { value: '3', name: '直转角' },
+                6: { value: '3', name: '两转转角' },
+                7: { value: '3', name: '三转转角' },
+                8: { value: '3', name: '窗企口' },
+                9: { value: '3', name: '企口转角' },
+                10: { value: '3', name: 'EB' },
+                11: { value: '3', name: 'EC' },
+                12: { value: '3', name: 'SS' },
+                13: { value: '3', name: 'MB' },
+
                 //
             }
         });

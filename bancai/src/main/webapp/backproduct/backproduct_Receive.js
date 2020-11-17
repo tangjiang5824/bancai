@@ -955,7 +955,27 @@ Ext.define('backproduct.backproduct_Receive',{
                                         pickList.removeAll();
 
                                         //  领料单查询重新加载
-                                        grid_back_query_pickList_specific.getStore().load();
+                                        // grid_back_query_pickList_specific.getStore().load();
+                                        var requisitionOrderId = Ext.getCmp('picklistId').getValue();
+
+                                        var buildingId = Ext.getCmp('buildingName').getValue();
+                                        var buildingpositionId = Ext.getCmp('positionName').getValue();
+                                        var warehouseName = Ext.getCmp('storePosition').rawValue;
+
+                                        console.log('sss')
+                                        //传入所选项目的id
+                                        console.log(Ext.getCmp('projectName').getValue())
+                                        specificbackList.load({
+                                            params : {
+                                                buildingId:buildingId,
+                                                buildingpositionId:buildingpositionId,
+                                                warehouseName:warehouseName,
+                                                //projectId:'1',
+                                                //type和领料单Id
+                                                requisitionOrderId:requisitionOrderId,
+                                                type:1,//退库产品
+                                            }
+                                        });
                                     }
                                     // if(response == true){
                                     //     Ext.MessageBox.alert("提示","领取成功" );

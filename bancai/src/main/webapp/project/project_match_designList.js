@@ -1,8 +1,8 @@
-Ext.define('project.project_check_designList',{
+Ext.define('project.project_match_designList',{
     extend:'Ext.panel.Panel',
     region: 'center',
     layout:'fit',
-    title: '项目设计清单撤销',
+    title: '项目设计清单匹配',
     initComponent: function(){
         var itemsPerPage = 50;
         var table_workoderLog="work_order_log_view";
@@ -11,7 +11,8 @@ Ext.define('project.project_check_designList',{
 
         //存放所选的原材料的具体规格
         var materialList = '';
-
+//防止按钮重复点击，发送多次请求，post_flag
+        var post_flag = false;
         //工单审核状态：枚举类型
         Ext.define('Worksheet.check.State', {
             statics: { // 关键
@@ -303,13 +304,14 @@ Ext.define('project.project_check_designList',{
                     renderer: function (value) {
                         return Worksheet.check.State[value].name; // key-value
                     },
+                    hidden:true
                 },
                 {
                     // name : '操作',
                     text : '操作',
                     flex :1 ,
                     renderer:function(value, cellmeta){
-                        return "<INPUT type='button' value='撤销' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
+                        return "<INPUT type='button' value='匹配' style='font-size: 10px;'>";  //<INPUT type='button' value=' 删 除'>
                     }
                 },
 
@@ -331,38 +333,40 @@ Ext.define('project.project_check_designList',{
                 emptyMsg:'无数据'
             }
             ],
-            listeners: {
-                // 双击表行响应事件
-                itemdblclick: function(me, record, item, index,rowModel){
-                    var select = record.data;
-                    //工单id
-                    var workorderlogId = select.id;
-
-                    //var pickNumber = select.
-
-                    //工单的具体信息
-                    var specific_worksheet_List = Ext.create('Ext.data.Store',{
-                        //id,materialName,length,width,materialType,number
-                        fields:['materialName','length','materialType','width','specification','number'],
-                        proxy : {
-                            type : 'ajax',
-                            url : 'material/findAllbyTableNameAndOnlyOneCondition.do?tableName='+table_workoderLogDetail+'&columnName=workorderlogId'+'&columnValue='+workorderlogId,//获取同类型的原材料  +'&pickNum='+pickNum
-                            reader : {
-                                type : 'json',
-                                rootProperty: table_workoderLogDetail,
-                            },
-                        },
-                        autoLoad : true
-                    });
-
-                    Ext.getCmp("toolbar_pop").items.items[0].setText(workorderlogId);//修改id为win_num的值，动态显示在窗口中
-                    // //传rowNum响应的行号:index+1
-                    // Ext.getCmp("toolbar5").items.items[2].setText(index+1)
-                    specific_workorder_outbound.setStore(specific_worksheet_List);
-                    win_showworkorder_outbound.show();
-                }
-
-            }
+            // listeners: {
+            //     // 双击表行响应事件
+            //     itemdblclick: function(me, record, item, index,rowModel){
+            //         var select = record.data;
+            //         //工单id
+            //         var workorderlogId = select.id;
+            //         console.log("select")
+            //         console.log(select)
+            //         //var pickNumber = select.
+            //         var designlist_Id = Ext.getCmp("designlist_Id").getValue();
+            //         var specific_designList_List = Ext.create('Ext.data.Store',{
+            //             //id,materialName,length,width,materialType,number
+            //             fields:['materialName','length','materialType','width','specification','number'],
+            //             proxy : {
+            //                 type : 'ajax',
+            //                 url : 'designlist/queryDesignlistByLogId.do?designlistlogId='+designlist_Id,//获取同类型的原材料  +'&pickNum='+pickNum
+            //                 reader : {
+            //                     type : 'json',
+            //                     rootProperty: 'designlistList',
+            //                 },
+            //             },
+            //             autoLoad : true
+            //         });
+            //         Ext.getCmp("toolbar_pop1").items.items[0].setValue(designlistLogId);//修改id为win_num的值，动态显示在窗口中
+            //         Ext.getCmp("toolbar_pop1").items.items[1].setValue(projectName);//修改id为win_num的值，动态显示在窗口中
+            //
+            //         // Ext.getCmp("toolbar_pop").items.items[0].setText(workorderlogId);//修改id为win_num的值，动态显示在窗口中
+            //         // //传rowNum响应的行号:index+1
+            //         // Ext.getCmp("toolbar5").items.items[2].setText(index+1)
+            //         designList_match_grid.setStore(specific_designList_List);
+            //         win_showdesignList_outbound.show();
+            //     }
+            //
+            // }
 
         });
 
@@ -397,9 +401,9 @@ Ext.define('project.project_check_designList',{
             ]
         });
 
-        var toolbar_back_pop = Ext.create('Ext.toolbar.Toolbar', {
+        var toolbar_import_pop = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
-            id:'toolbar_back_pop',
+            id:'toolbar_import_pop',
             items: [
                 {
                     //保存logid的值
@@ -436,60 +440,125 @@ Ext.define('project.project_check_designList',{
                 // },
                 {
                     xtype : 'button',
-                    text: '撤销',
-                    width: 50,
+                    text: '确认匹配',
+                    width: 80,
                     margin: '0 40 0 0',
                     layout: 'right',
                     handler: function(){
-                        var designlist_Id = Ext.getCmp("designlist_Id").getValue();
-                        console.log("designlist_Id---------",designlist_Id)
-                        //    material/backMaterialstore.do
-                        Ext.Msg.show({
-                            title: '操作确认',
-                            message: '将撤销设计清单，选择“是”否确认？',
-                            buttons: Ext.Msg.YESNO,
-                            icon: Ext.Msg.QUESTION,
-                            fn: function (btn) {
-                                if (btn === 'yes') {
-                                    Ext.Ajax.request({
-                                        url:"designlist/rollbackUploadData.do?designlistlogId="+designlist_Id,  //审核
-                                        // params:{
-                                        //     designlistlogId:designlist_Id,  //工单id
-                                        // },
-                                        success:function (response) {
-                                            var jsonObj = JSON.parse(response.responseText);
-                                            var success = jsonObj.success;
-                                            var errorCode = jsonObj.errorCode;
-                                            if(success == false){
-                                                if(errorCode == 200){
-                                                    //失败原因
-                                                    Ext.MessageBox.alert("提示", "撤销失败，已生成工单，或该清单不存在!");
-                                                }
-                                                else if(errorCode == 100){
-                                                    Ext.MessageBox.alert("提示", "撤销失败，未获取到该行数据!");
-                                                }
-                                                else if(errorCode == 1000){
-                                                    //未知错误
-                                                    Ext.MessageBox.alert("提示", "撤销失败，未知错误!");
-                                                }
-                                            }
-                                            else{
-                                                Ext.MessageBox.alert("提示", "撤销成功!");
-                                                //关闭窗口
-                                                win_showdesignList_outbound.close();
-                                                //刷新页面
-                                                designList_Store.load()
-                                            }
+                        if(post_flag){
+                        return;
+                    }
+                        post_flag = true;
 
-                                            // win_showworkorder_outbound.close();//关闭窗口
-                                            // //刷新页面
-                                            // Ext.getCmp("designList_Grid").getStore().load()
-                                            },
-                                        failure : function(response){
-                                            Ext.MessageBox.alert("提示", "撤销失败!");
-                                        }
-                                    })
+                        // self.saveOrderBtnCanUse = true;//按钮不能点击
+                        // setTimeout(() => {
+                        // 	//防止重复点击发送请求
+                        // 	self.saveOrderBtnCanUse = false;//按钮不可以点击
+                        // }, 90000);
+                        // // 正常代码再执行
+
+                        var select = Ext.getCmp('designList_match_grid').getStore()
+                            .getData();
+                        var s = new Array();
+                        select.each(function(rec) {
+                            s.push(JSON.stringify(rec.data));
+                        });
+                        console.log("zzy要看s")
+                        console.log(s)
+                        var projectId = Ext.getCmp("projectName").getValue();
+                        var buildingId = Ext.getCmp("buildingName").getValue();
+                        var positionId = Ext.getCmp("positionName").getValue();
+
+
+                        //显示匹配进度
+                        // Ext.MessageBox.show(
+                        // 	{
+                        // 		title:'请稍候',
+                        // 		msg:'产品匹配中，请耐心等待...',
+                        // 		progressText:'',    //进度条文本
+                        // 		width:300,
+                        // 		progress:true,
+                        // 		closable:false
+                        // 	}
+                        // );
+
+                        console.log("s--------------",s)
+                        //获取数据
+                        // Ext.Ajax.timeout=900000;//设置超时时间
+                        Ext.Ajax.request({
+                            //url : 'designlist/uploadData.do', //上传匹配数据
+                            //需要修改
+                            method:'POST',
+                            //submitEmptyText : false,
+                            timeout:90000000,//超时时间
+                            params : {
+                                s : "[" + s + "]",//存储选择领料的数量
+                                projectId:projectId,
+                                buildingId:buildingId,
+                                buildingpositionId:positionId,
+                            },
+                            success : function(response) {
+                                var res = response.responseText;
+                                var jsonobj = JSON.parse(res);//将json字符串转换为对象
+                                console.log(jsonobj);
+                                console.log("success--------------",jsonobj.success);
+                                console.log("errorList--------------",jsonobj['errorList']);
+                                var success = jsonobj.success;
+                                var errorList = jsonobj.errorList;
+                                var errorCode = jsonobj.errorCode;
+                                var errorCount = jsonobj.errorCount;
+                                if(success == false){
+                                    if(errorCode == 150){
+                                        //位置重复或品名不合法
+
+                                        //关闭进度条
+                                        Ext.MessageBox.hide();
+                                        // Ext.MessageBox.alert("提示","匹配失败，产品位置重复或品名不合法！请重新导入" );
+                                        Ext.Msg.show({
+                                            title: '提示',
+                                            message: '匹配失败，产品位置重复或品名不合法！\n是否查看具体错误数据',
+                                            buttons: Ext.Msg.YESNO,
+                                            icon: Ext.Msg.QUESTION,
+                                            fn: function (btn) {
+                                                if (btn === 'yes') {
+                                                    //点击确认，显示重复的数据
+                                                    errorlistStore.loadData(errorList);
+                                                    win_errorInfo_outbound.show();
+
+                                                    post_flag =false;
+                                                }
+                                            }
+                                        });
+                                    }
+                                    else if(errorCode == 300){
+                                        Ext.MessageBox.hide();
+                                        Ext.MessageBox.alert("提示","产品匹配失败！请重新导入" );
+
+                                        post_flag =false;
+                                    }
+                                    else if(errorCode == 1000){
+                                        Ext.MessageBox.hide();
+                                        Ext.MessageBox.alert("提示","匹配失败，未知错误！请重新导入" );
+
+                                        post_flag =false;
+                                    }
+                                }else{
+                                    Ext.MessageBox.hide();
+                                    Ext.MessageBox.alert("提示","匹配成功" );
+                                    //刷新页面
+                                    Ext.getCmp('addlistDataGrid').getStore().removeAll();
+
+                                    post_flag =false;
                                 }
+                                //var message =Ext.decode(response.responseText).showmessage;
+
+                            },
+                            failure : function(response) {
+
+                                post_flag =false;//防止发送多次请求
+                                // Ext.MessageBox.hide();
+                                //var message =Ext.decode(response.responseText).showmessage;
+                                Ext.MessageBox.alert("提示","匹配失败" );
                             }
                         });
                     }
@@ -498,9 +567,9 @@ Ext.define('project.project_check_designList',{
         });
 
         //弹出框，出入库详细记录
-        var specific_designList_outbound=Ext.create('Ext.grid.Panel',{
-            // id : 'specific_designList_outbound',
-            tbar: toolbar_back_pop,
+        var designList_match_grid=Ext.create('Ext.grid.Panel',{
+            id : 'designList_match_grid',
+            tbar: toolbar_import_pop,
             // store:material_Query_Records_store1,//oldpanellogdetailList，store1的数据固定
             dock: 'bottom',
             columns:[
@@ -513,6 +582,12 @@ Ext.define('project.project_check_designList',{
                 {
                     text: '位置',
                     dataIndex: 'position',
+                    flex :1,
+                    width:"80"
+                },
+                {
+                    text: '图号',
+                    dataIndex: 'figureNum',
                     flex :1,
                     width:"80"
                 },
@@ -554,7 +629,7 @@ Ext.define('project.project_check_designList',{
             draggable:true,
             closeAction : 'hidden',
             tbar:toolbar_pop1,
-            items:specific_designList_outbound,
+            items:designList_match_grid,
         });
 
 
@@ -572,7 +647,7 @@ Ext.define('project.project_check_designList',{
             var designlistLogId = e.data.designlistLogId;  //选中记录的logid,工单号
             var projectName = e.data.projectName;  //选中记录的项目名
             // var workorderlogId = e.data.id  //选中记录的logid,工单号
-            var isrollback = e.data.isrollback;  //清单是否撤销
+            var isrollback = 0;//e.data.isrollback;  //清单是否撤销
             console.log("e.data：",e.data)
             if (fieldName == "操作") {
                 //设置监听事件getSelectionModel().getSelection()
@@ -597,7 +672,7 @@ Ext.define('project.project_check_designList',{
                     // Ext.getCmp("toolbar_pop").items.items[0].setText(workorderlogId);//修改id为win_num的值，动态显示在窗口中
                     // //传rowNum响应的行号:index+1
                     // Ext.getCmp("toolbar5").items.items[2].setText(index+1)
-                    specific_designList_outbound.setStore(specific_designList_List);
+                    designList_match_grid.setStore(specific_designList_List);
                     win_showdesignList_outbound.show();
                 }
                 else{

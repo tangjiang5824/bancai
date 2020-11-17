@@ -1048,7 +1048,27 @@ Ext.define('preprocess.preprocess_Receive',{
                                         pickList.removeAll();
 
                                         //  领料单查询重新加载
-                                        grid__query_pickList_specific.getStore().load();
+                                        // grid__query_pickList_specific.getStore().load();
+                                        var requisitionOrderId = Ext.getCmp('picklistId').getValue();
+
+                                        var buildingId = Ext.getCmp('buildingName').getValue();
+                                        var buildingpositionId = Ext.getCmp('positionName').getValue();
+                                        var warehouseName = Ext.getCmp('storePosition').rawValue;
+
+                                        console.log('sss')
+                                        //传入所选项目的id
+                                        console.log(Ext.getCmp('projectName').getValue())
+                                        specificPreprocessList.load({
+                                            params : {
+                                                buildingId:buildingId,
+                                                buildingpositionId:buildingpositionId,
+                                                warehouseName:warehouseName,
+                                                //projectId:'1',
+                                                //type和领料单Id
+                                                requisitionOrderId:requisitionOrderId,
+                                                type:2,//预加工半成品
+                                            }
+                                        });
                                     }
                                     // if(response == true){
                                     //     Ext.MessageBox.alert("提示","领取成功" );

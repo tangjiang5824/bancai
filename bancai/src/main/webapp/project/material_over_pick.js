@@ -172,11 +172,11 @@ Ext.define('project.material_over_pick',{
             items: [
                 //超龄原因
                 {
-                    xtype: 'textfield',
-                    margin : '0 40 0 0',
+                    xtype: 'textarea',
+                    margin : '0 0 0 0',
                     fieldLabel: '超领原因',
                     id :'overpick_res',
-                    width: 510,
+                    width: 550,
                     labelWidth: 55,
                     name: 'overpick_res',
                     value:"",
@@ -197,6 +197,29 @@ Ext.define('project.material_over_pick',{
                 //     style:"margin-top:50px;",
                 // },
                 //申请人
+                // {
+                //     fieldLabel : '申请人',
+                //     xtype : 'combo',
+                //     name : 'operator',
+                //     id : 'operator',
+                //     // disabled : true,
+                //     // width:'95%',
+                //     margin: '0 0 0 75',
+                //     width: 215,
+                //     labelWidth: 45,
+                //     store : workerListStore,
+                //     displayField : 'workerName',
+                //     valueField : 'id',
+                //     editable : true,
+                //     allowBlank:false,
+                //     blankText  : "申请人姓名不能为空"
+                // },
+            ]
+        });
+        //新增按钮
+        var toolbar2 = Ext.create("Ext.toolbar.Toolbar", {
+            dock : "top",
+            items : [
                 {
                     fieldLabel : '申请人',
                     xtype : 'combo',
@@ -204,7 +227,7 @@ Ext.define('project.material_over_pick',{
                     id : 'operator',
                     // disabled : true,
                     // width:'95%',
-                    margin: '0 0 0 75',
+                    margin: '0 40 0 10',
                     width: 215,
                     labelWidth: 45,
                     store : workerListStore,
@@ -214,12 +237,7 @@ Ext.define('project.material_over_pick',{
                     allowBlank:false,
                     blankText  : "申请人姓名不能为空"
                 },
-            ]
-        });
-        //新增按钮
-        var toolbar2 = Ext.create("Ext.toolbar.Toolbar", {
-            dock : "top",
-            items : [{
+                {
                 xtype : 'button',
                 iconAlign : 'center',
                 iconCls : 'rukuicon ',

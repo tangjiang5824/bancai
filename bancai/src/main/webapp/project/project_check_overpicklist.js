@@ -60,7 +60,7 @@ Ext.define('project.project_check_overpicklist',{
         var tableList = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '项目名',
             labelWidth : 45,
-            width : 550,
+            width : 450,
             id :  'projectName',
             name : '项目名称',
             matchFieldWidth: true,
@@ -405,16 +405,16 @@ Ext.define('project.project_check_overpicklist',{
             //         Ext.getCmp("toolbar_pop").items.items[0].setText(workorderlogId);//修改id为win_num的值，动态显示在窗口中
             //         // //传rowNum响应的行号:index+1
             //         // Ext.getCmp("toolbar5").items.items[2].setText(index+1)
-            //         specific_workorder_outbound.setStore(specific_worksheet_List);
-            //         win_showworkorder_outbound.show();
+            //         specific_overPicklist_outbound.setStore(specific_worksheet_List);
+            //         win_showOverpicklist_outbound.show();
             //     }
             // }
 
         });
 
-        var toolbar_pop1 = Ext.create('Ext.toolbar.Toolbar', {
+        var toolbar_pop_checkOver = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
-            id:'toolbar_pop1',
+            id:'toolbar_pop_checkOver',
             items: [
                 {
                     xtype: 'textfield',
@@ -422,7 +422,7 @@ Ext.define('project.project_check_overpicklist',{
                     fieldLabel: '超领单号',
                     id :'requisitionOrderId',
                     width: 250,
-                    labelWidth: 50,
+                    labelWidth: 60,
                     name: 'requisitionOrderId',
                     value:"",
                     editable : false,//不可修改
@@ -432,10 +432,10 @@ Ext.define('project.project_check_overpicklist',{
                     xtype: 'textfield',
                     margin : '0 40 0 0',
                     fieldLabel: '所属项目',
-                    id :'projectName_Id',
+                    id :'projectName_Id_over',
                     width : 380,
                     labelWidth : 60,
-                    name: 'projectName_Id',
+                    name: 'projectName_Id_over',
                     value:"",
                     editable : false,//不可修改
                     disabled : true,//隐藏显示
@@ -443,9 +443,9 @@ Ext.define('project.project_check_overpicklist',{
             ]
         });
 
-        var toolbar_pop = Ext.create('Ext.toolbar.Toolbar', {
+        var toolbar_pop_checkOver2 = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
-            id:'toolbar_pop',
+            id:'toolbar_pop_checkOver2',
             items: [
                 {
                     //保存logid的值
@@ -535,7 +535,7 @@ Ext.define('project.project_check_overpicklist',{
                                             },
                                             success:function (response) {
                                                 Ext.MessageBox.alert("提示", "审核通过!");
-                                                win_showworkorder_outbound.close();//关闭窗口
+                                                win_showOverpicklist_outbound.close();//关闭窗口
                                                 //刷新页面
                                                 Ext.getCmp("overpicklist_Grid").getStore().load()
                                             },
@@ -580,7 +580,7 @@ Ext.define('project.project_check_overpicklist',{
                                             success:function (response) {
                                                 //console.log(response.responseText);
                                                 Ext.MessageBox.alert("提示", "驳回成功!");
-                                                win_showworkorder_outbound.close();//关闭窗口
+                                                win_showOverpicklist_outbound.close();//关闭窗口
                                                 //页面刷新
                                                 Ext.getCmp("overpicklist_Grid").getStore().load()
                                             },
@@ -615,9 +615,9 @@ Ext.define('project.project_check_overpicklist',{
         });
 
         //弹出框，出入库详细记录
-        var specific_workorder_outbound=Ext.create('Ext.grid.Panel',{
-            id : 'specific_workorder_outbound',
-            tbar: toolbar_pop,
+        var specific_overPicklist_outbound=Ext.create('Ext.grid.Panel',{
+            id : 'specific_overPicklist_outbound',
+            tbar: toolbar_pop_checkOver2,
             store:specificOverMaterialList_detail,//oldpanellogdetailList，store1的数据固定
             dock: 'bottom',
             columns:[
@@ -661,9 +661,9 @@ Ext.define('project.project_check_overpicklist',{
             })],
         });
 
-        var win_showworkorder_outbound = Ext.create('Ext.window.Window', {
-            // id:'win_showworkorder_outbound',
-            title: '工单详情',
+        var win_showOverpicklist_outbound = Ext.create('Ext.window.Window', {
+            // id:'win_showOverpicklist_outbound',
+            title: '超领单详情',
             height: 500,
             width: 750,
             layout: 'fit',
@@ -671,8 +671,8 @@ Ext.define('project.project_check_overpicklist',{
             draggable:true,
             modal :true, //除了窗口，不能操作其他
             closeAction : 'hidden',
-            tbar:toolbar_pop1,
-            items:specific_workorder_outbound,
+            tbar:toolbar_pop_checkOver,
+            items:specific_overPicklist_outbound,
         });
 
 
@@ -696,11 +696,11 @@ Ext.define('project.project_check_overpicklist',{
             console.log(e.data)
             if (fieldName == "操作") {
 
-                Ext.getCmp("toolbar_pop1").items.items[0].setValue(requisitionOrderId);//修改id为win_num的值，动态显示在窗口中
-                Ext.getCmp("toolbar_pop1").items.items[1].setValue(projectName);//修改id为win_num的值，动态显示在窗口中
+                Ext.getCmp("toolbar_pop_checkOver").items.items[0].setValue(requisitionOrderId);//修改id为win_num的值，动态显示在窗口中
+                Ext.getCmp("toolbar_pop_checkOver").items.items[1].setValue(projectName);//修改id为win_num的值，动态显示在窗口中
 
-                Ext.getCmp("toolbar_pop").items.items[0].setText(requisitionOrderId);//修改id为win_num的值，动态显示在窗口中
-                Ext.getCmp("toolbar_pop").items.items[1].setText(isActive);//修改id为win_num的值，动态显示在窗口中
+                Ext.getCmp("toolbar_pop_checkOver2").items.items[0].setText(requisitionOrderId);//修改id为win_num的值，动态显示在窗口中
+                Ext.getCmp("toolbar_pop_checkOver2").items.items[1].setText(isActive);//修改id为win_num的值，动态显示在窗口中
 
 
                 specificOverMaterialList_detail.load({
@@ -710,7 +710,7 @@ Ext.define('project.project_check_overpicklist',{
                     }
                 });
 
-                win_showworkorder_outbound.show();
+                win_showOverpicklist_outbound.show();
             }
         }
         this.dockedItems=[{

@@ -596,8 +596,8 @@ public class MaterialController {
         MaterialType type=info.getTypeId();
         //       List<Integer> list=new ArrayList<>();
         //匹配长度m,计算总长度和库存
-        // 1、 U  2、 60F封边 3、BS  4、EB 5、 EC 6、 DP 7、企口
-        if(type.getId()==1||type.getId()==16||type.getId()==17||type.getId()==10||type.getId()==12||type.getId()==13||type.getId()==15){
+        // 1、 U  2、 60F封边 3、BS  4、EB 5、 EC 6、 DP 7、企口  8、IC 9、 梯形筋
+        if(type.getId()==1||type.getId()==16||type.getId()==17||type.getId()==10||type.getId()==12||type.getId()==13||type.getId()==15||type.getId()==9||type.getId()==3){
             mysqlcondition c1=new mysqlcondition();
             if (null!=info.getTypeId()) {
                 c1.and(new mysqlcondition("typeId", "=", info.getTypeId().getId()));

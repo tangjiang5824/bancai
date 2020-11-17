@@ -178,15 +178,15 @@ Ext.define('oldpanel.oldpanel_Outbound',{
 
 
         //弹出框的表头
-        var toolbar_pop = Ext.create('Ext.toolbar.Toolbar', {
+        var toolbar_pop_oldout = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
-            id:'toolbar_pop',
+            id:'toolbar_pop_oldout',
             items: [
 
                 {
                     //保存logid的值
                     xtype: 'tbtext',
-                    id:'log_id',
+                    id:'old_log_id',
                     iconAlign: 'center',
                     iconCls: 'rukuicon ',
                     text: ' ',//默认为空
@@ -209,13 +209,13 @@ Ext.define('oldpanel.oldpanel_Outbound',{
                     xtype: 'combo',
                     margin : '0 40 0 0',
                     fieldLabel: '撤销人',
-                    id :'operator_back',
+                    id :'operator_back_oldOut',
                     store : workerListStore,
                     displayField : 'workerName',
                     valueField : 'id',
                     width: 150,
                     labelWidth: 50,
-                    name: 'operator_back',
+                    name: 'operator_back_oldOut',
                     value:"",
                 },
 
@@ -230,9 +230,9 @@ Ext.define('oldpanel.oldpanel_Outbound',{
                             return;
                         }
                         post_flag = true;
-                        var oldpanel_logId = Ext.getCmp("log_id").text;
+                        var oldpanel_logId = Ext.getCmp("old_log_id").text;
                         var is_rollback = Ext.getCmp("is_rollback").text;
-                        var operator = Ext.getCmp("operator_back").getValue();
+                        var operator = Ext.getCmp("operator_back_oldOut").getValue();
                         // console.log("id为：----",is_rollback)
                         if (is_rollback != 1){
                             Ext.Msg.show({
@@ -282,7 +282,7 @@ Ext.define('oldpanel.oldpanel_Outbound',{
         //弹出框，出入库详细记录
         var specific_data_grid_outbound=Ext.create('Ext.grid.Panel',{
             id : 'specific_data_grid_outbound',
-            tbar: toolbar_pop,
+            tbar: toolbar_pop_oldout,
             // store:oldpanel_Query_Records_store1,//oldpanellogdetailList，store1的数据固定
             dock: 'bottom',
             columns:[
@@ -449,8 +449,8 @@ Ext.define('oldpanel.oldpanel_Outbound',{
                 //     col.setText("入库数量");
                 // }
 
-                Ext.getCmp("toolbar_pop").items.items[0].setText(id); //设置log id的值
-                Ext.getCmp("toolbar_pop").items.items[1].setText(isrollback);
+                Ext.getCmp("toolbar_pop_oldout").items.items[0].setText(id); //设置log id的值
+                Ext.getCmp("toolbar_pop_oldout").items.items[1].setText(isrollback);
                 specific_data_grid_outbound.setStore(oldpanellogdetailList);
                 // console.log(materiallogdetailList);
                 win_showoldpanelData_outbound.show();

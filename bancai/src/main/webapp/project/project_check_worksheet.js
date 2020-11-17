@@ -264,9 +264,9 @@ Ext.define('project.project_check_worksheet',{
 
         });
 
-        var toolbar_pop1 = Ext.create('Ext.toolbar.Toolbar', {
+        var toolbar_pop_checkWork1 = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
-            id:'toolbar_pop1',
+            id:'toolbar_pop_checkWork1',
             items: [
                 {
                     xtype: 'textfield',
@@ -277,6 +277,17 @@ Ext.define('project.project_check_worksheet',{
                     labelWidth: 50,
                     name: 'worksheet_Id',
                     value:"",
+                    hidden:true
+                },
+                {
+                    xtype: 'textfield',
+                    margin : '0 40 0 0',
+                    fieldLabel: '工单号',
+                    id :'workOrderNo',
+                    width: 250,
+                    labelWidth: 50,
+                    name: 'workOrderNo',
+                    value:"",
                     editable : false,//不可修改
                     disabled : true,//隐藏显示
                 },
@@ -284,10 +295,10 @@ Ext.define('project.project_check_worksheet',{
                     xtype: 'textfield',
                     margin : '0 40 0 0',
                     fieldLabel: '所属项目',
-                    id :'projectName_Id',
+                    id :'projectName_Id_work',
                     width : 380,
                     labelWidth : 60,
-                    name: 'projectName_Id',
+                    name: 'projectName_Id_work',
                     value:"",
                     editable : false,//不可修改
                     disabled : true,//隐藏显示
@@ -295,9 +306,9 @@ Ext.define('project.project_check_worksheet',{
             ]
         });
 
-        var toolbar_pop = Ext.create('Ext.toolbar.Toolbar', {
+        var toolbar_pop_checkWork = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
-            id:'toolbar_pop',
+            id:'toolbar_pop_checkWork',
             items: [
                 {
                     //保存logid的值
@@ -325,17 +336,17 @@ Ext.define('project.project_check_worksheet',{
                 //     xtype: 'textfield',
                 //     margin : '0 40 0 0',
                 //     fieldLabel: '审核人',
-                //     id :'operator_back',
+                //     id :'operator_back_work',
                 //     width: 150,
                 //     labelWidth: 50,
-                //     name: 'operator_back',
+                //     name: 'operator_back_work',
                 //     value:"",
                 // },
                 {
                     fieldLabel : '审核人',
                     xtype : 'combo',
-                    name : 'operator_back',
-                    id : 'operator_back',
+                    name : 'operator_back_work',
+                    id : 'operator_back_work',
                     // disabled : true,
                     // width:'95%',
                     margin: '0 40 0 0',
@@ -455,7 +466,7 @@ Ext.define('project.project_check_worksheet',{
         //弹出框，出入库详细记录
         var specific_workorder_outbound=Ext.create('Ext.grid.Panel',{
             id : 'specific_workorder_outbound',
-            tbar: toolbar_pop,
+            tbar: toolbar_pop_checkWork,
             // store:material_Query_Records_store1,//oldpanellogdetailList，store1的数据固定
             dock: 'bottom',
             columns:[
@@ -509,7 +520,7 @@ Ext.define('project.project_check_worksheet',{
             draggable:true,
             modal :true, //除了窗口，不能操作其他
             closeAction : 'hidden',
-            tbar:toolbar_pop1,
+            tbar:toolbar_pop_checkWork1,
             items:specific_workorder_outbound,
         });
 
@@ -526,6 +537,7 @@ Ext.define('project.project_check_worksheet',{
             // var isrollback = Ext.getCmp('isrollback').getValue();
             var materialArr = sm.getSelection();
             var worksheetNum = e.data.id;  //选中记录的logid,工单号
+            var workOrderNo = e.data.workOrderNo;
             var projectName = e.data.projectName;  //选中记录的项目名
             var workorderlogId = e.data.id;  //选中记录的logid,工单号
 
@@ -548,11 +560,12 @@ Ext.define('project.project_check_worksheet',{
                     },
                     autoLoad : true
                 });
-                Ext.getCmp("toolbar_pop1").items.items[0].setValue(worksheetNum);//修改id为win_num的值，动态显示在窗口中
-                Ext.getCmp("toolbar_pop1").items.items[1].setValue(projectName);//修改id为win_num的值，动态显示在窗口中
+                Ext.getCmp("toolbar_pop_checkWork1").items.items[0].setValue(worksheetNum);//修改id为win_num的值，动态显示在窗口中
+                Ext.getCmp("toolbar_pop_checkWork1").items.items[1].setValue(workOrderNo);//修改id为win_num的值，动态显示在窗口中
+                Ext.getCmp("toolbar_pop_checkWork1").items.items[2].setValue(projectName);//修改id为win_num的值，动态显示在窗口中
 
-                Ext.getCmp("toolbar_pop").items.items[0].setText(workorderlogId);//修改id为win_num的值，动态显示在窗口中
-                Ext.getCmp("toolbar_pop").items.items[1].setText(isActive);//修改id为win_num的值，动态显示在窗口中
+                Ext.getCmp("toolbar_pop_checkWork").items.items[0].setText(workorderlogId);//修改id为win_num的值，动态显示在窗口中
+                Ext.getCmp("toolbar_pop_checkWork").items.items[1].setText(isActive);//修改id为win_num的值，动态显示在窗口中
 
                 // //传rowNum响应的行号:index+1
                 // Ext.getCmp("toolbar5").items.items[2].setText(index+1)

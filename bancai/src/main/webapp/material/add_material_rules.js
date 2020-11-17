@@ -391,11 +391,11 @@ Ext.define('material.add_material_rules', {
                                             name: 'count',
 
                                         },
-                                        {
-                                            xtype: 'textfield',
-                                            fieldLabel: '方向',
-                                            name: 'orientation',
-                                        },
+                                        // {
+                                        //     xtype: 'textfield',
+                                        //     fieldLabel: '方向',
+                                        //     name: 'orientation',
+                                        // },
                                         {
                                             xtype: 'textfield',
                                             fieldLabel: '标准值向上对齐',

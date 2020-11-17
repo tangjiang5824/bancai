@@ -38,7 +38,7 @@ Ext.define('project.project_query_overpicklist',{
         var tableList1 = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '项目名',
             labelWidth : 45,
-            width : 550,//'35%'
+            width : 450,//'35%'
             queryMode: 'local',
             id :  'projectName',
             name : 'projectName',
@@ -303,7 +303,7 @@ Ext.define('project.project_query_overpicklist',{
                     xtype : 'button',
                     text: '项目超料单查询',
                     width: 100,
-                    margin: '0 0 0 80',
+                    margin: '0 0 0 40',
                     layout: 'right',
                     handler: function(){
                         // var url='material/materiaPickingWin.jsp';

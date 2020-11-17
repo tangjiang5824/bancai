@@ -37,7 +37,6 @@ Ext.define('project.project_worksheet',{
             autoLoad : true
         });
 
-
         var projectList = Ext.create('Ext.form.ComboBox',{
             fieldLabel : '项目名',
             labelWidth : 45,
@@ -211,7 +210,11 @@ Ext.define('project.project_worksheet',{
                     store.getProxy().setExtraParams({
                         projectId:Ext.getCmp("projectName").getValue(),
                         buildingId:Ext.getCmp("buildingName").getValue(),
-                        buildingpositionId:Ext.getCmp("positionName")
+                        buildingpositionId:Ext.getCmp("positionName").getValue(),
+
+                        warehouseName:Ext.getCmp("storePositionprojectName").rawValue,
+                        product_Name :Ext.getCmp("pro_name").getValue(),
+                        madeBy:Ext.getCmp("madebyType").getValue()
                     });
                 }
 
@@ -228,6 +231,104 @@ Ext.define('project.project_worksheet',{
             items: [projectList,
                 buildingName,
                 buildingPositionList,
+                //其他筛选条件
+                // {
+                //     xtype : 'button',
+                //     text: '项目产品查询',
+                //     width: 100,
+                //     margin: '0 0 0 40',
+                //     layout: 'right',
+                //     handler: function(){
+                //         // var url='material/materiaPickingWin.jsp';
+                //         // url=encodeURI(url)
+                //         //window.open(url,"_blank");
+                //         console.log('sss')
+                //         //传入所选项目的id
+                //         console.log(Ext.getCmp('projectName').getValue())
+                //         productListStore.load({
+                //             params : {
+                //                 projectId:Ext.getCmp("projectName").getValue(),
+                //                 buildingId:Ext.getCmp("buildingName").getValue(),
+                //                 buildingpositionId:Ext.getCmp("positionName").getValue(),
+                //                 }
+                //         });
+                //     }
+                // }
+                ]
+        });
+        var storeNameList = Ext.create('Ext.data.Store',{
+            fields : [ 'warehouseName'],
+            proxy : {
+                type : 'ajax',
+                url : 'material/findStore.do', //查询所有的仓库编号
+                reader : {
+                    type : 'json',
+                    rootProperty: 'StoreName',
+                }
+            },
+            autoLoad : true
+        });
+        var storePosition = Ext.create('Ext.form.ComboBox',{
+            fieldLabel : '仓库名',
+            labelWidth : 45,
+            width : 200,
+            margin: '0 0 0 0',
+            id :  'storePosition',
+            name : 'storePosition',
+            matchFieldWidth: true,
+            emptyText : "--请选择--",
+            displayField: 'warehouseName',
+            valueField: 'id',
+            editable : false,
+            store: storeNameList,
+        });
+
+        var madebyTypeList = Ext.create('Ext.data.Store', {
+            fields: ['abbr', 'name'],
+            data : [
+                { "abbr": '0', "name": '未匹配' },
+                { "abbr": '1', "name": '退库成品' },
+                { "abbr": '2', "name": '预加工半产品' },
+                { "abbr": '3', "name": '旧板' },
+                { "abbr": '4', "name": '原材料新板' },
+                { "abbr": '5', "name": '未匹配成功'}
+            ]
+        });
+
+        var madebyType = Ext.create('Ext.form.ComboBox', {
+            fieldLabel: '匹配结果来源',
+            name: 'madebyType',
+            id: 'madebyType',
+            store: madebyTypeList,
+            queryMode: 'local',
+            displayField: 'name',
+            valueField: 'abbr',
+            margin : '0 0 0 40',
+            width: 180,
+            labelWidth: 80,
+            renderTo: Ext.getBody()
+        });
+
+        var toolbar2 = Ext.create('Ext.toolbar.Toolbar',{
+            dock : "top",
+            id : "toolbar2",
+            items: [
+                //其他筛选条件
+                //仓库
+                storePosition,
+                //产品名称
+                {
+                    xtype: 'textfield',
+                    margin : '0 0 0 40',
+                    fieldLabel: '产品名称',
+                    id :'pro_name',
+                    width: 215,
+                    labelWidth: 60,
+                    name: 'pro_name',
+                    value:"",
+                },
+                //材料主件类型
+                madebyType,
                 {
                     xtype : 'button',
                     text: '项目产品查询',
@@ -246,7 +347,11 @@ Ext.define('project.project_worksheet',{
                                 projectId:Ext.getCmp("projectName").getValue(),
                                 buildingId:Ext.getCmp("buildingName").getValue(),
                                 buildingpositionId:Ext.getCmp("positionName").getValue(),
-                                }
+
+                                warehouseName:Ext.getCmp("storePositionprojectName").rawValue,
+                                product_Name :Ext.getCmp("pro_name").getValue(),
+                                madeBy:Ext.getCmp("madebyType").getValue()
+                            }
                         });
                     }
                 }]
@@ -446,7 +551,6 @@ Ext.define('project.project_worksheet',{
                     region:'center',
                     bodyStyle: 'background:#fff;',
                     handler : function() {
-
                         // 取出grid的字段名字段类型pickingMaterialGrid
                         console.log('1===========')
                         var select = Ext.getCmp('pickingMaterialGrid').getStore()
@@ -496,6 +600,19 @@ Ext.define('project.project_worksheet',{
                                     autoLoad : true,
                                 });
                                 grid_worksheet_specific.setStore(worksheet_specificListStore);
+                                //刷新
+                                productListStore.load({
+                                    params : {
+                                        projectId:Ext.getCmp("projectName").getValue(),
+                                        buildingId:Ext.getCmp("buildingName").getValue(),
+                                        buildingpositionId:Ext.getCmp("positionName").getValue(),
+
+                                        warehouseName:Ext.getCmp("storePositionprojectName").rawValue,
+                                        product_Name :Ext.getCmp("pro_name").getValue(),
+                                        madeBy:Ext.getCmp("madebyType").getValue()
+                                    }
+                                });
+
                             },
                             failure : function(response) {
                                 //var message =Ext.decode(response.responseText).showmessage;
@@ -861,7 +978,8 @@ Ext.define('project.project_worksheet',{
             console.log("columnIndex:",columnIndex)
         }
 
-        this.dockedItems = [toolbar,panel];
+        this.dockedItems = [toolbar,toolbar2,panel];
+
         // this.dockedItems = [toolbar,panel,toolbar3];
         // this.items = [grid1];
         this.callParent(arguments);

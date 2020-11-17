@@ -81,7 +81,10 @@ public class ProjectController {
      */
     @RequestMapping(value = "/generate_project.do")
     @Transactional(rollbackFor = Exception.class)
-    public WebResponse add_project(String s, HttpSession session, String projectName, String proStartTime, String proEndTime, String planLeaderId, String produceLeaderId, String purchaseLeaderId, String financeLeaderId, String storeLeaderId, String isPreprocess) throws IOException, JSONException {
+    public WebResponse add_project(String s, HttpSession session, String projectName,
+                                   String proStartTime, String proEndTime, String planLeaderId,
+                                   String produceLeaderId, String purchaseLeaderId, String financeLeaderId,
+                                   String storeLeaderId, String projectLeaderId, String sellLeaderId, String isPreprocess) throws IOException, JSONException {
         WebResponse response = new WebResponse();
         if (projectName == null || projectName.trim().length() == 0) {
             response.setSuccess(false);
@@ -118,10 +121,12 @@ public class ProjectController {
         if (purchaseLeaderId.equals("")) purchaseLeaderId = null;
         if (financeLeaderId.equals("")) financeLeaderId = null;
         if (storeLeaderId.equals("")) storeLeaderId = null;
+        if (projectLeaderId.equals("")) projectLeaderId = null;
+        if (sellLeaderId.equals("")) sellLeaderId = null;
         //生成project计划表
-        String sql1 = "insert into project (uploadId,startTime,proStartTime,projectName,proEndTime,planLeaderId,produceLeaderId,purchaseLeaderId,financeLeaderId,storeLeaderId,statusId,isPreprocess) values(?,?,?,?,?,?,?,?,?,?,?,?) ";
+        String sql1 = "insert into project (uploadId,startTime,proStartTime,projectName,proEndTime,planLeaderId,produceLeaderId,purchaseLeaderId,financeLeaderId,storeLeaderId,projectLeaderId,sellLeaderId,statusId,isPreprocess) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?) ";
         //插入到project表的同时返回projectId
-        String projectId = insertProjectService.insertDataToTable(sql1, userid, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()), proStartTime, projectName, proEndTime, planLeaderId, produceLeaderId, purchaseLeaderId, financeLeaderId, storeLeaderId, "1", isPreprocess) + "";
+        String projectId = insertProjectService.insertDataToTable(sql1, userid, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()), proStartTime, projectName, proEndTime, planLeaderId, produceLeaderId, purchaseLeaderId, financeLeaderId, storeLeaderId,projectLeaderId,sellLeaderId, "1", isPreprocess) + "";
         for (int i = 0; i < jsonArray.length(); i++) {
             ArrayList arrayList = new ArrayList();
             JSONObject jsonTemp = jsonArray.getJSONObject(i);
@@ -1117,7 +1122,7 @@ public class ProjectController {
         System.out.println("zzyzzyzyyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzzyyzyzyzyzy");
         System.out.println(workorderlogId);
 
-        String fileName = "C:\\Users\\Administrator\\Desktop\\单号" +workorderlogId +"工单.xlsx";
+        String fileName = "D:\\单号" +workorderlogId +"工单.xlsx";
         // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
         // 如果这里想使用03 则 传入excelType参数即可
         //write(fileName,格式类)
@@ -1148,7 +1153,7 @@ public class ProjectController {
         System.out.println("zzyzzyzyyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzzyyzyzyzyzy");
         System.out.println(requisitionOrderId);
 
-        String fileName = "C:\\Users\\Administrator\\Desktop\\单号" +requisitionOrderId +"领料单.xlsx";
+        String fileName = "D:\\单号" +requisitionOrderId +"领料单.xlsx";
         // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
         // 如果这里想使用03 则 传入excelType参数即可
         //write(fileName,格式类)
@@ -1179,7 +1184,7 @@ public class ProjectController {
         System.out.println("zzyzzyzyyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzyzzyyzyzyzyzy");
         System.out.println(requisitionOrderId);
 
-        String fileName = "C:\\Users\\Administrator\\Desktop\\单号" +requisitionOrderId +"超领单.xlsx";
+        String fileName = "D:\\单号" +requisitionOrderId +"超领单.xlsx";
         // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
         // 如果这里想使用03 则 传入excelType参数即可
         //write(fileName,格式类)

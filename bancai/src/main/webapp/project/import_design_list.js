@@ -446,7 +446,7 @@ Ext.define('project.import_design_list', {
 		var tableList1 = Ext.create('Ext.form.ComboBox',{
 			fieldLabel : '项目名',
 			labelWidth : 45,
-			width : 550,//'35%'
+			width : 300,//'35%'
 			queryMode: 'local',
 			id :  'projectName',
 			name : 'projectName',
@@ -555,7 +555,7 @@ Ext.define('project.import_design_list', {
 		var buildingName = Ext.create('Ext.form.ComboBox',{
 			fieldLabel : '楼栋名',
 			labelWidth : 45,
-			width : 300,
+			width : 200,
 			id :  'buildingName',
 			name : 'buildingName',
 			matchFieldWidth: false,
@@ -636,6 +636,20 @@ Ext.define('project.import_design_list', {
 			items : [   tableList1,
 						buildingName,
 						buildingPositionList,
+				{
+					xtype:'radiogroup',
+					fieldLabel: '是否为上传删除清单',
+					labelWidth:120,
+					width:200,
+					columns: 2, //设置没四个选项一行
+					margin : '0 0 0 60',
+					id:'isDeleteDesignList',
+					allowBlank: false,
+					items:[
+						{boxLabel: '是', name: 'isDeleteDesignList',inputValue: '1'},
+						{boxLabel: '否', name: 'isDeleteDesignList',inputValue: '0', checked : true},
+					]
+				}
 
 					]//exceluploadform
 		});
@@ -661,7 +675,7 @@ Ext.define('project.import_design_list', {
 				exceluploadform,
 				{
 					xtype : 'button',
-					text: '确认匹配',
+					text: '确认上传',
 					width: 100,
 					margin: '0 0 0 40',
 					layout: 'right',
@@ -689,6 +703,7 @@ Ext.define('project.import_design_list', {
 						var buildingId = Ext.getCmp("buildingName").getValue();
 						var positionId = Ext.getCmp("positionName").getValue();
 
+						var isDeleteDesignList = Ext.getCmp('isDeleteDesignList').getValue().isDeleteDesignList;
 
 						//显示匹配进度
 						// Ext.MessageBox.show(
@@ -715,6 +730,7 @@ Ext.define('project.import_design_list', {
 								projectId:projectId,
 								buildingId:buildingId,
 								buildingpositionId:positionId,
+								isDeleteDesignList:isDeleteDesignList,
 							},
 							success : function(response) {
 								var res = response.responseText;

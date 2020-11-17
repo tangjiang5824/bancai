@@ -518,7 +518,7 @@ Ext.define('oldpanel.oldpanel_backcheck',{
 
         //退料单明细
         var grid_backList_specific=Ext.create('Ext.grid.Panel',{
-            // id : 'grid_backList_specific',
+            id : 'grid_backList_specific',
             tbar:toolbar_specific_backList,
             store:specific_backList,
             autoScroll: true, //超过长度带自动滚动条
@@ -818,8 +818,20 @@ Ext.define('oldpanel.oldpanel_backcheck',{
                                         old_pickList.removeAll();
 
                                         //  领料单查询重新加载
-                                        grid_backList_specific.getStore().load();
+                                        // grid_backList_specific.getStore().load();
+                                        var select = Ext.getCmp('grid_backList_specific').getSelectionModel().getSelection();
+                                        var returnOrderId = select[0].data.returnOrderId;
+                                        console.log('---11',select)
+
+                                        //退料单查询
+                                        specific_backList.load({
+                                            params : {
+                                                returnOrderId:returnOrderId,
+                                            }
+                                        });
+
                                     }
+
                                 },
                                 failure : function(response) {
                                     console.log('--------------responseresponse',response)
