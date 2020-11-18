@@ -544,9 +544,9 @@ Ext.define('project.management.editProject',{
         });
 
         //弹出框的表头
-        var toolbar_pop = Ext.create('Ext.toolbar.Toolbar', {
+        var toolbar_pop_editPro = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
-            id:'toolbar_pop',
+            id:'toolbar_pop_editPro',
             items: [
                 // MaterialTypeList,
                 {
@@ -593,7 +593,7 @@ Ext.define('project.management.editProject',{
             layout: 'fit',
             closable : true,
             draggable:true,
-            tbar:toolbar_pop,
+            tbar:toolbar_pop_editPro,
             items:building_grid,
             closeAction : 'hidden',
             modal:true,//模态窗口，背景窗口不可编辑
@@ -697,7 +697,7 @@ Ext.define('project.management.editProject',{
                     });
 
                     //将projectId传给弹出框
-                    Ext.getCmp("toolbar_pop").items.items[0].setText(projectId);
+                    Ext.getCmp("toolbar_pop_editPro").items.items[0].setText(projectId);
                     building_grid.setStore(buildinglList_projectId);
                     win_showbuildingData.show();
                 }

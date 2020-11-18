@@ -10,6 +10,7 @@ import com.bancai.domain.DataList;
 import com.bancai.domain.DataRow;
 import com.bancai.util.Excel;
 import com.bancai.vo.UploadDataResult;
+import com.bancai.vo.WebResponse;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -68,10 +69,10 @@ public class DesignlistService extends BaseService{
      */
     @Transactional
     public int createDesignlistData(DataList validList, String userId, String projectId, String buildingId,
-                                 String buildingpositionId) {
-        String sql_addLog = "insert into designlist_log (userId,time,isrollback,projectId,buildingId,buildingpositionId) values(?,?,?,?,?,?)";
+                                 String buildingpositionId,String remark) {
+        String sql_addLog = "insert into designlist_log (userId,time,isrollback,projectId,buildingId,buildingpositionId,matchStatus,remark) values(?,?,?,?,?,?,?,?)";
         int designlistlogId= insertProjectService.insertDataToTable(sql_addLog,userId,analyzeNameService.getTime(),"0"
-                ,projectId, buildingId, buildingpositionId);
+                ,projectId, buildingId, buildingpositionId,"0",remark);
         for (DataRow dataRow : validList) {
             String productId = dataRow.get("productId").toString();
             String position = dataRow.get("position").toString();
@@ -84,7 +85,8 @@ public class DesignlistService extends BaseService{
      * 设计清单匹配
      */
     @Transactional
-    public boolean matchDesignlist(String projectId, String buildingId, String buildingpositionId) throws ScriptException {
+    public WebResponse matchDesignlistByBaseId(String projectId, String buildingId, String buildingpositionId) throws ScriptException {
+        WebResponse response = new WebResponse();
         if(!isProjectPreprocess(projectId)){
             panelMatchService.matchBackProduct(projectId,buildingId,buildingpositionId);
             panelMatchService.matchPreprocess(projectId,buildingId,buildingpositionId);
@@ -93,7 +95,79 @@ public class DesignlistService extends BaseService{
         }else {
             new_panel_match.match(Integer.parseInt(projectId),Integer.parseInt(buildingId),Integer.parseInt(buildingpositionId));
         }
-        return panelMatchService.matchError(projectId,buildingId,buildingpositionId);
+        //return panelMatchService.matchError(projectId,buildingId,buildingpositionId);
+        DataList matchErrorList = panelMatchService.matchErrorList(projectId,buildingId,buildingpositionId);
+        updateDesignlistLogMatchStatusByBaseId(projectId,buildingId,buildingpositionId);
+        if(matchErrorList.isEmpty()){
+            response.setSuccess(true);
+            response.setMsg("匹配完成！");
+        }else {
+            response.setSuccess(false);
+            response.setErrorCode(200);
+            response.setMsg("匹配完成，但存在未匹配条目！");
+            response.setValue(matchErrorList);
+        }
+        return response;
+    }
+
+    @Transactional
+    public void updateDesignlistLogMatchStatusByBaseId(String projectId, String buildingId, String buildingpositionId){
+        DataList logList = queryService.query("SELECT DISTINCT designlistlogId FROM designlist WHERE projectId=? AND buildingId=? AND buildingpositionId=?"
+                ,projectId,buildingId,buildingpositionId);
+        if(!logList.isEmpty()){
+            for(DataRow logRow : logList){
+                String designlistlogId = logRow.get("designlistlogId").toString();
+                DataList statusList = queryService.query("SELECT COUNT(id) as count,SUM(if(madeBy = 0, 0, 1)) as num from designlist where designlistlogId=?"
+                        ,designlistlogId);
+                if(!statusList.isEmpty()){
+                    if(Integer.parseInt(statusList.get(0).get("num").toString())<Integer.parseInt(statusList.get(0).get("count").toString()))//未匹配完
+                        updateDesignlistLogMatchStatusById(designlistlogId,"0");
+                    else
+                        updateDesignlistLogMatchStatusById(designlistlogId,"1");
+                }
+            }
+        }
+    }
+
+    @Transactional
+    public WebResponse matchDesignlistByLogId(String designlistlogId) throws ScriptException {
+        WebResponse response = new WebResponse();
+        DataList logList = queryService.query("select * from designlist_log where id=?",designlistlogId);
+        if(logList.isEmpty()){
+            response.setErrorCode(100);
+            response.setMsg("未找到该清单记录");
+            response.setSuccess(false);
+            return response;
+        }
+        String projectId = logList.get(0).get("projectId").toString();
+        String buildingId = logList.get(0).get("buildingId").toString();
+        String buildingpositionId = logList.get(0).get("buildingpositionId").toString();
+        if(!isProjectPreprocess(projectId)){
+            panelMatchService.matchBackProduct(projectId,buildingId,buildingpositionId);
+            panelMatchService.matchPreprocess(projectId,buildingId,buildingpositionId);
+            panelMatchService.matchOldpanel(projectId,buildingId,buildingpositionId);
+            new_panel_match.match(Integer.parseInt(projectId),Integer.parseInt(buildingId),Integer.parseInt(buildingpositionId));
+        }else {
+            new_panel_match.match(Integer.parseInt(projectId),Integer.parseInt(buildingId),Integer.parseInt(buildingpositionId));
+        }
+//        return panelMatchService.matchError(projectId,buildingId,buildingpositionId);
+        DataList matchErrorList = panelMatchService.matchErrorList(designlistlogId);
+        if(matchErrorList.isEmpty()){
+            updateDesignlistLogMatchStatusById(designlistlogId,"1");
+            response.setSuccess(true);
+            response.setMsg("匹配完成！");
+        }else {
+            updateDesignlistLogMatchStatusById(designlistlogId,"0");
+            response.setSuccess(false);
+            response.setErrorCode(200);
+            response.setMsg("匹配完成，但存在未匹配条目！");
+            response.setValue(matchErrorList);
+        }
+        return response;
+    }
+
+    private void updateDesignlistLogMatchStatusById(String designlistlogId,String matchStatus){
+        jo.update("update designlist_log set matchStatus=\""+matchStatus+"\" where id=\""+designlistlogId+"\"");
     }
 
     private boolean isProjectPreprocess(String projectId){

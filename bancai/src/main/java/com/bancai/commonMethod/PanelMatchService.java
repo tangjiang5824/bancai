@@ -435,6 +435,29 @@ public class PanelMatchService extends BaseService{
     }
 
     @Transactional
+    public DataList matchErrorList(String designlistlogId){
+        return queryService.query("select `dl`.`id` AS `id`,`dl`.`projectId` AS `projectId`,`dl`.`buildingId` AS `buildingId`," +
+                "`dl`.`buildingpositionId` AS `buildingpositionId`,`dl`.`productId` AS `productId`,`dl`.`position` AS `position`," +
+                "`dl`.`figureNum` AS `figureNum`,`dl`.`designlistlogId` AS `designlistlogId`,`pi`.`productName` AS `productName`," +
+                "`p`.`projectName` AS `projectName`,`b`.`buildingName` AS `buildingName`,`bp`.`positionName` AS `buildingpositionName` from " +
+                "((((`designlist` `dl` left join `product_info` `pi` on((`dl`.`productId` = `pi`.`id`))) left join `project` `p` " +
+                "on((`dl`.`projectId` = `p`.`id`))) left join `building` `b` on((`dl`.`buildingId` = `b`.`id`))) left join " +
+                "`building_position` `bp` on((`dl`.`buildingpositionId` = `bp`.`id`))) where (`dl`.`madeBy` = 0) and (`dl`.`designlistlogId`=?)"
+                ,designlistlogId);
+    }
+    @Transactional
+    public DataList matchErrorList(String projectId, String buildingId, String buildingpositionId){
+        return queryService.query("select `dl`.`id` AS `id`,`dl`.`projectId` AS `projectId`,`dl`.`buildingId` AS `buildingId`," +
+                        "`dl`.`buildingpositionId` AS `buildingpositionId`,`dl`.`productId` AS `productId`,`dl`.`position` AS `position`," +
+                        "`dl`.`figureNum` AS `figureNum`,`dl`.`designlistlogId` AS `designlistlogId`,`pi`.`productName` AS `productName`," +
+                        "`p`.`projectName` AS `projectName`,`b`.`buildingName` AS `buildingName`,`bp`.`positionName` AS `buildingpositionName` from " +
+                        "((((`designlist` `dl` left join `product_info` `pi` on((`dl`.`productId` = `pi`.`id`))) left join `project` `p` " +
+                        "on((`dl`.`projectId` = `p`.`id`))) left join `building` `b` on((`dl`.`buildingId` = `b`.`id`))) left join " +
+                        "`building_position` `bp` on((`dl`.`buildingpositionId` = `bp`.`id`))) where (`dl`.`madeBy` = 0) " +
+                        "and (`dl`.`projectId`=?) and (`dl`.`buildingId`=?) and (`dl`.`buildingpositionId`=?)"
+                ,projectId,buildingId,buildingpositionId);
+    }
+    @Transactional
     public String oldpanelFitRuleSQL(String queryOldpanelFitRule, DataRow rulesRow, DataRow productInfo,String oldpanelFormat){
         int value;
         int low;

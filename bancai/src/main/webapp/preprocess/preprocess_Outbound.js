@@ -210,15 +210,14 @@ Ext.define('preprocess.preprocess_Outbound',{
 
 
         //弹出框的表头
-        var toolbar_pop = Ext.create('Ext.toolbar.Toolbar', {
+        var toolbar_pop_preOut = Ext.create('Ext.toolbar.Toolbar', {
             dock : "top",
-            id:'toolbar_pop',
+            id:'toolbar_pop_preOut',
             items: [
-                // MaterialTypeList,
                 {
                     //保存logid的值
                     xtype: 'tbtext',
-                    id:'log_id',
+                    id:'pre_log_id',
                     iconAlign: 'center',
                     iconCls: 'rukuicon ',
                     text: ' ',//默认为空
@@ -241,13 +240,13 @@ Ext.define('preprocess.preprocess_Outbound',{
                     xtype: 'combo',
                     margin : '0 40 0 0',
                     fieldLabel: '撤销人',
-                    id :'operator_back',
+                    id :'operator_back_preOut',
                     store : workerListStore,
                     displayField : 'workerName',
                     valueField : 'id',
                     width: 150,
                     labelWidth: 50,
-                    name: 'operator_back',
+                    name: 'operator_back_preOut',
                     value:"",
                 },
                 // {
@@ -270,9 +269,9 @@ Ext.define('preprocess.preprocess_Outbound',{
                     margin: '0 0 0 40',
                     layout: 'right',
                     handler: function(){
-                        var preprocess_logId = Ext.getCmp("log_id").text;
+                        var preprocess_logId = Ext.getCmp("pre_log_id").text;
                         var is_rollback = Ext.getCmp("is_rollback").text;
-                        var operator = Ext.getCmp("operator_back").getValue();
+                        var operator = Ext.getCmp("operator_back_preOut").getValue();
                         // console.log("id为：----",is_rollback)
                     //    material/backMaterialstore.do
                         if (is_rollback != 1){
@@ -319,7 +318,7 @@ Ext.define('preprocess.preprocess_Outbound',{
         //弹出框，出入库详细记录
         var preprocess_Query_Records_specific_data_grid=Ext.create('Ext.grid.Panel',{
             id : 'preprocess_Query_Records_specific_data_grid',
-            tbar: toolbar_pop,
+            tbar: toolbar_pop_preOut,
             // store:material_Query_Records_store1,//oldpanellogdetailList，store1的数据固定
             dock: 'bottom',
             columns:[
@@ -365,6 +364,7 @@ Ext.define('preprocess.preprocess_Outbound',{
             layout: 'fit',
             closable : true,
             draggable:true,
+            modal :true,
             closeAction : 'close',
             items:preprocess_Query_Records_specific_data_grid,
         });
@@ -490,8 +490,8 @@ Ext.define('preprocess.preprocess_Outbound',{
                 //     col.setText("入库数量");
                 // }
 
-                Ext.getCmp("toolbar_pop").items.items[0].setText(id); //设置log id的值
-                Ext.getCmp("toolbar_pop").items.items[1].setText(isrollback);
+                Ext.getCmp("toolbar_pop_preOut").items.items[0].setText(id); //设置log id的值
+                Ext.getCmp("toolbar_pop_preOut").items.items[1].setText(isrollback);
                 preprocess_Query_Records_specific_data_grid.setStore(preprocesslogdetailList);
                 // console.log(materiallogdetailList);
                preprocess_Query_Records_win_showpreprocessData.show();
