@@ -236,7 +236,8 @@ Ext.define('project.project_check_designList',{
                             }
                             });
                     }
-                }]
+                }
+                ]
         });
 
 
