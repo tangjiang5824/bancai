@@ -237,7 +237,7 @@ Ext.define('project.project_package_list',{
             id : "toolbar1",
             items : [   projectNameList,
                 buildingName,
-                buildingPositionList,
+                //buildingPositionList,
                 {
                     xtype : 'button',
                     text: '查询',
@@ -325,7 +325,17 @@ Ext.define('project.project_package_list',{
             // dock: 'bottom',
             // bbar:toolbar4,
             columns:[
+
                 {
+                    text: '包Id',
+                    dataIndex: 'id',
+                    flex :1,
+                    editor : {
+                        xtype : 'textfield',
+                        allowBlank : true
+                    },
+                    hidden:true,
+                },{
                     text: '包编号',
                     dataIndex: 'packageNo',
                     flex :1,
@@ -342,36 +352,6 @@ Ext.define('project.project_package_list',{
                         allowBlank : true
                     }
                 },
-                // {
-                //     text: '楼栋编号',
-                //     dataIndex: 'buildingNo',
-                //     flex :1,
-                //     editor : {
-                //         xtype : 'textfield',
-                //         allowBlank : true
-                //     }
-                // },{
-                //     dataIndex : 'buildingName',
-                //     text : '楼栋名',
-                //     flex :1,
-                //     editor : {
-                //         xtype : 'textfield',
-                //         allowBlank : true
-                //     }
-                // },{
-                //     dataIndex : 'buildingLeader',
-                //     text : '楼栋负责人',
-                //     flex :1,
-                //     editor:buildingOwnerList,renderer:function(value, cellmeta, record){
-                //         var index = workerListStore.find(buildingOwnerList.valueField,value);
-                //         var ehrRecord = workerListStore.getAt(index);
-                //         var returnvalue = "";
-                //         if (ehrRecord) {
-                //             returnvalue = ehrRecord.get('workerName');
-                //         }
-                //         return returnvalue;
-                //     }
-                // },
                 {
                     xtype:'actioncolumn',
                     text : '删除操作',
@@ -412,7 +392,7 @@ Ext.define('project.project_package_list',{
                                     fn: function (btn) {
                                         if (btn === 'yes') {
                                             Ext.Ajax.request({
-                                                url:"project/DeletePackage.do",  //删除包信息
+                                                url:"/package/deletePackage.do",  //删除包信息
                                                 params:{
                                                     packageId:packageId,
                                                 },
@@ -456,15 +436,17 @@ Ext.define('project.project_package_list',{
                         id='0'
                     }
                     //项目id
-                    var project_Id = Ext.getCmp("project_id").text;
-                    console.log("项目id：",project_Id)
+                    var projectId = Ext.getCmp("projectId").text;
+                    var buildingId = Ext.getCmp("buildingId").text;
+                    console.log("update点完后的data")
 
                     //修改的行数据
                     var data = editor.context.newValues;
+                    console.log(data)
                     //每个属性值
-                    var buildingNo = data.buildingNo;
-                    var buildingName = data.buildingName;
-                    var buildingLeader = data.buildingLeader;
+                    var packageNo = data.packageNo;
+                    var packageName = data.packageName;
+                    var packageId = data.id;
 
 
                     var s = new Array();
@@ -473,17 +455,19 @@ Ext.define('project.project_package_list',{
                     // console.log("editor===",editor.context.newValues)  //
 
                     Ext.Ajax.request({
-                        url:"project/ModifyPackage.do",  //EditDataById.do
+                        url:"package/addPackage.do",  //EditDataById.do
                         params:{
                             // tableName:table_name,
-                            projectId:project_Id,
+                            //packageId:package_id,
                             // field:field,
                             // value:e.value,
-                            id:id,
+                            //id:id,
                             // s : "[" + s + "]",
-                            buildingNo:buildingNo,
-                            buildingName:buildingName,
-                            buildingLeader:buildingLeader
+                            projectId:projectId,
+                            buildingId:buildingId,
+                            packageNo:packageNo,
+                            packageName:packageName,
+                            packageId:packageId
                         },
                         success:function (response) {
                             Ext.MessageBox.alert("提示","修改成功" );
@@ -508,9 +492,29 @@ Ext.define('project.project_package_list',{
             items: [
                 // MaterialTypeList,
                 {
+                    xtype: 'tbtext',
+                    id:'projectId',
+                    iconAlign: 'center',
+                    iconCls: 'rukuicon ',
+                    text: ' ',//默认为空
+                    region: 'center',
+                    bodyStyle: 'background:#fff;',
+                    hidden:true
+                },
+                {
+                    xtype: 'tbtext',
+                    id:'buildingId',
+                    iconAlign: 'center',
+                    iconCls: 'rukuicon ',
+                    text: ' ',//默认为空
+                    region: 'center',
+                    bodyStyle: 'background:#fff;',
+                    hidden:true
+                },
+                {
                     //保存projectId的值
                     xtype: 'tbtext',
-                    id:'project_id',
+                    id:'package_id',
                     iconAlign: 'center',
                     iconCls: 'rukuicon ',
                     text: ' ',//默认为空
@@ -522,7 +526,7 @@ Ext.define('project.project_package_list',{
                     xtype : 'button',
                     iconAlign : 'center',
                     iconCls : 'rukuicon ',
-                    text : '增加新楼栋',
+                    text : '增加新包',
                     handler : function() {
                         //fields: ['品号', '品名','规格','库存单位','仓库编号','数量','成本','存放位置']
                         var data = [{
@@ -642,7 +646,7 @@ Ext.define('project.project_package_list',{
 
                     var buildinglList_projectId = Ext.create('Ext.data.Store',{
                         //id,materialName,length,width,materialType,number
-                        fields:['packageNo','packageName'],
+                        fields:['id','packageNo','packageName'],
                         proxy : {
                             type : 'ajax',
                             //url : 'project/findBuilding.do?projectId='+projectId,//获取同类型的原材料  +'&pickNum='+pickNum
@@ -662,6 +666,7 @@ Ext.define('project.project_package_list',{
 
                     //将projectId传给弹出框
                     Ext.getCmp("toolbar_pop").items.items[0].setText(projectId);
+                    Ext.getCmp("toolbar_pop").items.items[1].setText(buildingId);
                     pop_package_grid.setStore(buildinglList_projectId);
                     win_showPackageData.show();
                 }

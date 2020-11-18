@@ -347,7 +347,7 @@ Ext.define('project.project_package_list_detail',{
                 // productFormatList,
                 projectNameCombo,
                 buildingName,
-                buildingPositionList,
+                //buildingPositionList,
                 {
                     xtype : 'button',
                     text: '查看包',
@@ -529,15 +529,15 @@ Ext.define('project.project_package_list_detail',{
                         allowBlank : true
                     }
                 },
-                {
-                    text: '位置',
-                    dataIndex: 'position',
-                    flex :1,
-                    editor : {
-                        xtype : 'textfield',
-                        allowBlank : true
-                    }
-                },
+                // {
+                //     text: '位置',
+                //     dataIndex: 'position',
+                //     flex :1,
+                //     editor : {
+                //         xtype : 'textfield',
+                //         allowBlank : true
+                //     }
+                // },
                 {
                     text: '图号',
                     dataIndex: 'figureNum',
@@ -808,7 +808,7 @@ Ext.define('project.project_package_list_detail',{
             columns : [
                 {dataIndex : 'projectName', text : '项目名', flex :1,editor : {xtype : 'textfield', allowBlank : false,},},
                 {dataIndex : 'buildingName', text : '楼栋名', flex :1,editor : {xtype : 'textfield', allowBlank : false,},},
-                {dataIndex : 'positionName', text : '位置', flex :1,editor : {xtype : 'textfield', allowBlank : false,},},
+                //{dataIndex : 'positionName', text : '位置', flex :1,editor : {xtype : 'textfield', allowBlank : false,},},
                 {dataIndex : 'packageNo', text : '打包编号', flex :1,editor : {xtype : 'textfield', allowBlank : false,},},
                 {text: '包名', dataIndex: 'packageName', flex :1,  editor : {xtype : 'textfield', allowBlank : false,}  },
                 {dataIndex : 'packageWeight', text : '累计重量', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
