@@ -570,5 +570,19 @@ public class AnalyzeNameService extends BaseService {
     }
 
 
+    @Transactional
+    public String designlistPositionGenerator(String productId,String projectId,String buildingId){
+        DataList findList = queryService.query("select `dl`.`projectId` AS `projectId`,`dl`.`buildingId` AS `buildingId`,`dl`.`productId` AS `productId`," +
+                "`pt`.`productTypeName` AS `productTypeName`,count(0) AS `count` from (((`designlist` `dl` left join `product_info` `pi` on((`dl`.`productId` = `pi`.`id`)))" +
+                " left join `product_format` `pf` on((`pi`.`productFormatId` = `pf`.`id`))) left join `producttype` `pt` on((`pf`.`productTypeId` = `pt`.`id`)))" +
+                " where ((`dl`.`projectId` = ?) and (`dl`.`buildingId` = ?) and (`dl`.`productId` = ?)) " +
+                "group by `dl`.`projectId`,`dl`.`buildingId`,`dl`.`productId`",projectId,buildingId,productId);
+        StringBuilder sb = new StringBuilder("#NoP-");
+        if(findList.isEmpty())
+            sb.append(queryService.query("select * from product_info_view where id=?",productId).get(0).get("productTypeName")).append("-1");
+        else
+            sb.append(findList.get(0).get("productTypeName")).append("-").append(findList.get(0).get("count"));
+        return sb.toString();
+    }
 
 }
