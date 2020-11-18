@@ -1,9 +1,12 @@
 package com.bancai.cg.entity;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@Data
 @Table(name = "designlist")
 public class Designlist {
     private Integer id;
@@ -16,6 +19,7 @@ public class Designlist {
     private Integer madeBy;
     private Integer processStatus;
     private Integer workorderLogId;
+    private Integer packageId;
 
     @Id
     @Column(name = "id", nullable = false)

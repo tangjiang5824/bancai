@@ -59,6 +59,10 @@ public class MaterialController {
     private QueryAllService queryAllService;
     @Autowired
     private InsertProjectService insertProjectService;
+    @Autowired
+    private packagedao packagedao;
+    @Autowired
+    private designlistdao designlistdao;
 
 
     //向materialtype原材料类型表插入
@@ -709,11 +713,19 @@ public class MaterialController {
         JSONArray jsonArray =JSONArray.parseArray(s);
         for(int i=0;i<jsonArray.size();i++){
             JSONObject object=jsonArray.getJSONObject(i);
-
-
         }
+        return true;
+    }
 
-
+    @RequestMapping("/package/deletePackage.do")
+    public boolean deletePackage(Integer packageId){
+        MyPackage p= packagedao.findById(packageId).orElse(null);
+        packagedao.delete(p);
+        List<Designlist> list=designlistdao.findAllByPackageId(packageId);
+        for(Designlist d:list){
+            d.setPackageId(null);
+            designlistdao.save(d);
+        }
         return true;
     }
 
