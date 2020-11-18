@@ -429,7 +429,7 @@ Ext.define('project.import_design_list', {
 		//楼栋store
 
 
-		var tableListStore1 = Ext.create('Ext.data.Store',{
+		var projectNameListStore = Ext.create('Ext.data.Store',{
 			fields : [ 'projectName'],
 			proxy : {
 				type : 'ajax',
@@ -443,7 +443,7 @@ Ext.define('project.import_design_list', {
 		});
 
 
-		var tableList1 = Ext.create('Ext.form.ComboBox',{
+		var projectNameList = Ext.create('Ext.form.ComboBox',{
 			fieldLabel : '项目名',
 			labelWidth : 45,
 			width : 300,//'35%'
@@ -455,7 +455,7 @@ Ext.define('project.import_design_list', {
 			displayField: 'projectName',
 			valueField: 'id',
 			editable : true,
-			store: tableListStore1,
+			store: projectNameListStore,
 			typeAhead: true,
 			triggerAction: 'all',
 			selectOnFocus:true,
@@ -633,7 +633,7 @@ Ext.define('project.import_design_list', {
 		var toolbar1 = Ext.create('Ext.toolbar.Toolbar', {
 			dock : "top",
 			id : "toolbar1",
-			items : [   tableList1,
+			items : [   projectNameList,
 						buildingName,
 						buildingPositionList,
 				{
