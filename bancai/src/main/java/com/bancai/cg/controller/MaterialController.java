@@ -732,11 +732,17 @@ public class MaterialController {
     @RequestMapping("/package/addPackage.do")
     public boolean addPackage(Integer packageId,String packageName,Double packageWeight,Integer projectId,Integer buildingId,String packageNo){
         MyPackage myPackage=new MyPackage();
+        if(packageId!=null)
         myPackage.setId(packageId);
+        if(packageWeight!=null)
         myPackage.setPackageWeight(packageWeight);
+        if(packageName!=null)
         myPackage.setPackageName(packageName);
+        if(projectId!=null)
         myPackage.setProjectId(projectId);
+        if(buildingId!=null)
         myPackage.setBuildingId(buildingId);
+        if(packageNo!=null)
         myPackage.setPackageNo(packageNo);
         packagedao.save(myPackage);
         return true;
