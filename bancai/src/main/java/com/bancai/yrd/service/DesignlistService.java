@@ -22,8 +22,6 @@ import com.bancai.service.BaseService;
 import javax.script.ScriptException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 @Service
 public class DesignlistService extends BaseService{
@@ -64,21 +62,33 @@ public class DesignlistService extends BaseService{
             return -200;//品名不合法
         return productId;
     }
+    @Transactional
+    public String analyzeDeleteDesignlist(String designlistlogId, String productName, String position) {
+        DataList queryList = queryService.query("select * from product_info where productName=?",productName);
+        if(queryList.isEmpty()) return null;//品名不合法
+        String productId = queryList.get(0).get("id").toString();
+        String designlistId = "";
+        if(!position.equals("-1")){
+            DataList desList = queryService.query("SELECT id FROM designlist WHERE designlistlogId=? AND productId=? ORDER BY id DESC LIMIT 1",designlistlogId,productId);
+            if(!desList.isEmpty())
+               designlistId = desList.get(0).get("id").toString();
+        }else {
+            DataList desList = queryService.query("SELECT id FROM designlist WHERE designlistlogId=? AND productId=? AND position=?",designlistlogId,productId,position);
+            if(!desList.isEmpty())
+                designlistId = desList.get(0).get("id").toString();
+        }
+        return designlistId;
+    }
     /**
      * 设计清单生成
      */
     @Transactional
     public int createDesignlistData(DataList validList, String userId, String projectId, String buildingId,
                                  String buildingpositionId,String remark) {
-        String sql_addLog = "insert into designlist_log (userId,time,isrollback,projectId,buildingId,buildingpositionId,matchStatus,remark) values(?,?,?,?,?,?,?,?)";
+        String sql_addLog = "insert into designlist_log (userId,time,isrollback,projectId,buildingId,buildingpositionId,matchStatus,remark,isActive) values(?,?,?,?,?,?,?,?,?)";
         int designlistlogId= insertProjectService.insertDataToTable(sql_addLog,userId,analyzeNameService.getTime(),"0"
-                ,projectId, buildingId, buildingpositionId,"0",remark);
-        for (DataRow dataRow : validList) {
-            String productId = dataRow.get("productId").toString();
-            String position = dataRow.get("position").toString();
-            String figureNum = dataRow.get("figureNum").toString();
-            setDesignlistOrigin(designlistlogId, projectId, buildingId, buildingpositionId, String.valueOf(productId), position, figureNum,0, 0);
-        }
+                ,projectId, buildingId, buildingpositionId,"0",remark,"1");
+        addDataToValidDesignlist(validList,String.valueOf(designlistlogId),projectId,buildingId,buildingpositionId);
         return designlistlogId;
     }
     /**
@@ -255,6 +265,34 @@ public class DesignlistService extends BaseService{
             designlistDeleteById("designlist",designlistId);
         }
         return b;
+    }
+
+    @Transactional
+    public boolean addDataToValidDesignlist(DataList validList,String designlistlogId){
+        DataList logList = queryService.query("select * from designlist_log where id=?",designlistlogId);
+        if(logList.isEmpty()) return false;
+        String projectId = logList.get(0).get("projectId").toString();
+        String buildingId = logList.get(0).get("buildingId").toString();
+        String buildingpositionId = logList.get(0).get("buildingpositionId").toString();
+        for (DataRow dataRow : validList) {
+            String productId = dataRow.get("productId").toString();
+            String position = dataRow.get("position").toString();
+            String figureNum = dataRow.get("figureNum").toString();
+            setDesignlistOrigin(Integer.parseInt(designlistlogId), projectId, buildingId, buildingpositionId, String.valueOf(productId), position, figureNum,0, 0);
+        }
+        updateDesignlistLogMatchStatusById(designlistlogId,"0");
+        return true;
+    }
+
+    @Transactional
+    public void addDataToValidDesignlist(DataList validList, String designlistlogId, String projectId, String buildingId, String buildingpositionId){
+        for (DataRow dataRow : validList) {
+            String productId = dataRow.get("productId").toString();
+            String position = dataRow.get("position").toString();
+            String figureNum = dataRow.get("figureNum").toString();
+            setDesignlistOrigin(Integer.parseInt(designlistlogId), projectId, buildingId, buildingpositionId, String.valueOf(productId), position, figureNum,0, 0);
+        }
+        updateDesignlistLogMatchStatusById(designlistlogId,"0");
     }
 
     @Transactional

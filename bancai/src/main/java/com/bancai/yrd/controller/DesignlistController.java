@@ -157,6 +157,67 @@ public class DesignlistController {
         return response;
     }
 
+    @RequestMapping(value = "/designlist/addData.do", method = RequestMethod.POST)
+    @ApiOperation("为已存在的设计清单添加数据")
+    public WebResponse designlistAddData(@ApiParam("品名，位置编号，图号")String s, String designlistlogId, String projectId, String buildingId, String buildingpositionId,HttpSession session) throws ScriptException {
+        WebResponse response = new WebResponse();
+        if(projectId==null||projectId.length()==0||buildingId==null||buildingId.length()==0||buildingpositionId==null||buildingpositionId.length()==0||designlistlogId==null||designlistlogId.length()==0){
+            response.setSuccess(false);
+            response.setErrorCode(100);
+            response.setMsg("未获取到设计清单");
+            return response;
+        }
+        DataList errorList = new DataList();
+        DataList validList = new DataList();
+        JSONArray jsonArray = new JSONArray(s);
+        String userId = (String)session.getAttribute("userid");
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonTemp = jsonArray.getJSONObject(i);
+            System.out.println("第" + i + "个---" + jsonTemp);
+            String productName=(jsonTemp.get("品名")+"").trim().toUpperCase();
+            String position=(jsonTemp.get("位置编号")+"").trim().toUpperCase();
+            if(position.equals("NULL")||position.length()==0)
+                position = "-1";
+            String figureNum=(jsonTemp.get("图号")+"").trim().toUpperCase();
+            int analyzeDesignlist = designlistService.analyzeDesignlist(productName, position, userId, projectId, buildingId);
+            if(analyzeDesignlist==-100){
+                DataRow errorRow = new DataRow();
+                errorRow.put("productName",productName);
+                errorRow.put("position",position);
+                errorRow.put("figureNum",figureNum);
+                errorRow.put("errorType","位置重复");
+                errorList.add(errorRow);
+            }else if(analyzeDesignlist==-200){
+                DataRow errorRow = new DataRow();
+                errorRow.put("productName",productName);
+                errorRow.put("position",position);
+                errorRow.put("figureNum",figureNum);
+                errorRow.put("errorType","品名不合法");
+                errorList.add(errorRow);
+            }else {
+                if(position.equals("-1"))
+                    position = analyzeNameService.designlistPositionGenerator(String.valueOf(analyzeDesignlist),projectId,buildingId);
+                DataRow validRow = new DataRow();
+                validRow.put("productId",String.valueOf(analyzeDesignlist));
+                validRow.put("position",position);
+                validRow.put("figureNum",figureNum);
+                validList.add(validRow);
+            }
+        }
+        if(errorList.size()!=0){
+            response.put("errorList",errorList);
+            response.put("errorCount",errorList.size());
+            response.setSuccess(false);
+            response.setErrorCode(150); //位置重复或品名不合法
+            response.setMsg("位置重复或品名不合法");
+            return response;
+        } else {
+            designlistService.addDataToValidDesignlist(validList,designlistlogId,projectId,buildingId,buildingpositionId);
+            response.setSuccess(true);
+        }
+        return response;
+    }
+
     @RequestMapping(value = "/designlist/matchDataByLogId.do", method = RequestMethod.POST)
     @ApiOperation("根据设计清单logId匹配")
     public WebResponse designlistMatchDataByLogId(String designlistlogId) throws ScriptException {
@@ -226,6 +287,65 @@ public class DesignlistController {
         //撤销
         String userId = (String)session.getAttribute("userid");
         response.setSuccess(designlistService.deleteDesignListLog(designlistlogId,userId));
+        return response;
+    }
+
+    @RequestMapping(value = "/designlist/uploadDeleteData.do", method = RequestMethod.POST)
+    @ApiOperation("提交删除设计清单的数据，若全部合法则删除")
+    public WebResponse designlistUploadDeleteData(@ApiParam("品名，位置编号，图号")String s, String designlistlogId) throws ScriptException {
+        WebResponse response = new WebResponse();
+        if(designlistlogId==null||designlistlogId.length()==0){
+            response.setSuccess(false);
+            response.setErrorCode(100);
+            response.setMsg("未获取到设计清单");
+            return response;
+        }
+        DataList errorList = new DataList();
+        DataList validList = new DataList();
+        JSONArray jsonArray = new JSONArray(s);
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonTemp = jsonArray.getJSONObject(i);
+            System.out.println("第" + i + "个---" + jsonTemp);
+            String productName=(jsonTemp.get("品名")+"").trim().toUpperCase();
+            String position=(jsonTemp.get("位置编号")+"").trim().toUpperCase();
+            if(position.equals("NULL")||position.length()==0)
+                position = "-1";
+            String figureNum=(jsonTemp.get("图号")+"").trim().toUpperCase();
+            String designlistId = designlistService.analyzeDeleteDesignlist(designlistlogId,productName,position);
+            if(null==designlistId){
+                DataRow errorRow = new DataRow();
+                errorRow.put("productName",productName);
+                errorRow.put("position",position);
+                errorRow.put("figureNum",figureNum);
+                errorRow.put("errorType","品名不合法");
+                errorList.add(errorRow);
+            }else if(designlistId.length()==0){
+                DataRow errorRow = new DataRow();
+                errorRow.put("productName",productName);
+                errorRow.put("position",position);
+                errorRow.put("figureNum",figureNum);
+                errorRow.put("errorType","不存在该设计清单");
+                errorList.add(errorRow);
+            }else {
+                DataRow validRow = new DataRow();
+                validRow.put("designlistId",designlistId);
+                validList.add(validRow);
+            }
+        }
+        if(errorList.size()!=0){
+            response.put("errorList",errorList);
+            response.put("errorCount",errorList.size());
+            response.setSuccess(false);
+            response.setErrorCode(150); //位置重复或品名不合法
+            response.setMsg("存在错误数据");
+            return response;
+        } else {
+            boolean b = true;
+            for(DataRow row : validList){
+                b=b&designlistService.deleteDesignList(row.get("designlistId").toString());
+            }
+            response.setSuccess(b);
+        }
         return response;
     }
 
