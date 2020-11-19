@@ -659,7 +659,8 @@ public class Select_specification_from_materialName_controller {
 		WebResponse wr=queryAllService.queryDataPage(start, limit, c, tableName);
 		return wr;
 	}
-	//查询打包清单
+
+	//查询项目楼栋位置明细
 	@RequestMapping(value = "/project/queryPackageProduct.do")
 	public WebResponse queryPackageProduct(Integer start, Integer limit, Integer projectId,
 										   Integer buildingId,Integer buildingpositionId,Integer packageId,String tableName) throws ParseException {
@@ -683,4 +684,85 @@ public class Select_specification_from_materialName_controller {
 		WebResponse wr=queryAllService.queryDataPage(start, -1, c, tableName);
 		return wr;
 	}
+	//查询非预加工，非结项项目
+	@RequestMapping(value = "/project/queryRunningProject.do")
+	public WebResponse queryRunningProject(Integer start, Integer limit, Integer projectId,
+										   Integer buildingId) throws ParseException {
+//		if(null==start||start.equals("")) start=0;
+//		if(null==limit||limit.equals("")) limit=50;
+		//String madeBy = "4";
+		mysqlcondition c=new mysqlcondition();
+
+		if (projectId!=null) {
+			c.and(new mysqlcondition("projectId", "=", projectId));
+		}
+		if (buildingId!=null) {
+			c.and(new mysqlcondition("buildingId", "=", buildingId));
+		}
+		c.and(new mysqlcondition("isPreprocess", "=", 0));
+		c.and(new mysqlcondition("statusId", "<>", 9));
+
+		WebResponse wr=queryAllService.queryDataPage(start, limit, c, "building_view");
+		return wr;
+	}
+	//删除包信息
+	@RequestMapping(value = "/project/DeletePackage.do")
+	public Boolean DeletePackage(Integer start, Integer limit, Integer packageId) throws ParseException {
+//		if(null==start||start.equals("")) start=0;
+//		if(null==limit||limit.equals("")) limit=50;
+		//String madeBy = "4";
+//		JSONArray jsonArray = new JSONArray(s);
+//		for (int i = 0; i < jsonArray.length(); i++) {
+//			JSONObject jsonObject = new JSONObject();
+//			jsonObject = jsonArray.getJSONObject(i);
+//			String oldpanelTypeName = jsonObject.get("oldpanelTypeName") + "";
+//			String description = jsonObject.get("description") + "";
+//			String classificationId = jsonObject.get("classificationId") + "";
+//			String sql = "delete from package where packageId = ?";
+//			boolean flag = insertProjectService.insertIntoTableBySQL(sql, oldpanelTypeName, description, classificationId);
+//			if (!flag) {
+//				return false;
+//			}
+//		}
+		return true;
+	}
+	//修改包信息
+	@RequestMapping(value = "/project/ModifyPackage.do")
+	public WebResponse ModifyPackage(Integer start, Integer limit, Integer projectId,
+										  Integer buildingId) throws ParseException {
+//		if(null==start||start.equals("")) start=0;
+//		if(null==limit||limit.equals("")) limit=50;
+		//String madeBy = "4";
+		mysqlcondition c=new mysqlcondition();
+
+		if (projectId!=null) {
+			c.and(new mysqlcondition("projectId", "=", projectId));
+		}
+		if (buildingId!=null) {
+			c.and(new mysqlcondition("buildingId", "=", buildingId));
+		}
+		c.and(new mysqlcondition("isPreprocess", "=", 0));
+		c.and(new mysqlcondition("statusId", "<>", 9));
+
+		WebResponse wr=queryAllService.queryDataPage(start, limit, c, "building_view");
+		return wr;
+	}
+//	@RequestMapping(value = "/material/insertIntoOldPanelType.do")
+//	@Transactional
+//	public boolean insertToOldPanelType(String s) throws JSONException {
+//		JSONArray jsonArray = new JSONArray(s);
+//		for (int i = 0; i < jsonArray.length(); i++) {
+//			JSONObject jsonObject = new JSONObject();
+//			jsonObject = jsonArray.getJSONObject(i);
+//			String oldpanelTypeName = jsonObject.get("oldpanelTypeName") + "";
+//			String description = jsonObject.get("description") + "";
+//			String classificationId = jsonObject.get("classificationId") + "";
+//			String sql = "insert into oldpaneltype (oldpanelTypeName,description,classificationId) values(?,?,?)";
+//			boolean flag = insertProjectService.insertIntoTableBySQL(sql, oldpanelTypeName, description, classificationId);
+//			if (!flag) {
+//				return false;
+//			}
+//		}
+//		return true;
+//	}
 }

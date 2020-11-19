@@ -753,6 +753,11 @@ Ext.define('project.project_create_picklist',{
                     flex :1
                 },
                 {
+                    dataIndex:'productName',
+                    text:'产品名',
+                    flex:1
+                },
+                {
                     dataIndex:'name', //工单号
                     text:'材料名',
                     flex :1
