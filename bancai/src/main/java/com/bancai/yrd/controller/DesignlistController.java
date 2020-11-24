@@ -371,9 +371,9 @@ public class DesignlistController {
      * */
     @RequestMapping("/order/queryWorkOrder.do")
     @ApiOperation("工单查询")
-    public void queryWorkOrder(String projectId, String buildingId, String buildingpositionId,
+    public void queryWorkOrder(String projectId, String buildingId, String buildingpositionId,String productName,String madeBy,
                                HttpServletResponse response) throws IOException, JSONException {
-        DataList workOrderList = designlistService.findWorkOrder(projectId, buildingId, buildingpositionId);
+        DataList workOrderList = designlistService.findWorkOrder(projectId, buildingId, buildingpositionId,productName,madeBy);
         //写回前端
         JSONObject object = new JSONObject();
         JSONArray array = new JSONArray(workOrderList);

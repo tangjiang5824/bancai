@@ -414,7 +414,7 @@ public class DesignlistService extends BaseService{
      * 查询工单
      * */
     @Transactional
-    public DataList findWorkOrder(String projectId, String buildingId, String buildingpositionId){
+    public DataList findWorkOrder(String projectId, String buildingId, String buildingpositionId,String productName,String madeBy){
         StringBuilder sb = new StringBuilder("select * from work_order_view where processStatus=0 ");
         if((projectId!=null)&&(projectId.length()!=0)){
             sb.append(" and projectId=\"").append(projectId).append("\"");
@@ -423,6 +423,10 @@ public class DesignlistService extends BaseService{
         }
         if((buildingpositionId!=null)&&(buildingpositionId.length()!=0))
             sb.append(" and buildingpositionId=\"").append(buildingpositionId).append("\"");
+        if((productName!=null)&&(productName.length()!=0))
+            sb.append(" and productName=\"").append(productName).append("\"");
+        if((madeBy!=null)&&(madeBy.length()!=0))
+            sb.append(" and madeBy=").append(madeBy);
         return queryService.query(sb.toString());
     }
 
