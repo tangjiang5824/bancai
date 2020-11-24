@@ -150,15 +150,15 @@ public class DesignlistService extends BaseService{
             return response;
         }
         String projectId = logList.get(0).get("projectId").toString();
-        String buildingId = logList.get(0).get("buildingId").toString();
-        String buildingpositionId = logList.get(0).get("buildingpositionId").toString();
+//        String buildingId = logList.get(0).get("buildingId").toString();
+//        String buildingpositionId = logList.get(0).get("buildingpositionId").toString();
         if(!isProjectPreprocess(projectId)){
-            panelMatchService.matchBackProduct(projectId,buildingId,buildingpositionId);
-            panelMatchService.matchPreprocess(projectId,buildingId,buildingpositionId);
-            panelMatchService.matchOldpanel(projectId,buildingId,buildingpositionId);
-            new_panel_match.match(Integer.parseInt(projectId),Integer.parseInt(buildingId),Integer.parseInt(buildingpositionId));
+            panelMatchService.matchBackProduct(designlistlogId);
+            panelMatchService.matchPreprocess(designlistlogId);
+            panelMatchService.matchOldpanel(designlistlogId);
+//            new_panel_match.match(designlistlogId);
         }else {
-            new_panel_match.match(Integer.parseInt(projectId),Integer.parseInt(buildingId),Integer.parseInt(buildingpositionId));
+//            new_panel_match.match(designlistlogId);
         }
 //        return panelMatchService.matchError(projectId,buildingId,buildingpositionId);
         DataList matchErrorList = panelMatchService.matchErrorList(designlistlogId);
@@ -196,8 +196,11 @@ public class DesignlistService extends BaseService{
     /**
      * 导入设计清单，返回清单id
      */
-    private int setDesignlistOrigin(int designlistlogId,String projectId, String buildingId, String buildingpositionId,
+    @Transactional
+    public int setDesignlistOrigin(int designlistlogId,String projectId, String buildingId, String buildingpositionId,
                                     String productId, String position, String figureNum,int madeBy, int processStatus){
+        if(position.equals("-1"))
+            position = analyzeNameService.designlistPositionGenerator(productId,projectId,buildingId);
         return insertProjectService.insertDataToTable("insert into designlist " +
                         "(designlistlogId,projectId,buildingId,buildingpositionId,productId,position,figureNum,madeBy,processStatus) values " +
                         "(?,?,?,?,?,?,?,?,?)",String.valueOf(designlistlogId), projectId, buildingId, buildingpositionId, productId,

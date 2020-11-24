@@ -11,6 +11,13 @@ Ext.define('project.project_query_overpicklist',{
         //存放所选的原材料的具体规格
         var materialList = '';
 
+        //工单审核状态：枚举类型
+        Ext.define('overPickList.query.State', {
+            statics: { // 关键
+                0: { value: '0', name: '未领完' },
+                1: { value: '1', name: '已领完' },
+            }
+        });
         //原件类型：枚举类型
         Ext.define('product.model.originType', {
             statics: { // 关键s
@@ -82,11 +89,11 @@ Ext.define('project.project_query_overpicklist',{
                 },
 
                 //下拉框默认返回的第一个值
-                render : function(combo) {//渲染
-                    combo.getStore().on("load", function(s, r, o) {
-                        combo.setValue(r[0].get('projectName'));//第一个值
-                    });
-                },
+                // render : function(combo) {//渲染
+                //     combo.getStore().on("load", function(s, r, o) {
+                //         combo.setValue(r[0].get('projectName'));//第一个值
+                //     });
+                // },
 
                 select:function (combo, record) {
                     //选中后
@@ -315,6 +322,12 @@ Ext.define('project.project_query_overpicklist',{
                         MaterialpickListStore.load({
                             params : {
                                 projectId:Ext.getCmp('projectName').getValue(),
+                                operator:Ext.getCmp('operator').getValue(),
+                                requisitionOrderNo:Ext.getCmp('picklistNum').getValue(),
+                                timeStart:Ext.getCmp('startTime').getValue(),
+                                timeEnd:Ext.getCmp('endTime').getValue(),
+                                status:Ext.getCmp('receiveStatus').getValue(),//是否领完
+                                // isActive:Ext.getCmp('projectName').getValue(),
                                 //projectId:'1',
                             }
                         });
@@ -344,7 +357,7 @@ Ext.define('project.project_query_overpicklist',{
             columns:[
                 new Ext.grid.RowNumberer(),//序号
                 {
-                dataIndex:'id',
+                dataIndex:'requisitionOrderNo',
                 text:'超领单号',
                 flex :1
             },
@@ -374,6 +387,17 @@ Ext.define('project.project_query_overpicklist',{
                     text:'超领原因',
                     flex :1,
                 },
+                {
+                    dataIndex:'status',
+                    text:'是否领完',
+                    //editor:{xtype : 'textfield', allowBlank : false}
+                    flex :1,
+                    renderer: function (value) {
+                        return overPickList.query.State[value].name; // key-value
+                    },
+                    editor:{xtype : 'textfield', allowBlank : false}
+                },
+
                 {
                     // name : '操作',
                     // name : '操作',

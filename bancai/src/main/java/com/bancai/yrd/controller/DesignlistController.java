@@ -126,8 +126,6 @@ public class DesignlistController {
                 errorRow.put("errorType","品名不合法");
                 errorList.add(errorRow);
             }else {
-                if(position.equals("-1"))
-                    position = analyzeNameService.designlistPositionGenerator(String.valueOf(analyzeDesignlist),projectId,buildingId);
                 DataRow validRow = new DataRow();
                 validRow.put("productId",String.valueOf(analyzeDesignlist));
                 validRow.put("position",position);
@@ -195,8 +193,8 @@ public class DesignlistController {
                 errorRow.put("errorType","品名不合法");
                 errorList.add(errorRow);
             }else {
-                if(position.equals("-1"))
-                    position = analyzeNameService.designlistPositionGenerator(String.valueOf(analyzeDesignlist),projectId,buildingId);
+//                if(position.equals("-1"))
+//                    position = analyzeNameService.designlistPositionGenerator(String.valueOf(analyzeDesignlist),projectId,buildingId);
                 DataRow validRow = new DataRow();
                 validRow.put("productId",String.valueOf(analyzeDesignlist));
                 validRow.put("position",position);

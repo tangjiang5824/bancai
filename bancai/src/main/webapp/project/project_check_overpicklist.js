@@ -290,8 +290,9 @@ Ext.define('project.project_check_overpicklist',{
                         overpickListStore.load({
                             params : {
                                 projectId:Ext.getCmp('projectName').getValue(),
-                                // isActive:Ext.getCmp('isActiveList').getValue(),
+                                isActive:Ext.getCmp('isActiveList').getValue(),
                                 operator:Ext.getCmp('operator').getValue(),
+                                requisitionOrderNo:Ext.getCmp('picklistNum').getValue(),
                                 timeStart:Ext.getCmp('startTime').getValue(),
                                 timeEnd:Ext.getCmp('endTime').getValue(),
                             }
@@ -315,7 +316,7 @@ Ext.define('project.project_check_overpicklist',{
             columns:[
                 new Ext.grid.RowNumberer(),//序号
                 {
-                    dataIndex:'id',
+                    dataIndex:'requisitionOrderNo',
                     text:'超领单号',
                     flex :1
                 },
@@ -345,6 +346,11 @@ Ext.define('project.project_check_overpicklist',{
                     text:'超领原因',
                     flex :1,
                 },
+                // {
+                //     dataIndex:'status',
+                //     text:'是否领完',
+                //     flex :1,
+                // },
                 {
                     dataIndex:'isActive',
                     text:'是否审核',
