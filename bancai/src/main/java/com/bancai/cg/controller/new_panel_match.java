@@ -49,6 +49,15 @@ public class new_panel_match {
     public  void match( int projectId, int buildingId, int buildingpositionId) throws ScriptException {
         //Session session=getSession();
         List<Designlist> design_list =designlistdao.findAllByMadeByAndProjectIdAndBuildingIdAndBuildingpositionIdOrderByProductId(0,projectId,buildingId,buildingpositionId);
+       designListMatch(design_list);
+    }
+    public  void match( String designlistlogId) throws ScriptException {
+        //Session session=getSession();
+        List<Designlist> design_list =designlistdao.findAllByMadeByAnddAndDesignlistlogId(0,Integer.valueOf(designlistlogId));
+        designListMatch(design_list);
+    }
+
+    private void designListMatch(List<Designlist> design_list) throws ScriptException {
         int pre_productId=0;
         List<Match_result> pre_match_results=new ArrayList<>();
         for (int i=0;i<design_list.size();i++){
@@ -88,8 +97,8 @@ public class new_panel_match {
 //
 //                }
                 }
-                    designlist.setMadeBy(4);
-                    designlistdao.save(designlist);
+                designlist.setMadeBy(4);
+                designlistdao.save(designlist);
                 continue;
             }
             List<Match_result> isrollbacklist=new ArrayList<>();
@@ -101,7 +110,7 @@ public class new_panel_match {
             if(productInfo.getSuffix()!=null&&productInfo.getSuffix().trim().length()!=0){
                 rules=materialMatchRulesRepository.findAllByProductformatIdAndIsCompleteMatchAndSuffix(productInfo.getProductFormatId().getId(),1,productInfo.getSuffix());
             }else
-             rules=materialMatchRulesRepository.findAllByProductformatIdAndIsCompleteMatchAndSuffix(productInfo.getProductFormatId().getId(),1,"");
+                rules=materialMatchRulesRepository.findAllByProductformatIdAndIsCompleteMatchAndSuffix(productInfo.getProductFormatId().getId(),1,"");
             rules.addAll(rules2);
             if(rules.size()==0) {
                 System.out.println(productInfo.getProductName()+"未添加匹配规则");
@@ -143,11 +152,11 @@ public class new_panel_match {
                     switch (materialPrefix){
                         //U板
                         case 301: materialName=info.getnValue()+" U铝膜板";
-                        specification=info.getmValue()+"mm";
-                        break;
+                            specification=info.getmValue()+"mm";
+                            break;
                         case 302: materialName=info.getaValue()+"*"+info.getbValue()+" IC";
-                        specification=info.getmValue()+"mm";
-                        break;
+                            specification=info.getmValue()+"mm";
+                            break;
                         default: {
                             StringBuffer sb=new StringBuffer();
                             if(info.getaValue()!=null&&info.getbValue()!=null) sb.append(info.getaValue()+"*"+info.getbValue());
@@ -209,7 +218,6 @@ public class new_panel_match {
                 designlist.setMadeBy(4);
                 designlistdao.save(designlist);
             }
-
 
         }
 

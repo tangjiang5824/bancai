@@ -156,9 +156,9 @@ public class DesignlistService extends BaseService{
             panelMatchService.matchBackProduct(designlistlogId);
             panelMatchService.matchPreprocess(designlistlogId);
             panelMatchService.matchOldpanel(designlistlogId);
-//            new_panel_match.match(designlistlogId);
+            new_panel_match.match(designlistlogId);
         }else {
-//            new_panel_match.match(designlistlogId);
+            new_panel_match.match(designlistlogId);
         }
 //        return panelMatchService.matchError(projectId,buildingId,buildingpositionId);
         DataList matchErrorList = panelMatchService.matchErrorList(designlistlogId);
