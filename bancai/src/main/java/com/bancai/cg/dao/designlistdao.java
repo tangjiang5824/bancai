@@ -12,5 +12,5 @@ public interface designlistdao extends JpaRepository<Designlist,Integer>, JpaSpe
     public List<Designlist> findAllByPackageId(int packageId);
 
 
-    public List<Designlist> findAllByMadeByAnddAndDesignlistlogId(int madeBy,int designlistlogId);
+    public List<Designlist> findAllByMadeByAndAndDesignlistlogId(int madeBy,int designlistlogId);
 }

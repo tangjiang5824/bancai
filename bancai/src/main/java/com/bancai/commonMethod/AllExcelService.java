@@ -191,7 +191,6 @@ public class AllExcelService extends BaseService {
 				}
 				dataList.get(i).put("品号",partNo);
 				dataList.get(i).put("原材料名",list.get(0).getMaterialName());
-
 			}else {
 				List<MaterialInfo> materialList=materialinfodao.findByMaterialName(materialName);
 				if(materialList.size()!=1) {

@@ -170,7 +170,7 @@ public class MaterialController {
     public WebResponse addMaterialData(String s,@ApiParam("入库人") Integer operator, HttpSession session) throws Exception {
         WebResponse response=new WebResponse();
         JSONArray jsonArray =JSONArray.parseArray(s);
-        if(jsonArray.size()==0){
+        if(jsonArray==null||jsonArray.size()==0){
             response.setErrorCode(100);
             response.setSuccess(false);
             response.setMsg("未输入原材料入库数据！");

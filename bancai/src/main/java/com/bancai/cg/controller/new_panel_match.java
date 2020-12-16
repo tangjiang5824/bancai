@@ -53,7 +53,7 @@ public class new_panel_match {
     }
     public  void match( String designlistlogId) throws ScriptException {
         //Session session=getSession();
-        List<Designlist> design_list =designlistdao.findAllByMadeByAnddAndDesignlistlogId(0,Integer.valueOf(designlistlogId));
+        List<Designlist> design_list =designlistdao.findAllByMadeByAndAndDesignlistlogId(0,Integer.valueOf(designlistlogId));
         designListMatch(design_list);
     }
 
