@@ -212,8 +212,8 @@ Ext.define('project.project_worksheet',{
                         buildingId:Ext.getCmp("buildingName").getValue(),
                         buildingpositionId:Ext.getCmp("positionName").getValue(),
 
-                        warehouseName:Ext.getCmp("storePositionprojectName").rawValue,
-                        product_Name :Ext.getCmp("pro_name").getValue(),
+                        warehouseName:Ext.getCmp("storePosition").rawValue,
+                        productName :Ext.getCmp("pro_name").getValue(),
                         madeBy:Ext.getCmp("madebyType").getValue()
                     });
                 }
@@ -348,8 +348,8 @@ Ext.define('project.project_worksheet',{
                                 buildingId:Ext.getCmp("buildingName").getValue(),
                                 buildingpositionId:Ext.getCmp("positionName").getValue(),
 
-                                warehouseName:Ext.getCmp("storePositionprojectName").rawValue,
-                                product_Name :Ext.getCmp("pro_name").getValue(),
+                                warehouseName:Ext.getCmp("storePosition").rawValue,
+                                productName :Ext.getCmp("pro_name").getValue(),
                                 madeBy:Ext.getCmp("madebyType").getValue()
                             }
                         });
@@ -607,8 +607,8 @@ Ext.define('project.project_worksheet',{
                                         buildingId:Ext.getCmp("buildingName").getValue(),
                                         buildingpositionId:Ext.getCmp("positionName").getValue(),
 
-                                        warehouseName:Ext.getCmp("storePositionprojectName").rawValue,
-                                        product_Name :Ext.getCmp("pro_name").getValue(),
+                                        warehouseName:Ext.getCmp("storePosition").rawValue,
+                                        productName :Ext.getCmp("pro_name").getValue(),
                                         madeBy:Ext.getCmp("madebyType").getValue()
                                     }
                                 });

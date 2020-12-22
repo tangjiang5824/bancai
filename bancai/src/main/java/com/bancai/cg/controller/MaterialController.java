@@ -170,7 +170,7 @@ public class MaterialController {
     public WebResponse addMaterialData(String s,@ApiParam("入库人") Integer operator, HttpSession session) throws Exception {
         WebResponse response=new WebResponse();
         JSONArray jsonArray =JSONArray.parseArray(s);
-        if(jsonArray.size()==0){
+        if(jsonArray==null||jsonArray.size()==0){
             response.setErrorCode(100);
             response.setSuccess(false);
             response.setMsg("未输入原材料入库数据！");
@@ -730,13 +730,26 @@ public class MaterialController {
     }
 
     @RequestMapping("/package/addPackage.do")
-    public boolean addPackage(Integer packageId,String packageName,Double packageWeight,Integer projectId,Integer buildingId,String packageNo){
+    public boolean addPackage(String packageId,String packageName,Double packageWeight,Integer projectId,Integer buildingId,String packageNo){
         MyPackage myPackage=new MyPackage();
-        myPackage.setId(packageId);
+        if(packageId!=null){
+           try {
+               Integer id=Integer.valueOf(packageId);
+               myPackage.setId(id);
+           }catch(Exception e){
+
+           }
+        }
+
+        if(packageWeight!=null)
         myPackage.setPackageWeight(packageWeight);
+        if(packageName!=null)
         myPackage.setPackageName(packageName);
+        if(projectId!=null)
         myPackage.setProjectId(projectId);
+        if(buildingId!=null)
         myPackage.setBuildingId(buildingId);
+        if(packageNo!=null)
         myPackage.setPackageNo(packageNo);
         packagedao.save(myPackage);
         return true;

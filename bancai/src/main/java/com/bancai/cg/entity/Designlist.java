@@ -20,6 +20,7 @@ public class Designlist {
     private Integer processStatus;
     private Integer workorderLogId;
     private Integer packageId;
+    private Integer designlistlogId;
 
     @Id
     @Column(name = "id", nullable = false)
