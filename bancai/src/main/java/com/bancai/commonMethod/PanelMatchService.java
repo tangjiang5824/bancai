@@ -38,7 +38,7 @@ public class PanelMatchService extends BaseService{
      */
     @Transactional
     public Map<String,ArrayList<String>>findMatchMap(String projectId, String buildingId, String buildingpositionId){
-        String sql = "select * from designlist where projectId=? and buildingId=? and buildingpositionId=? and madeBy=0";
+        String sql = "select * from designlist where projectId=? and buildingId=? and buildingpositionId=? and madeBy=0 AND isValid=1";
         DataList findMatchList = queryService.query(sql,projectId,buildingId,buildingpositionId);
         Map<String,ArrayList<String>> map = new HashMap<>();
         if(findMatchList.isEmpty())
@@ -61,7 +61,7 @@ public class PanelMatchService extends BaseService{
     }
     @Transactional
     public Map<String,ArrayList<String>>findMatchMap(String designlistlogId){
-        String sql = "select * from designlist where designlistlogId=? and (madeBy=0 or madeBy=4)";
+        String sql = "select * from designlist where designlistlogId=? and (madeBy=0 or madeBy=4) AND isValid=1";
         DataList findMatchList = queryService.query(sql,designlistlogId);
         Map<String,ArrayList<String>> map = new HashMap<>();
         if(findMatchList.isEmpty())
@@ -99,7 +99,7 @@ public class PanelMatchService extends BaseService{
      */
     @Transactional
     public int updateDesignlist(String projectId, String buildingId, String position, int madeBy) {
-        String sql = "select * from designlist where projectId=? and buildingId=? and position=?";
+        String sql = "select * from designlist where projectId=? and buildingId=? and position=? AND isValid=1";
         DataList queryList = queryService.query(sql,projectId,buildingId,position);
         if(queryList.size()!=1)
             return 0;

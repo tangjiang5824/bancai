@@ -63,17 +63,17 @@ public class DesignlistService extends BaseService{
         return productId;
     }
     @Transactional
-    public String analyzeDeleteDesignlist(String designlistlogId, String productName, String position) {
+    public String analyzeDeleteDesignlist(String projectId, String buildingId, String productName, String position) {
         DataList queryList = queryService.query("select * from product_info where productName=?",productName);
         if(queryList.isEmpty()) return null;//品名不合法
         String productId = queryList.get(0).get("id").toString();
         String designlistId = "";
         if(!position.equals("-1")){
-            DataList desList = queryService.query("SELECT id FROM designlist WHERE designlistlogId=? AND productId=? ORDER BY id DESC LIMIT 1",designlistlogId,productId);
+            DataList desList = queryService.query("SELECT id FROM designlist WHERE projectId=? AND buildingId=? AND productId=? AND isValid=1 ORDER BY id DESC LIMIT 1",projectId,buildingId,productId);
             if(!desList.isEmpty())
                designlistId = desList.get(0).get("id").toString();
         }else {
-            DataList desList = queryService.query("SELECT id FROM designlist WHERE designlistlogId=? AND productId=? AND position=?",designlistlogId,productId,position);
+            DataList desList = queryService.query("SELECT id FROM designlist WHERE projectId=? AND buildingId=? AND productId=? AND isValid=1 AND position=?",projectId,buildingId,productId,position);
             if(!desList.isEmpty())
                 designlistId = desList.get(0).get("id").toString();
         }
@@ -85,9 +85,9 @@ public class DesignlistService extends BaseService{
     @Transactional
     public int createDesignlistData(DataList validList, String userId, String projectId, String buildingId,
                                  String buildingpositionId,String remark) {
-        String sql_addLog = "insert into designlist_log (userId,time,isrollback,projectId,buildingId,buildingpositionId,matchStatus,remark,isActive) values(?,?,?,?,?,?,?,?,?)";
+        String sql_addLog = "insert into designlist_log (userId,time,isrollback,projectId,buildingId,buildingpositionId,matchStatus,remark,isActive,listType) values(?,?,?,?,?,?,?,?,?,?)";
         int designlistlogId= insertProjectService.insertDataToTable(sql_addLog,userId,analyzeNameService.getTime(),"0"
-                ,projectId, buildingId, buildingpositionId,"0",remark,"1");
+                ,projectId, buildingId, buildingpositionId,"0",remark,"1","1");
         addDataToValidDesignlist(validList,String.valueOf(designlistlogId),projectId,buildingId,buildingpositionId);
         return designlistlogId;
     }
@@ -122,12 +122,12 @@ public class DesignlistService extends BaseService{
 
     @Transactional
     public void updateDesignlistLogMatchStatusByBaseId(String projectId, String buildingId, String buildingpositionId){
-        DataList logList = queryService.query("SELECT DISTINCT designlistlogId FROM designlist WHERE projectId=? AND buildingId=? AND buildingpositionId=?"
+        DataList logList = queryService.query("SELECT DISTINCT designlistlogId FROM designlist WHERE projectId=? AND buildingId=? AND buildingpositionId=? AND isValid=1"
                 ,projectId,buildingId,buildingpositionId);
         if(!logList.isEmpty()){
             for(DataRow logRow : logList){
                 String designlistlogId = logRow.get("designlistlogId").toString();
-                DataList statusList = queryService.query("SELECT COUNT(id) as count,SUM(if(madeBy = 0, 0, 1)) as num from designlist where designlistlogId=?"
+                DataList statusList = queryService.query("SELECT COUNT(id) as count,SUM(if(madeBy = 0, 0, 1)) as num from designlist where designlistlogId=? AND isValid=1"
                         ,designlistlogId);
                 if(!statusList.isEmpty()){
                     if(Integer.parseInt(statusList.get(0).get("num").toString())<Integer.parseInt(statusList.get(0).get("count").toString()))//未匹配完
@@ -189,7 +189,7 @@ public class DesignlistService extends BaseService{
     }
 
     private boolean isDesignlistPositionValid(String projectId,String buildingId,String position){
-        return queryService.query("select * from designlist where projectId=? and buildingId=? and position=?"
+        return queryService.query("select * from designlist where projectId=? and buildingId=? and position=? and isValid=1"
                 , projectId, buildingId, position).isEmpty();
     }
 
@@ -202,9 +202,9 @@ public class DesignlistService extends BaseService{
         if(position.equals("-1"))
             position = analyzeNameService.designlistPositionGenerator(productId,projectId,buildingId);
         return insertProjectService.insertDataToTable("insert into designlist " +
-                        "(designlistlogId,projectId,buildingId,buildingpositionId,productId,position,figureNum,madeBy,processStatus) values " +
-                        "(?,?,?,?,?,?,?,?,?)",String.valueOf(designlistlogId), projectId, buildingId, buildingpositionId, productId,
-                position, figureNum,String.valueOf(madeBy), String.valueOf(processStatus));
+                        "(designlistlogId,projectId,buildingId,buildingpositionId,productId,position,figureNum,madeBy,processStatus,isValid) values " +
+                        "(?,?,?,?,?,?,?,?,?,?)",String.valueOf(designlistlogId), projectId, buildingId, buildingpositionId, productId,
+                position, figureNum,String.valueOf(madeBy), String.valueOf(processStatus), "1");
     }
 
     @Transactional
@@ -226,25 +226,45 @@ public class DesignlistService extends BaseService{
     }
 
     @Transactional
-    public boolean designlistCanRollback(String designlistlogId){
+    public DataList designlistCanRollback(String designlistlogId){
         DataList list = queryService.query("select * from designlist where designlistlogId=?",designlistlogId);
-        if(list.isEmpty())
-            return false;
-        else {
+        DataList reList = new DataList();
+        if(!list.isEmpty()){
             int processStatusSum = 0;
             for (DataRow dataRow : list)
                 processStatusSum = processStatusSum + Integer.parseInt(dataRow.get("processStatus").toString());
-            return processStatusSum == 0;
+            if(processStatusSum == 0){
+                reList = queryService.query("select * from designlist_log where id=?",designlistlogId);
+            }
         }
+        return reList;
     }
     @Transactional
-    public boolean deleteDesignListLog(String designlistlogId,String userId){
+    public boolean rollbackDesignListLog(DataList designlistLogList, String designlistlogId,String userId){
         boolean b = true;
+        int isrollback = Integer.parseInt(designlistLogList.get(0).get("isrollback").toString());
+        if(isrollback==1) return false;
+        int listType = Integer.parseInt(designlistLogList.get(0).get("listType").toString());
         DataList list = queryService.query("select * from designlist where designlistlogId=?",designlistlogId);
         if(!list.isEmpty()){
-            for (DataRow dataRow : list) {
-                String designlistId = dataRow.get("id").toString();
-                b=b&deleteDesignList(designlistId);
+            if(listType==1){
+                for (DataRow dataRow : list) {
+                    String designlistId = dataRow.get("id").toString();
+                    b=b&deleteDesignListData(designlistId,designlistlogId);
+                }
+            }else if(listType==0){
+                String projectId = designlistLogList.get(0).get("projectId").toString();
+                String buildingId = designlistLogList.get(0).get("buildingId").toString();
+                String buildingpositionId = designlistLogList.get(0).get("buildingpositionId").toString();
+                String sql_addLog = "insert into designlist_log (userId,time,isrollback,projectId,buildingId,buildingpositionId,matchStatus,remark,isActive,listType) values(?,?,?,?,?,?,?,?,?,?)";
+                int newLogId= insertProjectService.insertDataToTable(sql_addLog,userId,analyzeNameService.getTime(),"0"
+                        ,projectId, buildingId, buildingpositionId,"0","","1","1");
+                for (DataRow dataRow : list) {
+                    String designlistId = dataRow.get("id").toString();
+                    designlistDeleteRollbackUpdate(designlistId,String.valueOf(newLogId));
+                }
+            }else {
+               b=false;
             }
             jo.update("update designlist_log set isrollback=1,userId=\""+userId+
                     "\",time=\""+analyzeNameService.getTime()+"\" where id=\""+designlistlogId+"\"");
@@ -253,7 +273,18 @@ public class DesignlistService extends BaseService{
     }
 
     @Transactional
-    public boolean deleteDesignList(String designlistId){
+    public boolean deleteDesignList(DataList validList,String projectId, String buildingId, String buildingpositionId,String remark,String userId){
+        boolean b =true;
+        String sql_addLog = "insert into designlist_log (userId,time,isrollback,projectId,buildingId,buildingpositionId,matchStatus,remark,isActive,listType) values(?,?,?,?,?,?,?,?,?,?)";
+        int designlistlogId= insertProjectService.insertDataToTable(sql_addLog,userId,analyzeNameService.getTime(),"0"
+                ,projectId, buildingId, buildingpositionId,"0",remark,"1","0");
+        for(DataRow row : validList){
+            b=b&deleteDesignListData(row.get("designlistId").toString(),String.valueOf(designlistlogId));
+        }
+        return b;
+    }
+    @Transactional
+    public boolean deleteDesignListData(String designlistId,String designlistlogId){
         boolean b =true;
         DataList list = queryService.query("select * from query_match_result where designlistId=?",designlistId);
         if(!list.isEmpty()){
@@ -263,10 +294,10 @@ public class DesignlistService extends BaseService{
                 int storeId = Integer.parseInt(dataRow.get("matchId").toString());
                 double count = Double.parseDouble(dataRow.get("count").toString());
                 b=b&designlistMatchResultBackStore(type, storeId, count);
-                designlistDeleteById("match_result", matchResultId);
+                matchResultDeleteById(matchResultId);
             }
-            designlistDeleteById("designlist",designlistId);
         }
+        designlistDeleteUpdate(designlistId,designlistlogId);
         return b;
     }
 
@@ -307,7 +338,7 @@ public class DesignlistService extends BaseService{
             double count = Double.parseDouble(jsonTemp.get("count").toString());
             int storeId = Integer.parseInt(jsonTemp.get("matchId").toString());
             int type = Integer.parseInt(jsonTemp.get("materialMadeBy").toString());
-            designlistDeleteById("match_result", matchResultId);
+            matchResultDeleteById(matchResultId);
             b=b&designlistMatchResultBackStore(type, storeId, count);
         }
         return b;
@@ -335,8 +366,16 @@ public class DesignlistService extends BaseService{
         return true;
     }
 
-    private void designlistDeleteById(String tableName, String matchResultId){
-        jo.update("delete from "+tableName+" where id=\""+matchResultId+"\"");
+    private void matchResultDeleteById(String matchResultId){
+        jo.update("delete from match_result where id=\""+matchResultId+"\"");
+    }
+
+    private void designlistDeleteUpdate(String designlistId,String designlistlogId){
+        jo.update("update designlist set designlistlogId=\""+designlistlogId+"\",isValid=0 where id=\""+designlistId+"\"");
+    }
+
+    private void designlistDeleteRollbackUpdate(String designlistId,String designlistlogId){
+        jo.update("update designlist set designlistlogId=\""+designlistlogId+"\",isValid=1 where id=\""+designlistId+"\"");
     }
 
 
