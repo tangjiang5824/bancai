@@ -900,7 +900,8 @@ public class DesignlistService extends BaseService{
      * 退料单内容退料
      */
     @Transactional
-    public boolean finishReturnOrder(JSONArray jsonArray,String type, String returnOrderId,String operator, String userId){
+    public boolean finishReturnOrder(JSONArray jsonArray, String type, String returnOrderId,
+                                     String operator, String userId){
         String store = "";
         boolean b = true;
         DataRow orderRow = queryService.query("select * from return_order where id=?",returnOrderId).get(0);

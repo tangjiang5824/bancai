@@ -478,7 +478,10 @@ public class DesignlistController {
      * 查询领料单
      * */
     @RequestMapping("/order/queryRequisitionOrder.do")
-    public WebResponse queryRequisitionOrder(String origin,String projectId, String operator,String requisitionOrderNo, String timeStart, String timeEnd,Integer start,Integer limit){
+    public WebResponse queryRequisitionOrder(String origin,String projectId,
+                                             String operator,String requisitionOrderNo,
+                                             String timeStart, String timeEnd,Integer start,
+                                             Integer limit){
         mysqlcondition c=new mysqlcondition();
         if (null!=projectId&&projectId.length() != 0) {
             c.and(new mysqlcondition("projectId", "=", projectId));
@@ -965,7 +968,8 @@ public class DesignlistController {
             return response;
         }
         String userId = (String)session.getAttribute("userid");
-        DataList errorList = analyzeNameService.checkCountALessThanCountBInJsonArray(jsonArray,"count","countReturn");
+        DataList errorList = analyzeNameService.checkCountALessThanCountBInJsonArray(jsonArray,
+                "count","countReturn");
         if(errorList.size()!=0){
             response.put("errorList",errorList);
             response.put("errorNum",errorList.size());
