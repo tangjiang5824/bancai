@@ -67,14 +67,15 @@ public class MaterialController {
 
     //向materialtype原材料类型表插入
     //
-    @RequestMapping(value = "/material/insertIntoMaterialType.do")
+    @RequestMapping(value = "/material/insertIntoMaterialInfo.do")
     @Transactional
-    public boolean insertToMaterialType(String s) throws JSONException {
+    public boolean insertToMaterialInfo(String s) throws JSONException {
         List<MaterialInfo_trans> list =JSONArray.parseArray(s,MaterialInfo_trans.class);
         for (int i = 0; i <list.size() ; i++) {
             MaterialInfo_trans info_trans=list.get(i);
             MaterialInfo info=new MaterialInfo();
             info.setOrientation(info_trans.getOrientation());
+            info.setSpecification(info_trans.getSpecification());
             info.setnValue(info_trans.getNValue());
             info.setmValue(info_trans.getMValue());
             info.setpValue(info_trans.getPValue());

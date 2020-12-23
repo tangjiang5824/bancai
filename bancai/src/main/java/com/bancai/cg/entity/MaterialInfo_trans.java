@@ -7,6 +7,7 @@ public class MaterialInfo_trans {
     private Integer materialid;
     private String inventoryUnit;
     private String materialName;
+    private String specification;
     private Integer nValue;
     private Integer mValue;
     private Integer pValue;

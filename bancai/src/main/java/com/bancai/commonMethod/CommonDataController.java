@@ -3,6 +3,7 @@ package com.bancai.commonMethod;
 import com.bancai.cg.service.InsertProjectService;
 import com.bancai.controller.DataHistoryController;
 import com.bancai.db.mysqlcondition;
+import io.swagger.annotations.ApiParam;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -47,7 +48,7 @@ public class CommonDataController {
     /*修改数据*/
     //Status 0 2 删除
     @RequestMapping(value = "/data/EditCellById.do")
-    public boolean EditDataById(String tableName,String field , String value,String id,String type){
+    public boolean EditDataById(String tableName, String field , String value, String id, String type){
        String sql;
         if(type.equals("delete")){
             sql="delete from "+ tableName +" where  id= ?";

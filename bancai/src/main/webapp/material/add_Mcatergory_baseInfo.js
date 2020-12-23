@@ -33,10 +33,11 @@ Ext.define('material.add_Mcatergory_baseInfo', {
                     var data = [{
                         'materialName':'',
                         'typeId':'',
+                        'specification':'',
                         'aValue':'',
                         'bValue':'',
-                        'mValue':'',
                         'nValue':'',
+                        'mValue':'',
                         'pValue':'',
                         'orientation':'',
                         'inventoryUnit':'',
@@ -65,11 +66,11 @@ Ext.define('material.add_Mcatergory_baseInfo', {
                     });
                     if(s.length>0){
                         Ext.Ajax.request({
-                            url : 'material/insertIntoMaterialType.do', //HandleDataController
+                            url : 'material/insertIntoMaterialInfo.do', //HandleDataController
                             method:'POST',
                             //submitEmptyText : false,
                             params : {
-                                tableName:tableName,
+                               // tableName:tableName,
                                 // materialType:materialtype,
                                 s : "[" + s + "]",
                                 //userid: userid + ""
@@ -179,10 +180,11 @@ Ext.define('material.add_Mcatergory_baseInfo', {
                         return returnvalue;
                     }
                 },
+                {dataIndex : 'specification', text : '规格', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'aValue', text : 'a值', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'bValue', text : 'b值', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
-                {dataIndex : 'mValue', text : 'm值', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'nValue', text : 'n值', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
+                {dataIndex : 'mValue', text : 'm值', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'pValue', text : 'p值', flex :1, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'orientation', text : '方向', flex :.6, editor : {xtype : 'textfield', allowBlank : false,}},
                 {dataIndex : 'inventoryUnit', text : '库存单位', flex :.6, editor : {xtype : 'textfield', allowBlank : false,}},

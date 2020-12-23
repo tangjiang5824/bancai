@@ -209,6 +209,7 @@ public class DesignlistService extends BaseService{
 
     @Transactional
     public DataList queryDesignlistlog(String projectId, String buildingId, String buildingpositionId){
+        //userId<>0没有任何意义，如果允许userId为空就不应该加这句，如果不允许则应该在插入时进行验证，不应再查询时验证
         StringBuilder sb = new StringBuilder("select * from designlist_log_view where userId<>0");
         if((projectId!=null)&&(projectId.length()!=0)){
             sb.append(" and projectId=\"").append(projectId).append("\"");
