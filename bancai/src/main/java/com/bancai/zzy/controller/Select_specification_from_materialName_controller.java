@@ -561,7 +561,8 @@ public class Select_specification_from_materialName_controller {
 		return wr;
 	}
 	@RequestMapping(value = "/oldpanel/query_data.do")
-	public WebResponse query_data(Integer start, Integer limit, String tableName,String oldpanelType,String productType,
+	public WebResponse query_data(Integer start, Integer limit, String tableName,
+								  String oldpanelType,String productType,
 										 String maxCount,String minCount,String warehouseName) throws ParseException {
 		if(null==start||start.equals("")) start=0;
 		if(null==limit||limit.equals("")) limit=50;
