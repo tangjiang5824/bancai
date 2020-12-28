@@ -222,7 +222,9 @@ public class DesignlistService extends BaseService{
     }
 
     private StringBuilder queryDesignlistlogSQLBuilder(String projectId, String buildingId, String buildingpositionId){
-        StringBuilder sb = new StringBuilder("select * from designlist_log_view where userId<>0");
+        //userId<>0没有任何意义，如果允许userId为空就不应该加这句，如果不允许则应该在插入时进行验证，不应再查询时验证
+        //StringBuilder sb = new StringBuilder("select * from designlist_log_view where userId<>0");
+        StringBuilder sb = new StringBuilder("select * from designlist_log_view where 1=1");
         if((projectId!=null)&&(projectId.length()!=0)){
             sb.append(" and projectId=\"").append(projectId).append("\"");
             if((buildingId!=null)&&(buildingId.length()!=0))

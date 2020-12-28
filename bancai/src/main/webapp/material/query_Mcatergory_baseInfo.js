@@ -201,6 +201,7 @@ Ext.define('material.query_Mcatergory_baseInfo',{
             columns : [
                 // { text: '原材料品名',  dataIndex: 'materialName' ,flex :1,editor : {xtype : 'textfield', allowBlank : false}},
                 { text: '原材料名称',  dataIndex: 'materialName' ,flex :1,editor : {xtype : 'textfield'}},
+                { text: '规格',  dataIndex: 'specification' ,flex :1,editor : {xtype : 'textfield'}},
                 { text: '原材料品号',  dataIndex: 'partNo' ,flex :1,editor : {xtype : 'textfield'}},
                 {
                     dataIndex : 'typeName',
@@ -302,6 +303,7 @@ Ext.define('material.query_Mcatergory_baseInfo',{
                     var pValue = data.pValue;
                     var orientation = data.orientation;
                     var description = data.description;
+                    var specification = data.specification;
 
 
                     var s = new Array();
@@ -314,6 +316,7 @@ Ext.define('material.query_Mcatergory_baseInfo',{
                         params:{
                             id:id,
                             materialName:materialName,
+                            specification:specification,
                             partNo:partNo,
                             aValue:aValue,
                             bValue:bValue,

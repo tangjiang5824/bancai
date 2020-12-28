@@ -1347,11 +1347,14 @@ public class ProjectController {
 
     //修改原材料基本信息
     @RequestMapping("/material/updateMaterialInfo.do")
-    public boolean updateMaterialInfo(Integer id,String materialName,String partNo,String aValue,String bValue,String mValue,String nValue,String pValue,String orientation,String description,String unitWeight,String unitArea){
+    public boolean updateMaterialInfo(Integer id,String materialName,String specification,String partNo,String aValue,String bValue,String mValue,String nValue,String pValue,String orientation,String description,String unitWeight,String unitArea){
         StringBuffer sb=new StringBuffer();
         sb.append("id="+id);
         if(materialName!=null){
            sb.append(",materialName=\""+materialName+"\"");
+        }
+        if(specification!=null){
+           sb.append(",specification=\""+specification+"\"");
         }
         if(partNo!=null){
             sb.append(",partNo=\""+partNo+"\"");
