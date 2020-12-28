@@ -209,6 +209,19 @@ public class DesignlistService extends BaseService{
 
     @Transactional
     public DataList queryDesignlistlog(String projectId, String buildingId, String buildingpositionId){
+        StringBuilder sb = queryDesignlistlogSQLBuilder(projectId, buildingId, buildingpositionId);
+        sb.append(" and isActive=1");
+        return queryService.query(sb.toString());
+    }
+
+    @Transactional
+    public DataList queryDesignlistlogForMatch(String projectId, String buildingId, String buildingpositionId){
+        StringBuilder sb = queryDesignlistlogSQLBuilder(projectId, buildingId, buildingpositionId);
+        sb.append(" and isrollback=0 and isActive=1 and listType=1");
+        return queryService.query(sb.toString());
+    }
+
+    private StringBuilder queryDesignlistlogSQLBuilder(String projectId, String buildingId, String buildingpositionId){
         StringBuilder sb = new StringBuilder("select * from designlist_log_view where userId<>0");
         if((projectId!=null)&&(projectId.length()!=0)){
             sb.append(" and projectId=\"").append(projectId).append("\"");
@@ -217,7 +230,7 @@ public class DesignlistService extends BaseService{
         }
         if((buildingpositionId!=null)&&(buildingpositionId.length()!=0))
             sb.append(" and buildingpositionId=\"").append(buildingpositionId).append("\"");
-        return queryService.query(sb.toString());
+        return sb;
     }
 
     @Transactional

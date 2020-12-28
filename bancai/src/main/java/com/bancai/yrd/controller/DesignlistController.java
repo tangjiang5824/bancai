@@ -303,13 +303,31 @@ public class DesignlistController {
         return designlistService.matchDesignlistByBaseId(projectId,buildingId,buildingpositionId);
     }
     /*
-     * 查询designlist记录
+     * 查询可操作designlist记录
      * */
     @RequestMapping(value = "/designlist/queryUploadLog.do")
     @ApiOperation("查询设计清单记录")
     public void designlistqueryUploadLog(String projectId, String buildingId, String buildingpositionId,
                                                 HttpServletResponse response) throws IOException, JSONException {
         DataList designlistlogList = designlistService.queryDesignlistlog(projectId, buildingId, buildingpositionId);
+        //写回前端
+        JSONObject object = new JSONObject();
+        JSONArray array = new JSONArray(designlistlogList);
+        object.put("designlistlogList", array);
+//        System.out.println("类型1：--"+array.getClass().getName().toString());
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html");
+        response.getWriter().write(object.toString());
+        response.getWriter().flush();
+    }
+    /*
+     * 查询可匹配designlist记录
+     * */
+    @RequestMapping(value = "/designlist/queryUploadLogForMatch.do")
+    @ApiOperation("查询设计清单可匹配记录")
+    public void designlistqueryUploadLogForMatch(String projectId, String buildingId, String buildingpositionId,
+                                         HttpServletResponse response) throws IOException, JSONException {
+        DataList designlistlogList = designlistService.queryDesignlistlogForMatch(projectId, buildingId, buildingpositionId);
         //写回前端
         JSONObject object = new JSONObject();
         JSONArray array = new JSONArray(designlistlogList);
