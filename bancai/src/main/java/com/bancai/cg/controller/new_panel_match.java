@@ -147,6 +147,7 @@ public class new_panel_match {
                     inf.setaValue(info.getaValue());
                     inf.setbValue(info.getbValue());
                     inf.setOrientation(info.getOrientation());
+                    inf.setIsMain(0);
                     String specification=null;
                     String materialName=null;
                     switch (materialPrefix){

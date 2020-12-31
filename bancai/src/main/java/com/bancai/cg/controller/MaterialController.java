@@ -85,6 +85,7 @@ public class MaterialController {
             info.setMaterialName(info_trans.getMaterialName());
             info.setUnitWeight(info_trans.getUnitWeight());
             info.setTypeId(materialTypedao.findById(info_trans.getTypeId()).orElse(null));
+            info.setIsMain(1);
             materialinfodao.save(info);
             Integer prefix=info.getTypeId().getMaterialPrefix();
             Integer type=info.getTypeId().getId();
@@ -594,7 +595,7 @@ public class MaterialController {
         return object.toJSONString();
     }
 
-
+    //原材料匹配时，只通过匹配规则生成了结果，未匹配库存，在创建领料单时，匹配原材料库存
     public  DataList findMaterialStore(Integer materialId,Double count,DataRow rowList){
         DataList response=new DataList();
         MaterialInfo info=materialinfodao.findById(materialId).orElse(null);
