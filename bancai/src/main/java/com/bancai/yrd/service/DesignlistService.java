@@ -209,8 +209,22 @@ public class DesignlistService extends BaseService{
 
     @Transactional
     public DataList queryDesignlistlog(String projectId, String buildingId, String buildingpositionId){
+        StringBuilder sb = queryDesignlistlogSQLBuilder(projectId, buildingId, buildingpositionId);
+        sb.append(" and isActive=1");
+        return queryService.query(sb.toString());
+    }
+
+    @Transactional
+    public DataList queryDesignlistlogForMatch(String projectId, String buildingId, String buildingpositionId){
+        StringBuilder sb = queryDesignlistlogSQLBuilder(projectId, buildingId, buildingpositionId);
+        sb.append(" and isrollback=0 and isActive=1 and listType=1");
+        return queryService.query(sb.toString());
+    }
+
+    private StringBuilder queryDesignlistlogSQLBuilder(String projectId, String buildingId, String buildingpositionId){
         //userId<>0没有任何意义，如果允许userId为空就不应该加这句，如果不允许则应该在插入时进行验证，不应再查询时验证
-        StringBuilder sb = new StringBuilder("select * from designlist_log_view where userId<>0");
+        //StringBuilder sb = new StringBuilder("select * from designlist_log_view where userId<>0");
+        StringBuilder sb = new StringBuilder("select * from designlist_log_view where 1=1");
         if((projectId!=null)&&(projectId.length()!=0)){
             sb.append(" and projectId=\"").append(projectId).append("\"");
             if((buildingId!=null)&&(buildingId.length()!=0))
@@ -218,7 +232,7 @@ public class DesignlistService extends BaseService{
         }
         if((buildingpositionId!=null)&&(buildingpositionId.length()!=0))
             sb.append(" and buildingpositionId=\"").append(buildingpositionId).append("\"");
-        return queryService.query(sb.toString());
+        return sb;
     }
 
     @Transactional

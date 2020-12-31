@@ -115,6 +115,7 @@ public class OldpanelDataController {
         DataList errorList = new DataList();
         DataList insertList = new DataList();
         HashMap<String,String> map = new HashMap<>();
+        int ignoreCount = 0;
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonTemp = jsonArray.getJSONObject(i);
             String id = jsonTemp.get("id")+"";
@@ -130,8 +131,10 @@ public class OldpanelDataController {
             map.put("unitArea",unitArea);
             map.put("remark",remark);
             map.put("partNo",remark);
-            if(analyzeNameService.isInfoExist("oldpanel",oldpanelName)!=0)
-                errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"已经存在这种旧板",map);
+            if(analyzeNameService.isInfoExist("oldpanel",oldpanelName)!=0){
+                errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"已经存在这种旧板（已忽略）",map);
+                ignoreCount++;
+            }
             else if(analyzeNameService.isStringNotNonnegativeNumber(unitWeight))
                 errorList = analyzeNameService.addErrorRowToErrorList(errorList,id,"重量输入有误",map);
             else if(analyzeNameService.isStringNotNonnegativeNumber(unitArea))
@@ -150,17 +153,24 @@ public class OldpanelDataController {
                 }
             }
         }
-        if(!errorList.isEmpty()){
+        if((!errorList.isEmpty())&&(errorList.size()>ignoreCount)){
             response.setSuccess(false);
             response.setErrorCode(200);//提交的s存在错误内容
             response.put("errorList",errorList);
             response.put("errorCount",errorList.size());
-            response.setMsg("提交的数据存在错误内容");
+            response.setMsg("提交失败，存在"+errorList.size()+"条错误内容，其中"+ ignoreCount +"条为重复导入信息（已忽略）");
             return response;
         }
         boolean uploadResult = oldpanelDataService.oldpanelAddNewInfo(insertList,userId);
         response.setSuccess(uploadResult);
-
+        if((ignoreCount>0)&&uploadResult){
+            response.setSuccess(false);
+            response.setErrorCode(300);//提交的s存在错误内容
+            response.put("errorList",errorList);
+            response.put("errorCount",ignoreCount);
+            response.setMsg("提交成功，但其中存在"+ ignoreCount +"条重复导入信息（已忽略）");
+            return response;
+        }
         return response;
     }
 
