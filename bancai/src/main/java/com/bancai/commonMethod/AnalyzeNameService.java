@@ -164,7 +164,210 @@ public class AnalyzeNameService extends BaseService {
         return list.get(0).get("oldpanelType").toString();
     }
     /**
-     * 旧板品名解析。输入旧板品名，返回String[]{format,oldpanelType,m,n,a,b,mnAngle,suffix,oldpanelTypeName};
+     * 品名解析V2.0。输入品名，返回String[]{0typeId,1typeName,2classificationId,3widthFormat,4lengthFormat,
+     *                                    5m,6n,7p,8a,9b,10mAngle,11nAngle,12suffix,13igSuffix};
+     */
+    @Transactional
+    public String[] analyzeName(String tableName, String name){
+        name = name.trim().toUpperCase();
+        System.out.println("Analyze Name="+name+";Type="+tableName);
+        DataList typeList = getTypeByName(tableName,name);
+        if(typeList.size()==0)
+            return null;
+        String typeId = typeList.get(0).get("id").toString();
+        String classificationId = typeList.get(0).get("classificationId").toString();
+        String typeName = typeList.get(0).get(tableName+"TypeName").toString();
+        String m = null;
+        String n = null;
+        String p = null;
+        String a = null;
+        String b = null;
+        String mAngle = "0";
+        String nAngle = "0";
+        String igSuffix = "";
+        int widthFormat = 0;//0无1m2n3aXb4m+n5p
+        int lengthFormat = 0;
+        String nameStr = name.split("-")[0];
+        if(name.split("-").length>1)
+            igSuffix = name.substring(nameStr.length()+1);
+        String[] sName = nameStr.split("\\s+");
+        int space = 0;
+        int lenPoint = 0;
+        if(sName[space].equals(typeName)){//第一段为类型，无宽
+            lenPoint += sName[space].length();
+            if(sName.length>1){
+                space++;//解析第二段
+                if(sName[space].matches(isPureNumber)){
+                    m = sName[space];
+                    lengthFormat =1;
+                }else if(sName[space].contains("X")){
+                    if(sName[space].split("X").length!=2)
+                        return null;
+                    a = sName[space].split("X")[0];
+                    b = sName[space].split("X")[1];
+                    if(a.matches(isPureNumber)&&b.matches(isPureNumber))
+                        lengthFormat = 3;
+                    else
+                        return null;
+                }else if(sName[space].contains("+")){
+                    if(sName[space].split("\\+").length!=2)
+                        return null;
+                    m = sName[space].split("\\+")[0];
+                    n = sName[space].split("\\+")[1];
+                    if(!m.matches(isPureNumber)){
+                        if(m.substring(0,m.length()-1).matches(isPureNumber)){
+                            m = m.substring(0,m.length()-1);
+                            if(m.charAt(m.length()-1)=='A'){
+                                mAngle = "1";
+                            }else if(m.charAt(m.length()-1)=='B'){
+                                mAngle = "2";
+                            }else
+                                return null;
+                        }else
+                            return null;
+                    }
+                    if(!n.matches(isPureNumber)){
+                        if(n.substring(0,n.length()-1).matches(isPureNumber)){
+                            n = n.substring(0,n.length()-1);
+                            if(n.charAt(n.length()-1)=='A'){
+                                nAngle = "1";
+                            }else if(n.charAt(n.length()-1)=='B'){
+                                nAngle = "2";
+                            }else
+                                return null;
+                        }else
+                            return null;
+                    }
+                    lengthFormat = 4;
+                }
+                if(lengthFormat!=0){
+                    lenPoint += sName[space].length();
+                    space++;
+                }
+            }
+        }else {//第一段为宽，进行解析。必须有类型段，所以至少有两段
+            if(sName.length<2)
+                return null;
+            if(sName[space].matches(isPureNumber)){
+                n = sName[space];
+                widthFormat = 2;
+            }else if(sName[space].contains("X")){
+                if(sName[space].split("X").length!=2)
+                    return null;
+                a = sName[space].split("X")[0];
+                b = sName[space].split("X")[1];
+                if(a.matches(isPureNumber)&&b.matches(isPureNumber))
+                    widthFormat = 3;
+                else
+                    return null;
+            }else if(sName[space].contains("+")){
+                if(sName[space].split("\\+").length!=2)
+                    return null;
+                m = sName[space].split("\\+")[0];
+                n = sName[space].split("\\+")[1];
+                if(!m.matches(isPureNumber)){
+                    if(m.substring(0,m.length()-1).matches(isPureNumber)){
+                        m = m.substring(0,m.length()-1);
+                        if(m.charAt(m.length()-1)=='A'){
+                            mAngle = "1";
+                        }else if(m.charAt(m.length()-1)=='B'){
+                            mAngle = "2";
+                        }else
+                            return null;
+                    }else
+                        return null;
+                }
+                if(!n.matches(isPureNumber)){
+                    if(n.substring(0,n.length()-1).matches(isPureNumber)){
+                        n = n.substring(0,n.length()-1);
+                        if(n.charAt(n.length()-1)=='A'){
+                            nAngle = "1";
+                        }else if(n.charAt(n.length()-1)=='B'){
+                            nAngle = "2";
+                        }else
+                            return null;
+                    }else
+                        return null;
+                }
+                widthFormat = 4;
+            }else {
+                return null;
+            }
+            space++;//解析第二段
+            if(!sName[space].equals(typeName)){
+                return null;
+            }
+            lenPoint += sName[space].length();
+            if(sName.length>2){
+                space++;//解析第三段
+                if(sName[space].matches(isPureNumber)){
+                    if(widthFormat!=4){
+                        m = sName[space];
+                        lengthFormat = 1;
+                    }else {
+                        p = sName[space];
+                        lengthFormat = 5;
+                    }
+                }else if(sName[space].contains("X")){
+                    if((sName[space].split("X").length!=2)||(widthFormat==3))
+                        return null;
+                    a = sName[space].split("X")[0];
+                    b = sName[space].split("X")[1];
+                    if(a.matches(isPureNumber)&&b.matches(isPureNumber))
+                        lengthFormat = 3;
+                    else
+                        return null;
+                }else if(sName[space].contains("+")){
+                    if((sName[space].split("\\+").length!=2)||(widthFormat==4))
+                        return null;
+                    if(widthFormat==2){
+                        p = n;
+                        widthFormat = 5;
+                    }
+                    m = sName[space].split("\\+")[0];
+                    n = sName[space].split("\\+")[1];
+                    if(!m.matches(isPureNumber)){
+                        if(m.substring(0,m.length()-1).matches(isPureNumber)){
+                            m = m.substring(0,m.length()-1);
+                            if(m.charAt(m.length()-1)=='A'){
+                                mAngle = "1";
+                            }else if(m.charAt(m.length()-1)=='B'){
+                                mAngle = "2";
+                            }else
+                                return null;
+                        }else
+                            return null;
+                    }
+                    if(!n.matches(isPureNumber)){
+                        if(n.substring(0,n.length()-1).matches(isPureNumber)){
+                            n = n.substring(0,n.length()-1);
+                            if(n.charAt(n.length()-1)=='A'){
+                                nAngle = "1";
+                            }else if(n.charAt(n.length()-1)=='B'){
+                                nAngle = "2";
+                            }else
+                                return null;
+                        }else
+                            return null;
+                    }
+                    lengthFormat = 4;
+                }
+            }
+
+        }
+        String suffix = nameStr.substring(lenPoint+space);
+        System.out.println("Analyze Result of ["+name+"] ("+tableName+")");
+        System.out.println("               =typeId:"+typeId+"=typeName:"+typeName+"=classificationId:"+classificationId+
+                "=widthFormat:"+widthFormat+"=:lengthFormat"+lengthFormat);
+        System.out.println("               =mValue:"+m+"=nValue:"+n+"=pValue:"+p+"=mAngle:"+mAngle+"=nAngle:"+nAngle+
+                "=suffix:"+suffix+"=igSuffix:"+igSuffix);
+        return new String[]{typeId,typeName,classificationId,String.valueOf(widthFormat),String.valueOf(lengthFormat),m,n,p,a,b,
+                mAngle,nAngle,suffix,igSuffix};
+    }
+
+
+    /**
+     * 旧板品名解析V1.0。输入旧板品名，返回String[]{format,oldpanelType,m,n,a,b,mnAngle,suffix,oldpanelTypeName};
      */
     @Transactional
     public String[] analyzeOldpanelName(String oldpanelName){
@@ -309,6 +512,28 @@ public class AnalyzeNameService extends BaseService {
         int max = Math.max(a,b);
         int min = Math.min(a,b);
         return new String[]{String.valueOf(max),String.valueOf(min)};
+    }
+
+    /**
+     * 根据品名获取type表内容
+     */
+    @Transactional
+    public DataList getTypeByName(String tableName, String name){
+        String typeName = "";
+        String[] sName = name.split("\\s+");
+        DataList list = new DataList();
+        int pointer = -1;
+        for (String s : sName) {
+            pointer++;
+            if (s.substring(0, 1).matches(isPureWord)) {
+                typeName = s;
+                break;
+            }
+            if(pointer>=1) break;
+        }
+        if(!typeName.equals(""))
+            list = queryService.query("select * from "+tableName+"type where "+tableName+"TypeName=?",typeName);
+        return list;
     }
 
     /**

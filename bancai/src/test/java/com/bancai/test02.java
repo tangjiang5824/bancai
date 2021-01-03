@@ -248,17 +248,34 @@ public class test02 {
 //        String t = "^[0-9]+\\.{0,1}[0-9]{0,2}$";
 //        String s ="-5";
 //        System.out.println(s.matches(t));
-        String s = "200%150%null%null%null%0%0%0%%";
-        System.out.println(s.split("%").length);
-        String str = "a>=0&&(b%100)==5";
-        ScriptEngineManager manager = new ScriptEngineManager();
-        ScriptEngine engine = manager.getEngineByName("js");
-        engine.put("a", 4);
-        engine.put("b", 5);
-        Object result = engine.eval(str);
-        System.out.println("结果类型:" + result.getClass().getName() + ",计算结果:" + result);
-        boolean b =Boolean.parseBoolean(result.toString());
-        System.out.println(b);
+
+
+//        String s = "200%150%null%null%null%0%0%0%%";
+//        System.out.println(s.split("%").length);
+//        String str = "a>=0&&(b%100)==5";
+//        ScriptEngineManager manager = new ScriptEngineManager();
+//        ScriptEngine engine = manager.getEngineByName("js");
+//        engine.put("a", 4);
+//        engine.put("b", 5);
+//        Object result = engine.eval(str);
+//        System.out.println("结果类型:" + result.getClass().getName() + ",计算结果:" + result);
+//        boolean b =Boolean.parseBoolean(result.toString());
+//        System.out.println(b);
+
+//        String s = "EC 100-";
+//        System.out.println(s.substring("EC".length()+1));
+//        System.out.println(s.substring(s.length()-1));
+//        System.out.println(s.split("-").length);
+//        System.out.println(s.split("A").length);
+//        Map<String,String> map = new HashMap<>();
+//        map.put("a","a0");
+//        map.put("a","a1");
+//        System.out.println(map.get("a"));
+//        System.out.println(s.substring(0,s.length()-1));
+        StringBuilder sb =new StringBuilder();
+        System.out.println(sb.length());
+        sb.append("1232");
+        System.out.println(sb.length());
 
     }
 
