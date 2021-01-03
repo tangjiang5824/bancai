@@ -25,6 +25,15 @@ public class MaterialInfo {
     private Set<MaterialLogdetail> materialLogdetails =new HashSet<>();
     private String partNo;
     private String specification;
+    private Integer isMain;
+
+    public Integer getIsMain() {
+        return isMain;
+    }
+
+    public void setIsMain(Integer isMain) {
+        this.isMain = isMain;
+    }
 
     public String getSpecification() {
         return specification;
