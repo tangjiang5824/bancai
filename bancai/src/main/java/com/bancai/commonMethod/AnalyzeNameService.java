@@ -352,8 +352,12 @@ public class AnalyzeNameService extends BaseService {
                     }
                     lengthFormat = 4;
                 }
+                if(lengthFormat!=0) {
+                    lenPoint += sName[space].length();
+                    if(sName.length>3)
+                        space++;
+                }
             }
-
         }
         String suffix = nameStr.substring(lenPoint+space);
         System.out.println("Analyze Result of ["+name+"] ("+tableName+")");
